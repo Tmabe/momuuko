@@ -1121,15 +1121,21 @@ function renderPortList(){
   });
 }
 
-function portSelect(idx){
+function portSelect(idx, preventScroll){ // 예외 처리 변수 추가
   if(idx<0||idx>=imgs.length)return;
   _portSel=idx;
 
   /* 리스트 active */
   document.querySelectorAll('.port-li').forEach(function(el){el.classList.remove('active');});
   var li=document.getElementById('port-li-'+idx);
-  if(li){li.classList.add('active');li.scrollIntoView({behavior:'smooth',block:'nearest'});}
-
+  if(li){
+    li.classList.add('active');
+    // preventScroll이 비어있을 때(직접 클릭했을 때)만 스크롤 이동
+    if(!preventScroll) {
+      li.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+  }
+  // ... (이하 생략)
   /* 뷰어 */
   var wrap=document.getElementById('portViewerWrap');
   wrap.innerHTML='';
@@ -1981,3 +1987,4 @@ if(evField)evField.addEventListener('input',function(){document.getElementById('
 </script>
 </body>
 </html>
+
