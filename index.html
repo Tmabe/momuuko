@@ -24,7 +24,1236 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--sky-bg);color:var(--
 .side-nav{position:fixed;top:50%;right:18px;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;z-index:500;padding:10px 9px 12px;border-radius:18px;background:var(--white);border:1px solid var(--border);box-shadow:var(--sh-lg)}
 .side-nav-title{width:100px;padding:5px 0;font-size:10px;font-weight:900;text-align:center;color:var(--text2);border-radius:8px;background:linear-gradient(180deg,var(--sky-pl),var(--white));border:1px solid var(--border)}
 .side-nav button{width:100px;height:33px;border-radius:10px;border:1px solid var(--border);background:linear-gradient(180deg,var(--sky-l),var(--sky));color:var(--white);font-weight:700;font-size:11px;font-family:inherit;cursor:pointer;box-shadow:0 3px 10px rgba(77,184,240,.28),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .15s,box-shadow .15s}
+.side-nav button:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(77,184,240,.38)}<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모무꼬 · 작가 페이지</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,700;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#4db8f0;--sky-l:#a0d8f7;--sky-pl:#e0f4fd;--sky-bg:#f4fbff;
+  --pink:#f060a0;--pink-l:#ffa0cc;--pink-pl:#fff0f7;--pink-d:#cc3878;
+  --white:#fff;--text:#18303f;--text2:#4a6a80;--text3:#9ab8cc;
+  --border:#c0e4f8;--border-p:#f8d0e8;
+  --sh:0 2px 16px rgba(77,184,240,.10);--sh-lg:0 8px 40px rgba(77,184,240,.20);
+  --sh-p:0 4px 18px rgba(240,96,160,.22);--r:16px;--r-sm:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',sans-serif;background:transparent;color:var(--text);min-height:100vh}
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
+.section{margin-bottom:56px}
+
+/* 사이드 네비 */
+.side-nav{position:fixed;top:50%;right:18px;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;z-index:500;padding:10px 9px 12px;border-radius:18px;background:var(--white);border:1px solid var(--border);box-shadow:var(--sh-lg)}
+.side-nav-title{width:100px;padding:5px 0;font-size:10px;font-weight:900;text-align:center;color:var(--text2);border-radius:8px;background:linear-gradient(180deg,var(--sky-pl),var(--white));border:1px solid var(--border)}
+.side-nav button{width:100px;height:33px;border-radius:10px;border:1px solid var(--border);background:linear-gradient(180deg,var(--sky-l),var(--sky));color:var(--white);font-weight:700;font-size:11px;font-family:inherit;cursor:pointer;box-shadow:0 3px 10px rgba(77,184,240,.28),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .15s,box-shadow .15s}
 .side-nav button:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(77,184,240,.38)}
+.side-nav button.pk{background:linear-gradient(180deg,var(--pink-l),var(--pink));border-color:var(--border-p);box-shadow:0 3px 10px rgba(240,96,160,.25),inset 0 1px 0 rgba(255,255,255,.5)}
+.side-nav button.pk:hover{box-shadow:0 5px 14px rgba(240,96,160,.38)}
+.admin-dot{display:none;width:8px;height:8px;border-radius:50%;cursor:pointer;background:linear-gradient(135deg,var(--sky),var(--pink));opacity:.6;box-shadow:0 0 6px rgba(77,184,240,.6);transition:opacity .2s}
+.admin-dot:hover{opacity:1}
+.admin-mode .admin-dot{display:block}
+
+/* 히어로 */
+.hero{padding:60px 32px 40px;max-width:1080px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--sky),var(--pink));color:var(--white);font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:16px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5.5vw,56px);line-height:1.08;margin-bottom:8px}
+.hero h1 em{font-style:italic;color:var(--sky)}
+.hero-sub{font-size:13px;color:var(--text2);line-height:1.8;max-width:440px;margin-top:12px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+.chip{padding:5px 12px;background:var(--white);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text2);box-shadow:var(--sh)}
+.chip b{color:var(--sky)}.chip.pk-chip b{color:var(--pink)}
+.divider{width:calc(100% - 64px);max-width:1016px;margin:0 auto 48px;height:1px;background:linear-gradient(90deg,transparent,var(--sky-l),var(--pink-l),transparent)}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.sec-num{font-family:'Playfair Display',serif;font-style:italic;font-size:12px;color:var(--sky);opacity:.7}
+.sec-title{font-size:15px;font-weight:700;color:var(--text)}
+.sec-badge{font-size:10px;letter-spacing:.1em;text-transform:uppercase;background:var(--pink-pl);color:var(--pink-d);padding:2px 8px;border-radius:8px;font-weight:700}
+.sec-badge.blue{background:var(--sky-pl);color:#2070a0}
+
+/* 공통 */
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:26px 28px;box-shadow:var(--sh)}
+.btn{padding:9px 18px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn-sky{background:linear-gradient(135deg,var(--sky),#2da0d8);color:var(--white);box-shadow:0 4px 14px rgba(77,184,240,.32)}
+.btn-sky:hover{box-shadow:0 6px 20px rgba(77,184,240,.44)}
+.btn-pink{background:linear-gradient(135deg,var(--pink-l),var(--pink));color:var(--white);box-shadow:var(--sh-p)}
+.btn-pink:hover{box-shadow:0 6px 20px rgba(240,96,160,.44)}
+.btn-ghost{background:var(--white);color:var(--text2);border:1.5px solid var(--border);box-shadow:var(--sh)}
+.btn-ghost:hover{border-color:var(--sky);color:var(--sky)}
+.admin-only{display:none !important}
+.admin-mode .admin-only{display:inline-flex !important}
+.admin-mode .admin-only.as-flex{display:flex !important}
+
+/* 슬롯 */
+.slot-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--sky-pl);flex-wrap:wrap}
+.slot-row:last-child{border-bottom:none}
+.slot-month{font-size:13px;font-weight:700;width:64px;flex-shrink:0}
+.slot-status{font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;margin-left:4px}
+.status-open{background:var(--sky-pl);color:#1080b0}.status-full{background:var(--pink-pl);color:var(--pink-d)}
+.slot-dots{display:flex;gap:8px;flex:1;flex-wrap:wrap}
+.dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:var(--white);transition:all .18s;display:flex;align-items:center;justify-content:center;font-size:13px}
+.dot.filled{background:linear-gradient(135deg,var(--sky),#2da0d8);border-color:var(--sky)}
+.dot.filled::after{content:'■';color:var(--white)}.dot:not(.filled)::after{content:'□';color:var(--text3)}
+.dot:hover{transform:scale(1.12);box-shadow:0 3px 10px rgba(77,184,240,.3)}
+.slot-controls{display:flex;gap:6px;margin-left:auto;flex-shrink:0}
+.sm-btn{padding:5px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text2);transition:all .15s}
+.sm-btn:hover{border-color:var(--sky);color:var(--sky)}
+.sm-btn.del{color:var(--pink-d);border-color:var(--border-p)}.sm-btn.del:hover{background:var(--pink-pl)}
+.slot-add-row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;align-items:center;padding-top:14px;border-top:1px dashed var(--sky-l)}
+.field{padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:inherit;font-size:13px;color:var(--text);background:var(--sky-bg);outline:none;transition:border-color .2s}
+.field:focus{border-color:var(--sky)}
+
+/* 공지 */
+.notice-card{background:var(--white);border:1.5px solid var(--border-p);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.notice-head{background:linear-gradient(135deg,var(--pink-pl),#fff8f0);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-p)}
+.notice-head-title{font-size:13px;font-weight:700;color:var(--pink-d)}
+.notice-body{padding:22px}
+.notice-view{font-size:13px;line-height:1.9;color:var(--text);min-height:72px;white-space:pre-wrap}
+.notice-edit{display:none;width:100%;min-height:110px;border:1.5px solid var(--border-p);border-radius:var(--r-sm);padding:12px 14px;font-family:inherit;font-size:13px;color:var(--text);background:var(--sky-bg);resize:vertical;outline:none}
+.notice-edit:focus{border-color:var(--pink)}
+.notice-btn-row{display:none;gap:8px;margin-top:10px;justify-content:flex-end}
+
+/* ── 포트폴리오 플레이리스트 레이아웃 ── */
+.port-player{grid-template-columns:280px 1fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--sh-lg);background:#0f1e2d;min-height:780px}
+@media(max-width:860px){.port-player{grid-template-columns:1fr;grid-template-rows:300px 1fr;min-height:unset}}
+
+/* 왼쪽 플레이리스트 */
+.port-playlist{background:#16243a;border-right:1px solid rgba(77,184,240,.15);display:flex;flex-direction:column;overflow:hidden}
+.port-playlist-head{padding:14px 18px 10px;border-bottom:1px solid rgba(77,184,240,.12);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.port-playlist-title{font-size:13px;font-weight:700;color:#e8f4fd;letter-spacing:.05em}
+.port-playlist-count{font-size:11px;color:rgba(255,255,255,.35);font-weight:500}
+.port-list{overflow-y:auto;flex:1;padding:6px}
+.port-list::-webkit-scrollbar{width:4px}
+.port-list::-webkit-scrollbar-track{background:transparent}
+.port-list::-webkit-scrollbar-thumb{background:rgba(77,184,240,.25);border-radius:2px}
+
+/* 플레이리스트 아이템 — 16:9 카드 */
+.port-li{position:relative;width:100%;padding-top:56.25%;border-radius:10px;overflow:hidden;cursor:pointer;margin-bottom:6px;border:2px solid transparent;transition:border-color .15s,transform .15s}
+.port-li:hover{border-color:rgba(77,184,240,.4);transform:scale(1.01)}
+.port-li.active{border-color:var(--sky);box-shadow:0 0 0 1px var(--sky)}
+.port-li-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#0a1826}
+/* 하단 이름 오버레이 */
+.port-li-overlay{position:absolute;inset:0;background:linear-gradient(to top, rgba(5,15,28,.82) 0%, rgba(5,15,28,.3) 45%, transparent 100%);pointer-events:none}
+.port-li-info{position:absolute;bottom:0;left:0;right:0;padding:6px 10px 7px}
+.port-li-name{font-size:11px;font-weight:700;color:#ddeeff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.port-li-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px}
+.port-li-tag{font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(77,184,240,.25);color:var(--sky);border:1px solid rgba(77,184,240,.3)}
+.port-li-tag.pk{background:rgba(240,96,160,.22);color:var(--pink-l);border-color:rgba(240,96,160,.3)}
+.port-li-num{position:absolute;top:6px;left:8px;font-size:10px;color:rgba(255,255,255,.4);font-weight:700;background:rgba(0,0,0,.35);border-radius:4px;padding:1px 5px;line-height:1.4}
+/* 관리자 버튼 (관리자 호버시만) */
+.port-li-admin{position:absolute;top:6px;right:6px;display:none;gap:4px}
+.admin-mode .port-li:hover .port-li-admin{display:flex}
+.port-li-admin button{width:24px;height:24px;border-radius:6px;border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .15s;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.port-li-admin .btn-crop{background:rgba(77,184,240,.7);color:#fff}
+.port-li-admin .btn-del{background:rgba(240,96,160,.7);color:#fff}
+
+/* 오른쪽 뷰어 */
+.port-viewer{display:flex;flex-direction:column;background:#0a1420;position:relative}
+.port-viewer-img-wrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:360px;position:relative}
+@media(max-width:860px){.port-viewer-img-wrap{min-height:280px}}
+.port-viewer-img{max-width:100%;max-height:68vh;object-fit:contain;display:block;transition:opacity .2s}
+.port-viewer-img.loading{opacity:0}
+.port-viewer-bar{padding:12px 20px;background:#0f1e2d;border-top:1px solid rgba(77,184,240,.12);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.port-viewer-name{font-size:14px;font-weight:700;color:#ddeeff}
+.port-viewer-nav{display:flex;gap:6px}
+.port-viewer-nav button{padding:6px 16px;border-radius:8px;border:1px solid rgba(77,184,240,.3);background:rgba(77,184,240,.1);color:var(--sky);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.port-viewer-nav button:hover{background:rgba(77,184,240,.25)}
+.port-viewer-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,.25);font-size:13px;gap:10px}
+.port-viewer-empty .icon{font-size:40px;opacity:.4}
+
+/* 태그 편집 (관리자 — 뷰어 하단) */
+.port-tag-editor{display:none;padding:8px 20px 12px;background:#0f1e2d;border-top:1px solid rgba(77,184,240,.08);gap:6px;align-items:center;flex-wrap:wrap}
+.admin-mode .port-tag-editor{display:flex}
+.port-tag-input{flex:1;min-width:140px;padding:5px 10px;border:1px solid rgba(77,184,240,.3);border-radius:8px;background:rgba(77,184,240,.07);color:#ddeeff;font-size:12px;font-family:inherit;outline:none}
+.port-tag-input::placeholder{color:rgba(255,255,255,.2)}
+.port-tag-save{padding:5px 14px;border-radius:8px;border:none;background:rgba(77,184,240,.25);color:var(--sky);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+
+.port-empty{padding:60px 0;text-align:center;color:var(--text3);font-size:13px;line-height:2;background:#0a1420;border-radius:var(--r)}
+.port-empty .icon{font-size:38px;margin-bottom:8px}
+/* 크롭 편집 모달 */
+.crop-modal{display:none;position:fixed;inset:0;z-index:3500;background:rgba(8,20,32,.86);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+.crop-modal.open{display:flex;animation:fadeIn .2s ease}
+.crop-box{background:var(--white);border-radius:22px;width:100%;max-width:540px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.4);animation:lbIn .22s cubic-bezier(.34,1.56,.64,1)}
+.crop-head{background:linear-gradient(135deg,var(--sky-pl),var(--pink-pl));padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.crop-head h3{font-size:14px;font-weight:700}
+.crop-viewport{position:relative;overflow:hidden;background:#0a1928;cursor:grab;user-select:none;touch-action:none}
+.crop-viewport:active{cursor:grabbing}
+.crop-img-el{position:absolute;pointer-events:none;transform-origin:top left}
+.crop-hint{font-size:11px;color:var(--text3);padding:7px 16px;text-align:center;background:var(--sky-bg)}
+.crop-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;justify-content:space-between}
+.crop-zoom-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.crop-zoom-row input{width:100px}
+
+/* 공용 */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes lbIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.lb-close-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);background:var(--sky-pl);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all .15s;flex-shrink:0}
+.lb-close-btn:hover{background:var(--pink-pl);color:var(--pink-d);border-color:var(--border-p)}
+
+/* 의뢰 폼 */
+.form-layout{display:grid;gap:24px;grid-template-columns:1fr 360px;align-items:start}
+.form-left{display:flex;flex-direction:column;gap:18px}
+.opt-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:10px}
+.opt-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:13px 14px;cursor:pointer;transition:all .18s;box-shadow:var(--sh);user-select:none}
+.opt-card:hover{border-color:var(--sky-l);transform:translateY(-1px);box-shadow:var(--sh-lg)}
+.opt-card.sel{background:var(--sky-pl);border-color:var(--sky);box-shadow:0 0 0 2px var(--sky),var(--sh)}
+.opt-card .n{font-size:12px;font-weight:600;line-height:1.45}
+.opt-card .p{font-size:15px;font-weight:700;color:var(--sky);margin-top:6px}
+.admin-item-row{display:flex;gap:4px;margin-top:8px}
+.admin-item-row .sm-btn{flex:1;font-size:10px;padding:4px 0;text-align:center}
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.pill-wrap{display:inline-flex;align-items:center;gap:3px}
+.pill{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-size:12px;color:var(--text2);font-weight:500;cursor:pointer;transition:all .15s;user-select:none}
+.pill:hover{border-color:var(--sky-l);color:var(--sky)}
+.pill.sel{background:var(--sky-pl);border-color:var(--sky);color:#2070a0;font-weight:700}
+.pill.pk:hover{border-color:var(--pink-l);color:var(--pink)}
+.pill.pk.sel{background:var(--pink-pl);border-color:var(--pink);color:var(--pink-d)}
+.sub-lbl{font-size:13px;font-weight:700;color:var(--text)}
+.hint{font-size:11px;color:var(--text3);margin-top:8px}
+.total-lbl{font-size:11px;color:var(--text2);letter-spacing:.05em;text-transform:uppercase}
+.total-amt{font-size:26px;font-weight:700;color:var(--sky);font-family:'Playfair Display',serif}
+.total-amt span{font-size:12px;font-weight:400;color:var(--text2);font-family:'Noto Sans KR',sans-serif}
+.err-msg{display:none;margin-top:8px;padding:9px 12px;background:#fff0ee;border:1px solid #f5c0b8;border-radius:8px;font-size:12px;color:#c03020}
+textarea.msg-box{width:100%;min-height:100px;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-family:inherit;font-size:13px;color:var(--text);background:var(--sky-bg);resize:vertical;outline:none;line-height:1.7;transition:border-color .2s}
+textarea.msg-box:focus{border-color:var(--sky)}
+
+/* 섹션 헤더 (관리자 버튼 포함) */
+.fsec-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.fsec-btns{display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap}
+.fsec-btns .sm-btn{font-size:10px;padding:4px 8px}
+
+/* 새 섹션 추가 버튼 */
+.add-sec-btn{display:none;width:100%;padding:14px;border-radius:12px;border:2px dashed var(--sky-l);background:var(--sky-pl);color:var(--sky);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s}
+.add-sec-btn:hover{background:var(--sky-l);color:var(--white);border-style:solid}
+.admin-mode .add-sec-btn{display:block}
+
+/* 미리보기 */
+.preview-panel{position:sticky;top:24px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--sh-lg);overflow:hidden}
+.pp-head{background:linear-gradient(135deg,var(--sky-pl),var(--pink-pl));padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.pp-head-title{font-size:13px;font-weight:700}
+.pp-head-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:linear-gradient(135deg,var(--sky),var(--pink));color:var(--white)}
+.pp-body{padding:16px 18px;max-height:70vh;overflow-y:auto;font-size:12px;line-height:1.9;white-space:pre-wrap;font-family:'Noto Sans KR',sans-serif;min-height:80px;outline:none;cursor:text}
+.pp-body:focus{background:var(--sky-bg);border-radius:0 0 var(--r) var(--r)}
+.pp-empty{color:var(--text3);font-size:12px;line-height:1.9}
+.pp-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px}
+.pp-foot button{flex:1;padding:11px;font-size:13px}
+
+/* 모바일 */
+.mob-preview-btn{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;padding:12px 28px;border-radius:30px;border:none;background:linear-gradient(135deg,var(--sky),var(--pink));color:var(--white);font-family:inherit;font-size:14px;font-weight:700;box-shadow:0 6px 24px rgba(77,184,240,.4),0 0 0 3px rgba(255,255,255,.6);cursor:pointer;transition:all .2s}
+.mob-preview-btn:hover{transform:translateX(-50%) translateY(-2px)}
+.mob-drawer{display:none;position:fixed;inset:0;z-index:1500;align-items:flex-end}
+.mob-drawer.open{display:flex;animation:fadeIn .2s ease}
+.mob-drawer-bg{position:absolute;inset:0;background:rgba(8,20,32,.55);backdrop-filter:blur(4px)}
+.mob-drawer-box{position:relative;z-index:1;width:100%;background:var(--white);border-radius:20px 20px 0 0;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.2);animation:slideUp .3s cubic-bezier(.34,1.2,.64,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mob-drawer-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:12px auto 0}
+.mob-drawer-content{flex:1;overflow-y:auto;padding:16px 20px 24px;font-size:12px;line-height:1.9;white-space:pre-wrap}
+.mob-drawer-foot{padding:14px 20px 20px;border-top:1px solid var(--sky-pl);display:flex;gap:8px}
+.mob-drawer-foot button{flex:1;padding:13px}
+
+/* 관리자 토스트 */
+.admin-toast{position:fixed;bottom:28px;right:24px;z-index:4000;display:none;align-items:center;gap:10px;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px 18px;box-shadow:var(--sh-lg);font-size:12px;color:var(--text2)}
+.admin-toast.show{display:flex}
+.admin-toast-exit{padding:4px 10px;border-radius:8px;border:1px solid var(--border-p);background:var(--pink-pl);color:var(--pink-d);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+
+/* 출력 모달 */
+.out-modal{display:none;position:fixed;inset:0;z-index:2500;align-items:center;justify-content:center;padding:20px;background:rgba(8,20,32,.7);backdrop-filter:blur(8px)}
+.out-modal.open{display:flex;animation:fadeIn .2s ease}
+.out-box{background:var(--white);border-radius:22px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.3);animation:lbIn .25s cubic-bezier(.34,1.56,.64,1)}
+.out-head{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.out-head-title{font-family:'Playfair Display',serif;font-size:20px}
+.out-body{padding:16px 24px 24px}
+.out-pre{background:var(--sky-bg);border:1.5px solid var(--border);border-radius:12px;padding:16px;font-size:12px;line-height:1.9;white-space:pre-wrap;font-family:'Noto Sans KR',sans-serif;max-height:360px;overflow-y:auto}
+.out-actions{display:flex;gap:8px;margin-top:14px}
+.copied-toast{display:none;text-align:center;font-size:12px;color:var(--sky);font-weight:700;margin-top:8px}
+
+/* 편집 모달 (섹션 추가 / 항목 편집 공용) */
+.edit-modal{display:none;position:fixed;inset:0;z-index:3000;align-items:center;justify-content:center;padding:20px;background:rgba(8,20,32,.7);backdrop-filter:blur(8px)}
+.edit-modal.open{display:flex;animation:fadeIn .2s ease}
+.edit-box{background:var(--white);border-radius:22px;width:100%;max-width:460px;box-shadow:0 24px 80px rgba(0,0,0,.3);animation:lbIn .25s cubic-bezier(.34,1.56,.64,1);overflow:hidden}
+.edit-head{background:linear-gradient(135deg,var(--sky-pl),var(--pink-pl));padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.edit-head h3{font-size:15px;font-weight:700}
+.edit-body{padding:22px;display:flex;flex-direction:column;gap:16px}
+.edit-label{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:5px;display:block}
+.edit-field{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:13px;color:var(--text);background:var(--sky-bg);outline:none;transition:border-color .2s}
+.edit-field:focus{border-color:var(--sky)}
+.type-grid{display:flex;gap:8px}
+.type-card{flex:1;padding:12px 8px;border-radius:10px;border:1.5px solid var(--border);background:var(--white);text-align:center;cursor:pointer;transition:all .15s;user-select:none}
+.type-card:hover{border-color:var(--sky-l)}
+.type-card.sel{background:var(--sky-pl);border-color:var(--sky)}
+.type-card .ti{font-size:20px;display:block;margin-bottom:4px}
+.type-card .tl{font-size:11px;font-weight:700;color:var(--text2)}
+.type-card.sel .tl{color:var(--sky)}
+.type-card .ts{font-size:10px;color:var(--text3)}
+.edit-foot{padding:14px 22px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+
+/* ── 이벤트 강조 ── */
+.opt-card{position:relative}
+.opt-card.has-event{border-color:var(--pink-l)!important;background:linear-gradient(145deg,#fff 55%,var(--pink-pl))}
+.opt-card.has-event::after{content:'';position:absolute;inset:-1px;border-radius:14px;box-shadow:0 0 0 2px var(--pink-l);pointer-events:none}
+.ev-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--pink-d);background:var(--pink-pl);border:1px solid var(--border-p);border-radius:6px;padding:2px 7px;margin-top:6px;cursor:pointer;user-select:none;transition:background .15s}
+.ev-badge:hover{background:#ffe0ef}
+.pill.has-event{border-color:var(--pink-l)!important;background:linear-gradient(135deg,#fff,var(--pink-pl))!important;color:var(--pink-d)!important;font-weight:600!important}
+/* ── 이벤트 팝업 ── */
+.ev-popup-wrap{position:relative;display:inline-block}
+.ev-popup{position:absolute;z-index:300;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--white);border:1.5px solid var(--border-p);border-radius:12px;padding:10px 14px 10px;box-shadow:0 6px 24px rgba(240,96,160,.22);font-size:12px;color:var(--text);line-height:1.65;white-space:normal;min-width:120px;width:max-content;max-width:220px;pointer-events:none;display:none}
+.ev-popup.show{display:block;animation:evPop .18s cubic-bezier(.34,1.56,.64,1)}
+@keyframes evPop{from{opacity:0;transform:translateX(-50%) scale(.88)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+.ev-popup-title{font-size:10px;font-weight:700;color:var(--pink-d);margin-bottom:5px}
+.ev-popup::after{content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%) rotate(45deg);width:12px;height:12px;background:var(--white);border-right:1.5px solid var(--border-p);border-bottom:1.5px solid var(--border-p)}
+/* ── 히어로 편집 ── */
+.hero-edit-wrap{display:none;gap:8px;flex-wrap:wrap;margin-top:10px;padding:12px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:12px}
+.admin-mode .hero-edit-wrap{display:flex;flex-direction:column;gap:8px}
+.hero-edit-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hero-edit-lbl{font-size:11px;font-weight:700;color:var(--text2);width:60px;flex-shrink:0}
+.hero-edit-field{flex:1;min-width:140px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:var(--sky-bg);outline:none;transition:border-color .2s}
+.hero-edit-field:focus{border-color:var(--sky)}
+.hero-edit-save{padding:7px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--sky),#2da0d8);color:var(--white);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+/* ── 칩 관리 ── */
+.chip-wrap{display:inline-flex;align-items:center;gap:3px;flex-shrink:0}
+.chip-ctrl{display:none;gap:2px;align-items:center}
+.admin-mode .chip-ctrl{display:inline-flex}
+.chip-ctrl button{width:15px;height:15px;border-radius:50%;border:none;font-size:9px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
+.chip-ctrl .cc-edit{background:var(--sky-pl);color:var(--sky)}
+.chip-ctrl .cc-del{background:var(--pink-pl);color:var(--pink-d)}
+.chip-add-btn{display:none;padding:5px 12px;background:var(--white);border:1.5px dashed var(--sky);border-radius:20px;font-size:12px;color:var(--sky);cursor:pointer;font-family:inherit;transition:all .15s;align-items:center;gap:4px}
+.chip-add-btn:hover{background:var(--sky-pl)}
+.admin-mode .chip-add-btn{display:inline-flex}
+/* 반응형 */
+@media(max-width:860px){
+  .form-layout{grid-template-columns:1fr}
+  .preview-panel{display:none}
+  .mob-preview-btn{display:block}
+  .side-nav{display:none}
+  .hero{padding:40px 20px 28px}
+  .wrap{padding:0 20px}
+  .divider{width:calc(100% - 40px)}
+  .slot-controls{margin-left:0;width:100%;justify-content:flex-start}
+}
+@media(max-width:480px){
+  .hero h1{font-size:28px}.card{padding:18px 16px}
+  .opt-cards{grid-template-columns:1fr 1fr}
+}
+/* ── 수량 팝업 ── */
+.qty-popup{position:fixed;z-index:9000;background:var(--white);border:2px solid var(--sky);border-radius:16px;padding:12px 16px 14px;box-shadow:0 -4px 24px rgba(77,184,240,.22),0 8px 32px rgba(77,184,240,.18);display:none;flex-direction:column;align-items:center;gap:8px;min-width:170px;transform:translateX(-50%)}
+.qty-popup.open{display:flex;animation:qtyIn .18s cubic-bezier(.34,1.56,.64,1)}
+@keyframes qtyIn{from{opacity:0;transform:translateX(-50%) translateY(6px) scale(.92)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+/* 꼬리 삼각형 (아래 방향 — 카드 위에 팝업 뜰 때) */
+.qty-popup::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%) rotate(45deg);width:13px;height:13px;background:var(--white);border-right:2px solid var(--sky);border-bottom:2px solid var(--sky)}
+/* 위에 표시될 때는 꼬리 위로 */
+.qty-popup.arrow-down::after{bottom:-8px;top:auto;border-right:2px solid var(--sky);border-bottom:2px solid var(--sky);border-top:none;border-left:none}
+.qty-popup.arrow-up::after{top:-8px;bottom:auto;border-left:2px solid var(--sky);border-top:2px solid var(--sky);border-right:none;border-bottom:none;transform:translateX(-50%) rotate(45deg)}
+.qty-popup-title{font-size:11px;font-weight:700;color:var(--text2);text-align:center;line-height:1.4;max-width:150px;word-break:keep-all}
+.qty-row{display:flex;align-items:center;gap:0;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-top:2px}
+.qty-btn{width:40px;height:40px;border:none;background:var(--sky-bg);font-size:20px;font-weight:700;cursor:pointer;color:var(--sky);display:flex;align-items:center;justify-content:center;transition:background .12s;flex-shrink:0;line-height:1;-webkit-tap-highlight-color:transparent}
+.qty-btn:hover,.qty-btn:active{background:var(--sky-pl)}
+.qty-btn.minus{color:var(--pink-d)}
+.qty-btn.minus:hover,.qty-btn.minus:active{background:var(--pink-pl)}
+.qty-num{width:44px;text-align:center;font-size:20px;font-weight:700;color:var(--text);border-left:1.5px solid var(--border);border-right:1.5px solid var(--border);height:40px;display:flex;align-items:center;justify-content:center;user-select:none}
+.qty-hint{font-size:10px;color:var(--text3);text-align:center}
+/* ── 커스텀 확인 모달 ── */
+.confirm-modal{display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(8,20,32,.55);backdrop-filter:blur(4px)}
+.confirm-modal.open{display:flex;animation:fadeIn .15s ease}
+.confirm-box{background:var(--white);border-radius:18px;padding:28px 28px 22px;max-width:340px;width:90%;box-shadow:0 16px 60px rgba(0,0,0,.28);animation:lbIn .2s cubic-bezier(.34,1.56,.64,1);text-align:center}
+.confirm-box p{font-size:14px;font-weight:600;color:var(--text);line-height:1.6;margin-bottom:20px}
+.confirm-box p span{color:var(--pink-d)}
+.confirm-btns{display:flex;gap:8px;justify-content:center}
+.confirm-btns button{flex:1;padding:11px;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:opacity .15s}
+.confirm-btns button:hover{opacity:.85}
+.confirm-ok{background:linear-gradient(135deg,var(--pink-l),var(--pink));color:var(--white)}
+.confirm-cancel{background:var(--sky-bg);color:var(--text2);border:1.5px solid var(--border)!important}
+/* 하단 합계 바 (크게) */
+.total-bar-lg{background:linear-gradient(135deg,var(--sky-pl),var(--pink-pl));border-radius:18px;padding:22px 28px;border:2px solid var(--border);box-shadow:var(--sh-lg);text-align:center}
+.total-bar-lg-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:8px}
+.total-bar-lg-row{display:flex;align-items:baseline;justify-content:center;gap:6px;flex-wrap:wrap}
+.total-bar-lg-amt{font-family:'Playfair Display',serif;font-size:48px;font-weight:700;color:var(--sky);line-height:1}
+.total-bar-lg-won{font-size:20px;font-weight:700;color:var(--text2)}
+.total-bar-lg-count{font-size:13px;color:var(--text3);font-weight:500;align-self:center;margin-left:8px}
+</style>
+</head>
+<body>
+
+<div class="side-nav">
+  <div class="side-nav-title">빠른 이동</div>
+  <button onclick="goTo('slot-sec')">슬롯</button>
+  <button class="pk" onclick="goTo('port-sec')">포트폴리오</button>
+  <button class="pk" onclick="goTo('form-sec')">의뢰양식</button>
+  <button onclick="goTo('readme-anchor')">READ ME</button>
+  <button onclick="goToTop()">맨위로</button>
+  <div class="admin-dot" title="관리자 모드 해제" onclick="exitAdmin()"></div>
+</div>
+
+<header class="hero">
+  <div id="heroBadgeEl" class="hero-badge">Live2D Illustrator · 모무꼬</div>
+  <h1 id="heroTitleEl">모무꼬<br><em>작가 페이지</em></h1>
+  <p class="hero-sub" id="heroSubEl">퀄리티 높고 가성비 있는 그림을 지향합니다.<br>편하게 문의주세요 ✦</p>
+  <div class="hero-edit-wrap" id="heroEditWrap">
+    <div class="hero-edit-row">
+      <span class="hero-edit-lbl">배지</span>
+      <input class="hero-edit-field" id="heInputBadge" placeholder="예: Live2D Illustrator · 모무꼬">
+    </div>
+    <div class="hero-edit-row">
+      <span class="hero-edit-lbl">제목</span>
+      <input class="hero-edit-field" id="heInputTitle" placeholder="예: 모무꼬">
+    </div>
+    <div class="hero-edit-row">
+      <span class="hero-edit-lbl">설명</span>
+      <input class="hero-edit-field" id="heInputSub" placeholder="한 줄 소개">
+    </div>
+    <div>
+      <button class="hero-edit-save" onclick="saveHero()">저장</button>
+    </div>
+  </div>
+  <div class="chips" id="chipsRow" style="margin-top:20px"></div>
+  <button class="chip-add-btn" onclick="openChipModal(-1)">＋ 칩 추가</button>
+</header>
+
+<div class="divider"></div>
+<div class="wrap">
+
+  <section class="section" id="slot-sec">
+    <div class="sec-head">
+      <span class="sec-num">01</span><span class="sec-title">작업 슬롯 현황</span>
+      <span class="sec-badge blue">실시간</span>
+    </div>
+    <div class="card">
+      <div id="slotList"></div>
+      <div class="slot-add-row admin-only as-flex">
+        <input class="field" id="newMonth" placeholder="예: 7월" style="width:100px" maxlength="10">
+        <input class="field" id="newSlotN" type="number" value="3" min="1" max="10" style="width:72px">
+        <button class="btn btn-sky" onclick="addMonth()" style="padding:8px 16px;font-size:13px">+ 월 추가</button>
+        <span style="font-size:11px;color:var(--text3);align-self:center">■마감 / □오픈</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="port-sec">
+    <div class="sec-head">
+      <span class="sec-num">01</span><span class="sec-title">포트폴리오</span>
+      <span class="sec-badge">갤러리</span>
+    </div>
+    <div id="portStatus" style="display:none;padding:18px;text-align:center;font-size:13px;color:var(--text3)">🔄 불러오는 중...</div>
+    <div class="port-player" id="portPlayer" style="display:none">
+      <div class="port-playlist">
+        <div class="port-playlist-head">
+          <div class="port-playlist-title">Playlist</div>
+          <div class="port-playlist-count" id="portCount"></div>
+        </div>
+        <div class="port-list" id="portList"></div>
+      </div>
+      <div class="port-viewer" id="portViewer">
+        <div class="port-viewer-img-wrap" id="portViewerWrap">
+          <div class="port-viewer-empty"><div class="icon">🖼</div><div>왼쪽에서 작품을 선택해 주세요</div></div>
+        </div>
+        <div class="port-tag-editor">
+          <span style="font-size:11px;color:rgba(255,255,255,.4);flex-shrink:0">태그:</span>
+          <input class="port-tag-input" id="portTagInput" placeholder="태그1, 태그2 (쉼표로 구분)">
+          <button class="port-tag-save" onclick="savePortTags()">저장</button>
+        </div>
+        <div class="port-viewer-bar" id="portViewerBar" style="display:none">
+          <div class="port-viewer-name" id="portViewerName"></div>
+          <div class="port-viewer-nav">
+            <button onclick="portNav(-1)">‹ 이전</button>
+            <button onclick="portNav(1)">다음 ›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="port-empty" id="portEmpty" style="display:none">
+      <div class="icon">🖼</div>
+      <div>portfolio 폴더에 이미지를 업로드하면<br>자동으로 여기에 표시돼요</div>
+    </div>
+  </section>
+
+  <section class="section" id="form-sec">
+    <div class="sec-head">
+      <span class="sec-num">02</span><span class="sec-title">의뢰 양식 생성기</span>
+      <span class="sec-badge">LIVE</span>
+    </div>
+    <div class="form-layout">
+      <div class="form-left">
+        <div id="formSections"></div>
+        <button class="add-sec-btn" onclick="openSecAdd()">＋ 새 섹션 추가하기</button>
+        <div class="card">
+          <div class="sub-lbl" style="margin-bottom:10px">✉ 작가님께 전할 말</div>
+          <textarea class="msg-box" id="formMsg"
+            placeholder="캐릭터 설명, 레퍼런스 링크, 특이사항 등..."
+            oninput="updatePreview()"
+            onkeydown="onMsgKeydown(event)"></textarea>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">Enter로 줄바꿈 · 의뢰 내용을 자유롭게 작성해 주세요</div>
+        </div>
+
+        <div class="notice-card" id="readmeCard">
+          <div id="readme-anchor" style="position:relative;top:-80px;pointer-events:none"></div>
+          <div class="notice-head">
+            <div class="notice-head-title">📋 READ ME</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:11px;color:var(--text3)" id="readmeDate"></span>
+              <button class="btn btn-pink admin-only" style="padding:6px 13px;font-size:12px" onclick="toggleReadme()">편집</button>
+            </div>
+          </div>
+          <div class="notice-body">
+            <div class="notice-view" id="readmeView">작가님이 작성한 안내사항이 표시됩니다.</div>
+            <textarea class="notice-edit" id="readmeEdit" placeholder="의뢰 전 읽어야 할 안내사항을 입력하세요..."></textarea>
+            <div class="notice-btn-row" id="readmeBtns">
+              <button class="btn btn-sky" onclick="saveReadme()">저장</button>
+              <button class="btn btn-ghost" onclick="cancelReadme()">취소</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="notice-card" id="applyCard">
+          <div class="notice-head">
+            <div class="notice-head-title" style="color:var(--sky)">✦ 신청양식</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <button class="btn btn-sky admin-only" style="padding:6px 13px;font-size:12px" onclick="toggleApply()">편집</button>
+            </div>
+          </div>
+          <div class="notice-body">
+            <div class="notice-view" id="applyView" style="color:var(--text2)">신청 방법 및 주의사항이 표시됩니다.</div>
+            <textarea class="notice-edit" id="applyEdit" placeholder="신청 방법, 주의사항, 진행 순서 등을 입력하세요..." style="border-color:var(--sky)"></textarea>
+            <div class="notice-btn-row" id="applyBtns">
+              <button class="btn btn-sky" onclick="saveApply()">저장</button>
+              <button class="btn btn-ghost" onclick="cancelApply()">취소</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-pink" style="width:100%;padding:18px;font-size:16px;border-radius:14px" onclick="generateForm()">✦ 의뢰 양식 생성하기</button>
+        <div class="err-msg" id="genErr">기본 일러스트 옵션을 먼저 선택해 주세요.</div>
+
+        <div class="total-bar-lg">
+          <div class="total-bar-lg-label">현재 선택 합계</div>
+          <div class="total-bar-lg-row">
+            <span class="total-bar-lg-amt" id="totalAmt">0</span>
+            <span class="total-bar-lg-won">원</span>
+            <span class="total-bar-lg-count" id="selCount">선택 없음</span>
+          </div>
+        </div>
+      </div>
+      <div class="preview-panel">
+        <div class="pp-head">
+          <div class="pp-head-title">작업양식 미리보기</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="pp-head-badge">LIVE</div>
+            <button id="ppResetBtn" onclick="resetPreview()" title="자동생성 내용으로 초기화" style="display:none;padding:2px 8px;border-radius:6px;border:1px solid var(--border);background:var(--sky-bg);font-size:10px;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit">↺ 초기화</button>
+          </div>
+        </div>
+        <div class="pp-body" id="ppBody" contenteditable="true" spellcheck="false"></div>
+        <div class="pp-foot">
+          <button class="btn btn-sky" style="font-size:12px;padding:10px" onclick="copyPreview()">📋 복사</button>
+          <button class="btn btn-pink" style="font-size:12px;padding:10px" onclick="generateForm()">양식 생성</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<button class="mob-preview-btn" id="mobPrevBtn" onclick="openMobDrawer()" style="display:none">📋 양식 미리보기</button>
+
+<div class="mob-drawer" id="mobDrawer">
+  <div class="mob-drawer-bg" onclick="closeMobDrawer()"></div>
+  <div class="mob-drawer-box">
+    <div class="mob-drawer-handle"></div>
+    <div style="padding:14px 20px 0;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:14px;font-weight:700">작업양식 미리보기</div>
+      <button class="lb-close-btn" onclick="closeMobDrawer()">✕</button>
+    </div>
+    <div class="mob-drawer-content" id="mobDrawerContent" contenteditable="true" spellcheck="false"></div>
+    <div class="mob-drawer-foot">
+      <button class="btn btn-sky" style="font-size:13px;padding:12px" onclick="copyPreview()">📋 복사</button>
+      <button class="btn btn-pink" style="font-size:13px;padding:12px" onclick="closeMobDrawer();generateForm()">양식 생성</button>
+      <button class="btn btn-ghost" style="font-size:13px;padding:12px" onclick="closeMobDrawer()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<div class="crop-modal" id="cropModal" onclick="if(event.target===this)closeCropModal()">
+  <div class="crop-box">
+    <div class="crop-head">
+      <h3>📐 썸네일 위치 편집</h3>
+      <button class="lb-close-btn" onclick="closeCropModal()">✕</button>
+    </div>
+    <div class="crop-viewport" id="cropViewport" style="height:300px">
+      <img class="crop-img-el" id="cropImgEl" src="" alt="">
+    </div>
+    <div class="crop-hint">이미지를 드래그해 보이는 위치를 조정하세요</div>
+    <div class="crop-foot">
+      <div class="crop-zoom-row">
+        🔍 크기
+        <input type="range" id="cropZoom" min="80" max="300" value="100" oninput="onCropZoom(this.value)">
+        <span id="cropZoomVal">100%</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="closeCropModal()">취소</button>
+        <button class="btn btn-sky" onclick="saveCrop()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="out-modal" id="outModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="out-box">
+    <div class="out-head">
+      <div class="out-head-title">완성된 의뢰 양식</div>
+      <button class="lb-close-btn" onclick="document.getElementById('outModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="out-body">
+      <pre class="out-pre" id="outPre"></pre>
+      <div class="out-actions">
+        <button class="btn btn-sky" style="flex:1;padding:13px" onclick="copyOut()">📋 클립보드 복사</button>
+        <button class="btn btn-ghost" style="padding:13px 16px" onclick="document.getElementById('outModal').classList.remove('open')">닫기</button>
+      </div>
+      <div class="copied-toast" id="copiedToast">✓ 복사되었습니다!</div>
+    </div>
+  </div>
+</div>
+
+<div class="edit-modal" id="secModal" onclick="if(event.target===this)closeSecModal()">
+  <div class="edit-box">
+    <div class="edit-head">
+      <h3 id="secModalTitle">새 섹션 추가</h3>
+      <button class="lb-close-btn" onclick="closeSecModal()">✕</button>
+    </div>
+    <div class="edit-body">
+      <div>
+        <label class="edit-label">섹션 이름</label>
+        <input class="edit-field" id="secName" placeholder="예: 💙 특별 옵션">
+      </div>
+      <div id="secTypeWrap">
+        <label class="edit-label">선택 방식</label>
+        <div class="type-grid" style="flex-wrap:wrap">
+          <div class="type-card sel" data-t="radio"  onclick="pickType(this)"><span class="ti">🃏</span><span class="tl">카드형</span><span class="ts">하나만 선택</span></div>
+          <div class="type-card"    data-t="text"   onclick="pickType(this)"><span class="ti">✏️</span><span class="tl">자유입력</span><span class="ts">신청자가 직접 작성</span></div>
+          <div class="type-card"    data-t="notice" onclick="pickType(this)"><span class="ti">📋</span><span class="tl">공지칸</span><span class="ts">작가 안내문 표시</span></div>
+        </div>
+      </div>
+      <div id="secNoteWrap">
+        <label class="edit-label">안내문 <span style="font-weight:400;color:var(--text3)">(선택사항)</span></label>
+        <input class="edit-field" id="secNote" placeholder="섹션 위에 표시할 설명">
+      </div>
+      <div id="secMaxSelWrap" style="display:none">
+        <label class="edit-label">최대 선택 개수 <span style="font-weight:400;color:var(--text3)">(비워두면 무제한)</span></label>
+        <input class="edit-field" id="secMaxSel" type="number" min="1" max="99" placeholder="예: 3  (무제한이면 비워두세요)">
+      </div>
+    </div>
+    <div class="edit-foot">
+      <button class="btn btn-ghost" onclick="closeSecModal()">취소</button>
+      <button class="btn btn-sky"   onclick="saveSecModal()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="edit-modal" id="itemModal" onclick="if(event.target===this)closeItemModal()">
+  <div class="edit-box">
+    <div class="edit-head">
+      <h3 id="itemModalTitle">항목 수정</h3>
+      <button class="lb-close-btn" onclick="closeItemModal()">✕</button>
+    </div>
+    <div class="edit-body">
+      <div>
+        <label class="edit-label">이름</label>
+        <input class="edit-field" id="itemName" placeholder="항목 이름">
+      </div>
+      <div id="itemPriceWrap">
+        <label class="edit-label">가격 <span style="font-weight:400;color:var(--text3)">(숫자만, 무료=0)</span></label>
+        <input class="edit-field" id="itemPrice" type="number" min="0" placeholder="0">
+      </div>
+      <div id="itemSubWrap">
+        <label class="edit-label">부제목 <span style="font-weight:400;color:var(--text3)">(선택사항, 카드 아래 작은 글씨)</span></label>
+        <input class="edit-field" id="itemSub" placeholder="예: 🎉 20만원 할인">
+      </div>
+      <div>
+        <label class="edit-label">이벤트 내용 <span style="font-weight:400;color:var(--text3)">(선택사항, 15자 이내 · 입력 시 이벤트 뱃지 표시)</span></label>
+        <input class="edit-field" id="itemEvent" placeholder="예: 선착순 3명 할인" maxlength="15" oninput="this.value=this.value.slice(0,15)">
+        <div style="font-size:10px;color:var(--text3);margin-top:3px;text-align:right" id="itemEventCount">0 / 15</div>
+      </div>
+    </div>
+    <div class="edit-foot">
+      <button class="btn btn-ghost" onclick="closeItemModal()">취소</button>
+      <button class="btn btn-sky"   onclick="saveItemModal()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="edit-modal" id="chipModal" onclick="if(event.target===this)closeChipModal()">
+  <div class="edit-box">
+    <div class="edit-head">
+      <h3 id="chipModalTitle">칩 추가</h3>
+      <button class="lb-close-btn" onclick="closeChipModal()">✕</button>
+    </div>
+    <div class="edit-body">
+      <div>
+        <label class="edit-label">칩 내용 <span style="font-weight:400;color:var(--text3)">(HTML 가능: &lt;b&gt;강조&lt;/b&gt;)</span></label>
+        <input class="edit-field" id="chipText" placeholder="예: 답변율 &lt;b&gt;98%&lt;/b&gt;">
+      </div>
+      <div>
+        <label class="edit-label">색상 테마</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="type-card sel" data-c="default" onclick="pickChipColor(this)" style="flex:unset;padding:8px 14px;min-width:unset">
+            <span class="tl">기본 (파란)</span>
+          </div>
+          <div class="type-card" data-c="pink" onclick="pickChipColor(this)" style="flex:unset;padding:8px 14px;min-width:unset">
+            <span class="tl" style="color:var(--pink)">핑크</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="edit-foot">
+      <button class="btn btn-ghost" onclick="closeChipModal()">취소</button>
+      <button class="btn btn-sky" onclick="saveChipModal()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-toast" id="adminToast">
+  <span>🔑 <strong>관리자 모드</strong> 활성</span>
+  <button class="admin-toast-exit" onclick="exitAdmin()">모드 해제</button>
+</div>
+
+<div class="confirm-modal" id="confirmModal">
+  <div class="confirm-box">
+    <p id="confirmMsg">정말 삭제할까요?</p>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="resolveConfirm(false)">취소</button>
+      <button class="confirm-ok"     onclick="resolveConfirm(true)">삭제</button>
+    </div>
+  </div>
+</div>
+
+<div class="qty-popup" id="qtyPopup">
+  <div class="qty-popup-title" id="qtyPopupTitle">수량 선택</div>
+  <div class="qty-row">
+    <button class="qty-btn minus" onmousedown="changeQty(-1)" ontouchend="changeQty(-1)">−</button>
+    <div class="qty-num" id="qtyNum">1</div>
+    <button class="qty-btn plus"  onmousedown="changeQty(+1)" ontouchend="changeQty(+1)">＋</button>
+  </div>
+  <div class="qty-hint">0이면 선택 해제 · 바깥 클릭으로 닫기</div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   전역 변수 (반드시 최상단)
+══════════════════════════════════════════ */
+var ADMIN_PW = 'momuuko2025';
+var isAdmin  = sessionStorage.getItem('am') === '1';
+
+var slots = [
+  { month:'3·4월', filled:[true,true,true] },
+  { month:'5월',   filled:[true,false,false] },
+  { month:'6월',   filled:[false,false,false] }
+];
+/* fSel 키:
+   radio → 'r_'+sec.id         값: {n,p,itemId}
+   pill  → 'p_'+sec.id+'_'+item.id  값: {n,p}
+   expr  → DOM .sel 으로 직접 읽음              */
+var fSel = {};
+
+/* 모달 상태 */
+var _si=-1, _ii=-1, _secMode='add'; // secMode: 'add'|'rename'
+var _chipIdx=-1;
+
+/* 히어로 데이터 */
+var heroData = {
+  badge: 'Live2D Illustrator · 모무꼬',
+  title: '모무꼬',
+  sub:   '퀄리티 높고 가성비 있는 그림을 지향합니다.\n편하게 문의주세요 ✦'
+};
+
+/* 칩 데이터 */
+var chipsData = [
+  {text:'접수 <b style="color:var(--pink)">진행중</b>', color:'pink'},
+  {text:'답변율 <b>98%</b>', color:'default'},
+  {text:'Live2D <b>전문</b>', color:'pink'},
+  {text:'작업기간 <b>30일</b>', color:'default'}
+];
+
+/* ══════════════════════════════════════════
+   섹션 데이터
+══════════════════════════════════════════ */
+var formSections = [
+  { id:'base', label:'✦ 기본 일러스트', badge:'필수', type:'radio', required:true,
+    note:null, hint:null, pk:false,
+    items:[
+      {id:'b1',name:'전신 · 협업용 (강의 오픈기념 20만원 할인)',price:1050000,sub:'🎉 20만원 할인'},
+      {id:'b2',name:'전신 (강의 오픈기념 20만원 할인)',price:1100000,sub:'🎉 20만원 할인'},
+      {id:'b3',name:'반신 (리깅X)',price:850000,sub:null}
+    ]},
+  { id:'rig', label:'♥ 리깅 협업 세트', badge:null, type:'radio', required:false,
+    note:'💡 리깅은 협업 작가님께 별도 신청 필요. 세트 가격은 일러스트+리깅 합산 최소금액입니다.',
+    hint:null, pk:false,
+    items:[
+      {id:'r1',name:'하예나 님 리깅 + 전신 세트 (5만원 할인)',price:500000,sub:'5만원 할인'},
+      {id:'r2',name:'모몬 님 리깅 + 전신 세트 (표정 리깅 무료+5만원 할인)',price:880000,sub:'표정리깅 전부 무료'},
+      {id:'r3',name:'피니 님 리깅 + 전신 세트 (5만원 할인)',price:800000,sub:'5만원 할인'}
+    ]},
+  { id:'add', label:'▸ 추가 옵션', badge:null, type:'pill', required:false,
+    note:null, hint:'⚠ 의상·헤어는 먼저 문의 후 선택해 주세요', pk:false,
+    items:[
+      {id:'a1',name:'R18 파츠 추가',price:100000,sub:null},
+      {id:'a2',name:'표정·얼굴 파츠 추가',price:10000,sub:null},
+      {id:'a3',name:'의상 추가 (전신)',price:200000,sub:null},
+      {id:'a4',name:'악세서리·소품 파츠',price:10000,sub:null},
+      {id:'a5',name:'게임기 파츠 및 맞춤 손·팔',price:150000,sub:null},
+      {id:'a6',name:'헤어 추가',price:200000,sub:null},
+      {id:'a7',name:'센시티브 파츠',price:10000,sub:null},
+      {id:'a8',name:'동물귀',price:20000,sub:null},
+      {id:'a9',name:'꼬리',price:10000,sub:null},
+      {id:'a10',name:'3면도 (단색채색)',price:150000,sub:null}
+    ]},
+  { id:'debut', label:'🎊 데뷔축전', badge:null, type:'radio', required:false,
+    note:null, hint:null, pk:false,
+    items:[
+      {id:'d1',name:'데뷔축전 전신',price:250000,sub:null},
+      {id:'d2',name:'데뷔축전 (장패드·상업용)',price:450000,sub:null}
+    ]},
+  { id:'etc', label:'⚙ 기타', badge:null, type:'pill', required:false,
+    note:null, hint:null, pk:true,
+    items:[
+      {id:'e1',name:'저작권 구매 (굿즈·모델양도·상업 사용)',price:200000,sub:null},
+      {id:'e2',name:'빠른 마감 7일',price:300000,sub:null},
+      {id:'e3',name:'작품 비공개',price:100000,sub:null}
+    ]},
+  { id:'expr', label:'💬 기본 제공 표정', badge:'무료', type:'expr', required:false,
+    note:null, hint:null, pk:true,
+    items:[
+      {id:'x1',name:'빠직',price:0,sub:null},
+      {id:'x2',name:'정색 (얼굴 어두워짐)',price:0,sub:null},
+      {id:'x3',name:'반짝이는 눈',price:0,sub:null},
+      {id:'x4',name:'하트눈',price:0,sub:null},
+      {id:'x5',name:'눈물',price:0,sub:null},
+      {id:'x6',name:'땀',price:0,sub:null},
+      {id:'x7',name:'죽은눈',price:0,sub:null},
+      {id:'x8',name:'동공 작아짐',price:0,sub:null},
+      {id:'x9',name:'볼빵빵',price:0,sub:null}
+    ]}
+];
+
+/* ══════════════════════════════════════════
+   커스텀 확인 모달 (confirm() 대체)
+══════════════════════════════════════════ */
+var _confirmResolve=null;
+function customConfirm(msg,okLabel){
+  return new Promise(function(resolve){
+    _confirmResolve=resolve;
+    document.getElementById('confirmMsg').innerHTML=msg;
+    var okBtn=document.querySelector('.confirm-ok');
+    if(okBtn)okBtn.textContent=okLabel||'삭제';
+    document.getElementById('confirmModal').classList.add('open');
+  });
+}
+function resolveConfirm(yes){
+  document.getElementById('confirmModal').classList.remove('open');
+  if(_confirmResolve){_confirmResolve(yes);_confirmResolve=null;}
+}
+
+/* ══════════════════════════════════════════
+   관리자
+══════════════════════════════════════════ */
+function applyAdmin(){
+  document.body.classList.toggle('admin-mode', isAdmin);
+  document.getElementById('adminToast').classList.toggle('show', isAdmin);
+}
+function enterAdmin(){ isAdmin=true; sessionStorage.setItem('am','1'); applyAdmin(); renderSlots(); renderForm(); renderHero(); renderChips(); }
+function exitAdmin(){  isAdmin=false; sessionStorage.removeItem('am'); applyAdmin(); renderSlots(); renderForm(); renderHero(); renderChips(); }
+
+/* ══════════════════════════════════════════
+   히어로 렌더링 / 편집
+══════════════════════════════════════════ */
+function renderHero(){
+  document.getElementById('heroBadgeEl').textContent = heroData.badge;
+  document.getElementById('heroTitleEl').innerHTML = heroData.title.replace(/\n/g,'<br>');
+  document.getElementById('heroSubEl').innerHTML = heroData.sub.replace(/\n/g,'<br>');
+  if(isAdmin){
+    document.getElementById('heInputBadge').value = heroData.badge;
+    document.getElementById('heInputTitle').value = heroData.title;
+    document.getElementById('heInputSub').value = heroData.sub;
+  }
+}
+function saveHero(){
+  heroData.badge = document.getElementById('heInputBadge').value.trim() || heroData.badge;
+  heroData.title = document.getElementById('heInputTitle').value.trim() || heroData.title;
+  heroData.sub   = document.getElementById('heInputSub').value.trim()   || heroData.sub;
+  renderHero(); saveToStorage();
+}
+
+/* ══════════════════════════════════════════
+   칩 렌더링 / 편집
+══════════════════════════════════════════ */
+function renderChips(){
+  var row = document.getElementById('chipsRow'); row.innerHTML='';
+  chipsData.forEach(function(c,i){
+    var wrap = document.createElement('div'); wrap.className='chip-wrap';
+    var chip = document.createElement('div');
+    chip.className = 'chip' + (c.color==='pink' ? ' pk-chip' : '');
+    chip.style.borderColor = c.color==='pink' ? 'var(--border-p)' : '';
+    chip.innerHTML = c.text;
+    wrap.appendChild(chip);
+    if(isAdmin){
+      var ctrl=document.createElement('div'); ctrl.className='chip-ctrl';
+      var eb=document.createElement('button'); eb.className='cc-edit'; eb.textContent='✏'; eb.title='수정';
+      var db=document.createElement('button'); db.className='cc-del';  db.textContent='✕'; db.title='삭제';
+      (function(idx){
+        eb.onclick=function(){openChipModal(idx);};
+        db.onclick=function(){
+          customConfirm('이 칩을 삭제할까요?','삭제').then(function(yes){
+            if(!yes)return;
+            chipsData.splice(idx,1);renderChips();saveToStorage();
+          });
+        };
+      })(i);
+      ctrl.appendChild(eb); ctrl.appendChild(db); wrap.appendChild(ctrl);
+    }
+    row.appendChild(wrap);
+  });
+}
+function openChipModal(idx){
+  _chipIdx=idx;
+  document.getElementById('chipModalTitle').textContent = idx===-1 ? '칩 추가' : '칩 수정';
+  document.getElementById('chipText').value = idx===-1 ? '' : chipsData[idx].text;
+  var c = idx===-1 ? 'default' : (chipsData[idx].color||'default');
+  document.querySelectorAll('[data-c]').forEach(function(o){o.classList.toggle('sel',o.getAttribute('data-c')===c);});
+  document.getElementById('chipModal').classList.add('open');
+  setTimeout(function(){document.getElementById('chipText').focus();},100);
+}
+function closeChipModal(){document.getElementById('chipModal').classList.remove('open');}
+function pickChipColor(el){document.querySelectorAll('[data-c]').forEach(function(o){o.classList.remove('sel');});el.classList.add('sel');}
+function saveChipModal(){
+  var text=document.getElementById('chipText').value.trim();
+  if(!text){customConfirm('내용을 입력해주세요','확인');return;}
+  var color=(document.querySelector('[data-c].sel')||{getAttribute:function(){return 'default';}}).getAttribute('data-c');
+  if(_chipIdx===-1) chipsData.push({text:text,color:color});
+  else {chipsData[_chipIdx].text=text;chipsData[_chipIdx].color=color;}
+  closeChipModal(); renderChips(); saveToStorage();
+}
+function onMsgKeydown(e){
+  if(e.key!=='Enter') return;
+  var v=document.getElementById('formMsg').value.trim();
+  if(v===ADMIN_PW){ e.preventDefault(); document.getElementById('formMsg').value=''; updatePreview(); enterAdmin(); }
+}
+
+/* ══════════════════════════════════════════
+   슬롯
+══════════════════════════════════════════ */
+function renderSlots(){
+  var list=document.getElementById('slotList'); list.innerHTML='';
+  slots.forEach(function(s,si){
+    var all=s.filled.every(function(f){return f;});
+    var row=document.createElement('div'); row.className='slot-row';
+    var lbl=document.createElement('div'); lbl.className='slot-month';
+    lbl.innerHTML=s.month+' <span class="slot-status '+(all?'status-full':'status-open')+'">'+(all?'마감':'접수중')+'</span>';
+    var dots=document.createElement('div'); dots.className='slot-dots';
+    s.filled.forEach(function(f,di){
+      var d=document.createElement('div'); d.className='dot'+(f?' filled':'');
+      d.style.cursor=isAdmin?'pointer':'default';
+      if(isAdmin){d.title=f?'마감→오픈':'오픈→마감';(function(a,b,c){d.onclick=function(){slots[a].filled[b]=!c;renderSlots();saveToStorage();};})(si,di,f);}
+      dots.appendChild(d);
+    });
+    var ctrl=document.createElement('div'); ctrl.className='slot-controls admin-only as-flex';
+    if(isAdmin){
+      [['+ 슬롯','sm-btn',function(a){return function(){slots[a].filled.push(false);renderSlots();saveToStorage();};}(si)],
+       ['슬롯 -','sm-btn',function(a){return function(){if(slots[a].filled.length>1){slots[a].filled.pop();renderSlots();saveToStorage();}};}(si)],
+       ['삭제','sm-btn del',function(a,n){return function(){
+         customConfirm('"<span>'+n+'</span>" 슬롯을 삭제할까요?').then(function(yes){
+           if(!yes)return;
+           slots.splice(a,1);renderSlots();saveToStorage();
+         });
+       };}(si,s.month)]
+      ].forEach(function(x){var b=document.createElement('button');b.className=x[1];b.textContent=x[0];b.onclick=x[2];ctrl.appendChild(b);});
+    }
+    row.appendChild(lbl);row.appendChild(dots);row.appendChild(ctrl);list.appendChild(row);
+  });
+}
+function addMonth(){
+  var n=document.getElementById('newMonth').value.trim();
+  if(!n){customConfirm('월 이름 입력해주세요','확인');return;}
+  var cnt=parseInt(document.getElementById('newSlotN').value)||3;
+  var a=[];for(var i=0;i<cnt;i++)a.push(false);
+  slots.push({month:n,filled:a}); document.getElementById('newMonth').value=''; renderSlots(); saveToStorage();
+}
+
+/* ══════════════════════════════════════════
+   READ ME
+══════════════════════════════════════════ */
+function setReadmeDate(){
+  var d=new Date();
+  var el=document.getElementById('readmeDate');
+  if(el)el.textContent=d.getFullYear()+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+('0'+d.getDate()).slice(-2)+' 업데이트';
+}
+function toggleReadme(){
+  if(!isAdmin)return;
+  document.getElementById('readmeView').style.display='none';
+  document.getElementById('readmeEdit').style.display='block';
+  document.getElementById('readmeEdit').value=document.getElementById('readmeView').dataset.raw||'';
+  document.getElementById('readmeBtns').style.display='flex';
+  document.getElementById('readmeEdit').focus();
+}
+function saveReadme(){
+  var v=document.getElementById('readmeEdit').value.trim();
+  var el=document.getElementById('readmeView');
+  el.dataset.raw=v; el.textContent=v||'작가님이 작성한 안내사항이 표시됩니다.';
+  el.style.display='block';
+  document.getElementById('readmeEdit').style.display='none';
+  document.getElementById('readmeBtns').style.display='none';
+  setReadmeDate(); saveToStorage();
+}
+function cancelReadme(){
+  document.getElementById('readmeView').style.display='block';
+  document.getElementById('readmeEdit').style.display='none';
+  document.getElementById('readmeBtns').style.display='none';
+}
+
+/* ══════════════════════════════════════════
+   신청양식
+══════════════════════════════════════════ */
+function toggleApply(){
+  if(!isAdmin)return;
+  document.getElementById('applyView').style.display='none';
+  document.getElementById('applyEdit').style.display='block';
+  document.getElementById('applyEdit').value=document.getElementById('applyView').dataset.raw||'';
+  document.getElementById('applyBtns').style.display='flex';
+  document.getElementById('applyEdit').focus();
+}
+function saveApply(){
+  var v=document.getElementById('applyEdit').value.trim();
+  var el=document.getElementById('applyView');
+  el.dataset.raw=v; el.textContent=v||'신청 방법 및 주의사항이 표시됩니다.';
+  el.style.display='block';
+  document.getElementById('applyEdit').style.display='none';
+  document.getElementById('applyBtns').style.display='none';
+  saveToStorage();
+}
+function cancelApply(){
+  document.getElementById('applyView').style.display='block';
+  document.getElementById('applyEdit').style.display='none';
+  document.getElementById('applyBtns').style.display='none';
+}
+
+/* ══════════════════════════════════════════
+   포트폴리오 — GitHub API + 인라인 확장 + 크롭
+══════════════════════════════════════════ */
+var GITHUB_USER   = 'Tmabe';
+var GITHUB_REPO   = 'momuuko';
+var GITHUB_FOLDER = 'portfolio';
+var imgs=[], _portSel=-1;
+/* cropData: { [imgIndex]: {posX:%, posY:%, zoom:%} } */
+var cropData = {};
+/* tagsData: { [imgIndex]: string[] } — localStorage에 저장 */
+var tagsData = {};
+
+function loadPortfolio(){
+  var status=document.getElementById('portStatus');
+  status.style.display='block'; status.textContent='🔄 불러오는 중...';
+  document.getElementById('portPlayer').style.display='none';
+  document.getElementById('portEmpty').style.display='none';
+  fetch('https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/'+GITHUB_FOLDER)
+    .then(function(r){if(!r.ok)throw new Error('API '+r.status);return r.json();})
+    .then(function(data){
+      status.style.display='none';
+      imgs=[];
+      data.forEach(function(f){
+        if(f.type==='file'&&/\.(png|jpg|jpeg|gif|webp)$/i.test(f.name)){
+          imgs.push({src:'https://'+GITHUB_USER+'.github.io/'+GITHUB_REPO+'/'+GITHUB_FOLDER+'/'+encodeURIComponent(f.name),cap:f.name.replace(/\.[^.]+$/,'')});
+        }
+      });
+      if(!imgs.length){document.getElementById('portEmpty').style.display='block';return;}
+      document.getElementById('portPlayer').style.display='grid';
+      document.getElementById('portCount').textContent='총 '+imgs.length+'개';
+      renderPortList();
+      portSelect(0, true); // <--- 초기 로딩 시 스크롤 방지 추가
+    })
+    .catch(function(err){status.textContent='⚠ 이미지를 불러오지 못했어요.'; console.error(err);});
+}
+
+function renderPortList(){
+  var list=document.getElementById('portList'); list.innerHTML='';
+  imgs.forEach(function(img,i){
+    var li=document.createElement('div'); li.className='port-li'; li.id='port-li-'+i;
+
+    /* 16:9 꽉 채우는 썸네일 이미지 */
+    var th=document.createElement('img'); th.className='port-li-thumb'; th.alt=img.cap; th.loading='lazy'; th.src=img.src;
+    var c=cropData[i];
+    if(c){ th.style.objectPosition=(c.posX!==undefined?c.posX:50)+'% '+(c.posY!==undefined?c.posY:0)+'%'; }
+    else { th.style.objectPosition='50% 0%'; }
+
+    /* 하단 그라데이션 오버레이 */
+    var ov=document.createElement('div'); ov.className='port-li-overlay';
+
+    /* 번호 */
+    var num=document.createElement('div'); num.className='port-li-num'; num.textContent=i+1;
+
+    /* 이름 + 태그 (하단 오버레이 위) */
+    var info=document.createElement('div'); info.className='port-li-info';
+    var name=document.createElement('div'); name.className='port-li-name'; name.textContent=img.cap;
+    var tags=document.createElement('div'); tags.className='port-li-tags';
+    (tagsData[i]||[]).forEach(function(t,ti){
+      var tg=document.createElement('span'); tg.className='port-li-tag'+(ti%2===1?' pk':''); tg.textContent=t;
+      tags.appendChild(tg);
+    });
+    info.appendChild(name); info.appendChild(tags);
+
+    /* 관리자 버튼 (admin-mode CSS로 노출 제어) */
+    var adm=document.createElement('div'); adm.className='port-li-admin';
+    if(isAdmin){
+      var cropBtn=document.createElement('button'); cropBtn.className='btn-crop'; cropBtn.title='크롭'; cropBtn.textContent='✂';
+      (function(idx){cropBtn.onclick=function(e){e.stopPropagation();openCropModal(idx);};})(i);
+      var delBtn=document.createElement('button'); delBtn.className='btn-del'; delBtn.title='삭제'; delBtn.textContent='✕';
+      (function(idx){delBtn.onclick=function(e){e.stopPropagation();
+        customConfirm('"<span>'+imgs[idx].cap+'</span>" 이미지를 목록에서 제거할까요?<br><small style="color:var(--text3)">GitHub에서는 직접 삭제해 주세요</small>').then(function(yes){
+          if(!yes)return;
+          imgs.splice(idx,1);
+          if(_portSel>=imgs.length)_portSel=imgs.length-1;
+          document.getElementById('portCount').textContent='총 '+imgs.length+'개';
+          renderPortList();
+          if(imgs.length)portSelect(_portSel>=0?_portSel:0);
+          else{document.getElementById('portPlayer').style.display='none';document.getElementById('portEmpty').style.display='block';}
+        });
+      };})(i);
+      adm.appendChild(cropBtn); adm.appendChild(delBtn);
+    }
+
+    (function(idx){li.onclick=function(){portSelect(idx);};})(i);
+    li.appendChild(th); li.appendChild(ov); li.appendChild(num); li.appendChild(info); li.appendChild(adm);
+    list.appendChild(li);
+  });
+}
+
+function portSelect(idx, preventScroll){ // <--- preventScroll 추가
+  if(idx<0||idx>=imgs.length)return;
+  _portSel=idx;
+
+  /* 리스트 active */
+  document.querySelectorAll('.port-li').forEach(function(el){el.classList.remove('active');});
+  var li=document.getElementById('port-li-'+idx);
+  if(li){
+    li.classList.add('active');
+    if(!preventScroll) { // <--- 조건부 스크롤 이동
+      li.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+  }
+
+  /* 뷰어 */
+  var wrap=document.getElementById('portViewerWrap');
+  wrap.innerHTML='';
+  var img=document.createElement('img'); img.className='port-viewer-img loading'; img.alt=imgs[idx].cap;
+  img.onload=function(){img.classList.remove('loading');};
+  img.src=imgs[idx].src;
+  wrap.appendChild(img);
+
+  /* 뷰어 바 */
+  document.getElementById('portViewerBar').style.display='flex';
+  document.getElementById('portViewerName').textContent=imgs[idx].cap;
+
+  /* 태그 에디터 input 업데이트 */
+  var tagInput=document.getElementById('portTagInput');
+  if(tagInput)tagInput.value=(tagsData[idx]||[]).join(', ');
+}
+
+function portNav(dir){
+  var next=_portSel+dir;
+  if(next<0)next=imgs.length-1;
+  if(next>=imgs.length)next=0;
+  portSelect(next);
+}
+
+function savePortTags(){
+  if(_portSel<0)return;
+  var raw=document.getElementById('portTagInput').value;
+  var arr=raw.split(',').map(function(s){return s.trim();}).filter(Boolean);
+  tagsData[_portSel]=arr;
+  renderPortList();
+  portSelect(_portSel);
+  saveToStorage();
+}
+
+function applyCrop(imgEl,idx){
+  /* 플레이리스트 썸네일 (<img> 태그) */
+  var c=cropData[idx];
+  if(c){
+    imgEl.style.objectFit='cover';
+    imgEl.style.objectPosition=(c.posX!==undefined?c.posX:50)+'% '+(c.posY!==undefined?c.posY:0)+'%';
+  } else {
+    imgEl.style.objectFit='cover';
+    imgEl.style.objectPosition='50% 0%';
+  }
+}
+
+/* ── 크롭 모달 ── */
+var _cropIdx=-1, _cropDrag=false, _cropStartX=0,_cropStartY=0, _cropPosX=50, _cropPosY=0, _cropZoom=100;
+
+function openCropModal(idx){
+  _cropIdx=idx;
+  var c=cropData[idx]||{posX:50,posY:0,zoom:100};
+  _cropPosX=c.posX!==undefined?c.posX:50;
+  _cropPosY=c.posY!==undefined?c.posY:0;
+  _cropZoom=c.zoom||100;
+  document.getElementById('cropZoom').value=_cropZoom;
+  document.getElementById('cropZoomVal').textContent=Math.round(_cropZoom)+'%';
+  document.getElementById('cropModal').classList.add('open');
+  /* 모달 렌더 완료 후 이미지 로드 (rAF 두 번으로 레이아웃 확정 대기) */
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    var el=document.getElementById('cropImgEl');
+    el.onload=function(){updateCropPreview();};
+    if(el.src!==imgs[idx].src){
+      el.src=imgs[idx].src;
+    } else if(el.complete&&el.naturalWidth>0){
+      updateCropPreview();
+    }
+  });});
+}
+function closeCropModal(){document.getElementById('cropModal').classList.remove('open');}
+
+function updateCropPreview(){
+  var vp=document.getElementById('cropViewport');
+  var el=document.getElementById('cropImgEl');
+  var box=document.querySelector('.crop-box');
+  var vpW=(box&&box.offsetWidth>0)?box.offsetWidth:480;
+  if(vpW<100)vpW=480;
+  /* 3:4 비율 뷰포트 */
+  var vpH=Math.round(vpW*4/3);
+  vp.style.height=vpH+'px';
+  var scale=_cropZoom/100;
+  var imgW=Math.round(vpW*scale);
+  /* 이미지 자연 비율 유지 */
+  var ratio=(el.naturalHeight&&el.naturalWidth)?el.naturalHeight/el.naturalWidth:1.4;
+  var imgH=Math.round(imgW*ratio);
+  el.style.width=imgW+'px';
+  el.style.height=imgH+'px';
+  /* left: posX 0%=왼쪽, 100%=오른쪽 */
+  var maxLeft=Math.min(0,vpW-imgW);
+  el.style.left=Math.round(maxLeft*(_cropPosX/100))+'px';
+  /* top: posY 0%=위, 100%=아래 */
+  var maxTop=Math.min(0,vpH-imgH);
+  el.style.top=Math.round(maxTop*(_cropPosY/100))+'px';
+}
+function onCropZoom(v){
+  _cropZoom=parseFloat(v);
+  document.getElementById('cropZoomVal').textContent=Math.round(v)+'%';
+  updateCropPreview();
+}
+
+/* drag */
+document.addEventListener('DOMContentLoaded',function(){
+  var vp=document.getElementById('cropViewport');
+
+  function doDrag(dx,dy){
+    var vpW=vp.parentElement.offsetWidth||500;
+    var vpH=Math.round(vpW*4/3);
+    var scale=_cropZoom/100;
+    var imgW=Math.round(vpW*scale);
+    var el=document.getElementById('cropImgEl');
+    var ratio=(el.naturalHeight&&el.naturalWidth)?el.naturalHeight/el.naturalWidth:1.4;
+    var imgH=Math.round(imgW*ratio);
+    var maxLeft=Math.min(0,vpW-imgW);
+    var maxTop=Math.min(0,vpH-imgH);
+    /* 드래그: 이미지를 마우스 방향으로 이동 (왼쪽으로 드래그 = 오른쪽 부분이 보임) */
+    if(Math.abs(maxLeft)>0){
+      _cropPosX=Math.max(0,Math.min(100,_cropPosX - (dx/maxLeft)*100));
+    }
+    if(
 .side-nav button.pk{background:linear-gradient(180deg,var(--pink-l),var(--pink));border-color:var(--border-p);box-shadow:0 3px 10px rgba(240,96,160,.25),inset 0 1px 0 rgba(255,255,255,.5)}
 .side-nav button.pk:hover{box-shadow:0 5px 14px rgba(240,96,160,.38)}
 .admin-dot{display:none;width:8px;height:8px;border-radius:50%;cursor:pointer;background:linear-gradient(135deg,var(--sky),var(--pink));opacity:.6;box-shadow:0 0 6px rgba(77,184,240,.6);transition:opacity .2s}
@@ -1988,5 +3217,6 @@ if(evField)evField.addEventListener('input',function(){document.getElementById('
 </script>
 </body>
 </html>
+
 
 
