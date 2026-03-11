@@ -220,6 +220,38 @@ textarea.msg-box:focus{border-color:var(--sky)}
 .type-card .ts{font-size:10px;color:var(--text3)}
 .edit-foot{padding:14px 22px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
 
+/* ── 이벤트 강조 ── */
+.opt-card{position:relative}
+.opt-card.has-event{border-color:var(--pink-l)!important;background:linear-gradient(145deg,#fff 55%,var(--pink-pl))}
+.opt-card.has-event::after{content:'';position:absolute;inset:-1px;border-radius:14px;box-shadow:0 0 0 2px var(--pink-l);pointer-events:none}
+.ev-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--pink-d);background:var(--pink-pl);border:1px solid var(--border-p);border-radius:6px;padding:2px 7px;margin-top:6px;cursor:pointer;user-select:none;transition:background .15s}
+.ev-badge:hover{background:#ffe0ef}
+.pill.has-event{border-color:var(--pink-l)!important;background:linear-gradient(135deg,#fff,var(--pink-pl))!important;color:var(--pink-d)!important;font-weight:600!important}
+/* ── 이벤트 팝업 ── */
+.ev-popup-wrap{position:relative;display:inline-block}
+.ev-popup{position:absolute;z-index:300;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--white);border:1.5px solid var(--border-p);border-radius:12px;padding:10px 14px 10px;box-shadow:0 6px 24px rgba(240,96,160,.22);font-size:12px;color:var(--text);line-height:1.65;white-space:normal;min-width:120px;width:max-content;max-width:220px;pointer-events:none;display:none}
+.ev-popup.show{display:block;animation:evPop .18s cubic-bezier(.34,1.56,.64,1)}
+@keyframes evPop{from{opacity:0;transform:translateX(-50%) scale(.88)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+.ev-popup-title{font-size:10px;font-weight:700;color:var(--pink-d);margin-bottom:5px}
+.ev-popup::after{content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%) rotate(45deg);width:12px;height:12px;background:var(--white);border-right:1.5px solid var(--border-p);border-bottom:1.5px solid var(--border-p)}
+/* ── 히어로 편집 ── */
+.hero-edit-wrap{display:none;gap:8px;flex-wrap:wrap;margin-top:10px;padding:12px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:12px}
+.admin-mode .hero-edit-wrap{display:flex;flex-direction:column;gap:8px}
+.hero-edit-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hero-edit-lbl{font-size:11px;font-weight:700;color:var(--text2);width:60px;flex-shrink:0}
+.hero-edit-field{flex:1;min-width:140px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:var(--sky-bg);outline:none;transition:border-color .2s}
+.hero-edit-field:focus{border-color:var(--sky)}
+.hero-edit-save{padding:7px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--sky),#2da0d8);color:var(--white);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+/* ── 칩 관리 ── */
+.chip-wrap{display:inline-flex;align-items:center;gap:3px;flex-shrink:0}
+.chip-ctrl{display:none;gap:2px;align-items:center}
+.admin-mode .chip-ctrl{display:inline-flex}
+.chip-ctrl button{width:15px;height:15px;border-radius:50%;border:none;font-size:9px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
+.chip-ctrl .cc-edit{background:var(--sky-pl);color:var(--sky)}
+.chip-ctrl .cc-del{background:var(--pink-pl);color:var(--pink-d)}
+.chip-add-btn{display:none;padding:5px 12px;background:var(--white);border:1.5px dashed var(--sky);border-radius:20px;font-size:12px;color:var(--sky);cursor:pointer;font-family:inherit;transition:all .15s;align-items:center;gap:4px}
+.chip-add-btn:hover{background:var(--sky-pl)}
+.admin-mode .chip-add-btn{display:inline-flex}
 /* 반응형 */
 @media(max-width:860px){
   .form-layout{grid-template-columns:1fr}
@@ -253,15 +285,30 @@ textarea.msg-box:focus{border-color:var(--sky)}
 
 <!-- 히어로 -->
 <header class="hero">
-  <div class="hero-badge">Live2D Illustrator · 모무꼬</div>
-  <h1>모무꼬<br><em>작가 페이지</em></h1>
-  <p class="hero-sub">퀄리티 높고 가성비 있는 그림을 지향합니다.<br>편하게 문의주세요 ✦</p>
-  <div class="chips">
-    <div class="chip" style="border-color:var(--border-p)">접수 <b style="color:var(--pink)">진행중</b></div>
-    <div class="chip">답변율 <b>98%</b></div>
-    <div class="chip pk-chip">Live2D <b>전문</b></div>
-    <div class="chip">작업기간 <b>30일</b></div>
+  <div id="heroBadgeEl" class="hero-badge">Live2D Illustrator · 모무꼬</div>
+  <h1 id="heroTitleEl">모무꼬<br><em>작가 페이지</em></h1>
+  <p class="hero-sub" id="heroSubEl">퀄리티 높고 가성비 있는 그림을 지향합니다.<br>편하게 문의주세요 ✦</p>
+  <!-- 관리자 편집 패널 -->
+  <div class="hero-edit-wrap" id="heroEditWrap">
+    <div class="hero-edit-row">
+      <span class="hero-edit-lbl">배지</span>
+      <input class="hero-edit-field" id="heInputBadge" placeholder="예: Live2D Illustrator · 모무꼬">
+    </div>
+    <div class="hero-edit-row">
+      <span class="hero-edit-lbl">제목</span>
+      <input class="hero-edit-field" id="heInputTitle" placeholder="예: 모무꼬">
+    </div>
+    <div class="hero-edit-row">
+      <span class="hero-edit-lbl">설명</span>
+      <input class="hero-edit-field" id="heInputSub" placeholder="한 줄 소개">
+    </div>
+    <div>
+      <button class="hero-edit-save" onclick="saveHero()">저장</button>
+    </div>
   </div>
+  <!-- 칩 목록 -->
+  <div class="chips" id="chipsRow" style="margin-top:20px"></div>
+  <button class="chip-add-btn" onclick="openChipModal(-1)">＋ 칩 추가</button>
 </header>
 
 <div class="divider"></div>
@@ -475,10 +522,46 @@ textarea.msg-box:focus{border-color:var(--sky)}
         <label class="edit-label">부제목 <span style="font-weight:400;color:var(--text3)">(선택사항, 카드 아래 작은 글씨)</span></label>
         <input class="edit-field" id="itemSub" placeholder="예: 🎉 20만원 할인">
       </div>
+      <div>
+        <label class="edit-label">이벤트 내용 <span style="font-weight:400;color:var(--text3)">(선택사항, 15자 이내 · 입력 시 이벤트 뱃지 표시)</span></label>
+        <input class="edit-field" id="itemEvent" placeholder="예: 선착순 3명 할인" maxlength="15" oninput="this.value=this.value.slice(0,15)">
+        <div style="font-size:10px;color:var(--text3);margin-top:3px;text-align:right" id="itemEventCount">0 / 15</div>
+      </div>
     </div>
     <div class="edit-foot">
       <button class="btn btn-ghost" onclick="closeItemModal()">취소</button>
       <button class="btn btn-sky"   onclick="saveItemModal()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 칩 편집 모달 -->
+<div class="edit-modal" id="chipModal" onclick="if(event.target===this)closeChipModal()">
+  <div class="edit-box">
+    <div class="edit-head">
+      <h3 id="chipModalTitle">칩 추가</h3>
+      <button class="lb-close-btn" onclick="closeChipModal()">✕</button>
+    </div>
+    <div class="edit-body">
+      <div>
+        <label class="edit-label">칩 내용 <span style="font-weight:400;color:var(--text3)">(HTML 가능: &lt;b&gt;강조&lt;/b&gt;)</span></label>
+        <input class="edit-field" id="chipText" placeholder="예: 답변율 &lt;b&gt;98%&lt;/b&gt;">
+      </div>
+      <div>
+        <label class="edit-label">색상 테마</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="type-card sel" data-c="default" onclick="pickChipColor(this)" style="flex:unset;padding:8px 14px;min-width:unset">
+            <span class="tl">기본 (파란)</span>
+          </div>
+          <div class="type-card" data-c="pink" onclick="pickChipColor(this)" style="flex:unset;padding:8px 14px;min-width:unset">
+            <span class="tl" style="color:var(--pink)">핑크</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="edit-foot">
+      <button class="btn btn-ghost" onclick="closeChipModal()">취소</button>
+      <button class="btn btn-sky" onclick="saveChipModal()">저장</button>
     </div>
   </div>
 </div>
@@ -511,6 +594,22 @@ var fSel = {};
 
 /* 모달 상태 */
 var _si=-1, _ii=-1, _secMode='add'; // secMode: 'add'|'rename'
+var _chipIdx=-1;
+
+/* 히어로 데이터 */
+var heroData = {
+  badge: 'Live2D Illustrator · 모무꼬',
+  title: '모무꼬',
+  sub:   '퀄리티 높고 가성비 있는 그림을 지향합니다.\n편하게 문의주세요 ✦'
+};
+
+/* 칩 데이터 */
+var chipsData = [
+  {text:'접수 <b style="color:var(--pink)">진행중</b>', color:'pink'},
+  {text:'답변율 <b>98%</b>', color:'default'},
+  {text:'Live2D <b>전문</b>', color:'pink'},
+  {text:'작업기간 <b>30일</b>', color:'default'}
+];
 
 /* ══════════════════════════════════════════
    섹션 데이터
@@ -580,8 +679,73 @@ function applyAdmin(){
   document.body.classList.toggle('admin-mode', isAdmin);
   document.getElementById('adminToast').classList.toggle('show', isAdmin);
 }
-function enterAdmin(){ isAdmin=true; sessionStorage.setItem('am','1'); applyAdmin(); renderSlots(); renderForm(); }
-function exitAdmin(){  isAdmin=false; sessionStorage.removeItem('am'); applyAdmin(); renderSlots(); renderForm(); }
+function enterAdmin(){ isAdmin=true; sessionStorage.setItem('am','1'); applyAdmin(); renderSlots(); renderForm(); renderHero(); renderChips(); }
+function exitAdmin(){  isAdmin=false; sessionStorage.removeItem('am'); applyAdmin(); renderSlots(); renderForm(); renderHero(); renderChips(); }
+
+/* ══════════════════════════════════════════
+   히어로 렌더링 / 편집
+══════════════════════════════════════════ */
+function renderHero(){
+  document.getElementById('heroBadgeEl').textContent = heroData.badge;
+  document.getElementById('heroTitleEl').innerHTML = heroData.title.replace(/\n/g,'<br>');
+  document.getElementById('heroSubEl').innerHTML = heroData.sub.replace(/\n/g,'<br>');
+  if(isAdmin){
+    document.getElementById('heInputBadge').value = heroData.badge;
+    document.getElementById('heInputTitle').value = heroData.title;
+    document.getElementById('heInputSub').value = heroData.sub;
+  }
+}
+function saveHero(){
+  heroData.badge = document.getElementById('heInputBadge').value.trim() || heroData.badge;
+  heroData.title = document.getElementById('heInputTitle').value.trim() || heroData.title;
+  heroData.sub   = document.getElementById('heInputSub').value.trim()   || heroData.sub;
+  renderHero();
+}
+
+/* ══════════════════════════════════════════
+   칩 렌더링 / 편집
+══════════════════════════════════════════ */
+function renderChips(){
+  var row = document.getElementById('chipsRow'); row.innerHTML='';
+  chipsData.forEach(function(c,i){
+    var wrap = document.createElement('div'); wrap.className='chip-wrap';
+    var chip = document.createElement('div');
+    chip.className = 'chip' + (c.color==='pink' ? ' pk-chip' : '');
+    chip.style.borderColor = c.color==='pink' ? 'var(--border-p)' : '';
+    chip.innerHTML = c.text;
+    wrap.appendChild(chip);
+    if(isAdmin){
+      var ctrl=document.createElement('div'); ctrl.className='chip-ctrl';
+      var eb=document.createElement('button'); eb.className='cc-edit'; eb.textContent='✏'; eb.title='수정';
+      var db=document.createElement('button'); db.className='cc-del';  db.textContent='✕'; db.title='삭제';
+      (function(idx){
+        eb.onclick=function(){openChipModal(idx);};
+        db.onclick=function(){if(confirm('이 칩을 삭제할까요?')){chipsData.splice(idx,1);renderChips();}};
+      })(i);
+      ctrl.appendChild(eb); ctrl.appendChild(db); wrap.appendChild(ctrl);
+    }
+    row.appendChild(wrap);
+  });
+}
+function openChipModal(idx){
+  _chipIdx=idx;
+  document.getElementById('chipModalTitle').textContent = idx===-1 ? '칩 추가' : '칩 수정';
+  document.getElementById('chipText').value = idx===-1 ? '' : chipsData[idx].text;
+  var c = idx===-1 ? 'default' : (chipsData[idx].color||'default');
+  document.querySelectorAll('[data-c]').forEach(function(o){o.classList.toggle('sel',o.getAttribute('data-c')===c);});
+  document.getElementById('chipModal').classList.add('open');
+  setTimeout(function(){document.getElementById('chipText').focus();},100);
+}
+function closeChipModal(){document.getElementById('chipModal').classList.remove('open');}
+function pickChipColor(el){document.querySelectorAll('[data-c]').forEach(function(o){o.classList.remove('sel');});el.classList.add('sel');}
+function saveChipModal(){
+  var text=document.getElementById('chipText').value.trim();
+  if(!text){alert('내용을 입력해주세요');return;}
+  var color=(document.querySelector('[data-c].sel')||{getAttribute:function(){return 'default';}}).getAttribute('data-c');
+  if(_chipIdx===-1) chipsData.push({text:text,color:color});
+  else {chipsData[_chipIdx].text=text;chipsData[_chipIdx].color=color;}
+  closeChipModal(); renderChips();
+}
 function onMsgKeydown(e){
   if(e.key!=='Enter') return;
   var v=document.getElementById('formMsg').value.trim();
@@ -768,14 +932,26 @@ function renderForm(){
       var grid=document.createElement('div'); grid.className='opt-cards';
       sec.items.forEach(function(item,ii){
         var sel=fSel['r_'+sec.id]&&fSel['r_'+sec.id].itemId===item.id;
-        var oc=document.createElement('div'); oc.className='opt-card'+(sel?' sel':'');
+        var hasEv=!!(item.event&&item.event.trim());
+        var oc=document.createElement('div'); oc.className='opt-card'+(sel?' sel':'')+(hasEv?' has-event':'');
         oc.setAttribute('data-sid',sec.id); oc.setAttribute('data-iid',item.id);
         var nd=document.createElement('div'); nd.className='n';
         nd.innerHTML=item.sub?esc(item.name)+'<br><small style="color:var(--pink);font-weight:700">'+esc(item.sub)+'</small>':esc(item.name);
         var pd=document.createElement('div'); pd.className='p';
         pd.textContent=item.price>0?item.price.toLocaleString()+'원':'문의';
         oc.appendChild(nd); oc.appendChild(pd);
-        (function(a,b){oc.onclick=function(e){if(e.target.tagName==='BUTTON')return;radioSel(a,b);};})(si,ii);
+        /* 이벤트 뱃지 */
+        if(hasEv){
+          var evWrap=document.createElement('div'); evWrap.className='ev-popup-wrap'; evWrap.style.cssText='position:relative;display:inline-block';
+          var evB=document.createElement('div'); evB.className='ev-badge'; evB.innerHTML='✦ 이벤트';
+          var evP=document.createElement('div'); evP.className='ev-popup';
+          evP.innerHTML='<div class="ev-popup-title">🎉 이벤트</div>'+esc(item.event);
+          evB.onmouseenter=function(){evP.classList.add('show');};
+          evB.onmouseleave=function(){evP.classList.remove('show');};
+          evB.onclick=function(e){e.stopPropagation();evP.classList.toggle('show');};
+          evWrap.appendChild(evB); evWrap.appendChild(evP); oc.appendChild(evWrap);
+        }
+        (function(a,b){oc.onclick=function(e){if(e.target.tagName==='BUTTON'||e.target.classList.contains('ev-badge'))return;radioSel(a,b);};})(si,ii);
         if(isAdmin){
           var ar=document.createElement('div'); ar.className='admin-item-row';
           var eb=document.createElement('button'); eb.className='sm-btn'; eb.textContent='✏ 수정';
@@ -792,11 +968,25 @@ function renderForm(){
       sec.items.forEach(function(item,ii){
         var key='p_'+sec.id+'_'+item.id;
         var isSel=sec.type!=='expr'&&!!fSel[key];
+        var hasEv=!!(item.event&&item.event.trim());
         var pill=document.createElement('div');
-        pill.className='pill'+(sec.pk?' pk':'')+(isSel?' sel':'');
+        pill.className='pill'+(sec.pk?' pk':'')+(isSel?' sel':'')+(hasEv?' has-event':'');
         pill.setAttribute('data-n',item.name);
-        if(sec.type==='expr'){pill.setAttribute('data-esec',sec.id);pill.textContent=item.name;pill.onclick=function(){togExpr(pill);};}
-        else{pill.textContent=item.name+(item.price>0?' +'+item.price.toLocaleString()+'원':'');(function(p,k,n,pr){p.onclick=function(){togPill(p,k,n,pr);};})(pill,key,item.name,item.price);}
+        var pillLabel=item.name+(item.price>0&&sec.type!=='expr'?' +'+item.price.toLocaleString()+'원':'');
+        pill.textContent=pillLabel;
+        if(hasEv){
+          var evB2=document.createElement('span'); evB2.className='ev-badge'; evB2.style.marginLeft='6px'; evB2.innerHTML='✦ 이벤트';
+          var evP2=document.createElement('div'); evP2.className='ev-popup';
+          evP2.innerHTML='<div class="ev-popup-title">🎉 이벤트</div>'+esc(item.event);
+          var pw2Outer=document.createElement('div'); pw2Outer.className='ev-popup-wrap'; pw2Outer.style.cssText='position:relative;display:inline-block';
+          evB2.onmouseenter=function(){evP2.classList.add('show');};
+          evB2.onmouseleave=function(){evP2.classList.remove('show');};
+          evB2.onclick=function(e){e.stopPropagation();evP2.classList.toggle('show');};
+          pw2Outer.appendChild(evB2); pw2Outer.appendChild(evP2);
+          pill.appendChild(pw2Outer);
+        }
+        if(sec.type==='expr'){pill.setAttribute('data-esec',sec.id);pill.onclick=function(){togExpr(pill);};}
+        else{(function(p,k,n,pr){p.onclick=function(e){if(e.target.classList.contains('ev-badge'))return;togPill(p,k,n,pr);};})(pill,key,item.name,item.price);}
         if(isAdmin){
           var pw=document.createElement('div'); pw.className='pill-wrap'; pw.appendChild(pill);
           var eb2=document.createElement('button'); eb2.className='sm-btn'; eb2.style.cssText='padding:3px 7px;font-size:10px'; eb2.textContent='✏';
@@ -931,6 +1121,8 @@ function openItemAdd(si){
   document.getElementById('itemName').value='';
   document.getElementById('itemPrice').value='0';
   document.getElementById('itemSub').value='';
+  document.getElementById('itemEvent').value='';
+  document.getElementById('itemEventCount').textContent='0 / 15';
   document.getElementById('itemPriceWrap').style.display=sec.type==='expr'?'none':'block';
   document.getElementById('itemSubWrap').style.display=sec.type==='radio'?'block':'none';
   document.getElementById('itemModal').classList.add('open');
@@ -943,6 +1135,9 @@ function openItemEdit(si,ii){
   document.getElementById('itemName').value=item.name;
   document.getElementById('itemPrice').value=item.price;
   document.getElementById('itemSub').value=item.sub||'';
+  var ev=item.event||'';
+  document.getElementById('itemEvent').value=ev;
+  document.getElementById('itemEventCount').textContent=ev.length+' / 15';
   document.getElementById('itemPriceWrap').style.display=sec.type==='expr'?'none':'block';
   document.getElementById('itemSubWrap').style.display=sec.type==='radio'?'block':'none';
   document.getElementById('itemModal').classList.add('open');
@@ -954,13 +1149,14 @@ function saveItemModal(){
   var si=_si,ii=_ii,sec=formSections[si];
   var price=parseInt(document.getElementById('itemPrice').value)||0;
   var sub=document.getElementById('itemSub').value.trim()||null;
+  var event=document.getElementById('itemEvent').value.trim().slice(0,15)||null;
   if(ii===-1){
-    sec.items.push({id:'i'+Date.now(),name:name,price:price,sub:sub});
+    sec.items.push({id:'i'+Date.now(),name:name,price:price,sub:sub,event:event});
   } else {
     var item=sec.items[ii];
     var k=sec.type==='radio'?'r_'+sec.id:'p_'+sec.id+'_'+item.id;
     if(fSel[k]){fSel[k].n=name;fSel[k].p=price;}
-    item.name=name;item.price=price;item.sub=sub;
+    item.name=name;item.price=price;item.sub=sub;item.event=event;
   }
   closeItemModal();renderForm();updateTotal();updatePreview();
 }
@@ -996,11 +1192,17 @@ function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'}
    초기화 (반드시 마지막)
 ══════════════════════════════════════════ */
 applyAdmin();
+renderHero();
+renderChips();
 renderSlots();
 setNoticeDate();
 renderForm();
 updatePreview();
 loadPortfolio();
+/* 이벤트 카운터 */
+document.getElementById('itemEvent').addEventListener('input',function(){
+  document.getElementById('itemEventCount').textContent=this.value.length+' / 15';
+});
 </script>
 </body>
 </html>
