@@ -91,36 +91,38 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--sky-bg);color:var(--
 .notice-btn-row{display:none;gap:8px;margin-top:10px;justify-content:flex-end}
 
 /* ── 포트폴리오 플레이리스트 레이아웃 ── */
-.port-player{grid-template-columns:320px 1fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--sh-lg);background:#0f1e2d;min-height:480px}
-@media(max-width:860px){.port-player{grid-template-columns:1fr;grid-template-rows:260px 1fr;min-height:unset}}
+.port-player{grid-template-columns:280px 1fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--sh-lg);background:#0f1e2d;min-height:780px}
+@media(max-width:860px){.port-player{grid-template-columns:1fr;grid-template-rows:300px 1fr;min-height:unset}}
 
 /* 왼쪽 플레이리스트 */
 .port-playlist{background:#16243a;border-right:1px solid rgba(77,184,240,.15);display:flex;flex-direction:column;overflow:hidden}
 .port-playlist-head{padding:14px 18px 10px;border-bottom:1px solid rgba(77,184,240,.12);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .port-playlist-title{font-size:13px;font-weight:700;color:#e8f4fd;letter-spacing:.05em}
 .port-playlist-count{font-size:11px;color:rgba(255,255,255,.35);font-weight:500}
-.port-list{overflow-y:auto;flex:1;padding:6px 0}
+.port-list{overflow-y:auto;flex:1;padding:6px}
 .port-list::-webkit-scrollbar{width:4px}
 .port-list::-webkit-scrollbar-track{background:transparent}
 .port-list::-webkit-scrollbar-thumb{background:rgba(77,184,240,.25);border-radius:2px}
 
-/* 플레이리스트 아이템 */
-.port-li{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;transition:background .15s;position:relative;border-left:3px solid transparent}
-.port-li:hover{background:rgba(77,184,240,.08)}
-.port-li.active{background:rgba(77,184,240,.14);border-left-color:var(--sky)}
-.port-li-thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#0a1826}
-.port-li-info{flex:1;min-width:0}
-.port-li-name{font-size:13px;font-weight:700;color:#ddeeff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px}
-.port-li-tags{display:flex;gap:4px;flex-wrap:wrap}
-.port-li-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(77,184,240,.2);color:var(--sky);border:1px solid rgba(77,184,240,.3)}
-.port-li-tag.pk{background:rgba(240,96,160,.2);color:var(--pink-l);border-color:rgba(240,96,160,.3)}
-.port-li-num{font-size:10px;color:rgba(255,255,255,.2);font-weight:500;flex-shrink:0;width:18px;text-align:right}
+/* 플레이리스트 아이템 — 16:9 카드 */
+.port-li{position:relative;width:100%;padding-top:56.25%;border-radius:10px;overflow:hidden;cursor:pointer;margin-bottom:6px;border:2px solid transparent;transition:border-color .15s,transform .15s}
+.port-li:hover{border-color:rgba(77,184,240,.4);transform:scale(1.01)}
+.port-li.active{border-color:var(--sky);box-shadow:0 0 0 1px var(--sky)}
+.port-li-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#0a1826}
+/* 하단 이름 오버레이 */
+.port-li-overlay{position:absolute;inset:0;background:linear-gradient(to top, rgba(5,15,28,.82) 0%, rgba(5,15,28,.3) 45%, transparent 100%);pointer-events:none}
+.port-li-info{position:absolute;bottom:0;left:0;right:0;padding:6px 10px 7px}
+.port-li-name{font-size:11px;font-weight:700;color:#ddeeff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.port-li-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px}
+.port-li-tag{font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(77,184,240,.25);color:var(--sky);border:1px solid rgba(77,184,240,.3)}
+.port-li-tag.pk{background:rgba(240,96,160,.22);color:var(--pink-l);border-color:rgba(240,96,160,.3)}
+.port-li-num{position:absolute;top:6px;left:8px;font-size:10px;color:rgba(255,255,255,.4);font-weight:700;background:rgba(0,0,0,.35);border-radius:4px;padding:1px 5px;line-height:1.4}
 /* 관리자 버튼 (관리자 호버시만) */
-.port-li-admin{display:none;gap:4px;flex-shrink:0}
+.port-li-admin{position:absolute;top:6px;right:6px;display:none;gap:4px}
 .admin-mode .port-li:hover .port-li-admin{display:flex}
-.port-li-admin button{width:22px;height:22px;border-radius:6px;border:none;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .15s}
-.port-li-admin .btn-crop{background:rgba(77,184,240,.25);color:var(--sky)}
-.port-li-admin .btn-del{background:rgba(240,96,160,.25);color:var(--pink-l)}
+.port-li-admin button{width:24px;height:24px;border-radius:6px;border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .15s;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.port-li-admin .btn-crop{background:rgba(77,184,240,.7);color:#fff}
+.port-li-admin .btn-del{background:rgba(240,96,160,.7);color:#fff}
 
 /* 오른쪽 뷰어 */
 .port-viewer{display:flex;flex-direction:column;background:#0a1420;position:relative}
@@ -1070,35 +1072,30 @@ function renderPortList(){
   var list=document.getElementById('portList'); list.innerHTML='';
   imgs.forEach(function(img,i){
     var li=document.createElement('div'); li.className='port-li'; li.id='port-li-'+i;
-    li.setAttribute('data-idx',i);
+
+    /* 16:9 꽉 채우는 썸네일 이미지 */
+    var th=document.createElement('img'); th.className='port-li-thumb'; th.alt=img.cap; th.loading='lazy'; th.src=img.src;
+    var c=cropData[i];
+    if(c){ th.style.objectPosition=(c.posX!==undefined?c.posX:50)+'% '+(c.posY!==undefined?c.posY:0)+'%'; }
+    else { th.style.objectPosition='50% 0%'; }
+
+    /* 하단 그라데이션 오버레이 */
+    var ov=document.createElement('div'); ov.className='port-li-overlay';
 
     /* 번호 */
     var num=document.createElement('div'); num.className='port-li-num'; num.textContent=i+1;
 
-    /* 썸네일 */
-    var th=document.createElement('img'); th.className='port-li-thumb'; th.alt=img.cap; th.loading='lazy';
-    /* cropData 반영 */
-    var c=cropData[i];
-    if(c){
-      th.src=img.src;
-      th.style.objectFit='cover';
-      th.style.objectPosition=(c.posX!==undefined?c.posX:50)+'% '+(c.posY!==undefined?c.posY:0)+'%';
-    } else {
-      th.src=img.src;
-    }
-
-    /* 정보 */
+    /* 이름 + 태그 (하단 오버레이 위) */
     var info=document.createElement('div'); info.className='port-li-info';
     var name=document.createElement('div'); name.className='port-li-name'; name.textContent=img.cap;
     var tags=document.createElement('div'); tags.className='port-li-tags';
-    var tArr=(tagsData[i]||[]);
-    tArr.forEach(function(t,ti){
+    (tagsData[i]||[]).forEach(function(t,ti){
       var tg=document.createElement('span'); tg.className='port-li-tag'+(ti%2===1?' pk':''); tg.textContent=t;
       tags.appendChild(tg);
     });
     info.appendChild(name); info.appendChild(tags);
 
-    /* 관리자 버튼 — admin 모드에서만 DOM에 추가 */
+    /* 관리자 버튼 (admin-mode CSS로 노출 제어) */
     var adm=document.createElement('div'); adm.className='port-li-admin';
     if(isAdmin){
       var cropBtn=document.createElement('button'); cropBtn.className='btn-crop'; cropBtn.title='크롭'; cropBtn.textContent='✂';
@@ -1119,7 +1116,7 @@ function renderPortList(){
     }
 
     (function(idx){li.onclick=function(){portSelect(idx);};})(i);
-    li.appendChild(num); li.appendChild(th); li.appendChild(info); li.appendChild(adm);
+    li.appendChild(th); li.appendChild(ov); li.appendChild(num); li.appendChild(info); li.appendChild(adm);
     list.appendChild(li);
   });
 }
