@@ -90,43 +90,60 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--sky-bg);color:var(--
 .notice-edit:focus{border-color:var(--pink)}
 .notice-btn-row{display:none;gap:8px;margin-top:10px;justify-content:flex-end}
 
-/* 포트폴리오 */
-.port-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:700px){.port-grid{grid-template-columns:repeat(2,1fr)}}
-/* 첫 이미지: 전체 너비, 원본비율로 완전히 펼쳐서 표시 */
-.port-item{position:relative;border-radius:var(--r);overflow:visible}
-.port-item.first-item{grid-column:1/-1}
-.port-item.first-item .thumb-wrap::before{padding-top:0}
-.port-item.first-item .thumb-img{position:relative;inset:auto;width:100%;height:auto;max-height:none;object-fit:unset}
-.port-item.first-item .thumb-wrap{cursor:default}
-.port-item.first-item .t-ov{display:none}
-/* 일반 썸네일: 세로비율 3:4 */
-.thumb-wrap{position:relative;border-radius:var(--r);overflow:hidden;background:var(--sky-pl);border:1.5px solid var(--border);box-shadow:var(--sh);cursor:pointer;transition:transform .2s,box-shadow .2s}
-.thumb-wrap::before{content:'';display:block;padding-top:133.33%}
-.thumb-wrap:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
-.thumb-wrap:hover .t-ov{opacity:1}
-.thumb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .12s}
-/* object-position은 JS에서 개별 설정 */
-.t-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(77,184,240,.45),rgba(240,96,160,.45));opacity:0;transition:opacity .2s;display:flex;align-items:center;justify-content:center;font-size:22px}
-.t-cap{position:absolute;bottom:0;left:0;right:0;padding:6px 10px;background:linear-gradient(transparent,rgba(15,30,45,.65));font-size:11px;color:rgba(255,255,255,.9);font-weight:500}
-.t-del{position:absolute;top:7px;right:7px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.85);border:none;font-size:12px;cursor:pointer;display:none;align-items:center;justify-content:center;color:var(--pink-d);font-weight:700}
-.thumb-wrap:hover .t-del{display:flex}.t-del:hover{background:var(--pink-pl)}
-.t-crop{position:absolute;top:7px;left:7px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.85);border:none;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;color:var(--sky)}
-.thumb-wrap:hover .t-crop{display:flex}.t-crop:hover{background:var(--sky-pl)}
-/* 확장 시 그리드 전체 너비 차지 */
-.port-item.expanded{grid-column:1/-1}
-/* 첫 이미지는 hover 효과 없음 */
-.port-item.first-item .thumb-wrap:hover{transform:none;box-shadow:var(--sh)}
-/* 인라인 확장 패널 */
-.port-expand{display:none;margin-top:8px;border-radius:var(--r);overflow:hidden;background:var(--white);border:1.5px solid var(--border);box-shadow:var(--sh-lg);transform-origin:top center}
-.port-expand.open{display:block;animation:expandIn .22s cubic-bezier(.34,1.2,.64,1)}
-@keyframes expandIn{from{opacity:0;transform:scaleY(.85)}to{opacity:1;transform:scaleY(1)}}
-.port-expand-img{width:100%;display:block;max-height:80vh;object-fit:contain;background:#0a1928}
-.port-expand-bar{padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);gap:10px}
-.port-expand-nav{display:flex;gap:6px}
-.port-expand-nav button{padding:5px 13px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-size:12px;cursor:pointer;font-family:inherit;color:var(--text2);transition:all .15s}
-.port-expand-nav button:hover{border-color:var(--sky);color:var(--sky)}
-.port-empty{grid-column:1/-1;padding:60px 0;text-align:center;color:var(--text3);font-size:13px;line-height:2}
+/* ── 포트폴리오 플레이리스트 레이아웃 ── */
+.port-player{grid-template-columns:320px 1fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--sh-lg);background:#0f1e2d;min-height:480px}
+@media(max-width:860px){.port-player{grid-template-columns:1fr;grid-template-rows:260px 1fr;min-height:unset}}
+
+/* 왼쪽 플레이리스트 */
+.port-playlist{background:#16243a;border-right:1px solid rgba(77,184,240,.15);display:flex;flex-direction:column;overflow:hidden}
+.port-playlist-head{padding:14px 18px 10px;border-bottom:1px solid rgba(77,184,240,.12);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.port-playlist-title{font-size:13px;font-weight:700;color:#e8f4fd;letter-spacing:.05em}
+.port-playlist-count{font-size:11px;color:rgba(255,255,255,.35);font-weight:500}
+.port-list{overflow-y:auto;flex:1;padding:6px 0}
+.port-list::-webkit-scrollbar{width:4px}
+.port-list::-webkit-scrollbar-track{background:transparent}
+.port-list::-webkit-scrollbar-thumb{background:rgba(77,184,240,.25);border-radius:2px}
+
+/* 플레이리스트 아이템 */
+.port-li{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;transition:background .15s;position:relative;border-left:3px solid transparent}
+.port-li:hover{background:rgba(77,184,240,.08)}
+.port-li.active{background:rgba(77,184,240,.14);border-left-color:var(--sky)}
+.port-li-thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#0a1826}
+.port-li-info{flex:1;min-width:0}
+.port-li-name{font-size:13px;font-weight:700;color:#ddeeff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px}
+.port-li-tags{display:flex;gap:4px;flex-wrap:wrap}
+.port-li-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(77,184,240,.2);color:var(--sky);border:1px solid rgba(77,184,240,.3)}
+.port-li-tag.pk{background:rgba(240,96,160,.2);color:var(--pink-l);border-color:rgba(240,96,160,.3)}
+.port-li-num{font-size:10px;color:rgba(255,255,255,.2);font-weight:500;flex-shrink:0;width:18px;text-align:right}
+/* 관리자 버튼 (관리자 호버시만) */
+.port-li-admin{display:none;gap:4px;flex-shrink:0}
+.admin-mode .port-li:hover .port-li-admin{display:flex}
+.port-li-admin button{width:22px;height:22px;border-radius:6px;border:none;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .15s}
+.port-li-admin .btn-crop{background:rgba(77,184,240,.25);color:var(--sky)}
+.port-li-admin .btn-del{background:rgba(240,96,160,.25);color:var(--pink-l)}
+
+/* 오른쪽 뷰어 */
+.port-viewer{display:flex;flex-direction:column;background:#0a1420;position:relative}
+.port-viewer-img-wrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:360px;position:relative}
+@media(max-width:860px){.port-viewer-img-wrap{min-height:280px}}
+.port-viewer-img{max-width:100%;max-height:68vh;object-fit:contain;display:block;transition:opacity .2s}
+.port-viewer-img.loading{opacity:0}
+.port-viewer-bar{padding:12px 20px;background:#0f1e2d;border-top:1px solid rgba(77,184,240,.12);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.port-viewer-name{font-size:14px;font-weight:700;color:#ddeeff}
+.port-viewer-nav{display:flex;gap:6px}
+.port-viewer-nav button{padding:6px 16px;border-radius:8px;border:1px solid rgba(77,184,240,.3);background:rgba(77,184,240,.1);color:var(--sky);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.port-viewer-nav button:hover{background:rgba(77,184,240,.25)}
+.port-viewer-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,.25);font-size:13px;gap:10px}
+.port-viewer-empty .icon{font-size:40px;opacity:.4}
+
+/* 태그 편집 (관리자 — 뷰어 하단) */
+.port-tag-editor{display:none;padding:8px 20px 12px;background:#0f1e2d;border-top:1px solid rgba(77,184,240,.08);gap:6px;align-items:center;flex-wrap:wrap}
+.admin-mode .port-tag-editor{display:flex}
+.port-tag-input{flex:1;min-width:140px;padding:5px 10px;border:1px solid rgba(77,184,240,.3);border-radius:8px;background:rgba(77,184,240,.07);color:#ddeeff;font-size:12px;font-family:inherit;outline:none}
+.port-tag-input::placeholder{color:rgba(255,255,255,.2)}
+.port-tag-save{padding:5px 14px;border-radius:8px;border:none;background:rgba(77,184,240,.25);color:var(--sky);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+
+.port-empty{padding:60px 0;text-align:center;color:var(--text3);font-size:13px;line-height:2;background:#0a1420;border-radius:var(--r)}
 .port-empty .icon{font-size:38px;margin-bottom:8px}
 /* 크롭 편집 모달 */
 .crop-modal{display:none;position:fixed;inset:0;z-index:3500;background:rgba(8,20,32,.86);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
@@ -291,7 +308,6 @@ textarea.msg-box:focus{border-color:var(--sky)}
 @media(max-width:480px){
   .hero h1{font-size:28px}.card{padding:18px 16px}
   .opt-cards{grid-template-columns:1fr 1fr}
-  .port-grid{grid-template-columns:1fr 1fr}
 }
 /* ── 수량 팝업 ── */
 .qty-popup{position:fixed;z-index:9000;background:var(--white);border:2px solid var(--sky);border-radius:16px;padding:12px 16px 14px;box-shadow:0 -4px 24px rgba(77,184,240,.22),0 8px 32px rgba(77,184,240,.18);display:none;flex-direction:column;align-items:center;gap:8px;min-width:170px;transform:translateX(-50%)}
@@ -398,11 +414,37 @@ textarea.msg-box:focus{border-color:var(--sky)}
       <span class="sec-badge">갤러리</span>
     </div>
     <div id="portStatus" style="display:none;padding:18px;text-align:center;font-size:13px;color:var(--text3)">🔄 불러오는 중...</div>
-    <div class="port-grid" id="portGrid">
-      <div class="port-empty" id="portEmpty">
-        <div class="icon">🖼</div>
-        <div>portfolio 폴더에 이미지를 업로드하면<br>자동으로 여기에 표시돼요</div>
+    <div class="port-player" id="portPlayer" style="display:none">
+      <!-- 왼쪽 플레이리스트 -->
+      <div class="port-playlist">
+        <div class="port-playlist-head">
+          <div class="port-playlist-title">Playlist</div>
+          <div class="port-playlist-count" id="portCount"></div>
+        </div>
+        <div class="port-list" id="portList"></div>
       </div>
+      <!-- 오른쪽 뷰어 -->
+      <div class="port-viewer" id="portViewer">
+        <div class="port-viewer-img-wrap" id="portViewerWrap">
+          <div class="port-viewer-empty"><div class="icon">🖼</div><div>왼쪽에서 작품을 선택해 주세요</div></div>
+        </div>
+        <div class="port-tag-editor">
+          <span style="font-size:11px;color:rgba(255,255,255,.4);flex-shrink:0">태그:</span>
+          <input class="port-tag-input" id="portTagInput" placeholder="태그1, 태그2 (쉼표로 구분)">
+          <button class="port-tag-save" onclick="savePortTags()">저장</button>
+        </div>
+        <div class="port-viewer-bar" id="portViewerBar" style="display:none">
+          <div class="port-viewer-name" id="portViewerName"></div>
+          <div class="port-viewer-nav">
+            <button onclick="portNav(-1)">‹ 이전</button>
+            <button onclick="portNav(1)">다음 ›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="port-empty" id="portEmpty" style="display:none">
+      <div class="icon">🖼</div>
+      <div>portfolio 폴더에 이미지를 업로드하면<br>자동으로 여기에 표시돼요</div>
     </div>
   </section>
 
@@ -994,14 +1036,17 @@ function cancelApply(){
 var GITHUB_USER   = 'Tmabe';
 var GITHUB_REPO   = 'momuuko';
 var GITHUB_FOLDER = 'portfolio';
-var imgs=[], expandedIdx=-1;
+var imgs=[], _portSel=-1;
 /* cropData: { [imgIndex]: {posX:%, posY:%, zoom:%} } */
 var cropData = {};
+/* tagsData: { [imgIndex]: string[] } — localStorage에 저장 */
+var tagsData = {};
 
 function loadPortfolio(){
   var status=document.getElementById('portStatus');
-  var grid=document.getElementById('portGrid');
-  status.style.display='block'; status.textContent='🔄 불러오는 중...'; grid.innerHTML='';
+  status.style.display='block'; status.textContent='🔄 불러오는 중...';
+  document.getElementById('portPlayer').style.display='none';
+  document.getElementById('portEmpty').style.display='none';
   fetch('https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/'+GITHUB_FOLDER)
     .then(function(r){if(!r.ok)throw new Error('API '+r.status);return r.json();})
     .then(function(data){
@@ -1012,111 +1057,126 @@ function loadPortfolio(){
           imgs.push({src:'https://'+GITHUB_USER+'.github.io/'+GITHUB_REPO+'/'+GITHUB_FOLDER+'/'+encodeURIComponent(f.name),cap:f.name.replace(/\.[^.]+$/,'')});
         }
       });
-      renderPort();
+      if(!imgs.length){document.getElementById('portEmpty').style.display='block';return;}
+      document.getElementById('portPlayer').style.display='grid';
+      document.getElementById('portCount').textContent='총 '+imgs.length+'개';
+      renderPortList();
+      portSelect(0);
     })
     .catch(function(err){status.textContent='⚠ 이미지를 불러오지 못했어요.'; console.error(err);});
 }
 
-function renderPort(){
-  var g=document.getElementById('portGrid'); g.innerHTML='';
-  if(!imgs.length){
-    var em=document.createElement('div'); em.className='port-empty';
-    em.innerHTML='<div class="icon">🖼</div><div>portfolio 폴더에 이미지를 업로드하면<br>자동으로 여기에 표시돼요</div>';
-    g.appendChild(em); return;
-  }
+function renderPortList(){
+  var list=document.getElementById('portList'); list.innerHTML='';
   imgs.forEach(function(img,i){
-    var item=document.createElement('div');
-    item.className='port-item'+(i===0?' first-item':'');
-    item.id='port-item-'+i;
+    var li=document.createElement('div'); li.className='port-li'; li.id='port-li-'+i;
+    li.setAttribute('data-idx',i);
+
+    /* 번호 */
+    var num=document.createElement('div'); num.className='port-li-num'; num.textContent=i+1;
 
     /* 썸네일 */
-    var tw=document.createElement('div'); tw.className='thumb-wrap';
-    var im=document.createElement('img'); im.className='thumb-img'; im.src=img.src; im.alt=img.cap; im.loading=i===0?'eager':'lazy';
-    applyCrop(im,i); /* object-position 적용 */
-    var ov=document.createElement('div'); ov.className='t-ov'; ov.textContent='🔍';
-    var cap=document.createElement('div'); cap.className='t-cap'; cap.textContent=img.cap;
-    tw.appendChild(im); tw.appendChild(ov); tw.appendChild(cap);
-
-    /* 크롭 버튼 (관리자 + 일반 썸네일) */
-    if(isAdmin&&i!==0){
-      var crBtn=document.createElement('button'); crBtn.className='t-crop'; crBtn.title='썸네일 편집'; crBtn.textContent='✂';
-      (function(idx){crBtn.onclick=function(e){e.stopPropagation();openCropModal(idx);};})(i);
-      tw.appendChild(crBtn);
+    var th=document.createElement('img'); th.className='port-li-thumb'; th.alt=img.cap; th.loading='lazy';
+    /* cropData 반영 */
+    var c=cropData[i];
+    if(c){
+      th.src=img.src;
+      th.style.objectFit='cover';
+      th.style.objectPosition=(c.posX!==undefined?c.posX:50)+'% '+(c.posY!==undefined?c.posY:0)+'%';
+    } else {
+      th.src=img.src;
     }
 
-    /* 클릭: 첫 장은 그냥 보여주기, 나머지는 인라인 확장 */
-    if(i!==0){
-      (function(idx){tw.onclick=function(){toggleExpand(idx);};})(i);
+    /* 정보 */
+    var info=document.createElement('div'); info.className='port-li-info';
+    var name=document.createElement('div'); name.className='port-li-name'; name.textContent=img.cap;
+    var tags=document.createElement('div'); tags.className='port-li-tags';
+    var tArr=(tagsData[i]||[]);
+    tArr.forEach(function(t,ti){
+      var tg=document.createElement('span'); tg.className='port-li-tag'+(ti%2===1?' pk':''); tg.textContent=t;
+      tags.appendChild(tg);
+    });
+    info.appendChild(name); info.appendChild(tags);
+
+    /* 관리자 버튼 — admin 모드에서만 DOM에 추가 */
+    var adm=document.createElement('div'); adm.className='port-li-admin';
+    if(isAdmin){
+      var cropBtn=document.createElement('button'); cropBtn.className='btn-crop'; cropBtn.title='크롭'; cropBtn.textContent='✂';
+      (function(idx){cropBtn.onclick=function(e){e.stopPropagation();openCropModal(idx);};})(i);
+      var delBtn=document.createElement('button'); delBtn.className='btn-del'; delBtn.title='삭제'; delBtn.textContent='✕';
+      (function(idx){delBtn.onclick=function(e){e.stopPropagation();
+        customConfirm('"<span>'+imgs[idx].cap+'</span>" 이미지를 목록에서 제거할까요?<br><small style="color:var(--text3)">GitHub에서는 직접 삭제해 주세요</small>').then(function(yes){
+          if(!yes)return;
+          imgs.splice(idx,1);
+          if(_portSel>=imgs.length)_portSel=imgs.length-1;
+          document.getElementById('portCount').textContent='총 '+imgs.length+'개';
+          renderPortList();
+          if(imgs.length)portSelect(_portSel>=0?_portSel:0);
+          else{document.getElementById('portPlayer').style.display='none';document.getElementById('portEmpty').style.display='block';}
+        });
+      };})(i);
+      adm.appendChild(cropBtn); adm.appendChild(delBtn);
     }
 
-    /* 인라인 확장 패널 */
-    var exp=document.createElement('div'); exp.className='port-expand'; exp.id='port-exp-'+i;
-    var expImg=document.createElement('img'); expImg.className='port-expand-img'; expImg.src=img.src; expImg.alt=img.cap;
-    var expBar=document.createElement('div'); expBar.className='port-expand-bar';
-    var nav=document.createElement('div'); nav.className='port-expand-nav';
-    var prevBtn=document.createElement('button'); prevBtn.textContent='‹ 이전';
-    var nextBtn=document.createElement('button'); nextBtn.textContent='다음 ›';
-    (function(idx){prevBtn.onclick=function(){navigateExpand(idx,-1);};nextBtn.onclick=function(){navigateExpand(idx,1);};})(i);
-    nav.appendChild(prevBtn); nav.appendChild(nextBtn);
-    var capName=document.createElement('span'); capName.style.cssText='font-size:12px;color:var(--text2)'; capName.textContent=img.cap;
-    var closeBtn=document.createElement('button'); closeBtn.className='lb-close-btn'; closeBtn.textContent='✕';
-    (function(idx){closeBtn.onclick=function(){closeExpand(idx);};})(i);
-    expBar.appendChild(nav); expBar.appendChild(capName); expBar.appendChild(closeBtn);
-    exp.appendChild(expImg); exp.appendChild(expBar);
-
-    item.appendChild(tw); item.appendChild(exp);
-    g.appendChild(item);
+    (function(idx){li.onclick=function(){portSelect(idx);};})(i);
+    li.appendChild(num); li.appendChild(th); li.appendChild(info); li.appendChild(adm);
+    list.appendChild(li);
   });
 }
 
-function applyCrop(imgEl,idx){
-  var c=cropData[idx];
-  /* <img> 태그를 숨기고 부모(.thumb-wrap)에 background-image로 크롭 표현 */
-  var tw=imgEl.parentElement;
-  if(!tw)return;
-  if(c){
-    imgEl.style.visibility='hidden';
-    tw.style.backgroundImage='url("'+imgEl.src+'")';
-    tw.style.backgroundSize=(c.zoom||100)+'%';
-    tw.style.backgroundRepeat='no-repeat';
-    /* posX: 0%=왼쪽, 100%=오른쪽 / posY: 0%=위, 100%=아래 */
-    tw.style.backgroundPosition=(c.posX!==undefined?c.posX:50)+'% '+(c.posY!==undefined?c.posY:0)+'%';
-  } else {
-    imgEl.style.visibility='';
-    tw.style.backgroundImage='';
-    tw.style.backgroundSize='';
-    tw.style.backgroundPosition='';
-  }
+function portSelect(idx){
+  if(idx<0||idx>=imgs.length)return;
+  _portSel=idx;
+
+  /* 리스트 active */
+  document.querySelectorAll('.port-li').forEach(function(el){el.classList.remove('active');});
+  var li=document.getElementById('port-li-'+idx);
+  if(li){li.classList.add('active');li.scrollIntoView({behavior:'smooth',block:'nearest'});}
+
+  /* 뷰어 */
+  var wrap=document.getElementById('portViewerWrap');
+  wrap.innerHTML='';
+  var img=document.createElement('img'); img.className='port-viewer-img loading'; img.alt=imgs[idx].cap;
+  img.onload=function(){img.classList.remove('loading');};
+  img.src=imgs[idx].src;
+  wrap.appendChild(img);
+
+  /* 뷰어 바 */
+  document.getElementById('portViewerBar').style.display='flex';
+  document.getElementById('portViewerName').textContent=imgs[idx].cap;
+
+  /* 태그 에디터 input 업데이트 */
+  var tagInput=document.getElementById('portTagInput');
+  if(tagInput)tagInput.value=(tagsData[idx]||[]).join(', ');
 }
 
-function toggleExpand(idx){
-  if(expandedIdx===idx){closeExpand(idx);return;}
-  if(expandedIdx!==-1)closeExpand(expandedIdx);
-  expandedIdx=idx;
-  var item=document.getElementById('port-item-'+idx);
-  if(item)item.classList.add('expanded');
-  var exp=document.getElementById('port-exp-'+idx);
-  if(exp)exp.classList.add('open');
-  setTimeout(function(){
-    var e=document.getElementById('port-exp-'+idx);
-    if(e)e.scrollIntoView({behavior:'smooth',block:'nearest'});
-  },80);
+function portNav(dir){
+  var next=_portSel+dir;
+  if(next<0)next=imgs.length-1;
+  if(next>=imgs.length)next=0;
+  portSelect(next);
 }
-function closeExpand(idx){
-  var item=document.getElementById('port-item-'+idx);
-  if(item)item.classList.remove('expanded');
-  var exp=document.getElementById('port-exp-'+idx);
-  if(exp)exp.classList.remove('open');
-  if(expandedIdx===idx)expandedIdx=-1;
+
+function savePortTags(){
+  if(_portSel<0)return;
+  var raw=document.getElementById('portTagInput').value;
+  var arr=raw.split(',').map(function(s){return s.trim();}).filter(Boolean);
+  tagsData[_portSel]=arr;
+  renderPortList();
+  portSelect(_portSel);
+  saveToStorage();
 }
-function navigateExpand(currentIdx,dir){
-  closeExpand(currentIdx);
-  var next=currentIdx+dir;
-  /* 첫 장(0)은 건너뜀, 범위 벗어나면 반대편으로 순환 */
-  if(next<1)next=imgs.length-1;
-  if(next>=imgs.length)next=1;
-  if(next===currentIdx)return;
-  setTimeout(function(){toggleExpand(next);},50);
+
+function applyCrop(imgEl,idx){
+  /* 플레이리스트 썸네일 (<img> 태그) */
+  var c=cropData[idx];
+  if(c){
+    imgEl.style.objectFit='cover';
+    imgEl.style.objectPosition=(c.posX!==undefined?c.posX:50)+'% '+(c.posY!==undefined?c.posY:0)+'%';
+  } else {
+    imgEl.style.objectFit='cover';
+    imgEl.style.objectPosition='50% 0%';
+  }
 }
 
 /* ── 크롭 모달 ── */
@@ -1217,12 +1277,11 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 function saveCrop(){
   cropData[_cropIdx]={posX:_cropPosX,posY:_cropPosY,zoom:_cropZoom};
-  /* 즉시 썸네일에 반영 */
-  var thumbImg=document.querySelector('#port-item-'+_cropIdx+' .thumb-img');
-  if(thumbImg){
-    /* src가 아직 없으면 설정 */
-    if(!thumbImg.src&&imgs[_cropIdx])thumbImg.src=imgs[_cropIdx].src;
-    applyCrop(thumbImg,_cropIdx);
+  /* 플레이리스트 썸네일 갱신 */
+  var li=document.getElementById('port-li-'+_cropIdx);
+  if(li){
+    var th=li.querySelector('.port-li-thumb');
+    if(th)applyCrop(th,_cropIdx);
   }
   saveToStorage();
   closeCropModal();
@@ -1778,7 +1837,7 @@ function saveToStorage(){
   try{
     var readmeRaw=document.getElementById('readmeView')?document.getElementById('readmeView').dataset.raw||'':'';
     var applyRaw=document.getElementById('applyView')?document.getElementById('applyView').dataset.raw||'':'';
-    var data={heroData:heroData,chipsData:chipsData,slots:slots,formSections:formSections,readmeRaw:readmeRaw,applyRaw:applyRaw,cropData:cropData};
+    var data={heroData:heroData,chipsData:chipsData,slots:slots,formSections:formSections,readmeRaw:readmeRaw,applyRaw:applyRaw,cropData:cropData,tagsData:tagsData};
     localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
   }catch(e){console.warn('저장 실패',e);}
 }
@@ -1806,6 +1865,7 @@ function loadFromStorage(){
       if(rv2){rv2.dataset.raw=data.noticeRaw;rv2.textContent=data.noticeRaw||'작가님이 작성한 안내사항이 표시됩니다.';}
     }
     if(data.cropData)cropData=data.cropData;
+    if(data.tagsData)tagsData=data.tagsData;
     return true;
   }catch(e){console.warn('불러오기 실패',e);return false;}
 }
