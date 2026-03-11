@@ -1061,9 +1061,10 @@ function loadPortfolio(){
       });
       if(!imgs.length){document.getElementById('portEmpty').style.display='block';return;}
       document.getElementById('portPlayer').style.display='grid';
+     // ...
       document.getElementById('portCount').textContent='총 '+imgs.length+'개';
       renderPortList();
-      portSelect(0);
+      portSelect(0, true); // true를 넣어 초기 스크롤 강제 이동을 막습니다.
     })
     .catch(function(err){status.textContent='⚠ 이미지를 불러오지 못했어요.'; console.error(err);});
 }
@@ -1987,4 +1988,5 @@ if(evField)evField.addEventListener('input',function(){document.getElementById('
 </script>
 </body>
 </html>
+
 
