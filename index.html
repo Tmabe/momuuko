@@ -2430,20 +2430,72 @@ async function _ghPutFile(user,repo,token,path,content64,msg,sha){
   return res;
 }
 
+/* ══════════════════════════════════════════
+   1번 · GitHub 자동 배포 (완전 복구판)
+══════════════════════════════════════════ */
 async function deployToGitHub(){
   if(isAdmin){_showToastMsg('⚠️ GitHub 배포는 전용 비밀번호로 접근해주세요','#ef4444');return;}
   var c=_ghCfg();
   if(!c.token){openGhModal();_showToastMsg('먼저 GitHub 설정을 입력해주세요','#ef4444');return;}
   closeGhModal();
 
- var wasAdmin = document.documentElement.classList.contains('admin-mode');
+  var wasAdmin = document.documentElement.classList.contains('admin-mode');
   if(wasAdmin) document.documentElement.classList.remove('admin-mode');
   var adminToast = document.getElementById('adminToast');
+  var adminToastDisplay = adminToast ? adminToast.style.display : '';
   if(adminToast) {
     adminToast.style.display = '';
     adminToast.classList.remove('show');
   }
 
+  /* 누락되었던 필수 데이터 수집 코드를 꽉 채워 넣었습니다 */
+  var readmeRaw=document.getElementById('readmeView')?document.getElementById('readmeView').dataset.raw||'':'';
+  var applyRaw=document.getElementById('applyView')?document.getElementById('applyView').dataset.raw||'':'';
+  var baked={
+    heroData:heroData, 
+    chipsData:chipsData, 
+    slots:slots, 
+    formSections:formSections, 
+    readmeRaw:readmeRaw, 
+    applyRaw:applyRaw, 
+    applyQuestions:applyQuestions, 
+    cropData:cropData, 
+    tagsData:tagsData, 
+    commissions:commissions
+  };
+  
+  /* 팝업창이 뜨기 전에 깨끗한 화면을 먼저 캡처합니다 */
+  var html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  
+  /* 캡처 완료 후 사용자에게 배포 중 메시지 표시 */
+  _showToastMsg('🚀 GitHub에 배포 중...','#8b5cf6');
+
+  if(wasAdmin) {
+    document.documentElement.classList.add('admin-mode');
+    if(adminToast) adminToast.classList.add('show');
+  }
+
+  /* 파서 오류 방지를 위해 script 단어 쪼개기 */
+  var sStart = '<scr' + 'ipt>';
+  var sEnd = '</scr' + 'ipt>';
+  var inject = sStart + 'window.__BAKED__=' + JSON.stringify(baked) + ';' + sEnd;
+  
+  var reg = new RegExp('<scr'+'ipt>window\\.__BAKED__=[\\s\\S]*?<\\/scr'+'ipt>\\n?', 'g');
+  html = html.replace(reg, '');
+  html = html.replace(/(<head[^>]*>)/i,'$1\n'+inject);
+  
+  var content64=btoa(unescape(encodeURIComponent(html)));
+  try{
+    var sha=await _ghGetSha(c.user,c.repo,c.token,'index.html');
+    var res=await _ghPutFile(c.user,c.repo,c.token,'index.html',content64,'✨ 페이지 업데이트: '+new Date().toLocaleString('ko-KR'),sha);
+    if(res.ok){
+      _showToastMsg('🚀 배포 완료! 약 30초 후 반영돼요','#10b981');
+    }else{
+      var err=await res.json();
+      _showToastMsg('❌ 배포 실패: '+(err.message||res.status),'#ef4444');
+    }
+  }catch(e){_showToastMsg('❌ 오류: '+e.message,'#ef4444');}
+}
   var readmeRaw=document.getElementById('readmeView')?document.getElementById('readmeView').dataset.raw||'':'';
   // ... (중략: var baked = ... 등 그대로 유지) ...
   
