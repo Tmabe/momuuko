@@ -20,14 +20,20 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--sky-bg);color:var(--
 .wrap{max-width:1080px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
 .section{margin-bottom:56px}
 
-/* ── 오른쪽 고정 그룹 (빠른이동 + 미리보기) ── */
+/* ── 페이지 외부 레이아웃 (iframe 호환) ── */
+.page-outer{display:flex;align-items:flex-start;position:relative}
+.page-main{flex:1;min-width:0}
+/* ── 오른쪽 고정 그룹 (sticky — iframe에서도 동작) ── */
 .right-group{
-  position:fixed;top:50%;right:18px;transform:translateY(-50%);
-  z-index:500;display:flex;flex-direction:column;align-items:center;gap:10px;
-  max-height:92vh;
+  position:sticky;top:20px;
+  flex-shrink:0;width:130px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  max-height:calc(100vh - 40px);
+  padding-right:8px;
+  align-self:flex-start;
 }
 /* 사이드 네비 */
-.side-nav{display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 9px 12px;border-radius:18px;background:var(--white);border:1px solid var(--border);box-shadow:var(--sh-lg);flex-shrink:0}
+.side-nav{display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 9px 12px;border-radius:18px;background:var(--white);border:1px solid var(--border);box-shadow:var(--sh-lg);flex-shrink:0;width:118px}
 .side-nav-title{width:100px;padding:5px 0;font-size:10px;font-weight:900;text-align:center;color:var(--text2);border-radius:8px;background:linear-gradient(180deg,var(--sky-pl),var(--white));border:1px solid var(--border)}
 .side-nav button{width:100px;height:33px;border-radius:10px;border:1px solid var(--border);background:linear-gradient(180deg,var(--sky-l),var(--sky));color:var(--white);font-weight:700;font-size:11px;font-family:inherit;cursor:pointer;box-shadow:0 3px 10px rgba(77,184,240,.28),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .15s,box-shadow .15s}
 .side-nav button:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(77,184,240,.38)}
@@ -316,8 +322,9 @@ textarea.msg-box:focus{border-color:var(--sky)}
 .admin-mode .chip-add-btn{display:inline-flex}
 /* 반응형 */
 @media(max-width:860px){
-  .form-layout{grid-template-columns:1fr}
+  .page-outer{display:block}
   .right-group{display:none}
+  .form-layout{grid-template-columns:1fr}
   .mob-preview-btn{display:block}
   .hero{padding:40px 20px 28px}
   .wrap{padding:0 20px}
@@ -367,36 +374,8 @@ textarea.msg-box:focus{border-color:var(--sky)}
 </head>
 <body>
 
-<!-- 오른쪽 고정 그룹 -->
-<div class="right-group">
-
-<!-- 빠른이동 -->
-<div class="side-nav">
-  <div class="side-nav-title">빠른 이동</div>
-  <button onclick="goTo('slot-sec')">슬롯</button>
-  <button class="pk" onclick="goTo('port-sec')">포트폴리오</button>
-  <button class="pk" onclick="goTo('form-sec')">의뢰양식</button>
-  <button onclick="goTo('readme-anchor')">READ ME</button>
-  <button onclick="goToTop()">맨위로</button>
-  <div class="admin-dot" title="관리자 모드 해제" onclick="exitAdmin()"></div>
-</div>
-
-<!-- 미리보기 패널 (항상 표시) -->
-<div class="preview-panel">
-  <div class="pp-head">
-    <div class="pp-head-title">미리보기</div>
-  </div>
-  <div class="pp-body" id="ppBody" contenteditable="true" spellcheck="false"></div>
-  <div class="pp-foot">
-    <button id="ppResetBtn" class="pp-reset-btn" onclick="resetPreview()">↺ 초기화</button>
-    <div class="pp-action-row">
-      <button class="pp-btn-copy" onclick="copyPreview()">📋 복사</button>
-      <button class="pp-btn-gen" onclick="generateForm()">생성</button>
-    </div>
-  </div>
-</div>
-
-</div><!-- /right-group -->
+<div class="page-outer">
+<div class="page-main">
 
 <!-- 히어로 -->
 <header class="hero">
@@ -491,7 +470,7 @@ textarea.msg-box:focus{border-color:var(--sky)}
   <section class="section" id="form-sec">
     <div class="sec-head">
       <span class="sec-num">02</span><span class="sec-title">의뢰 양식 생성기</span>
-      <span class="sec-badge">예상 가격</span>
+      <span class="sec-badge">LIVE</span>
     </div>
     <div class="form-layout">
       <div class="form-left">
@@ -562,9 +541,40 @@ textarea.msg-box:focus{border-color:var(--sky)}
       </div>
     </div>
   </section>
+</div><!-- /page-main -->
+
+<!-- 오른쪽 고정 그룹 (sticky) -->
+<div class="right-group">
+
+<!-- 빠른이동 -->
+<div class="side-nav">
+  <div class="side-nav-title">빠른 이동</div>
+  <button onclick="goTo('slot-sec')">슬롯</button>
+  <button class="pk" onclick="goTo('port-sec')">포트폴리오</button>
+  <button class="pk" onclick="goTo('form-sec')">의뢰양식</button>
+  <button onclick="goTo('readme-anchor')">READ ME</button>
+  <button onclick="goToTop()">맨위로</button>
+  <div class="admin-dot" title="관리자 모드 해제" onclick="exitAdmin()"></div>
 </div>
 
-<!-- 모바일 버튼 -->
+<!-- 미리보기 패널 -->
+<div class="preview-panel">
+  <div class="pp-head">
+    <div class="pp-head-title">미리보기</div>
+    <div class="pp-head-badge">LIVE</div>
+  </div>
+  <div class="pp-body" id="ppBody" contenteditable="true" spellcheck="false"></div>
+  <div class="pp-foot">
+    <button id="ppResetBtn" class="pp-reset-btn" onclick="resetPreview()">↺ 초기화</button>
+    <div class="pp-action-row">
+      <button class="pp-btn-copy" onclick="copyPreview()">📋 복사</button>
+      <button class="pp-btn-gen" onclick="generateForm()">생성</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /right-group -->
+</div><!-- /page-outer -->
 <button class="mob-preview-btn" id="mobPrevBtn" onclick="openMobDrawer()" style="display:none">📋 양식 미리보기</button>
 
 <!-- 모바일 드로어 -->
@@ -2003,4 +2013,3 @@ if(evField)evField.addEventListener('input',function(){document.getElementById('
 </script>
 </body>
 </html>
-
