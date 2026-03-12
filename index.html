@@ -20,8 +20,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--sky-bg);color:var(--
 .wrap{max-width:1080px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
 .section{margin-bottom:56px}
 
+/* ── 오른쪽 고정 그룹 (빠른이동 + 미리보기) ── */
+.right-group{
+  position:fixed;top:50%;right:18px;transform:translateY(-50%);
+  z-index:500;display:flex;flex-direction:column;align-items:center;gap:10px;
+  max-height:92vh;
+}
 /* 사이드 네비 */
-.side-nav{position:fixed;top:50%;right:18px;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;z-index:500;padding:10px 9px 12px;border-radius:18px;background:var(--white);border:1px solid var(--border);box-shadow:var(--sh-lg)}
+.side-nav{display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 9px 12px;border-radius:18px;background:var(--white);border:1px solid var(--border);box-shadow:var(--sh-lg);flex-shrink:0}
 .side-nav-title{width:100px;padding:5px 0;font-size:10px;font-weight:900;text-align:center;color:var(--text2);border-radius:8px;background:linear-gradient(180deg,var(--sky-pl),var(--white));border:1px solid var(--border)}
 .side-nav button{width:100px;height:33px;border-radius:10px;border:1px solid var(--border);background:linear-gradient(180deg,var(--sky-l),var(--sky));color:var(--white);font-weight:700;font-size:11px;font-family:inherit;cursor:pointer;box-shadow:0 3px 10px rgba(77,184,240,.28),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .15s,box-shadow .15s}
 .side-nav button:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(77,184,240,.38)}
@@ -30,6 +36,27 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--sky-bg);color:var(--
 .admin-dot{display:none;width:8px;height:8px;border-radius:50%;cursor:pointer;background:linear-gradient(135deg,var(--sky),var(--pink));opacity:.6;box-shadow:0 0 6px rgba(77,184,240,.6);transition:opacity .2s}
 .admin-dot:hover{opacity:1}
 .admin-mode .admin-dot{display:block}
+/* ── 미리보기 패널 (항상 표시, 접기 없음) ── */
+.preview-panel{
+  width:177px;background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--r);box-shadow:var(--sh-lg);
+  overflow:hidden;display:flex;flex-direction:column;flex-shrink:1;min-height:0;
+}
+.pp-head{background:linear-gradient(135deg,var(--sky-pl),var(--pink-pl));padding:8px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:4px;flex-shrink:0}
+.pp-head-title{font-size:9px;font-weight:900;color:var(--text2);letter-spacing:.02em;white-space:nowrap}
+.pp-head-badge{font-size:8px;font-weight:700;padding:1px 5px;border-radius:5px;background:linear-gradient(135deg,var(--sky),var(--pink));color:var(--white);flex-shrink:0;animation:ppLivePulse 2.4s ease-in-out infinite}
+@keyframes ppLivePulse{0%,100%{opacity:1}50%{opacity:.45}}
+.pp-body{padding:9px 10px;overflow-y:auto;font-size:9px;line-height:1.75;white-space:pre-wrap;font-family:'Noto Sans KR',sans-serif;min-height:70px;max-height:220px;outline:none;cursor:text;flex:1}
+.pp-body:focus{background:var(--sky-bg)}
+.pp-empty{color:var(--text3);font-size:9px;line-height:1.75}
+.pp-foot{padding:7px 8px 8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.pp-reset-btn{display:none;width:100%;padding:4px;border-radius:6px;border:1px solid var(--border);background:var(--sky-bg);font-size:9px;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit}
+.pp-reset-btn:hover{border-color:var(--sky);color:var(--sky)}
+.pp-action-row{display:flex;gap:5px}
+.pp-action-row button{flex:1;padding:7px 4px;font-size:9.5px;font-weight:700;border-radius:8px;border:none;font-family:inherit;cursor:pointer;transition:opacity .15s}
+.pp-action-row button:active{opacity:.75}
+.pp-btn-copy{background:linear-gradient(135deg,var(--sky),#2da0d8);color:#fff}
+.pp-btn-gen{background:linear-gradient(135deg,var(--pink-l),var(--pink));color:#fff}
 
 /* 히어로 */
 .hero{padding:60px 32px 40px;max-width:1080px;margin:0 auto}
@@ -168,7 +195,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--sky-bg);color:var(--
 .lb-close-btn:hover{background:var(--pink-pl);color:var(--pink-d);border-color:var(--border-p)}
 
 /* 의뢰 폼 */
-.form-layout{display:grid;gap:24px;grid-template-columns:1fr 360px;align-items:start}
+.form-layout{display:grid;gap:24px;grid-template-columns:1fr;align-items:start}
 .form-left{display:flex;flex-direction:column;gap:18px}
 .opt-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:10px}
 .opt-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:13px 14px;cursor:pointer;transition:all .18s;box-shadow:var(--sh);user-select:none}
@@ -204,16 +231,7 @@ textarea.msg-box:focus{border-color:var(--sky)}
 .add-sec-btn:hover{background:var(--sky-l);color:var(--white);border-style:solid}
 .admin-mode .add-sec-btn{display:block}
 
-/* 미리보기 */
-.preview-panel{position:sticky;top:24px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--sh-lg);overflow:hidden}
-.pp-head{background:linear-gradient(135deg,var(--sky-pl),var(--pink-pl));padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.pp-head-title{font-size:13px;font-weight:700}
-.pp-head-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:linear-gradient(135deg,var(--sky),var(--pink));color:var(--white)}
-.pp-body{padding:16px 18px;max-height:70vh;overflow-y:auto;font-size:12px;line-height:1.9;white-space:pre-wrap;font-family:'Noto Sans KR',sans-serif;min-height:80px;outline:none;cursor:text}
-.pp-body:focus{background:var(--sky-bg);border-radius:0 0 var(--r) var(--r)}
-.pp-empty{color:var(--text3);font-size:12px;line-height:1.9}
-.pp-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px}
-.pp-foot button{flex:1;padding:11px;font-size:13px}
+/* pp-body focus already covered above */
 
 /* 모바일 */
 .mob-preview-btn{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;padding:12px 28px;border-radius:30px;border:none;background:linear-gradient(135deg,var(--sky),var(--pink));color:var(--white);font-family:inherit;font-size:14px;font-weight:700;box-shadow:0 6px 24px rgba(77,184,240,.4),0 0 0 3px rgba(255,255,255,.6);cursor:pointer;transition:all .2s}
@@ -299,9 +317,8 @@ textarea.msg-box:focus{border-color:var(--sky)}
 /* 반응형 */
 @media(max-width:860px){
   .form-layout{grid-template-columns:1fr}
-  .preview-panel{display:none}
+  .right-group{display:none}
   .mob-preview-btn{display:block}
-  .side-nav{display:none}
   .hero{padding:40px 20px 28px}
   .wrap{padding:0 20px}
   .divider{width:calc(100% - 40px)}
@@ -350,7 +367,10 @@ textarea.msg-box:focus{border-color:var(--sky)}
 </head>
 <body>
 
-<!-- 사이드 네비 -->
+<!-- 오른쪽 고정 그룹 -->
+<div class="right-group">
+
+<!-- 빠른이동 -->
 <div class="side-nav">
   <div class="side-nav-title">빠른 이동</div>
   <button onclick="goTo('slot-sec')">슬롯</button>
@@ -360,6 +380,23 @@ textarea.msg-box:focus{border-color:var(--sky)}
   <button onclick="goToTop()">맨위로</button>
   <div class="admin-dot" title="관리자 모드 해제" onclick="exitAdmin()"></div>
 </div>
+
+<!-- 미리보기 패널 (항상 표시) -->
+<div class="preview-panel">
+  <div class="pp-head">
+    <div class="pp-head-title">미리보기</div>
+  </div>
+  <div class="pp-body" id="ppBody" contenteditable="true" spellcheck="false"></div>
+  <div class="pp-foot">
+    <button id="ppResetBtn" class="pp-reset-btn" onclick="resetPreview()">↺ 초기화</button>
+    <div class="pp-action-row">
+      <button class="pp-btn-copy" onclick="copyPreview()">📋 복사</button>
+      <button class="pp-btn-gen" onclick="generateForm()">생성</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /right-group -->
 
 <!-- 히어로 -->
 <header class="hero">
@@ -521,21 +558,6 @@ textarea.msg-box:focus{border-color:var(--sky)}
             <span class="total-bar-lg-won">원</span>
             <span class="total-bar-lg-count" id="selCount">선택 없음</span>
           </div>
-        </div>
-      </div>
-      <!-- PC 미리보기 -->
-      <div class="preview-panel">
-        <div class="pp-head">
-          <div class="pp-head-title">작업양식 미리보기</div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <div class="pp-head-badge">LIVE</div>
-            <button id="ppResetBtn" onclick="resetPreview()" title="자동생성 내용으로 초기화" style="display:none;padding:2px 8px;border-radius:6px;border:1px solid var(--border);background:var(--sky-bg);font-size:10px;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit">↺ 초기화</button>
-          </div>
-        </div>
-        <div class="pp-body" id="ppBody" contenteditable="true" spellcheck="false"></div>
-        <div class="pp-foot">
-          <button class="btn btn-sky" style="font-size:12px;padding:10px" onclick="copyPreview()">📋 복사</button>
-          <button class="btn btn-pink" style="font-size:12px;padding:10px" onclick="generateForm()">양식 생성</button>
         </div>
       </div>
     </div>
