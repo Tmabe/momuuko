@@ -6,3 +6,743 @@
 <title>모무꼬 · 의뢰 관리</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e1a;
+  --card:#111827;
+  --card2:#1a2235;
+  --border:#1e2d45;
+  --sky:#38bdf8;
+  --sky2:#0ea5e9;
+  --pink:#f472b6;
+  --green:#34d399;
+  --yellow:#fbbf24;
+  --red:#f87171;
+  --purple:#a78bfa;
+  --text:#e2e8f0;
+  --text2:#94a3b8;
+  --text3:#4a5568;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh}
+
+/* 로그인 */
+#loginScreen{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);
+}
+.login-box{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:40px;
+  width:340px;
+  text-align:center;
+  box-shadow:0 0 60px rgba(56,189,248,.08);
+}
+.login-logo{font-size:28px;font-weight:900;color:var(--sky);letter-spacing:-1px;margin-bottom:6px}
+.login-sub{font-size:12px;color:var(--text3);margin-bottom:28px}
+.login-input{
+  width:100%;background:#0d1424;border:1.5px solid var(--border);
+  border-radius:10px;padding:13px 16px;font-size:14px;
+  color:var(--text);font-family:inherit;outline:none;transition:border .2s;
+  text-align:center;letter-spacing:2px;
+}
+.login-input:focus{border-color:var(--sky)}
+.login-btn{
+  width:100%;margin-top:12px;padding:13px;
+  background:linear-gradient(135deg,var(--sky2),var(--sky));
+  border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:inherit;transition:opacity .2s;
+}
+.login-btn:hover{opacity:.9}
+.login-err{color:var(--red);font-size:12px;margin-top:8px;min-height:18px}
+
+/* 앱 */
+#app{display:none;min-height:100vh}
+
+/* 헤더 */
+.app-header{
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  padding:16px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.app-logo{font-size:18px;font-weight:900;color:var(--sky);letter-spacing:-0.5px}
+.app-logo span{color:var(--text2);font-weight:400;font-size:13px;margin-left:8px}
+.header-actions{display:flex;gap:8px;align-items:center}
+.stat-pill{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--text2)}
+.stat-pill b{color:var(--sky);margin-left:4px}
+
+/* 메인 */
+.app-body{padding:24px 28px;max-width:1200px;margin:0 auto}
+
+/* 상단 통계 */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.stat-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.stat-value{font-size:28px;font-weight:900;font-family:var(--mono)}
+.stat-value.sky{color:var(--sky)}
+.stat-value.green{color:var(--green)}
+.stat-value.yellow{color:var(--yellow)}
+.stat-value.pink{color:var(--pink)}
+
+/* 툴바 */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.tb-btn{
+  padding:8px 16px;border-radius:10px;border:1.5px solid var(--border);
+  background:var(--card);color:var(--text2);font-size:13px;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:6px;
+}
+.tb-btn:hover{border-color:var(--sky);color:var(--sky)}
+.tb-btn.primary{background:var(--sky2);border-color:var(--sky2);color:#fff}
+.tb-btn.primary:hover{background:var(--sky);border-color:var(--sky)}
+.tb-filter{display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:4px}
+.tf-opt{padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;transition:all .15s;border:none;background:none;font-family:inherit}
+.tf-opt.sel{background:var(--card2);color:var(--text)}
+.tb-search{
+  background:var(--card);border:1.5px solid var(--border);border-radius:10px;
+  padding:8px 14px;color:var(--text);font-size:13px;font-family:inherit;outline:none;
+  transition:border .2s;min-width:180px;
+}
+.tb-search:focus{border-color:var(--sky)}
+
+/* 의뢰 카드 그리드 */
+.comm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.comm-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:20px;position:relative;transition:all .2s;cursor:pointer;
+}
+.comm-card:hover{border-color:var(--sky);transform:translateY(-2px);box-shadow:0 8px 32px rgba(56,189,248,.1)}
+.comm-card.done{border-color:var(--green);background:linear-gradient(135deg,var(--card),#0d1f19)}
+.comm-card.overdue{border-color:var(--red)}
+.cc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.cc-client{font-size:17px;font-weight:700}
+.cc-type{font-size:11px;color:var(--text3);margin-top:3px}
+.cc-amount{font-size:14px;font-weight:700;color:var(--sky);font-family:var(--mono)}
+/* 단계 진행바 */
+.cc-progress{margin-bottom:14px}
+.cc-stages{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:6px}
+.cc-stage{
+  font-size:10px;padding:3px 8px;border-radius:20px;
+  border:1px solid var(--border);color:var(--text3);cursor:pointer;
+  transition:all .15s;font-family:inherit;background:transparent;font-weight:600;
+}
+.cc-stage:hover{border-color:var(--sky);color:var(--sky)}
+.cc-stage.prev{border-color:#1e3a4a;background:#0d2030;color:#4a8fa8}
+.cc-stage.cur{border-color:var(--sky);background:var(--sky);color:#0a0e1a}
+.cc-stage.done-s{border-color:var(--green);background:var(--green);color:#0a0e1a}
+.cc-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.cc-bar-fill{height:100%;border-radius:2px;transition:width .4s;background:linear-gradient(90deg,var(--sky2),var(--sky))}
+.cc-bar-fill.done-bar{background:linear-gradient(90deg,#059669,var(--green))}
+/* 하단 */
+.cc-footer{display:flex;align-items:center;justify-content:space-between}
+.cc-deadline{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.cc-deadline.warn{color:var(--yellow);font-weight:700}
+.cc-deadline.over{color:var(--red);font-weight:700}
+.cc-actions{display:flex;gap:6px}
+.cc-act{
+  font-size:10px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);
+  color:var(--text3);cursor:pointer;font-family:inherit;font-weight:600;
+  background:transparent;transition:all .15s;
+}
+.cc-act:hover{border-color:var(--sky);color:var(--sky)}
+.cc-act.deliver{border-color:var(--green);color:var(--green)}
+.cc-act.deliver:hover{background:var(--green);color:#0a0e1a}
+.cc-act.del{border-color:var(--border)}
+.cc-act.del:hover{border-color:var(--red);color:var(--red)}
+.cc-note{font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5}
+
+/* 빈 상태 */
+.empty-state{
+  text-align:center;padding:60px 20px;color:var(--text3);
+  grid-column:1/-1;
+}
+.empty-state .ei{font-size:48px;margin-bottom:12px}
+.empty-state p{font-size:14px;line-height:1.7}
+
+/* 모달 공통 */
+.modal{
+  display:none;position:fixed;inset:0;z-index:500;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+}
+.modal.open{display:flex;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;width:100%;max-width:480px;
+  box-shadow:0 24px 80px rgba(0,0,0,.5);
+  animation:slideUp .25s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+.modal-head{padding:22px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.modal-close:hover{border-color:var(--red);color:var(--red)}
+.modal-body{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.modal-foot{padding:14px 24px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.field-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.field{
+  width:100%;background:#0d1424;border:1.5px solid var(--border);
+  border-radius:10px;padding:11px 14px;font-size:13px;
+  color:var(--text);font-family:inherit;outline:none;transition:border .2s;
+}
+.field:focus{border-color:var(--sky)}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;border:none}
+.btn-sky{background:var(--sky2);color:#fff}.btn-sky:hover{background:var(--sky)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--sky);color:var(--sky)}
+.btn-red{background:#7f1d1d;color:var(--red);border:1px solid #991b1b}.btn-red:hover{background:#991b1b}
+
+/* 단계 선택 */
+.stage-picker{display:flex;gap:4px;flex-wrap:wrap}
+.sp-btn{
+  padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;
+  border:1.5px solid var(--border);color:var(--text3);cursor:pointer;
+  font-family:inherit;background:transparent;transition:all .15s;
+}
+.sp-btn.sel{border-color:var(--sky);background:var(--sky);color:#0a0e1a}
+
+/* 납품 모달 */
+.dlv-box{max-width:500px}
+.file-zone{
+  border:2px dashed var(--border);border-radius:12px;
+  padding:24px;text-align:center;cursor:pointer;transition:all .15s;
+}
+.file-zone:hover{border-color:var(--sky);background:rgba(56,189,248,.04)}
+.file-list{margin-top:8px;max-height:120px;overflow-y:auto}
+.file-item{font-size:11px;color:var(--text2);padding:3px 0;border-bottom:1px solid var(--border);font-family:var(--mono)}
+.prog{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:8px;display:none}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--sky2),var(--sky));border-radius:2px;transition:width .3s;width:0%}
+
+/* GitHub 모달 */
+.gh-hint{font-size:11px;color:var(--text3);line-height:1.6;background:#0d1424;border-radius:10px;padding:12px 14px;border:1px solid var(--border)}
+.gh-status{font-size:12px;padding:10px 14px;border-radius:10px;font-weight:600;display:none}
+.gh-status.ok{display:block;background:#052e16;color:var(--green);border:1px solid #166534}
+.gh-status.err{display:block;background:#3b0b0b;color:var(--red);border:1px solid #7f1d1d}
+.gh-status.load{display:block;background:#0d1424;color:var(--sky);border:1px solid var(--border)}
+
+/* 토스트 */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:12px 20px;font-size:13px;font-weight:600;color:var(--text);
+  z-index:9999;display:none;white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+#toast.show{display:block;animation:fadeIn .2s ease}
+
+/* 반응형 */
+@media(max-width:700px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .app-body{padding:16px}
+  .app-header{padding:14px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">momuuko</div>
+    <div class="login-sub">의뢰 관리 대시보드 · 비공개</div>
+    <input class="login-input" id="loginInput" type="password" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">입장</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- 앱 -->
+<div id="app">
+  <header class="app-header">
+    <div>
+      <div class="app-logo">momuuko <span>의뢰 관리</span></div>
+    </div>
+    <div class="header-actions">
+      <div class="stat-pill">진행 중 <b id="hStatActive">0</b></div>
+      <div class="stat-pill">이번 달 수익 <b id="hStatIncome">0원</b></div>
+      <button class="tb-btn" onclick="openGhModal()">⚙️ GitHub</button>
+      <button class="tb-btn" style="border-color:var(--red);color:var(--red)" onclick="doLogout()">로그아웃</button>
+    </div>
+  </header>
+
+  <main class="app-body">
+    <!-- 통계 -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">전체 의뢰</div><div class="stat-value sky" id="stTotal">0</div></div>
+      <div class="stat-card"><div class="stat-label">진행 중</div><div class="stat-value yellow" id="stActive">0</div></div>
+      <div class="stat-card"><div class="stat-label">완료</div><div class="stat-value green" id="stDone">0</div></div>
+      <div class="stat-card"><div class="stat-label">이번 달 수익</div><div class="stat-value pink" id="stIncome">0</div></div>
+    </div>
+
+    <!-- 툴바 -->
+    <div class="toolbar">
+      <button class="tb-btn primary" onclick="openModal(-1)">＋ 새 의뢰</button>
+      <div class="tb-filter">
+        <button class="tf-opt sel" data-f="all" onclick="setFilter(this)">전체</button>
+        <button class="tf-opt" data-f="active" onclick="setFilter(this)">진행 중</button>
+        <button class="tf-opt" data-f="done" onclick="setFilter(this)">완료</button>
+        <button class="tf-opt" data-f="overdue" onclick="setFilter(this)">마감초과</button>
+      </div>
+      <input class="tb-search" id="searchInput" placeholder="🔍 이름, 작품 검색..." oninput="renderCards()">
+      <button class="tb-btn" onclick="deployToGitHub()" style="margin-left:auto">🚀 GitHub 배포</button>
+    </div>
+
+    <!-- 의뢰 카드 -->
+    <div class="comm-grid" id="commGrid"></div>
+  </main>
+</div>
+
+<!-- 의뢰 추가/편집 모달 -->
+<div class="modal" id="editModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" id="editTitle">새 의뢰 추가</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-grid">
+        <div>
+          <div class="field-label">의뢰인 닉네임 *</div>
+          <input class="field" id="fClient" placeholder="닉네임">
+        </div>
+        <div>
+          <div class="field-label">작품 종류</div>
+          <input class="field" id="fType" placeholder="전신 일러스트">
+        </div>
+      </div>
+      <div class="field-grid">
+        <div>
+          <div class="field-label">금액 (원)</div>
+          <input class="field" id="fAmount" type="number" placeholder="1100000">
+        </div>
+        <div>
+          <div class="field-label">마감일</div>
+          <input class="field" id="fDeadline" type="date">
+        </div>
+      </div>
+      <div>
+        <div class="field-label">납품용 이메일</div>
+        <input class="field" id="fEmail" type="email" placeholder="example@gmail.com">
+      </div>
+      <div>
+        <div class="field-label">현재 단계</div>
+        <div class="stage-picker" id="stagePicker"></div>
+      </div>
+      <div>
+        <div class="field-label">메모</div>
+        <input class="field" id="fNote" placeholder="특이사항, 요청사항 등">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn btn-sky" onclick="saveModal()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 납품 모달 -->
+<div class="modal" id="dlvModal" onclick="if(event.target===this)closeDlvModal()">
+  <div class="modal-box dlv-box">
+    <div class="modal-head">
+      <div class="modal-title">📦 납품 패키지</div>
+      <button class="modal-close" onclick="closeDlvModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="field-label">의뢰인</div>
+        <input class="field" id="dlvClient" readonly style="opacity:.7">
+      </div>
+      <div>
+        <div class="field-label">이메일</div>
+        <input class="field" id="dlvEmail" type="email" placeholder="example@gmail.com">
+      </div>
+      <div>
+        <div class="field-label">완성 파일 선택</div>
+        <div class="file-zone" onclick="document.getElementById('dlvFile').click()">
+          <div style="font-size:24px;margin-bottom:6px">📁</div>
+          <div style="font-size:13px;font-weight:700;color:var(--sky)">파일 선택하기</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">PSD, PNG, ZIP 등 여러 파일 동시 선택 가능</div>
+        </div>
+        <input type="file" id="dlvFile" multiple style="display:none" onchange="onDlvFileChange(this)">
+        <div class="file-list" id="dlvFileList"></div>
+        <div class="prog" id="dlvProg"><div class="prog-fill" id="dlvProgFill"></div></div>
+      </div>
+      <div>
+        <div class="field-label">이메일 메모</div>
+        <textarea class="field" id="dlvNote" rows="2" style="resize:vertical" placeholder="납품 드립니다 💙 감사합니다!"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeDlvModal()">취소</button>
+      <button class="btn btn-sky" onclick="dlvZip()">📥 ZIP 다운로드</button>
+      <button class="btn btn-sky" onclick="dlvGmail()">📧 Gmail 열기</button>
+    </div>
+  </div>
+</div>
+
+<!-- GitHub 설정 모달 -->
+<div class="modal" id="ghModal" onclick="if(event.target===this)closeGhModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">⚙️ GitHub 연동 설정</div>
+      <button class="modal-close" onclick="closeGhModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="gh-hint">
+        🔐 <b>Personal Access Token</b> 발급 방법<br>
+        GitHub → Settings → Developer settings<br>
+        → Personal access tokens → Tokens (classic)<br>
+        → Generate new token → <b>repo</b> 체크 → 생성<br>
+        <br>
+        ⚠️ 토큰은 탭을 닫으면 사라져요 (보안 유지)
+      </div>
+      <div>
+        <div class="field-label">GitHub Username</div>
+        <input class="field" id="ghUser" placeholder="Tmabe" value="Tmabe">
+      </div>
+      <div>
+        <div class="field-label">Repository</div>
+        <input class="field" id="ghRepo" placeholder="momuuko" value="momuuko">
+      </div>
+      <div>
+        <div class="field-label">Personal Access Token</div>
+        <input class="field" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx">
+      </div>
+      <div id="ghStatus" class="gh-status"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeGhModal()">취소</button>
+      <button class="btn btn-ghost" onclick="testGhToken()">연결 테스트</button>
+      <button class="btn btn-sky" onclick="saveGhSettings()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ─── 설정 ─── */
+/* 비밀번호는 SHA-256 해시로만 저장 — F12로 원문 확인 불가 */
+var DASH_HASH = 'cc8cace2712ebbf2a6e7816c25341b7ee4579a962340c8237966983ffd7d2749';
+var STORAGE_KEY = 'mm_dash_v1';
+var STAGES = ['접수','입금확인','러프','러프컨펌','선화','채색','완성','전달완료'];
+
+async function _hashPw(pw){
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+
+/* ─── 상태 ─── */
+var commissions = [];
+var _editIdx    = -1;
+var _editStage  = 0;
+var _filter     = 'all';
+var _dlvFiles   = [];
+
+/* ─── 로그인 ─── */
+function doLogin(){
+  var v = document.getElementById('loginInput').value;
+  _hashPw(v).then(function(h){
+    if(h === DASH_HASH){
+      sessionStorage.setItem('dash_auth','1');
+      document.getElementById('loginScreen').style.display='none';
+      document.getElementById('app').style.display='block';
+      loadData(); renderAll();
+    } else {
+      document.getElementById('loginErr').textContent='비밀번호가 틀렸어요';
+      document.getElementById('loginInput').value='';
+    }
+  });
+}
+function doLogout(){
+  sessionStorage.removeItem('dash_auth');
+  location.reload();
+}
+/* 자동 로그인 체크 */
+if(sessionStorage.getItem('dash_auth')==='1'){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+}
+
+/* ─── 데이터 ─── */
+function saveData(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(commissions)); }catch(e){}
+}
+function loadData(){
+  try{
+    var raw=localStorage.getItem(STORAGE_KEY);
+    if(raw) commissions=JSON.parse(raw);
+  }catch(e){}
+}
+
+/* ─── 렌더 ─── */
+function renderAll(){ renderStats(); renderCards(); }
+
+function renderStats(){
+  var today=new Date(); today.setHours(0,0,0,0);
+  var active=commissions.filter(function(c){return c.stage<STAGES.length-1;}).length;
+  var done=commissions.filter(function(c){return c.stage===STAGES.length-1;}).length;
+  var now=new Date(); var ym=now.getFullYear()+'-'+(now.getMonth()+1+'').padStart(2,'0');
+  var income=commissions
+    .filter(function(c){return c.paidAt&&c.paidAt.startsWith(ym)&&c.amount;})
+    .reduce(function(s,c){return s+parseInt(c.amount||0);},0);
+  document.getElementById('stTotal').textContent=commissions.length;
+  document.getElementById('stActive').textContent=active;
+  document.getElementById('stDone').textContent=done;
+  document.getElementById('stIncome').textContent=income.toLocaleString();
+  document.getElementById('hStatActive').textContent=active;
+  document.getElementById('hStatIncome').textContent=income.toLocaleString()+'원';
+}
+
+function renderCards(){
+  var q=(document.getElementById('searchInput').value||'').toLowerCase();
+  var today=new Date(); today.setHours(0,0,0,0);
+  var filtered=commissions.filter(function(c,i){
+    c._idx=i;
+    if(q&&!(c.client.toLowerCase().includes(q)||(c.type||'').toLowerCase().includes(q)))return false;
+    if(_filter==='active'&&c.stage===STAGES.length-1)return false;
+    if(_filter==='done'&&c.stage!==STAGES.length-1)return false;
+    if(_filter==='overdue'){
+      if(!c.deadline)return false;
+      var d=new Date(c.deadline); if(d>=today||c.stage===STAGES.length-1)return false;
+    }
+    return true;
+  });
+
+  if(!filtered.length){
+    document.getElementById('commGrid').innerHTML=
+      '<div class="empty-state"><div class="ei">📋</div><p>해당 조건의 의뢰가 없어요</p></div>';
+    return;
+  }
+
+  document.getElementById('commGrid').innerHTML=filtered.map(function(c){
+    var i=c._idx;
+    var isDone=c.stage===STAGES.length-1;
+    var dlClass=''; var dlText='';
+    if(c.deadline){
+      var d=new Date(c.deadline); var diff=Math.ceil((d-today)/86400000);
+      if(isDone){ dlClass=''; dlText='✅ 완료'; }
+      else if(diff<0){ dlClass='over'; dlText='⚠️ '+Math.abs(diff)+'일 초과'; }
+      else if(diff===0){ dlClass='warn'; dlText='📅 오늘 마감'; }
+      else if(diff<=3){ dlClass='warn'; dlText='⏰ '+diff+'일 남음'; }
+      else { dlText=diff+'일 남음'; }
+    }
+    var pct=Math.round(c.stage/(STAGES.length-1)*100);
+    var stages=STAGES.map(function(s,si){
+      var cls=si<c.stage?'prev':si===c.stage?'cur':si===STAGES.length-1&&isDone?'done-s':'';
+      return '<button class="cc-stage '+cls+'" onclick="event.stopPropagation();setStage('+i+','+si+')">'+s+'</button>';
+    }).join('');
+
+    return '<div class="comm-card'+(isDone?' done':dlClass==='over'?' overdue':'')+'" onclick="openModal('+i+')">'
+      +'<div class="cc-header"><div><div class="cc-client">'+c.client+'</div><div class="cc-type">'+(c.type||'')+'</div></div>'
+      +(c.amount?'<div class="cc-amount">'+parseInt(c.amount).toLocaleString()+'원</div>':'')+'</div>'
+      +'<div class="cc-progress"><div class="cc-stages">'+stages+'</div>'
+      +'<div class="cc-bar"><div class="cc-bar-fill'+(isDone?' done-bar':'')+'" style="width:'+pct+'%"></div></div></div>'
+      +(c.note?'<div class="cc-note">📝 '+c.note+'</div>':'')
+      +'<div class="cc-footer"><div class="cc-deadline '+dlClass+'">'+dlText+'</div>'
+      +'<div class="cc-actions" onclick="event.stopPropagation()">'
+      +'<button class="cc-act deliver" onclick="openDlvFor('+i+')">📦 납품</button>'
+      +'<button class="cc-act del" onclick="delComm('+i+')">✕</button>'
+      +'</div></div></div>';
+  }).join('');
+}
+
+function setFilter(el){
+  document.querySelectorAll('.tf-opt').forEach(function(b){b.classList.remove('sel');});
+  el.classList.add('sel'); _filter=el.dataset.f; renderCards();
+}
+
+/* ─── 의뢰 CRUD ─── */
+function setStage(i,s){
+  commissions[i].stage=s;
+  if(s===STAGES.length-1&&!commissions[i].paidAt){
+    commissions[i].paidAt=new Date().toISOString().slice(0,7);
+  }
+  saveData(); renderAll();
+}
+function delComm(i){
+  if(!confirm(commissions[i].client+'님 의뢰를 삭제할까요?'))return;
+  commissions.splice(i,1); saveData(); renderAll();
+}
+
+/* ─── 편집 모달 ─── */
+function openModal(idx){
+  _editIdx=idx;
+  var isNew=idx<0; var c=isNew?{}:commissions[idx];
+  document.getElementById('editTitle').textContent=isNew?'새 의뢰 추가':'의뢰 수정';
+  document.getElementById('fClient').value=c.client||'';
+  document.getElementById('fType').value=c.type||'';
+  document.getElementById('fAmount').value=c.amount||'';
+  document.getElementById('fDeadline').value=c.deadline||'';
+  document.getElementById('fEmail').value=c.email||'';
+  document.getElementById('fNote').value=c.note||'';
+  _editStage=c.stage||0;
+  renderStagePicker();
+  document.getElementById('editModal').classList.add('open');
+}
+function closeModal(){ document.getElementById('editModal').classList.remove('open'); }
+function renderStagePicker(){
+  document.getElementById('stagePicker').innerHTML=STAGES.map(function(s,i){
+    return '<button class="sp-btn'+(i===_editStage?' sel':'')+'" onclick="pickStage('+i+')">'+s+'</button>';
+  }).join('');
+}
+function pickStage(i){
+  _editStage=i; renderStagePicker();
+}
+function saveModal(){
+  var client=document.getElementById('fClient').value.trim();
+  if(!client){alert('의뢰인 닉네임을 입력해주세요');return;}
+  var obj={
+    client:client, type:document.getElementById('fType').value.trim(),
+    amount:document.getElementById('fAmount').value,
+    deadline:document.getElementById('fDeadline').value,
+    email:document.getElementById('fEmail').value.trim(),
+    note:document.getElementById('fNote').value.trim(),
+    stage:_editStage,
+    paidAt:_editIdx>=0?commissions[_editIdx].paidAt:undefined
+  };
+  if(_editIdx<0) commissions.push(obj); else commissions[_editIdx]=obj;
+  saveData(); renderAll(); closeModal();
+}
+
+/* ─── 납품 ─── */
+function openDlvFor(i){
+  var c=commissions[i];
+  _dlvFiles=[];
+  document.getElementById('dlvClient').value=c.client||'';
+  document.getElementById('dlvEmail').value=c.email||'';
+  document.getElementById('dlvNote').value='납품 드립니다 💙 감사합니다!';
+  document.getElementById('dlvFileList').innerHTML='';
+  document.getElementById('dlvProg').style.display='none';
+  document.getElementById('dlvModal').classList.add('open');
+}
+function closeDlvModal(){ document.getElementById('dlvModal').classList.remove('open'); }
+function onDlvFileChange(input){
+  _dlvFiles=Array.from(input.files);
+  var list=document.getElementById('dlvFileList');
+  list.innerHTML=_dlvFiles.map(function(f){
+    return '<div class="file-item">📄 '+f.name+' ('+_fmtSize(f.size)+')</div>';
+  }).join('');
+}
+function _fmtSize(b){if(b<1024)return b+'B';if(b<1048576)return (b/1024).toFixed(1)+'KB';return (b/1048576).toFixed(1)+'MB';}
+async function dlvZip(){
+  if(!_dlvFiles.length){alert('파일을 먼저 선택해주세요');return;}
+  if(!window.JSZip){
+    var s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    document.head.appendChild(s);
+    await new Promise(function(r){s.onload=r;});
+  }
+  var pb=document.getElementById('dlvProg'),pf=document.getElementById('dlvProgFill');
+  pb.style.display='block'; pf.style.width='0%';
+  var zip=new JSZip();
+  var client=document.getElementById('dlvClient').value.trim()||'납품';
+  var folder=zip.folder(client+'_납품파일');
+  for(var i=0;i<_dlvFiles.length;i++){
+    folder.file(_dlvFiles[i].name, await _dlvFiles[i].arrayBuffer());
+    pf.style.width=((i+1)/_dlvFiles.length*80)+'%';
+  }
+  var blob=await zip.generateAsync({type:'blob'});
+  pf.style.width='100%';
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=client+'_납품파일.zip';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();pb.style.display='none';},1500);
+  showToast('📥 ZIP 다운로드 완료!');
+}
+function dlvGmail(){
+  var client=document.getElementById('dlvClient').value.trim();
+  var email=document.getElementById('dlvEmail').value.trim();
+  var note=document.getElementById('dlvNote').value.trim();
+  var su=encodeURIComponent('[모무꼬] '+client+'님 완성본 전달');
+  var bd=encodeURIComponent((client?client+'님, 안녕하세요! 모무꼬입니다 💙\n\n':'안녕하세요! 모무꼬입니다 💙\n\n')
+    +'완성된 작품 파일 전달드립니다.\n\n'+(note?note+'\n\n':'')
+    +'감사합니다!\n— 모무꼬 (@momuuko)');
+  window.open('https://mail.google.com/mail/?view=cm&fs=1'+(email?'&to='+encodeURIComponent(email):'')+
+    '&su='+su+'&body='+bd,'_blank');
+}
+
+/* ─── GitHub ─── */
+function _ghCfg(){ return {user:sessionStorage.getItem('gh_user')||'',repo:sessionStorage.getItem('gh_repo')||'',token:sessionStorage.getItem('gh_token')||''}; }
+function openGhModal(){
+  var c=_ghCfg();
+  document.getElementById('ghUser').value=c.user||'Tmabe';
+  document.getElementById('ghRepo').value=c.repo||'momuuko';
+  document.getElementById('ghToken').value=c.token||'';
+  document.getElementById('ghStatus').className='gh-status';
+  document.getElementById('ghModal').classList.add('open');
+}
+function closeGhModal(){ document.getElementById('ghModal').classList.remove('open'); }
+function saveGhSettings(){
+  sessionStorage.setItem('gh_user', document.getElementById('ghUser').value.trim());
+  sessionStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
+  sessionStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
+  closeGhModal(); showToast('✅ GitHub 설정 저장 완료!');
+}
+async function testGhToken(){
+  var st=document.getElementById('ghStatus');
+  st.className='gh-status load'; st.textContent='연결 확인 중...';
+  var c=_ghCfg();
+  var u=document.getElementById('ghUser').value.trim();
+  var r=document.getElementById('ghRepo').value.trim();
+  var t=document.getElementById('ghToken').value.trim();
+  try{
+    var res=await fetch('https://api.github.com/repos/'+u+'/'+r,{headers:{'Authorization':'token '+t}});
+    if(res.ok){ st.className='gh-status ok'; st.textContent='✅ 연결 성공! 저장을 눌러주세요.'; }
+    else { st.className='gh-status err'; st.textContent='❌ 실패 ('+res.status+'): 토큰과 저장소 이름을 확인해주세요'; }
+  }catch(e){ st.className='gh-status err'; st.textContent='❌ 오류: '+e.message; }
+}
+async function _ghGetSha(u,r,t,path){
+  try{var res=await fetch('https://api.github.com/repos/'+u+'/'+r+'/contents/'+path,{headers:{'Authorization':'token '+t}});
+    if(!res.ok)return null; return (await res.json()).sha||null;
+  }catch(e){return null;}}
+async function deployToGitHub(){
+  var c=_ghCfg();
+  if(!c.token){ openGhModal(); showToast('⚙️ GitHub 설정 먼저 입력해주세요'); return; }
+  showToast('🚀 배포 중...');
+  /* 현재 HTML에 데이터 굽기 */
+  var baked={commissions:commissions};
+  var html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  var inject='<script>if(window.__DASH_BAKED__)Object.assign(window,window.__DASH_BAKED__);window.__DASH_BAKED__='+JSON.stringify(baked)+';<\/script>';
+  html=html.replace(/<script>if\(window\.__DASH_BAKED__[\s\S]*?<\/script>\n?/g,'');
+  html=html.replace(/(<head[^>]*>)/i,'$1\n'+inject);
+  var content64=btoa(unescape(encodeURIComponent(html)));
+  try{
+    var sha=await _ghGetSha(c.user,c.repo,c.token,'dashboard.html');
+    var res=await fetch('https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/dashboard.html',{
+      method:'PUT',
+      headers:{'Authorization':'token '+c.token,'Content-Type':'application/json'},
+      body:JSON.stringify({message:'📊 대시보드 업데이트 '+new Date().toLocaleString('ko-KR'),content:content64,sha:sha||undefined})
+    });
+    if(res.ok) showToast('🚀 배포 완료! dashboard.html로 저장됐어요');
+    else { var e=await res.json(); showToast('❌ 실패: '+(e.message||res.status)); }
+  }catch(e){ showToast('❌ 오류: '+e.message); }
+}
+
+/* ─── 토스트 ─── */
+var _toastTimer;
+function showToast(msg){
+  var el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(function(){el.classList.remove('show');},3000);
+}
+
+/* ─── 초기화 ─── */
+loadData();
+/* baked data 적용 */
+if(window.__DASH_BAKED__&&window.__DASH_BAKED__.commissions){
+  commissions=window.__DASH_BAKED__.commissions;
+  saveData();
+}
+if(sessionStorage.getItem('dash_auth')==='1'){ renderAll(); }
+</script>
+</body>
+</html>
