@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>모무꼬 · Momukko</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0c0a12;
+  --card:    #13101e;
+  --border:  rgba(255,255,255,.07);
+  --text:    #ede8f5;
+  --text2:   #9b90b8;
+  --text3:   #5a5070;
+  --pink:    #f06292;
+  --pink2:   #e91e8c;
+  --lilac:   #c084fc;
+  --sky:     #67e8f9;
+  --gold:    #fcd34d;
+  --glow:    rgba(240,98,146,.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+/* ── 배경 효과 ── */
+.bg-orbs {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px); opacity: .45;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.orb1 { width: 520px; height: 520px; background: radial-gradient(circle, #e91e8c, transparent 70%); top: -180px; left: -160px; animation-delay: 0s; }
+.orb2 { width: 400px; height: 400px; background: radial-gradient(circle, #7c3aed, transparent 70%); bottom: -120px; right: -100px; animation-delay: -6s; }
+.orb3 { width: 300px; height: 300px; background: radial-gradient(circle, #0891b2, transparent 70%); top: 40%; left: 55%; animation-delay: -11s; }
+
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(40px, 30px) scale(1.08); }
+}
+
+/* 노이즈 오버레이 */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  background-size: 180px;
+  pointer-events: none;
+  opacity: .6;
+}
+
+/* ── 래퍼 ── */
+.wrapper {
+  position: relative; z-index: 2;
+  width: 100%; max-width: 440px;
+  padding: 48px 24px 64px;
+  display: flex; flex-direction: column; align-items: center;
+}
+
+/* ── 헤더 ── */
+.avatar-wrap {
+  position: relative;
+  margin-bottom: 24px;
+}
+.avatar-ring {
+  width: 100px; height: 100px; border-radius: 50%;
+  padding: 2.5px;
+  background: conic-gradient(from 0deg, var(--pink2), var(--lilac), var(--sky), var(--pink2));
+  animation: spin 6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.avatar-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 42px;
+  border: 3px solid var(--bg);
+  overflow: hidden;
+}
+.avatar-inner img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+}
+.status-dot {
+  position: absolute; bottom: 4px; right: 4px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #22c55e;
+  border: 3px solid var(--bg);
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,.5); }
+  50%      { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+}
+
+.name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 36px;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #fff 30%, var(--lilac));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.name em {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--pink), var(--lilac));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.handle {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--text3);
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.bio {
+  font-size: 13px;
+  color: var(--text2);
+  text-align: center;
+  line-height: 1.75;
+  max-width: 320px;
+  margin-bottom: 10px;
+}
+
+/* 커미션 오픈 뱃지 */
+.open-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(240,98,146,.12);
+  border: 1px solid rgba(240,98,146,.3);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 11px; font-weight: 700;
+  color: var(--pink);
+  letter-spacing: .5px;
+  margin-bottom: 36px;
+  animation: badge-glow 2.5s ease-in-out infinite;
+}
+@keyframes badge-glow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(240,98,146,.2); }
+  50%      { box-shadow: 0 0 16px 4px rgba(240,98,146,.15); }
+}
+.open-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--pink);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ── 링크 카드들 ── */
+.links { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+
+.link-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 15px 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all .22s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.link-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--card-glow, transparent);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.link-card:hover {
+  transform: translateY(-3px) scale(1.015);
+  border-color: var(--card-accent, var(--border));
+  box-shadow: 0 12px 40px var(--card-shadow, rgba(0,0,0,.3));
+}
+.link-card:hover::before { opacity: 1; }
+.link-card:active { transform: scale(.98); }
+
+/* 아이콘 */
+.link-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+
+/* 텍스트 */
+.link-text { flex: 1; position: relative; z-index: 1; }
+.link-title {
+  font-size: 14px; font-weight: 700;
+  margin-bottom: 2px;
+  letter-spacing: -.2px;
+}
+.link-sub {
+  font-size: 11px; color: var(--text3);
+  font-family: 'DM Mono', monospace;
+}
+
+/* 화살표 */
+.link-arrow {
+  font-size: 16px; color: var(--text3);
+  transition: transform .2s, color .2s;
+  position: relative; z-index: 1;
+  flex-shrink: 0;
+}
+.link-card:hover .link-arrow {
+  transform: translateX(4px);
+  color: var(--text);
+}
+
+/* 개별 카드 색상 */
+.card-x {
+  --card-accent: rgba(255,255,255,.15);
+  --card-shadow: rgba(0,0,0,.4);
+  --card-glow: linear-gradient(135deg, rgba(255,255,255,.03), transparent);
+}
+.card-x .link-icon { background: #111; border: 1px solid #333; }
+
+.card-commission {
+  --card-accent: rgba(240,98,146,.35);
+  --card-shadow: rgba(240,98,146,.2);
+  --card-glow: linear-gradient(135deg, rgba(240,98,146,.06), transparent);
+}
+.card-commission .link-icon { background: rgba(240,98,146,.15); }
+.card-commission .link-title { color: #fce4ec; }
+
+.card-artmug {
+  --card-accent: rgba(99,102,241,.4);
+  --card-shadow: rgba(99,102,241,.2);
+  --card-glow: linear-gradient(135deg, rgba(99,102,241,.06), transparent);
+}
+.card-artmug .link-icon { background: rgba(99,102,241,.15); }
+
+.card-coloso {
+  --card-accent: rgba(252,211,77,.35);
+  --card-shadow: rgba(252,211,77,.15);
+  --card-glow: linear-gradient(135deg, rgba(252,211,77,.05), transparent);
+}
+.card-coloso .link-icon { background: rgba(252,211,77,.12); }
+.card-coloso .link-title { color: #fef9c3; }
+
+.card-tally {
+  --card-accent: rgba(240,98,146,.28);
+  --card-shadow: rgba(240,98,146,.15);
+  --card-glow: linear-gradient(135deg, rgba(240,98,146,.05), transparent);
+}
+.card-tally .link-icon { background: rgba(240,98,146,.12); }
+.card-tally .link-title { color: #fce4ec; }
+  --card-shadow: rgba(103,232,249,.12);
+  --card-glow: linear-gradient(135deg, rgba(103,232,249,.04), transparent);
+}
+.card-email .link-icon { background: rgba(103,232,249,.12); }
+
+/* 하이라이트 카드 (커미션) */
+.card-featured {
+  border-color: rgba(240,98,146,.25);
+  background: linear-gradient(135deg, #1a0f1a, #13101e);
+}
+
+/* ── 섹션 구분 라벨 ── */
+.section-label {
+  width: 100%;
+  display: flex; align-items: center; gap: 10px;
+  margin: 18px 0 6px;
+  font-size: 10px; font-weight: 700;
+  color: var(--text3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+}
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: var(--border);
+}
+
+/* ── 언어 감지 안내 (8) ── */
+.lang-notice {
+  font-size: 11px; color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  margin-bottom: 20px;
+  animation: reveal .4s .5s ease both;
+}
+
+/* ── 푸터 ── */
+.footer {
+  margin-top: 40px;
+  font-size: 11px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  text-align: center;
+  line-height: 1.8;
+}
+.footer a { color: var(--text3); text-decoration: none; }
+.footer a:hover { color: var(--pink); }
+
+/* ── 입장 애니메이션 ── */
+.wrapper > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: reveal .6s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+.avatar-wrap   { animation-delay: .05s; }
+.name          { animation-delay: .12s; }
+.handle        { animation-delay: .17s; }
+.bio           { animation-delay: .22s; }
+.open-badge    { animation-delay: .27s; }
+.links         { animation-delay: .32s; }
+.footer        { animation-delay: .42s; }
+
+@keyframes reveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.link-card {
+  opacity: 0;
+  animation: reveal .5s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+.link-card:nth-child(1) { animation-delay: .34s; }
+.link-card:nth-child(2) { animation-delay: .40s; }
+.link-card:nth-child(3) { animation-delay: .46s; }
+.link-card:nth-child(4) { animation-delay: .52s; }
+.link-card:nth-child(5) { animation-delay: .58s; }
+.link-card:nth-child(6) { animation-delay: .64s; }
+.link-card:nth-child(7) { animation-delay: .70s; }
+.section-label { opacity: 0; animation: reveal .4s ease forwards; }
+.section-label:nth-of-type(1) { animation-delay: .30s; }
+.section-label:nth-of-type(2) { animation-delay: .48s; }
+
+@media (max-width: 480px) {
+  .wrapper { padding: 36px 16px 52px; }
+  .name { font-size: 30px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="wrapper">
+
+  <!-- 아바타 -->
+  <div class="avatar-wrap">
+    <div class="avatar-ring">
+      <div class="avatar-inner">
+        <img src="https://ugc.production.linktr.ee/6e1927b0-9b08-4794-93ce-7c282ddf7b7d_.png" alt="모무꼬" onerror="this.style.display='none';this.parentElement.textContent='🎨'">
+      </div>
+    </div>
+    <div class="status-dot"></div>
+  </div>
+
+  <!-- 이름 -->
+  <div class="name">Mom<em>ukko</em></div>
+  <div class="handle">@Momukko · 모무꼬</div>
+
+  <!-- 소개 -->
+  <p class="bio">
+    Character Designer &amp; Live2D Illustrator<br>
+    퀄리티 높은 버튜버 모델 &amp; 일러스트 제작 ✦<br>
+    <span style="font-size:11px;color:var(--text3)">High-quality VTuber models &amp; illustrations</span>
+  </p>
+
+  <!-- 커미션 오픈 뱃지 -->
+  <div class="open-badge">
+    <div class="open-dot"></div>
+    <span id="commStatusText">COMMISSIONS OPEN · 접수중</span>
+  </div>
+
+  <!-- 8. 언어 감지 안내 -->
+  <div class="lang-notice" id="langNotice"></div>
+  <div class="links">
+
+    <div class="section-label">Commissions · 커미션</div>
+
+    <!-- 커미션 신청 (모무꼬 사이트) -->
+    <a class="link-card card-commission card-featured" href="https://Tmabe.github.io/momuuko" target="_blank" data-id="commission">
+      <div class="link-icon">🎨</div>
+      <div class="link-text">
+        <div class="link-title">커미션 안내 · Commission Info</div>
+        <div class="link-sub">가격표 · 옵션 · 신청방법 · Pricing & how to order</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <!-- Tally 신청 폼 -->
+    <a class="link-card card-tally card-featured" href="https://tally.so/r/vGAV98" target="_blank" data-id="tally">
+      <div class="link-icon">📋</div>
+      <div class="link-text">
+        <div class="link-title">신청 폼 · Request Form</div>
+        <div class="link-sub">여기서 바로 신청 · English OK</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <!-- Artmug -->
+    <a class="link-card card-artmug" href="https://artmug.kr/index.php?channel=view&uid=27120" target="_blank" data-id="artmug">
+      <div class="link-icon">🖼</div>
+      <div class="link-text">
+        <div class="link-title">아트머그 · Artmug</div>
+        <div class="link-sub">포트폴리오 · 한국어 문의 · Korean portfolio</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <div class="section-label">Social · 소셜 · Course · 강의</div>
+
+    <!-- X (트위터) -->
+    <a class="link-card card-x" href="https://x.com/Momuko8" target="_blank" data-id="twitter">
+      <div class="link-icon">𝕏</div>
+      <div class="link-text">
+        <div class="link-title">X (Twitter) · @Momuko8</div>
+        <div class="link-sub">작업 근황 · WIPs · updates · daily posts</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <!-- 콜로소 강의 -->
+    <a class="link-card card-coloso" href="http://bit.ly/momukkopini-tw" target="_blank" data-id="coloso">
+      <div class="link-icon">🎓</div>
+      <div class="link-text">
+        <div class="link-title">콜로소 강의 · COLOSO Course</div>
+        <div class="link-sub">나만의 VTuber 만들기 · Make your own Live2D VTuber</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <!-- 이메일 -->
+    <a class="link-card card-email" href="mailto:" id="emailCard" data-id="email">
+      <div class="link-icon">✉️</div>
+      <div class="link-text">
+        <div class="link-title">비즈니스 문의 · Business Inquiry</div>
+        <div class="link-sub">협업 · 에이전시 · 기타 · Collabs & agencies</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+  </div>
+
+  <!-- 푸터 -->
+  <div class="footer">
+    © 2025 Momukko · 모무꼬 · All rights reserved<br>
+    <a href="https://x.com/Momuko8">@Momuko8</a> · Character Designer &amp; Live2D Illustrator
+  </div>
+
+</div>
+
+<script>
+/* ====================================================
+   설정값
+   ==================================================== */
+var emailAddr = ''; // 이메일 주소. 예: 'hello@momukko.com'
+var X_USERNAME = 'Momuko8'; // X(트위터) 유저명
+
+/* ====================================================
+   프로필 이미지 — X 프로필 사진 자동 로드
+   unavatar.io 를 통해 X 프로필 이미지를 가져옵니다.
+   X가 프로필을 바꾸면 자동 반영됩니다.
+   ==================================================== */
+(function(){
+  var img = document.querySelector('.avatar-inner img');
+  if(!img) return;
+  var xSrc = 'https://unavatar.io/twitter/' + X_USERNAME + '?fallback=false';
+  var testImg = new Image();
+  testImg.onload = function(){
+    img.src = xSrc;
+    img.onerror = function(){ this.style.display='none'; this.parentElement.textContent='🎨'; };
+  };
+  testImg.onerror = function(){
+    // unavatar 실패 시 기존 링크트리 이미지 유지
+  };
+  testImg.src = xSrc;
+})();
+
+/* ====================================================
+   이메일 카드
+   ==================================================== */
+var emailCard = document.getElementById('emailCard');
+if(emailAddr){
+  emailCard.href = 'mailto:' + emailAddr;
+} else {
+  emailCard.addEventListener('click', function(e){
+    e.preventDefault();
+    window.open('https://x.com/' + X_USERNAME, '_blank');
+  });
+  emailCard.querySelector('.link-sub').textContent = 'DM me on X · @' + X_USERNAME;
+}
+
+/* ====================================================
+   8. 방문자 언어 감지 → 카드 순서 조정
+   ==================================================== */
+(function(){
+  var lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+  var isKorean = lang.startsWith('ko');
+  var notice = document.getElementById('langNotice');
+  if(isKorean){
+    notice.textContent = '🇰🇷 한국어 사용자로 감지되었습니다';
+    var linksWrap = document.querySelector('.links');
+    var artmug = document.querySelector('[data-id="artmug"]');
+    var tally  = document.querySelector('[data-id="tally"]');
+    if(artmug && tally) linksWrap.insertBefore(artmug, tally);
+  } else {
+    notice.textContent = '🌐 Links optimized for English speakers';
+  }
+})();
+</script>
+</body>
+</html>
