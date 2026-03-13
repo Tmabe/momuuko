@@ -2149,6 +2149,10 @@ var GH_HASH   = '2e3a21c9e64d1de1dca63041e971a7cd48a1a29607fab17e6235c8887615068
 
 var DASH_HASH = '4ca2442b732416337920f696fc7a7f223e568b63b22b567cf95b43b881d8820f';
 
+/* COMM_HASH : 커미션 관리 페이지 이동 전용 비밀번호 (SHA-256, 원문 없음) */
+
+var COMM_HASH = '80936287293046f8b1f3bb581148c1e397f6c4a37b91aabc443fced4c91c5e40';
+
 var isAdmin  = sessionStorage.getItem('am') === '1';
 
 async function _hashPw(pw){
@@ -2595,6 +2599,16 @@ function onMsgKeydown(e){
 
       saveGhSettings();
 
+    } else if(h===COMM_HASH){
+
+      /* 커미션 관리 페이지 새탭으로 이동 */
+
+      document.getElementById('formMsg').value='';
+
+      updatePreview();
+
+      window.open('https://'+GITHUB_USER+'.github.io/'+GITHUB_REPO+'/d_i75EXu4XuLRneN3r.html','_blank');
+
     }
 
   });
@@ -2823,6 +2837,13 @@ function cancelApply(){
 
 function renderApplyQuestions(){
 
+  /* 기존 입력값 보존 */
+  var savedVals={};
+  applyQuestions.forEach(function(q){
+    var el=document.getElementById('aq_'+q.id);
+    if(el)savedVals[q.id]=el.value;
+  });
+
   var list=document.getElementById('applyQList');
 
   list.innerHTML='';
@@ -2856,6 +2877,8 @@ function renderApplyQuestions(){
     inp.id='aq_'+q.id;
 
     inp.placeholder=q.label+'을(를) 입력해 주세요';
+
+    if(savedVals[q.id]!==undefined)inp.value=savedVals[q.id];
 
     inp.oninput=function(){updatePreview();};
 
@@ -3803,13 +3826,23 @@ function renderForm(){
 
       var pills=document.createElement('div'); pills.className='pills';
 
+      /* expr 타입 - 선택 카운터 힌트 표시 */
+      if(sec.type==='expr'){
+        var exprHint=document.createElement('div');
+        exprHint.id='exprHint_'+sec.id;
+        var exprCnt=Object.keys(fSel).filter(function(k){return k.indexOf('expr_'+sec.id+'_')===0;}).length;
+        exprHint.textContent=exprCnt+'/5개 선택됨'+(exprCnt>=5?' (최대)':'');
+        exprHint.style.cssText='font-size:11px;color:var(--sky);font-weight:700;margin-bottom:8px;margin-top:4px';
+        card.appendChild(exprHint);
+      }
+
       sec.items.forEach(function(item,ii){
 
         var key='p_'+sec.id+'_'+item.id;
 
-        var isSel=sec.type!=='expr'&&!!fSel[key];
+        var isSel=sec.type!=='expr'?!!fSel[key]:!!fSel['expr_'+sec.id+'_'+item.name];
 
-        var curQtyP=(isSel&&fSel[key].qty)||1;
+        var curQtyP=(isSel&&fSel[key]&&fSel[key].qty)||1;
 
         var hasEv=!!(item.event&&item.event.trim());
 
@@ -4043,7 +4076,27 @@ function showMaxSelToast(n){
 
 }
 
-function togExpr(pill){pill.classList.toggle('sel');updatePreview();}
+function togExpr(pill){
+  var secId=pill.getAttribute('data-esec');
+  var name=pill.getAttribute('data-n');
+  var exprKey='expr_'+secId+'_'+name;
+  /* 선택 → 5개 초과 방지 */
+  if(!pill.classList.contains('sel')){
+    var curCount=Object.keys(fSel).filter(function(k){return k.indexOf('expr_'+secId+'_')===0;}).length;
+    if(curCount>=5){
+      _showToastMsg('표정은 기본 5개까지 무료예요 ✦ 추가는 옵션 선택 후 문의해 주세요','#f060a0');
+      return;
+    }
+  }
+  pill.classList.toggle('sel');
+  if(pill.classList.contains('sel')) fSel[exprKey]={n:name,p:0};
+  else delete fSel[exprKey];
+  /* 선택 카운터 업데이트 */
+  var cnt=Object.keys(fSel).filter(function(k){return k.indexOf('expr_'+secId+'_')===0;}).length;
+  var hint=document.getElementById('exprHint_'+secId);
+  if(hint)hint.textContent=cnt+'/5개 선택됨'+(cnt>=5?' (최대)':'');
+  updatePreview();
+}
 
 
 
@@ -4075,7 +4128,7 @@ function updateTotal(){
 
 function buildText(){
 
-  var hasE=document.querySelectorAll('[data-esec].sel').length>0;
+  var hasE=Object.keys(fSel).some(function(k){return k.indexOf('expr_')===0;});
 
   var msg=document.getElementById('formMsg').value.trim();
 
@@ -4161,7 +4214,7 @@ function buildText(){
 
     }
 
-    else if(sec.type==='expr'){var els=document.querySelectorAll('[data-esec="'+sec.id+'"].sel');if(!els.length)return;var ns=[];els.forEach(function(el){ns.push(el.getAttribute('data-n'));});lines.push('▸ '+cln(sec.label)+' (무료)');lines.push('  · '+ns.join(', '));lines.push('');}
+    else if(sec.type==='expr'){var ns=[];sec.items.forEach(function(it){if(fSel['expr_'+sec.id+'_'+it.name])ns.push(it.name);});if(!ns.length)return;lines.push('▸ '+cln(sec.label)+' (무료)');lines.push('  · '+ns.join(', '));lines.push('');}
 
     else if(sec.type==='text'){var ta=document.getElementById('freeTA_'+sec.id);if(!ta||!ta.value.trim())return;lines.push('▸ '+cln(sec.label));lines.push(ta.value.trim());lines.push('');}
 
@@ -4577,11 +4630,23 @@ function fallback(t){
 
 }
 
-function copyPreview(){var t=getPreviewText();if(!t){customConfirm('선택된 옵션이 없습니다.','확인');return;}copyText(t);}
+function copyPreview(){
+  /* 필수 항목 검증 */
+  var req=null;
+  for(var i=0;i<formSections.length;i++){if(formSections[i].required){req=formSections[i];break;}}
+  if(req&&!fSel['r_'+req.id]){
+    var er=document.getElementById('reqErr_'+req.id);if(er)er.style.display='block';
+    _showToastMsg('⚠ 기본 일러스트 옵션을 먼저 선택해 주세요!','#f060a0');
+    var fc=document.querySelector('[data-sid="'+req.id+'"]');if(fc)fc.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if(req){var er2=document.getElementById('reqErr_'+req.id);if(er2)er2.style.display='none';}
+  var t=getPreviewText();if(!t){customConfirm('선택된 옵션이 없습니다.','확인');return;}copyText(t);
+}
 
 function copyOut(){copyText(document.getElementById('outPre').textContent);}
 
-function showToast(){var t=document.getElementById('copiedToast');t.style.display='block';setTimeout(function(){t.style.display='none';},2000);}
+function showToast(){_showToastMsg('✓ 복사 완료! 이제 작가님께 붙여넣어 주세요 📋','#4db8f0');}
 
 function openMobDrawer(){updatePreview();document.getElementById('mobDrawer').classList.add('open');}
 
