@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>모무꼬 · Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08070f;
+  --card:#111020;
+  --card2:#181628;
+  --border:rgba(180,140,255,.08);
+  --border2:rgba(180,140,255,.18);
+  --text:#ede8ff;
+  --text2:#8b82b0;
+  --text3:#45405a;
+  --pink:#f06292;
+  --pink2:#c2185b;
+  --lilac:#c084fc;
+  --sky:#67e8f9;
+  --gold:#fcd34d;
+  --green:#6ee7b7;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Noto Sans KR',sans-serif;
+  min-height:100vh; overflow-x:hidden;
+}
+
+/* ── 배경 ── */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);animation:drift 20s ease-in-out infinite alternate;}
+.o1{width:700px;height:700px;background:radial-gradient(circle,rgba(192,100,252,.12),transparent 70%);top:-200px;left:-200px;animation-delay:0s;}
+.o2{width:500px;height:500px;background:radial-gradient(circle,rgba(240,98,146,.1),transparent 70%);bottom:-100px;right:-100px;animation-delay:-8s;}
+.o3{width:400px;height:400px;background:radial-gradient(circle,rgba(103,232,249,.07),transparent 70%);top:40%;left:40%;animation-delay:-14s;}
+@keyframes drift{from{transform:translate(0,0) scale(1);}to{transform:translate(50px,30px) scale(1.1);}}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  background-size:160px; opacity:.5;
+}
+
+/* ── 래퍼 ── */
+.wrap{
+  position:relative;z-index:1;
+  max-width:900px;margin:0 auto;
+  padding:60px 32px 80px;
+}
+
+/* ── 헤더 ── */
+.header{text-align:center;margin-bottom:56px;}
+.crown{font-size:32px;margin-bottom:12px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.logo{
+  font-family:'Instrument Serif',serif;font-size:52px;line-height:1;
+  letter-spacing:-1px;margin-bottom:8px;
+}
+.logo em{
+  font-style:italic;
+  background:linear-gradient(135deg,var(--pink),var(--lilac),var(--sky));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.tagline{
+  font-family:var(--mono);font-size:12px;color:var(--text3);
+  letter-spacing:2px;text-transform:uppercase;
+}
+
+/* ── 그리드 ── */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  margin-bottom:16px;
+}
+.grid-wide{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+/* ── 앱 카드 ── */
+.app-card{
+  position:relative;overflow:hidden;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:28px 26px 24px;
+  cursor:pointer;
+  text-decoration:none;color:inherit;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  display:flex;flex-direction:column;gap:0;
+}
+.app-card::before{
+  content:'';position:absolute;inset:0;
+  background:var(--card-glow,transparent);
+  opacity:0;transition:opacity .25s;
+}
+.app-card:hover{
+  transform:translateY(-6px) scale(1.02);
+  border-color:var(--card-accent,var(--border));
+  box-shadow:0 20px 60px var(--card-shadow,rgba(0,0,0,.4));
+}
+.app-card:hover::before{opacity:1;}
+.app-card:active{transform:scale(.98);}
+
+/* 아이콘 */
+.card-icon{
+  font-size:32px;margin-bottom:16px;
+  position:relative;z-index:1;
+  display:inline-block;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.app-card:hover .card-icon{transform:scale(1.15) rotate(-5deg);}
+
+/* 텍스트 */
+.card-name{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:17px;
+  margin-bottom:5px;position:relative;z-index:1;
+  letter-spacing:-.3px;
+}
+.card-desc{
+  font-size:12px;color:var(--text2);line-height:1.6;
+  position:relative;z-index:1;flex:1;
+}
+.card-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:14px;position:relative;z-index:1;
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  padding:3px 10px;border-radius:20px;
+  border:1px solid currentColor;opacity:.6;
+  transition:opacity .2s;width:fit-content;
+}
+.app-card:hover .card-tag{opacity:1;}
+
+/* 카드별 색상 */
+.c-commission{
+  --card-accent:rgba(240,98,146,.35);
+  --card-shadow:rgba(240,98,146,.15);
+  --card-glow:linear-gradient(135deg,rgba(240,98,146,.06) 0%,transparent 60%);
+}
+.c-commission .card-name{color:#fce4ec;}
+.c-commission .card-tag{color:var(--pink);}
+
+.c-dashboard{
+  --card-accent:rgba(103,232,249,.3);
+  --card-shadow:rgba(103,232,249,.12);
+  --card-glow:linear-gradient(135deg,rgba(103,232,249,.05) 0%,transparent 60%);
+}
+.c-dashboard .card-name{color:#e0f7ff;}
+.c-dashboard .card-tag{color:var(--sky);}
+
+.c-links{
+  --card-accent:rgba(192,132,252,.3);
+  --card-shadow:rgba(192,132,252,.12);
+  --card-glow:linear-gradient(135deg,rgba(192,132,252,.06) 0%,transparent 60%);
+}
+.c-links .card-name{color:#f3e8ff;}
+.c-links .card-tag{color:var(--lilac);}
+
+.c-practice{
+  --card-accent:rgba(252,211,77,.3);
+  --card-shadow:rgba(252,211,77,.12);
+  --card-glow:linear-gradient(135deg,rgba(252,211,77,.05) 0%,transparent 60%);
+}
+.c-practice .card-name{color:#fef9c3;}
+.c-practice .card-tag{color:var(--gold);}
+
+.c-tally{
+  --card-accent:rgba(110,231,183,.3);
+  --card-shadow:rgba(110,231,183,.12);
+  --card-glow:linear-gradient(135deg,rgba(110,231,183,.06) 0%,transparent 60%);
+}
+.c-tally .card-name{color:#d1fae5;}
+.c-tally .card-tag{color:var(--green);}
+
+.c-x{
+  --card-accent:rgba(255,255,255,.15);
+  --card-shadow:rgba(0,0,0,.4);
+  --card-glow:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 60%);
+}
+.c-x .card-name{color:#fff;}
+.c-x .card-tag{color:var(--text2);}
+
+/* ── 특별 강조 카드 (연습 트래커 — 와이드) ── */
+.app-card.wide{
+  flex-direction:row;align-items:center;gap:24px;
+}
+.app-card.wide .card-icon{font-size:40px;margin-bottom:0;flex-shrink:0;}
+.app-card.wide .card-body{flex:1;}
+.app-card.wide .card-name{font-size:20px;}
+.app-card.wide:hover .card-icon{transform:scale(1.15) rotate(-5deg);}
+
+/* ── 비공개 배지 ── */
+.private-badge{
+  position:absolute;top:16px;right:16px;
+  font-size:9px;font-family:var(--mono);font-weight:500;
+  padding:2px 8px;border-radius:10px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  color:var(--text3);letter-spacing:.5px;
+}
+
+/* ── 구분선 ── */
+.divider{
+  display:flex;align-items:center;gap:14px;
+  margin:32px 0 16px;
+  font-family:var(--mono);font-size:10px;color:var(--text3);
+  letter-spacing:1.5px;text-transform:uppercase;
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── 푸터 ── */
+.footer{
+  text-align:center;margin-top:52px;
+  font-family:var(--mono);font-size:11px;color:var(--text3);
+  line-height:2;
+}
+.footer a{color:var(--text3);text-decoration:none;transition:color .15s;}
+.footer a:hover{color:var(--lilac);}
+
+/* ── 입장 애니메이션 ── */
+.header{opacity:0;transform:translateY(20px);animation:reveal .7s .05s cubic-bezier(.34,1.56,.64,1) forwards;}
+.grid{opacity:0;transform:translateY(20px);animation:reveal .6s .2s cubic-bezier(.34,1.56,.64,1) forwards;}
+.divider{opacity:0;animation:reveal .5s .35s ease forwards;}
+.grid-wide{opacity:0;transform:translateY(20px);animation:reveal .6s .4s cubic-bezier(.34,1.56,.64,1) forwards;}
+.footer{opacity:0;animation:reveal .5s .55s ease forwards;}
+@keyframes reveal{to{opacity:1;transform:translateY(0);}}
+
+@media(max-width:700px){
+  .grid{grid-template-columns:1fr 1fr;}
+  .grid-wide{grid-template-columns:1fr;}
+  .app-card.wide{flex-direction:column;align-items:flex-start;}
+  .app-card.wide .card-icon{margin-bottom:8px;}
+  .logo{font-size:38px;}
+  .wrap{padding:40px 18px 60px;}
+}
+@media(max-width:480px){
+  .grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="crown">👑</div>
+    <div class="logo">Mom<em>ukko</em></div>
+    <div class="tagline">Character Designer · Live2D Illustrator · 모무꼬</div>
+  </div>
+
+  <!-- 메인 앱 3개 -->
+  <div class="grid">
+
+    <!-- 커미션 사이트 -->
+    <a class="app-card c-commission" href="https://Tmabe.github.io/momuuko/index.html" target="_blank">
+      <div class="card-icon">🎨</div>
+      <div class="card-name">커미션 사이트</div>
+      <div class="card-desc">가격표 · 옵션 · 신청 안내<br>외부 공개용 커미션 페이지</div>
+      <div class="card-tag">PUBLIC · 공개</div>
+    </a>
+
+    <!-- 대시보드 -->
+    <a class="app-card c-dashboard" href="https://Tmabe.github.io/momuuko/d_i75EXu4XuLRneN3r.html" target="_blank">
+      <div class="private-badge">🔒 PRIVATE</div>
+      <div class="card-icon">📊</div>
+      <div class="card-name">의뢰 대시보드</div>
+      <div class="card-desc">의뢰 관리 · 수익 집계<br>단계 추적 · CSV 내보내기</div>
+      <div class="card-tag">PRIVATE · 작가 전용</div>
+    </a>
+
+    <!-- 링크 페이지 -->
+    <a class="app-card c-links" href="https://Tmabe.github.io/momuuko/links.html" target="_blank">
+      <div class="card-icon">🔗</div>
+      <div class="card-name">링크 페이지</div>
+      <div class="card-desc">X · Artmug · 콜로소 · 커미션<br>바이오 링크 · Linktree 대체</div>
+      <div class="card-tag">PUBLIC · 링크트리 대체</div>
+    </a>
+
+  </div>
+
+  <div class="divider">외부 서비스</div>
+
+  <!-- 외부 링크 2개 -->
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px;">
+
+    <!-- Tally 신청폼 -->
+    <a class="app-card c-tally" href="https://tally.so/r/vGAV98" target="_blank">
+      <div class="card-icon">📋</div>
+      <div class="card-name">커미션 신청 폼</div>
+      <div class="card-desc">Tally 기반 신청 양식<br>한국어 · English OK</div>
+      <div class="card-tag">TALLY · 신청 접수</div>
+    </a>
+
+    <!-- X 트위터 -->
+    <a class="app-card c-x" href="https://x.com/Momuko8" target="_blank">
+      <div class="card-icon">𝕏</div>
+      <div class="card-name">X (Twitter)</div>
+      <div class="card-desc">작업 근황 · WIPs<br>@Momuko8</div>
+      <div class="card-tag">@Momuko8 · SNS</div>
+    </a>
+
+  </div>
+
+  <div class="divider">작가 도구</div>
+
+  <!-- 연습 트래커 와이드 -->
+  <div class="grid-wide">
+    <a class="app-card c-practice wide" href="https://Tmabe.github.io/momuuko/practice.html" target="_blank">
+      <div class="card-icon">🔥</div>
+      <div class="card-body">
+        <div class="card-name">연습 트래커</div>
+        <div class="card-desc">타이머 · 스트릭 캘린더 · 약점 트래커<br>아이디어 번개장 · 수익 목표 차트<br>하이퍼포커스 모드 (ADHD 대응)</div>
+        <div class="card-tag">PRIVATE · 작가 전용 도구</div>
+      </div>
+    </a>
+
+    <!-- 빈 카드 — 다음 앱 예약석 -->
+    <div class="app-card" style="border-style:dashed;cursor:default;opacity:.4;justify-content:center;align-items:center;text-align:center;gap:8px;">
+      <div style="font-size:28px;">＋</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text3)">다음 앱</div>
+      <div style="font-size:11px;color:var(--text3)">뭔가 필요하면 말해줘</div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <div class="footer">
+    © 2025 Momukko · 모무꼬<br>
+    <a href="https://x.com/Momuko8">@Momuko8</a> ·
+    <a href="https://Tmabe.github.io/momuuko/links.html">Links</a> ·
+    <a href="https://Tmabe.github.io/momuuko/index.html">Commission</a>
+  </div>
+
+</div>
+
+</body>
+</html>
