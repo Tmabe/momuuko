@@ -1,0 +1,25 @@
+{
+  "name": "모무꼬 연습 트래커",
+  "short_name": "모무꼬",
+  "description": "연습 타이머 · 스트릭 · 아이디어 번개장 · 수익 목표",
+  "start_url": "/momuuko/practice.html",
+  "scope": "/momuuko/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f0e0c",
+  "theme_color": "#0f0e0c",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
