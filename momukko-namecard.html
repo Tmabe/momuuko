@@ -557,26 +557,33 @@ body.light .hs-lbl{ color:var(--text3); }
 }
 
 /* 캐러셀 래퍼 — 클립 영역 */
+/* 패딩 담당 래퍼 */
+.pf-carousel-outer{
+  padding:0 48px;
+}
+/* overflow 클립 담당 */
 .pf-carousel-wrap{
   overflow:hidden;
-  padding:0 48px;
+  height:440px;
+  position:relative;
   cursor:grab;
   user-select:none;
 }
+.pf-carousel-wrap:hover .pf-track{ animation-play-state:paused !important; }
 .pf-carousel-wrap:active{ cursor:grabbing; }
-
-/* 캐러셀 트랙 — transform 으로 이동 */
+/* 트랙 — JS가 keyframes 이름+duration 을 직접 주입 */
 .pf-track{
   display:flex;
   gap:4px;
+  position:absolute;
+  top:0; left:0; height:100%;
   will-change:transform;
-  transition:none;
 }
 
 /* 아이템 */
 .pf-item{
-  flex:0 0 340px;
-  height:480px;
+  flex:0 0 300px;
+  height:440px;
   position:relative; overflow:hidden; background:var(--bg3);
   transition:transform .3s;
 }
@@ -816,7 +823,7 @@ footer::before{
 }
 @media(max-width:960px){
   .pf-carousel-wrap{ height:300px; }
-  .pf-item{ flex:0 0 220px; height:300px; }
+  .pf-item{ flex:0 0 220px !important; height:300px !important; }
   .hero{ grid-template-columns:1fr; min-height:auto; }
   .hero-right{ display:none; }
   .hero-title{ white-space:normal; font-size:clamp(48px,12vw,100px); }
@@ -833,7 +840,7 @@ footer::before{
 }
 @media(max-width:600px){
   .pf-carousel-wrap{ height:220px; }
-  .pf-item{ flex:0 0 160px; height:220px; }
+  .pf-item{ flex:0 0 160px !important; height:220px !important; }
   .hero-left{ padding:48px 20px; }
   .scroll-cue{ display:none; }
   .hero-stat-wrap{ display:none; }
@@ -1521,34 +1528,53 @@ function makeItem(file){
   return el;
 }
 
-/* 마퀴 렌더 — 원본 + 클론으로 seamless 루프 */
+/* 마퀴 렌더 — 원본 + 클론, <style> 주입으로 정확한 애니메이션 */
+var _styleSheet = (function(){
+  var s = document.createElement('style');
+  document.head.appendChild(s);
+  return s;
+})();
+
 function renderGrid(trackId, files){
   var track = document.getElementById(trackId);
   if(!track){ console.error('track not found:', trackId); return; }
+
+  /* 기존 내용 + 애니메이션 리셋 */
+  track.style.animation = 'none';
   track.innerHTML = '';
-  track.style.animation = 'none'; /* 리셋 */
 
   var ITEM_W = 300, GAP = 4;
 
   /* 원본 세트 */
   files.forEach(function(file){ track.appendChild(makeItem(file)); });
-  /* 클론 세트 */
+
+  /* 클론 세트 — seamless 루프용 */
   files.forEach(function(file){
     var c = makeItem(file);
     c.classList.add('clone');
     track.appendChild(c);
   });
 
-  /* 원본 1세트 너비 = n장 * (아이템너비+gap) - 마지막gap */
-  var setW  = files.length * (ITEM_W + GAP);
-  var dur   = Math.max(files.length * 2.5, 12);
+  /* 원본 1세트 이동 거리 */
+  var setW = files.length * (ITEM_W + GAP);
+  var dur  = Math.max(files.length * 2.5, 12);
+  var kfName = 'mq_' + trackId;
 
-  /* CSS 변수로 애니메이션 거리/속도 전달 */
-  track.style.setProperty('--marquee-dist', '-' + setW + 'px');
-  track.style.setProperty('--marquee-dur',  dur + 's');
-  track.style.animation = 'marquee ' + dur + 's linear infinite';
+  /* @keyframes를 픽셀값으로 직접 주입 — CSS 변수 우회 */
+  var existingRules = _styleSheet.sheet ? _styleSheet.sheet.cssRules : [];
+  for(var i = existingRules.length - 1; i >= 0; i--){
+    try{ _styleSheet.sheet.deleteRule(i); }catch(e){}
+  }
+  _styleSheet.sheet.insertRule(
+    '@keyframes '+kfName+'{from{transform:translateX(0)}to{transform:translateX(-'+setW+'px)}}',
+    0
+  );
 
-  console.log('['+trackId+']', files.length+'장', setW+'px', dur+'s');
+  /* 애니메이션 적용 (리플로우 강제 후) */
+  void track.offsetWidth;
+  track.style.animation = kfName+' '+dur+'s linear infinite';
+
+  console.log('['+trackId+'] ✅', files.length+'장', setW+'px', dur+'s');
 }
 
 function showEmpty(trackId, msg){
