@@ -1545,7 +1545,7 @@ function renderGrid(trackId, files){
   });
 
   var setW   = files.length * ITEM_W + Math.max(files.length - 1, 0) * GAP;
-  var dur    = Math.max(files.length * 2.5, 12);
+  var dur    = Math.max(files.length * 5, 24);
   var kfName = 'mq_' + trackId;
 
   /* 이 그리드 전용 <style> 태그 — 기존 것 있으면 재사용 */
@@ -1563,7 +1563,7 @@ function renderGrid(trackId, files){
 
   /* 리플로우 강제 후 애니메이션 적용 */
   void track.offsetWidth;
-  track.style.animation = kfName+' '+dur+'s linear infinite';
+  track.style.animation = kfName+' '+dur+'s steps(' + (files.length * 2) + ') infinite';
 
   console.log('['+trackId+'] ✅', files.length+'장', setW+'px', dur+'s');
 }
