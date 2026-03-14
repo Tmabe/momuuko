@@ -1528,18 +1528,11 @@ function makeItem(file){
   return el;
 }
 
-/* 마퀴 렌더 — 원본 + 클론, <style> 주입으로 정확한 애니메이션 */
-var _styleSheet = (function(){
-  var s = document.createElement('style');
-  document.head.appendChild(s);
-  return s;
-})();
-
+/* 마퀴 렌더 — 그리드마다 독립 <style> 태그 사용 */
 function renderGrid(trackId, files){
   var track = document.getElementById(trackId);
   if(!track){ console.error('track not found:', trackId); return; }
 
-  /* 기존 내용 + 애니메이션 리셋 */
   track.style.animation = 'none';
   track.innerHTML = '';
 
@@ -1547,30 +1540,30 @@ function renderGrid(trackId, files){
 
   /* 원본 세트 */
   files.forEach(function(file){ track.appendChild(makeItem(file)); });
-
-  /* 클론 세트 — seamless 루프용 */
+  /* 클론 세트 */
   files.forEach(function(file){
-    var c = makeItem(file);
-    c.classList.add('clone');
+    var c = makeItem(file); c.classList.add('clone');
     track.appendChild(c);
   });
 
-  /* 원본 1세트 이동 거리 */
-  var setW = files.length * (ITEM_W + GAP);
-  var dur  = Math.max(files.length * 2.5, 12);
+  var setW   = files.length * (ITEM_W + GAP);
+  var dur    = Math.max(files.length * 2.5, 12);
   var kfName = 'mq_' + trackId;
 
-  /* @keyframes를 픽셀값으로 직접 주입 — CSS 변수 우회 */
-  var existingRules = _styleSheet.sheet ? _styleSheet.sheet.cssRules : [];
-  for(var i = existingRules.length - 1; i >= 0; i--){
-    try{ _styleSheet.sheet.deleteRule(i); }catch(e){}
+  /* 이 그리드 전용 <style> 태그 — 기존 것 있으면 재사용 */
+  var styleId = 'style_' + trackId;
+  var styleEl = document.getElementById(styleId);
+  if(!styleEl){
+    styleEl = document.createElement('style');
+    styleEl.id = styleId;
+    document.head.appendChild(styleEl);
   }
-  _styleSheet.sheet.insertRule(
-    '@keyframes '+kfName+'{from{transform:translateX(0)}to{transform:translateX(-'+setW+'px)}}',
-    0
-  );
+  styleEl.textContent =
+    '@keyframes '+kfName+
+    '{from{transform:translateX(0)}'+
+    'to{transform:translateX(-'+setW+'px)}}';
 
-  /* 애니메이션 적용 (리플로우 강제 후) */
+  /* 리플로우 강제 후 애니메이션 적용 */
   void track.offsetWidth;
   track.style.animation = kfName+' '+dur+'s linear infinite';
 
