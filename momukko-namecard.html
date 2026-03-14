@@ -815,6 +815,7 @@ footer::before{
   .hero-left{ padding:60px 40px 60px 40px; }
 }
 @media(max-width:960px){
+  .pf-carousel-wrap{ height:300px; }
   .pf-item{ flex:0 0 220px; height:300px; }
   .hero{ grid-template-columns:1fr; min-height:auto; }
   .hero-right{ display:none; }
@@ -831,6 +832,7 @@ footer::before{
   .pf-sep{ padding:0 24px; }
 }
 @media(max-width:600px){
+  .pf-carousel-wrap{ height:220px; }
   .pf-item{ flex:0 0 160px; height:220px; }
   .hero-left{ padding:48px 20px; }
   .scroll-cue{ display:none; }
@@ -1137,8 +1139,10 @@ footer::before{
       <div class="pf-cat-name">LIVE2D <span style="color:var(--Y)">WORKS</span></div>
       <div class="pf-cat-en" data-t="pf_l2d_sub">Live2D 일러스트 · 파츠 분리</div>
     </div>
-    <div class="pf-carousel-wrap" id="l2dGridWrap">
-      <div class="pf-track" id="l2dGrid"></div>
+    <div class="pf-carousel-outer">
+      <div class="pf-carousel-wrap" id="l2dGridWrap">
+        <div class="pf-track" id="l2dGrid"></div>
+      </div>
     </div>
     <div class="pf-empty-wrap" id="l2dGridEmptyWrap">
       <div class="pf-empty" id="l2dGridEmpty" style="display:none">
@@ -1158,8 +1162,10 @@ footer::before{
       <div class="pf-cat-name">CHARACTER <span style="color:var(--Y)">ILLUST</span></div>
       <div class="pf-cat-en" data-t="pf_char_sub">캐릭터 일러스트 · 개인작</div>
     </div>
-    <div class="pf-carousel-wrap" id="charGridWrap">
-      <div class="pf-track" id="charGrid"></div>
+    <div class="pf-carousel-outer">
+      <div class="pf-carousel-wrap" id="charGridWrap">
+        <div class="pf-track" id="charGrid"></div>
+      </div>
     </div>
     <div class="pf-empty-wrap" id="charGridEmptyWrap">
       <div class="pf-empty" id="charGridEmpty" style="display:none">
@@ -1179,8 +1185,10 @@ footer::before{
       <div class="pf-cat-name">DESIGN <span style="color:var(--Y)">WORKS</span></div>
       <div class="pf-cat-en" data-t="pf_design_sub">디자인 · 그래픽</div>
     </div>
-    <div class="pf-carousel-wrap" id="designGridWrap">
-      <div class="pf-track" id="designGrid"></div>
+    <div class="pf-carousel-outer">
+      <div class="pf-carousel-wrap" id="designGridWrap">
+        <div class="pf-track" id="designGrid"></div>
+      </div>
     </div>
     <div class="pf-empty-wrap" id="designGridEmptyWrap">
       <div class="pf-empty" id="designGridEmpty" style="display:none">
@@ -1513,26 +1521,34 @@ function makeItem(file){
   return el;
 }
 
-/* 마퀴 렌더 — 원본 + 클론 붙여서 무한루프 */
+/* 마퀴 렌더 — 원본 + 클론으로 seamless 루프 */
 function renderGrid(trackId, files){
   var track = document.getElementById(trackId);
   if(!track){ console.error('track not found:', trackId); return; }
   track.innerHTML = '';
+  track.style.animation = 'none'; /* 리셋 */
+
+  var ITEM_W = 300, GAP = 4;
 
   /* 원본 세트 */
   files.forEach(function(file){ track.appendChild(makeItem(file)); });
-  /* 클론 세트 — 원본과 이어붙여서 seamless 루프 */
+  /* 클론 세트 */
   files.forEach(function(file){
-    var clone = makeItem(file);
-    clone.classList.add('clone');
-    track.appendChild(clone);
+    var c = makeItem(file);
+    c.classList.add('clone');
+    track.appendChild(c);
   });
 
-  /* 이미지 수에 따라 속도 조정 (장수 * 3초) */
-  var duration = Math.max(files.length * 3, 15);
-  track.style.animationDuration = duration + 's';
+  /* 원본 1세트 너비 = n장 * (아이템너비+gap) - 마지막gap */
+  var setW  = files.length * (ITEM_W + GAP);
+  var dur   = Math.max(files.length * 2.5, 12);
 
-  console.log('['+trackId+'] 렌더 완료 — '+files.length+'장 ('+duration+'s)');
+  /* CSS 변수로 애니메이션 거리/속도 전달 */
+  track.style.setProperty('--marquee-dist', '-' + setW + 'px');
+  track.style.setProperty('--marquee-dur',  dur + 's');
+  track.style.animation = 'marquee ' + dur + 's linear infinite';
+
+  console.log('['+trackId+']', files.length+'장', setW+'px', dur+'s');
 }
 
 function showEmpty(trackId, msg){
