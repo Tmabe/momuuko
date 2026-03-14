@@ -967,7 +967,6 @@ footer::before{
 <body>
 
 
-<!-- 스플래시 인트로 -->
 <div id="splash">
   <div class="splash-logo">
     <span style="animation-delay:.05s">M</span>
@@ -986,7 +985,6 @@ footer::before{
 <div class="bg-side bg-side-right"></div>
 <div class="bg-diag"></div>
 
-<!-- 라이트박스 -->
 <div class="lightbox" id="lightbox" onclick="if(event.target===this)closeLightbox()">
   <div class="lb-corner lb-c-tl"></div>
   <div class="lb-corner lb-c-tr"></div>
@@ -997,7 +995,6 @@ footer::before{
   <div class="lb-info" id="lbInfo"></div>
 </div>
 
-<!-- NAV -->
 <nav>
   <a class="nav-logo" href="#"><span>M</span>OMUKKO</a>
   <div class="nav-center">
@@ -1022,7 +1019,6 @@ footer::before{
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-left">
     <div class="bg-deco">MM</div>
@@ -1085,7 +1081,6 @@ footer::before{
   </div>
 </section>
 
-<!-- SKILLS -->
 <section id="skills" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
   <div class="sec">
     <div class="sec-head reveal">
@@ -1134,10 +1129,8 @@ footer::before{
   </div>
 </section>
 
-<!-- PORTFOLIO -->
 <section id="portfolio">
 
-  <!-- LIVE2D -->
   <div class="pf-sec">
     <div class="pf-cat-label reveal">
       <div class="pf-cat-tag">02</div>
@@ -1157,10 +1150,8 @@ footer::before{
     </div>
   </div>
 
-  <!-- 구분선 -->
   <div class="pf-sep"><div class="pf-sep-line"></div></div>
 
-  <!-- CHARACTER -->
   <div class="pf-sec" style="padding-top:0">
     <div class="pf-cat-label reveal">
       <div class="pf-cat-tag">03</div>
@@ -1180,10 +1171,8 @@ footer::before{
     </div>
   </div>
 
-  <!-- 구분선 -->
   <div class="pf-sep"><div class="pf-sep-line"></div></div>
 
-  <!-- DESIGN -->
   <div class="pf-sec" style="padding-top:0">
     <div class="pf-cat-label reveal">
       <div class="pf-cat-tag">04</div>
@@ -1205,7 +1194,6 @@ footer::before{
 
 </section>
 
-<!-- CONTACT -->
 <section id="contact">
   <div class="contact-inner">
     <div class="sec-head reveal" style="margin-bottom:48px">
@@ -1249,7 +1237,6 @@ footer::before{
 </section>
 
 
-<!-- SNS 섹션 -->
 <section id="sns">
   <div class="sns-inner">
     <div class="sec-head reveal">
@@ -1508,7 +1495,7 @@ function fetchFolderRecursive(apiPath, tag){
 /* 이미지 아이템 생성 */
 function makeItem(file){
   var src = 'https://raw.githubusercontent.com/'+GITHUB_USER+'/'+GITHUB_REPO
-    +'/'+GITHUB_BRANCH+'/'+file.path;
+    +'/'+GITHUB_BRANCH+'/'+encodeURI(file.path);
   var title = parseName(file.name);
   var tag   = file.tag || '';
   var el = document.createElement('div');
@@ -1544,8 +1531,14 @@ function renderGrid(trackId, files){
     track.appendChild(c);
   });
 
-  var setW   = files.length * ITEM_W + Math.max(files.length - 1, 0) * GAP;
-  var dur    = Math.max(files.length * 5, 24);
+  // 브라우저에 요소가 배치된 후의 실제 픽셀을 읽어오기 위해 강제 리플로우(Reflow)
+  void track.offsetWidth; 
+
+  // 클론 세트의 첫 번째 요소의 정확한 시작 위치(offsetLeft)를 측정하여 완벽하게 부드러운 루프 구현
+  var setW = track.children[files.length].offsetLeft;
+
+  // 애니메이션 재생 시간(속도). 배수(4.5)를 조절하여 속도를 제어합니다.
+  var dur  = Math.max(files.length * 4.5, 20); 
   var kfName = 'mq_' + trackId;
 
   /* 이 그리드 전용 <style> 태그 — 기존 것 있으면 재사용 */
@@ -1556,14 +1549,14 @@ function renderGrid(trackId, files){
     styleEl.id = styleId;
     document.head.appendChild(styleEl);
   }
+
+  // 부드러운 등속도(linear) 이동 애니메이션 지정
   styleEl.textContent =
     '@keyframes '+kfName+
     '{from{transform:translateX(0)}'+
     'to{transform:translateX(-'+setW+'px)}}';
 
-  /* 리플로우 강제 후 애니메이션 적용 */
-  void track.offsetWidth;
-  track.style.animation = kfName+' '+dur+'s steps(' + (files.length * 2) + ') infinite';
+  track.style.animation = kfName+' '+dur+'s linear infinite';
 
   console.log('['+trackId+'] ✅', files.length+'장', setW+'px', dur+'s');
 }
