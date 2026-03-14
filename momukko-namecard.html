@@ -165,15 +165,13 @@ body.light::after{
   #cursor{ display:none !important; }
 }
 #cursor{
-  position:fixed; width:11px; height:11px;
+  position:fixed; width:8px; height:8px;
   background:var(--Y); pointer-events:none; z-index:9999;
-  transform:translate(-50%,-50%) rotate(45deg);
-  border:2px solid rgba(0,0,0,.75);
-  border-radius:1px;
-  box-shadow:0 0 0 1px rgba(255,255,255,.25);
-  transition:width .15s, height .15s;
+  transform:translate(-50%,-50%);
+  transition:transform .08s, width .2s, height .2s;
+  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
 }
-#cursor.big{ width:18px; height:18px; }
+#cursor.big{ width:20px; height:20px; }
 
 /* ═══════════════════════════════════
    NAV
@@ -550,7 +548,7 @@ body.light .hs-lbl{ color:var(--text3); }
    PORTFOLIO — 스크롤 자연 나열
 ═══════════════════════════════════ */
 #portfolio{ background:var(--bg); }
-.pf-sec{ padding:100px 48px; max-width:1280px; margin:0 auto; }
+.pf-sec{ padding:100px 48px; max-width:1400px; margin:0 auto; }
 
 /* 카테고리 라벨 */
 .pf-cat-label{
@@ -574,28 +572,43 @@ body.light .hs-lbl{ color:var(--text3); }
   border-left:1px solid var(--line);
 }
 
-/* Live2D 그리드 — 큰 형태 */
-.pf-grid-l2d{
-  display:grid;
-  grid-template-columns:repeat(12,1fr);
-  gap:2px;
-  margin-bottom:2px;
+/* ── 가로 스크롤 캐러셀 ── */
+.pf-carousel{
+  display:flex; gap:3px;
+  overflow-x:auto; overflow-y:visible;
+  scroll-behavior:smooth;
+  scrollbar-width:none; -ms-overflow-style:none;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:4px;
+  cursor:grab;
 }
-.pf-grid-l2d .pf-item{ aspect-ratio:3/4; }
-.pf-grid-l2d .pf-item:nth-child(1){ grid-column:span 7; aspect-ratio:auto; min-height:480px; }
-.pf-grid-l2d .pf-item:nth-child(2){ grid-column:span 5; }
-.pf-grid-l2d .pf-item:nth-child(3){ grid-column:span 5; }
-.pf-grid-l2d .pf-item:nth-child(4){ grid-column:span 4; }
-.pf-grid-l2d .pf-item:nth-child(5){ grid-column:span 4; }
-.pf-grid-l2d .pf-item:nth-child(6){ grid-column:span 4; }
-.pf-grid-l2d .pf-item:nth-child(n+4){ grid-row:auto; }
-
-/* 캐릭터 그리드 — 균등 4열 */
-.pf-grid-char{
-  display:grid; grid-template-columns:repeat(4,1fr);
-  gap:2px;
+.pf-carousel:active{ cursor:grabbing; }
+.pf-carousel::-webkit-scrollbar{ display:none; }
+/* 캐러셀 아이템 — 고정 높이, 비율 유지 */
+.pf-carousel .pf-item{
+  flex:0 0 auto;
+  height:480px;
+  width:auto;
+  aspect-ratio:3/4;
 }
-.pf-grid-char .pf-item{ aspect-ratio:3/4; }
+/* 좌우 스크롤 버튼 */
+.pf-nav{
+  display:flex; justify-content:flex-end; gap:4px; margin-top:12px;
+}
+.pf-nav-btn{
+  width:38px; height:38px;
+  border:1px solid var(--line2); background:transparent;
+  color:var(--text2); font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .2s;
+}
+.pf-nav-btn:hover{ border-color:var(--Y); color:var(--Y); }
+/* 빈 상태 — 캐러셀 내 */
+.pf-carousel .pf-empty{
+  flex:0 0 auto; width:400px; height:480px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border:1px solid var(--line);
+}
 
 /* 공통 아이템 */
 .pf-item{
@@ -692,10 +705,10 @@ body.light .hs-lbl{ color:var(--text3); }
 }
 /* 엄청 큰 타이틀 */
 .ct-heading{
-  font-family:var(--display); font-size:clamp(36px,6vw,88px);
-  font-weight:400; letter-spacing:3px; line-height:.9; color:var(--text);
+  font-family:var(--display); font-size:clamp(20px,3.8vw,72px);
+  font-weight:400; letter-spacing:2px; line-height:.9; color:var(--text);
   text-transform:uppercase; margin-bottom:8px;
-  white-space:nowrap;
+  white-space:nowrap; overflow:hidden;
 }
 .ct-heading-accent{ color:var(--Y); display:inline; }
 .ct-sub{
@@ -831,6 +844,7 @@ footer::before{
   .hero-left{ padding:60px 40px 60px 40px; }
 }
 @media(max-width:960px){
+  .pf-carousel .pf-item{ height:360px; }
   .hero{ grid-template-columns:1fr; min-height:auto; }
   .hero-right{ display:none; }
   .hero-title{ white-space:normal; font-size:clamp(48px,12vw,100px); }
@@ -846,6 +860,7 @@ footer::before{
   .pf-sep{ padding:0 24px; }
 }
 @media(max-width:600px){
+  .pf-carousel .pf-item{ height:260px; }
   .hero-left{ padding:48px 20px; }
   .scroll-cue{ display:none; }
   .hero-stat-wrap{ display:none; }
@@ -856,7 +871,7 @@ footer::before{
   .pf-grid-l2d .pf-item:nth-child(1){ grid-column:span 2; aspect-ratio:16/9; min-height:0; }
   .pf-grid-l2d .pf-item:nth-child(n+2){ grid-column:span 1; }
   .pf-grid-char{ grid-template-columns:repeat(2,1fr); }
-  .ct-heading{ font-size:clamp(32px,9vw,64px); white-space:normal; }
+  .ct-heading{ font-size:clamp(18px,5.5vw,48px); white-space:normal; overflow:visible; }
   .hero-contacts{ margin-top:auto; }
   .sec{ padding:56px 20px; }
   .pf-sep{ padding:0 16px; }
@@ -1027,13 +1042,16 @@ footer::before{
       <div class="pf-cat-name">LIVE2D <span style="color:var(--Y)">WORKS</span></div>
       <div class="pf-cat-en" data-t="pf_l2d_sub">Live2D 일러스트 · 파츠 분리</div>
     </div>
-    <div class="pf-grid-l2d" id="l2dGrid">
+    <div class="pf-carousel" id="l2dGrid">
       <div class="pf-empty">
         <span class="pf-empty-num">L2D</span>
         <div id="l2dStatus">portfolio/live2d/ 폴더에 이미지를 올려주세요</div>
       </div>
     </div>
   </div>
+  <div class="pf-nav"><button class="pf-nav-btn" onclick="scrollPf('l2dGrid',-1)">←</button><button class="pf-nav-btn" onclick="scrollPf('l2dGrid',1)">→</button></div>
+  <div class="pf-nav"><button class="pf-nav-btn" onclick="scrollPf('charGrid',-1)">←</button><button class="pf-nav-btn" onclick="scrollPf('charGrid',1)">→</button></div>
+  <div class="pf-nav"><button class="pf-nav-btn" onclick="scrollPf('designGrid',-1)">←</button><button class="pf-nav-btn" onclick="scrollPf('designGrid',1)">→</button></div>
 
   <!-- 구분선 -->
   <div class="pf-sep"><div class="pf-sep-line"></div></div>
@@ -1045,7 +1063,7 @@ footer::before{
       <div class="pf-cat-name">CHARACTER <span style="color:var(--Y)">ILLUST</span></div>
       <div class="pf-cat-en" data-t="pf_char_sub">캐릭터 일러스트 · 개인작</div>
     </div>
-    <div class="pf-grid-char" id="charGrid">
+    <div class="pf-carousel" id="charGrid">
       <div class="pf-empty">
         <span class="pf-empty-num">CHR</span>
         <div id="charStatus">portfolio/character/ 폴더에 이미지를 올려주세요</div>
@@ -1063,7 +1081,7 @@ footer::before{
       <div class="pf-cat-name">DESIGN <span style="color:var(--Y)">WORKS</span></div>
       <div class="pf-cat-en" data-t="pf_design_sub">디자인 · 그래픽</div>
     </div>
-    <div class="pf-grid-char" id="designGrid">
+    <div class="pf-carousel" id="designGrid">
       <div class="pf-empty">
         <span class="pf-empty-num">DSN</span>
         <div id="designStatus">portfolio/design/ 폴더에 이미지를 올려주세요</div>
@@ -1079,14 +1097,13 @@ footer::before{
     <div class="sec-head reveal" style="margin-bottom:48px">
       <div class="sec-num">// 05</div>
       <div class="sec-title-block">
-        <div class="sec-title">GET IN <span class="sec-title-accent">TOUCH</span></div>
+        <div class="sec-title">CON<span class="sec-title-accent">TACT</span></div>
         <span class="sec-title-en" data-t="ct_sub">외주 의뢰 · 협업 · 비즈니스 문의</span>
       </div>
     </div>
     <div class="contact-grid reveal">
       <div class="contact-left">
         <div class="ct-heading"><span data-t="ct_heading">함께</span><span class="ct-heading-accent" data-t="ct_heading2">만들자</span></div>
-        <span class="ct-sub" data-t="ct_let">LET'S CREATE TOGETHER</span>
         <p class="ct-desc"
           data-t="ct_desc">
           외주 의뢰, 협업 제안, 비즈니스 문의 모두 환영합니다. 아래 채널로 편하게 연락해 주세요.
@@ -1217,10 +1234,10 @@ var T = {
   pf_design_sub: { ko:'디자인 · 그래픽 작업',         en:'Design · Graphic Works',         ja:'デザイン · グラフィック',        zh:'设计 · 平面作品' },
 
   /* CONTACT */
-  ct_sub:       { ko:'외주 의뢰 · 협업 · 비즈니스 문의', en:'Commission · Collaboration · Business', ja:'外注依頼 · コラボ · ビジネスお問い合わせ', zh:'外包委托 · 合作 · 商务咨询' },
+  ct_sub:       { ko:'CONTACT', en:'CONTACT', ja:'CONTACT', zh:'CONTACT' },
   ct_heading:   { ko:'항상', en:'ALWAYS',  ja:'いつでも', zh:'随时' },
   ct_heading2:  { ko:'기다리고 있겠습니다', en:'WAITING FOR YOU', ja:'お待ちしております', zh:'恭候您的联系' },
-  ct_let:       { ko:'언제든 편하게 연락 주세요', en:'Feel free to reach out anytime.', ja:'お気軽にご連絡ください', zh:'欢迎随时与我联系' },
+  ct_let:       { ko:'', en:'', ja:'', zh:'' },
   ct_desc:      { ko:'외주 의뢰, 협업 제안, 비즈니스 문의 모두 진심으로 환영합니다. 작은 문의도 소중히 여기겠습니다.',
                   en:'Commissions, collaborations, and business inquiries are all sincerely welcome. Every inquiry is important to me.',
                   ja:'外注依頼・コラボ提案・ビジネスのお問い合わせを心よりお待ちしております。どんな些細なご相談もお気軽にどうぞ。',
@@ -1378,7 +1395,7 @@ function renderGrid(gridId, files){
     var tag   = file.tag || '';
     var el = document.createElement('div');
     el.className = 'pf-item reveal';
-    el.style.transitionDelay = (i * 0.05) + 's';
+    el.style.transitionDelay = (i * 0.04) + 's';
     el.innerHTML =
       '<img src="'+src+'" alt="'+title+'" loading="lazy">'
       +(tag ? '<div class="pf-tag">'+tag+'</div>' : '')
@@ -1430,6 +1447,22 @@ function closeLightbox(){
   document.body.style.overflow='';
 }
 document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLightbox(); });
+
+/* 캐러셀 좌우 스크롤 */
+function scrollPf(id, dir){
+  var el = document.getElementById(id);
+  if(el) el.scrollBy({ left: dir * 420, behavior:'smooth' });
+}
+/* 드래그 스크롤 */
+document.querySelectorAll('.pf-carousel').forEach(function(track){
+  var down=false, sx=0, sl=0;
+  track.addEventListener('mousedown',function(e){ down=true; sx=e.pageX; sl=track.scrollLeft; track.style.userSelect='none'; });
+  window.addEventListener('mouseup',function(){ down=false; track.style.userSelect=''; });
+  track.addEventListener('mousemove',function(e){
+    if(!down) return;
+    track.scrollLeft = sl - (e.pageX - sx) * 1.2;
+  });
+});
 
 loadPortfolio();
 </script>
