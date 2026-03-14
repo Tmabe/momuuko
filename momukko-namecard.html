@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOMUKKO · NAMECARD</title>
+<meta name="description" content="서브컬쳐 캐릭터 일러스트 & Live2D 모델 디자이너 모무꼬">
+<meta property="og:title" content="MOMUKKO · NAMECARD">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&family=Noto+Sans+KR:wght@300;400;700;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════
+   ROOT — 단 하나의 포인트 컬러
+═══════════════════════════════════ */
+:root{
+  --Y:       #FFD000;
+  --Y2:      #CC9900;
+  --mono:    'DM Mono', monospace;
+  --cond:    'Barlow Condensed', sans-serif;
+  --display: 'Bebas Neue', sans-serif;
+}
+
+/* ── 다크 모드 (기본) ── */
+body{
+  --bg:    #1A1A22;
+  --bg2:   #1F1F28;
+  --bg3:   #25252F;
+  --panel: #22222C;
+  --line:  rgba(255,255,255,.12);
+  --line2: rgba(255,255,255,.24);
+  --text:  #F0EEE8;
+  --text2: #B8B4AC;
+  --text3: #7A7870;
+  --nav-bg:rgba(22,22,30,.88);
+  --lb-bg: rgba(20,20,28,.97);
+  --hero-overlay:rgba(20,20,28,.8);
+  --img-filter:var(--img-filter);
+}
+
+/* ── 라이트 모드 ── */
+body.light{
+  --bg:    #F2F1EE;
+  --bg2:   #E8E7E3;
+  --bg3:   #DDDCD8;
+  --panel: #ECEAE6;
+  --line:  rgba(0,0,0,.1);
+  --line2: rgba(0,0,0,.2);
+  --text:  #18181C;
+  --text2: #5A5850;
+  --text3: #9A9890;
+  --nav-bg:rgba(242,241,238,.92);
+  --lb-bg: rgba(240,239,236,.97);
+  --hero-overlay:rgba(232,231,227,.75);
+  --img-filter:contrast(1.02) saturate(.9);
+}
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Noto Sans KR', sans-serif; font-weight:300;
+  overflow-x:hidden;
+}
+
+/* ═══════════════════════════════════
+   커스텀 커서
+═══════════════════════════════════ */
+*, a, button{ cursor:none !important; }
+#cursor{
+  position:fixed; width:8px; height:8px;
+  background:var(--Y); pointer-events:none; z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width .15s, height .15s;
+  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%); /* 마름모 */
+}
+#cursor.big{ width:20px; height:20px; }
+
+/* ═══════════════════════════════════
+   NAV
+═══════════════════════════════════ */
+nav{
+  position:fixed; top:0; left:0; right:0; z-index:300;
+  height:52px; padding:0 0 0 48px;
+  display:grid; grid-template-columns:1fr auto 1fr;
+  align-items:stretch;
+  background:var(--nav-bg); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line);
+}
+/* 왼쪽 꺾쇠 데코 */
+nav::before{
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; background:var(--Y);
+}
+.nav-logo{
+  font-family:var(--display); font-size:20px; letter-spacing:4px;
+  color:var(--text); text-decoration:none;
+  display:flex; align-items:center;
+}
+.nav-right{
+  display:flex; align-items:center; justify-content:flex-end;
+  gap:8px; padding-right:32px;
+}
+.nav-logo span{ color:var(--Y); }
+.nav-center{
+  display:flex; gap:0; align-items:stretch;
+}
+.nav-link{
+  font-family:var(--mono); font-size:11px; letter-spacing:3px;
+  text-transform:uppercase; color:var(--text2); text-decoration:none;
+  padding:0 20px; height:52px; display:flex; align-items:center;
+  border-left:1px solid var(--line); transition:color .2s;
+  position:relative;
+}
+.nav-link::after{
+  content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+  background:var(--Y); transform:scaleX(0); transition:transform .2s;
+}
+.nav-link:hover{ color:var(--Y); }
+.nav-link:hover::after{ transform:scaleX(1); }
+.lang-btn{
+  font-family:var(--mono); font-size:9px; letter-spacing:3px;
+  text-transform:uppercase; padding:6px 14px;
+  border:1px solid var(--line2); background:transparent;
+  color:var(--text2); transition:all .2s;
+}
+.lang-btn{ position:relative; }
+.lang-btn:hover{ border-color:var(--Y); color:var(--Y); }
+.lang-wrap{ position:relative; }
+.lang-arrow{ font-size:8px; margin-left:4px; transition:transform .2s; }
+.lang-wrap.open .lang-arrow{ transform:rotate(180deg); }
+.lang-menu{
+  display:none; position:absolute; top:calc(100% + 6px); right:0;
+  background:var(--bg2); border:1px solid var(--line2);
+  min-width:140px; z-index:400;
+  flex-direction:column;
+}
+.lang-wrap.open .lang-menu{ display:flex; animation:menuIn .15s ease; }
+@keyframes menuIn{ from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+.lang-option{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 16px; background:transparent;
+  border:none; border-bottom:1px solid var(--line);
+  color:var(--text2); text-align:left; transition:all .15s;
+  width:100%;
+}
+.lang-option:last-child{ border-bottom:none; }
+.lang-option:hover{ background:rgba(255,208,0,.08); color:var(--text); }
+.lang-option.active{ color:var(--Y); }
+.lo-code{ font-family:var(--display); font-size:13px; letter-spacing:1px; min-width:24px; }
+.lo-name{ font-family:var(--mono); font-size:10px; letter-spacing:1px; }
+.theme-btn{
+  font-size:14px; width:32px; height:32px;
+  border:1px solid var(--line2); background:transparent;
+  color:var(--text2); transition:all .2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.theme-btn:hover{ border-color:var(--Y); color:var(--Y); }
+/* 라이트 모드 전환 시 밝은 요소들 조정 */
+body.light .hero-img-fallback{ color:rgba(255,208,0,.06); }
+body.light .bg-deco{ color:rgba(255,208,0,.05); }
+body.light .lb-close{ color:var(--text2); }
+body.light .pf-empty{ border-color:var(--line2); }
+body.light .pf-empty-num{ opacity:.3; }
+body.light footer::before{ background:var(--Y); }
+body.light .ct-heading{ color:var(--text); }
+body.light .contact-left::before{ background:var(--Y); }
+body.light #contact{ background:var(--bg2); border-top:1px solid var(--line); }
+body.light .ct-desc{ color:var(--text); }
+body.light .ct-heading-accent{ color:var(--Y2); }
+body.light .hero-stat-wrap .hero-stat{ background:rgba(255,255,255,.7); }
+body.light .hs-lbl{ color:var(--text3); }
+
+/* ═══════════════════════════════════
+   HERO
+═══════════════════════════════════ */
+.hero{
+  min-height:100vh; padding-top:52px;
+  display:grid; grid-template-columns:1fr minmax(320px,420px);
+  position:relative; overflow:hidden;
+}
+
+/* 왼쪽 */
+.hero-left{
+  display:flex; flex-direction:column; justify-content:center;
+  padding:80px 64px 80px 48px; position:relative; z-index:1;
+  overflow:hidden; min-width:0;
+}
+/* 대각선 슬래시 데코 */
+.hero-slash{
+  font-family:var(--cond); font-size:13px; font-weight:700;
+  letter-spacing:4px; color:var(--Y); text-transform:uppercase;
+  display:flex; align-items:center; gap:12px; margin-bottom:32px;
+  opacity:0; animation:cutIn .5s .1s ease forwards;
+}
+.hero-slash::before{
+  content:'//'; font-family:var(--display); font-size:14px; color:var(--Y2);
+}
+.hero-slash-line{
+  flex:0 0 48px; height:1px; background:var(--Y);
+}
+
+/* 메인 타이틀 — 엄청 크게 */
+.hero-title{
+  font-family:var(--display); font-size:clamp(52px,7vw,110px);
+  line-height:.85; letter-spacing:2px; color:var(--text);
+  margin-bottom:4px; white-space:nowrap; overflow:visible;
+  opacity:0; animation:cutIn .6s .2s ease forwards;
+}
+.hero-title-accent{ color:var(--Y); display:inline; }
+
+/* 한글 서브 — 아주 작게 */
+.hero-sub-kr{
+  font-family:var(--mono); font-size:13px; letter-spacing:6px;
+  color:var(--text2); text-transform:uppercase; margin-bottom:48px;
+  opacity:0; animation:cutIn .5s .4s ease forwards;
+}
+
+/* 직선 구분 */
+.hero-rule{
+  width:100%; height:1px; background:var(--line);
+  margin-bottom:40px; position:relative;
+  opacity:0; animation:cutIn .4s .5s ease forwards;
+}
+.hero-rule::before{
+  content:''; position:absolute; left:0; top:0; height:1px;
+  width:80px; background:var(--Y);
+}
+
+/* 직함 — 중간 크기 */
+.hero-role{
+  font-family:var(--cond); font-size:clamp(18px,2.5vw,28px);
+  font-weight:700; letter-spacing:2px; color:var(--text);
+  text-transform:uppercase; margin-bottom:6px;
+  opacity:0; animation:cutIn .5s .55s ease forwards;
+}
+.hero-role-en{
+  font-family:var(--mono); font-size:12px; letter-spacing:2px;
+  color:var(--text2); margin-bottom:52px;
+  opacity:0; animation:cutIn .5s .65s ease forwards;
+}
+
+/* 연락처 — 아주 작게 */
+.hero-contacts{
+  display:flex; flex-direction:column; gap:0;
+  border:1px solid var(--line);
+  opacity:0; animation:cutIn .5s .75s ease forwards;
+}
+.hc-item{
+  display:flex; align-items:center; gap:0;
+  text-decoration:none; color:var(--text2);
+  border-bottom:1px solid var(--line);
+  transition:all .2s; overflow:hidden; min-width:0;
+}
+.hc-item:last-child{ border-bottom:none; }
+.hc-item:hover{ color:var(--text); background:rgba(255,208,0,.04); }
+.hc-item:hover .hc-tag{ background:var(--Y); color:var(--bg); }
+.hc-tag{
+  font-family:var(--display); font-size:11px; letter-spacing:2px;
+  padding:12px 16px; background:var(--bg3); color:var(--Y2);
+  border-right:1px solid var(--line); min-width:80px; text-align:center;
+  transition:all .2s; flex-shrink:0;
+}
+.hc-val{
+  font-family:var(--mono); font-size:11px; letter-spacing:.5px;
+  padding:0 16px; flex:1; color:var(--text);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;
+}
+
+/* 오른쪽 */
+.hero-right{
+  background:var(--bg2); border-left:1px solid var(--line);
+  position:relative; overflow:hidden;
+  display:flex; align-items:flex-end; justify-content:center;
+}
+.hero-img{
+  width:100%; height:100%; object-fit:cover;
+  object-position:top center;
+  filter:var(--img-filter);
+  opacity:0; animation:fadeIn .8s .3s ease forwards;
+}
+.hero-img-fallback{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--display); font-size:180px; color:rgba(255,208,0,.06);
+  letter-spacing:-8px; user-select:none;
+}
+/* 오른쪽 패널 오버레이 */
+.hero-right-overlay{
+  position:absolute; inset:0;
+  background:linear-gradient(0deg,var(--hero-overlay) 0%,transparent 40%);
+  pointer-events:none;
+}
+/* 코너 데코 */
+.corner{
+  position:absolute; width:20px; height:20px;
+  border-color:var(--Y); border-style:solid;
+}
+.corner-tl{ top:12px; left:12px; border-width:2px 0 0 2px; }
+.corner-tr{ top:12px; right:12px; border-width:2px 2px 0 0; }
+.corner-bl{ bottom:12px; left:12px; border-width:0 0 2px 2px; }
+.corner-br{ bottom:12px; right:12px; border-width:0 2px 2px 0; }
+
+/* 우측 하단 스탯 */
+.hero-stat-wrap{
+  position:absolute; bottom:24px; left:0; right:0; padding:0 20px;
+  display:flex; gap:1px; z-index:2;
+}
+.hero-stat{
+  flex:1; background:rgba(0,0,0,.35); border:1px solid var(--line);
+  padding:10px 12px; text-align:center;
+  backdrop-filter:blur(8px);
+}
+.hs-val{
+  font-family:var(--display); font-size:22px; color:var(--Y);
+  letter-spacing:1px; display:block;
+}
+.hs-lbl{
+  font-family:var(--mono); font-size:8px; letter-spacing:2px;
+  color:var(--text3); text-transform:uppercase; margin-top:1px;
+}
+
+/* 배경 데코 텍스트 */
+.bg-deco{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  font-family:var(--display); font-size:clamp(120px,18vw,240px); color:rgba(255,208,0,.04);
+  letter-spacing:-8px; user-select:none; white-space:nowrap; z-index:0;
+  pointer-events:none; max-width:100%; overflow:hidden;
+}
+
+/* 스크롤 큐 */
+.scroll-cue{
+  position:absolute; bottom:36px; left:48px; z-index:2;
+  display:flex; align-items:center; gap:12px;
+  font-family:var(--mono); font-size:8px; letter-spacing:4px;
+  color:var(--text3); text-transform:uppercase;
+  opacity:0; animation:cutIn .5s 1.1s ease forwards;
+}
+.scroll-bar{
+  width:1px; height:40px; background:linear-gradient(180deg,var(--Y),transparent);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse{
+  0%,100%{ opacity:.4; } 50%{ opacity:1; }
+}
+
+/* ═══════════════════════════════════
+   섹션 공통
+═══════════════════════════════════ */
+.sec{ padding:100px 48px; max-width:1280px; margin:0 auto; }
+
+/* 섹션 헤더 — ZZZ 스타일 */
+.sec-head{
+  display:flex; align-items:flex-end; gap:24px; margin-bottom:64px;
+  position:relative; min-width:0; overflow:hidden;
+}
+.sec-head::after{
+  content:''; position:absolute; bottom:-1px; left:0; right:0;
+  height:1px; background:var(--line);
+}
+.sec-num{
+  font-family:var(--display); font-size:14px; letter-spacing:2px;
+  color:var(--Y); padding-bottom:16px;
+}
+.sec-title-block{ padding-bottom:16px; flex:1; }
+.sec-title{
+  font-family:var(--display); font-size:clamp(40px,6vw,80px);
+  letter-spacing:3px; line-height:.9; color:var(--text);
+  text-transform:uppercase;
+}
+.sec-title-accent{ color:var(--Y); }
+.sec-title-en{
+  font-family:var(--mono); font-size:12px; letter-spacing:3px;
+  color:var(--text2); text-transform:uppercase; margin-top:6px;
+  display:block;
+}
+.sec-head-right{
+  font-family:var(--mono); font-size:9px; letter-spacing:2px;
+  color:var(--text3); padding-bottom:18px; text-transform:uppercase;
+  display:flex; align-items:center; gap:8px;
+}
+.sec-head-right::before{
+  content:''; width:20px; height:1px; background:var(--line2);
+}
+
+/* reveal */
+.reveal{
+  opacity:0; transform:translateY(20px);
+  transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
+}
+.reveal.in{ opacity:1; transform:translateY(0); }
+.rd1{ transition-delay:.08s; }
+.rd2{ transition-delay:.16s; }
+.rd3{ transition-delay:.24s; }
+
+/* ═══════════════════════════════════
+   SKILLS — 3패널
+═══════════════════════════════════ */
+#skills{ background:var(--bg2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.skills-wrap{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; background:var(--line);
+  border:1px solid var(--line); overflow:hidden;
+}
+.skill-card{
+  background:var(--panel); padding:40px 36px;
+  position:relative; overflow:hidden;
+  transition:background .25s;
+}
+.skill-card:hover{ background:var(--bg3); }
+/* 호버 시 노란선 */
+.skill-card::before{
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:2px;
+  background:var(--Y); transform:scaleX(0); transform-origin:left;
+  transition:transform .4s cubic-bezier(.22,1,.36,1);
+}
+.skill-card:hover::before{ transform:scaleX(1); }
+/* 번호 */
+.sk-num{
+  font-family:var(--display); font-size:64px; color:rgba(255,208,0,.06);
+  position:absolute; top:16px; right:20px; line-height:1; letter-spacing:-2px;
+  user-select:none;
+}
+.sk-idx{
+  font-family:var(--mono); font-size:11px; letter-spacing:3px;
+  color:var(--Y); margin-bottom:28px; display:block;
+}
+/* 이름 — 크게 */
+.sk-name{
+  font-family:var(--cond); font-size:clamp(20px,2.5vw,28px);
+  font-weight:900; letter-spacing:1px; text-transform:uppercase;
+  color:var(--text); margin-bottom:2px; line-height:1.1;
+}
+/* 영문 — 아주 작게 */
+.sk-name-en{
+  font-family:var(--mono); font-size:11px; letter-spacing:2px;
+  color:var(--text2); text-transform:uppercase; margin-bottom:24px; display:block;
+}
+.sk-body{
+  font-size:13px; font-weight:400; color:var(--text); line-height:2;
+  margin-bottom:8px;
+}
+.sk-body-en{
+  font-family:var(--mono); font-size:11px; font-weight:400;
+  color:var(--text2); line-height:1.9;
+  border-left:2px solid var(--Y); padding-left:10px;
+}
+
+/* ═══════════════════════════════════
+   PORTFOLIO — 스크롤 자연 나열
+═══════════════════════════════════ */
+#portfolio{ background:var(--bg); }
+.pf-sec{ padding:100px 48px; max-width:1280px; margin:0 auto; }
+
+/* 카테고리 라벨 */
+.pf-cat-label{
+  display:flex; align-items:center; gap:0;
+  margin-bottom:40px; border:1px solid var(--line);
+  overflow:hidden; flex-wrap:nowrap; min-width:0;
+}
+.pf-cat-tag{
+  font-family:var(--display); font-size:11px; letter-spacing:3px;
+  padding:10px 20px; background:var(--Y); color:var(--bg);
+  text-transform:uppercase; flex-shrink:0;
+}
+.pf-cat-name{
+  font-family:var(--display); font-size:clamp(20px,3.5vw,48px);
+  letter-spacing:2px; color:var(--text); padding:0 20px; flex:1;
+  text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.pf-cat-en{
+  font-family:var(--mono); font-size:11px; letter-spacing:2px;
+  color:var(--text2); padding:0 20px; text-transform:uppercase;
+  border-left:1px solid var(--line);
+}
+
+/* Live2D 그리드 — 큰 형태 */
+.pf-grid-l2d{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:2px;
+  margin-bottom:2px;
+}
+.pf-grid-l2d .pf-item{ aspect-ratio:3/4; }
+.pf-grid-l2d .pf-item:nth-child(1){ grid-column:span 7; aspect-ratio:auto; min-height:480px; }
+.pf-grid-l2d .pf-item:nth-child(2){ grid-column:span 5; }
+.pf-grid-l2d .pf-item:nth-child(3){ grid-column:span 5; }
+.pf-grid-l2d .pf-item:nth-child(4){ grid-column:span 4; }
+.pf-grid-l2d .pf-item:nth-child(5){ grid-column:span 4; }
+.pf-grid-l2d .pf-item:nth-child(6){ grid-column:span 4; }
+.pf-grid-l2d .pf-item:nth-child(n+4){ grid-row:auto; }
+
+/* 캐릭터 그리드 — 균등 4열 */
+.pf-grid-char{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:2px;
+}
+.pf-grid-char .pf-item{ aspect-ratio:3/4; }
+
+/* 공통 아이템 */
+.pf-item{
+  position:relative; overflow:hidden; background:var(--bg3);
+  cursor:none !important; transition:transform .4s cubic-bezier(.22,1,.36,1);
+}
+.pf-item:hover{ transform:scale(1.01); z-index:2; }
+.pf-item img{
+  width:100%; height:100%; object-fit:cover;
+  filter:saturate(.85) contrast(1.05);
+  transition:filter .4s, transform .6s;
+}
+.pf-item:hover img{ filter:saturate(1.1); transform:scale(1.06); }
+/* 오버레이 */
+.pf-overlay{
+  position:absolute; inset:0;
+  background:linear-gradient(0deg,rgba(8,8,13,.9) 0%,transparent 50%);
+  opacity:0; transition:opacity .3s;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:16px;
+}
+.pf-item:hover .pf-overlay{ opacity:1; }
+.pf-overlay-title{
+  font-family:var(--cond); font-size:16px; font-weight:700;
+  letter-spacing:1px; color:var(--text); text-transform:uppercase;
+  margin-bottom:2px; line-height:1.1;
+}
+.pf-overlay-en{
+  font-family:var(--mono); font-size:9px; letter-spacing:1px; color:var(--text3);
+}
+/* 태그 */
+.pf-tag{
+  position:absolute; top:0; left:0;
+  font-family:var(--display); font-size:9px; letter-spacing:2px;
+  padding:4px 10px; background:var(--Y); color:var(--bg);
+  text-transform:uppercase;
+}
+/* 코너 데코 — 호버 시 나타남 */
+.pf-corner{
+  position:absolute; width:12px; height:12px;
+  border-color:var(--Y); border-style:solid;
+  opacity:0; transition:opacity .2s;
+}
+.pf-item:hover .pf-corner{ opacity:1; }
+.pf-corner.tl{ top:8px; left:8px; border-width:1px 0 0 1px; }
+.pf-corner.br{ bottom:8px; right:8px; border-width:0 1px 1px 0; }
+
+/* 빈 상태 */
+.pf-empty{
+  grid-column:1/-1; padding:60px 40px; text-align:center;
+  border:1px solid var(--line);
+  font-family:var(--mono); font-size:10px; color:var(--text3);
+  letter-spacing:2px; line-height:2.5; text-transform:uppercase;
+}
+.pf-empty-num{
+  font-family:var(--display); font-size:64px; color:var(--Y);
+  display:block; margin-bottom:8px;
+}
+
+/* 카테고리 구분선 */
+.pf-sep{
+  height:80px; display:flex; align-items:center;
+  padding:0 48px; max-width:1280px; margin:0 auto;
+}
+.pf-sep-line{
+  flex:1; height:1px; background:var(--line);
+  position:relative;
+}
+.pf-sep-line::after{
+  content:''; position:absolute; left:50%; top:-2px;
+  width:4px; height:4px; background:var(--Y);
+  transform:translateX(-50%) rotate(45deg);
+}
+
+/* ═══════════════════════════════════
+   CONTACT
+═══════════════════════════════════ */
+#contact{
+  background:var(--bg2);
+  border-top:1px solid var(--line);
+}
+.contact-inner{ max-width:1280px; margin:0 auto; padding:100px 48px; }
+.contact-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:0;
+  border:1px solid var(--line); overflow:hidden;
+}
+.contact-left{
+  padding:64px 56px; border-right:1px solid var(--line);
+  position:relative; overflow:hidden;
+}
+.contact-left::before{
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; background:var(--Y);
+}
+/* 엄청 큰 타이틀 */
+.ct-heading{
+  font-family:var(--display); font-size:clamp(56px,8vw,110px);
+  letter-spacing:2px; line-height:.85; color:var(--text);
+  text-transform:uppercase; margin-bottom:8px;
+}
+.ct-heading-accent{ color:var(--Y); display:block; }
+.ct-sub{
+  font-family:var(--mono); font-size:12px; letter-spacing:3px;
+  color:var(--text2); text-transform:uppercase; margin-bottom:40px; display:block;
+}
+.ct-desc{
+  font-size:14px; font-weight:400; color:var(--text);
+  line-height:2.1; margin-bottom:6px;
+}
+.ct-desc-en{
+  font-family:var(--mono); font-size:11px; font-weight:400;
+  color:var(--text2); line-height:1.9;
+}
+.contact-right{
+  display:flex; flex-direction:column;
+}
+.ct-item{
+  display:flex; align-items:stretch; gap:0;
+  border-bottom:1px solid var(--line);
+  text-decoration:none; color:var(--text2);
+  transition:all .2s; flex:1;
+}
+.ct-item:last-child{ border-bottom:none; }
+.ct-item:hover{ background:rgba(255,208,0,.04); color:var(--text); }
+.ct-item:hover .ct-icon-wrap{ background:var(--Y); color:var(--bg); }
+.ct-icon-wrap{
+  width:64px; display:flex; align-items:center; justify-content:center;
+  border-right:1px solid var(--line); font-size:16px;
+  transition:all .2s; flex-shrink:0;
+  background:var(--bg3);
+}
+.ct-body{ padding:24px 28px; flex:1; }
+.ct-label{
+  font-family:var(--mono); font-size:10px; letter-spacing:3px;
+  color:var(--text2); text-transform:uppercase; margin-bottom:6px; display:block;
+}
+.ct-val{
+  font-family:var(--cond); font-size:16px; font-weight:600;
+  letter-spacing:1px; color:inherit;
+}
+.ct-arrow{
+  width:48px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:12px; color:var(--text3);
+  border-left:1px solid var(--line); flex-shrink:0;
+  transition:color .2s;
+}
+.ct-item:hover .ct-arrow{ color:var(--Y); }
+
+/* ═══════════════════════════════════
+   FOOTER
+═══════════════════════════════════ */
+footer{
+  background:var(--bg); border-top:1px solid var(--line);
+  padding:20px 48px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:relative;
+}
+footer::before{
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--Y);
+}
+.ft-left{
+  font-family:var(--display); font-size:12px; letter-spacing:3px;
+  color:var(--text3);
+}
+.ft-left span{ color:var(--Y); }
+.ft-right{
+  font-family:var(--mono); font-size:11px; letter-spacing:2px;
+  color:var(--text2); text-transform:uppercase;
+}
+
+/* ═══════════════════════════════════
+   라이트박스
+═══════════════════════════════════ */
+.lightbox{
+  display:none; position:fixed; inset:0; z-index:900;
+  background:var(--lb-bg);
+  align-items:center; justify-content:center; padding:32px;
+}
+.lightbox.open{ display:flex; animation:lbIn .2s ease; }
+@keyframes lbIn{ from{opacity:0} to{opacity:1} }
+.lb-img{
+  max-width:88vw; max-height:88vh; object-fit:contain;
+  border:1px solid var(--line);
+  animation:lbScale .3s cubic-bezier(.22,1,.36,1);
+}
+@keyframes lbScale{ from{transform:scale(.95);opacity:0} to{transform:scale(1);opacity:1} }
+/* 라이트박스 코너 데코 */
+.lb-corner{
+  position:absolute; width:24px; height:24px;
+  border-color:var(--Y); border-style:solid;
+}
+.lb-c-tl{ top:20px; left:20px; border-width:2px 0 0 2px; }
+.lb-c-tr{ top:20px; right:20px; border-width:2px 2px 0 0; }
+.lb-c-bl{ bottom:20px; left:20px; border-width:0 0 2px 2px; }
+.lb-c-br{ bottom:20px; right:20px; border-width:0 2px 2px 0; }
+.lb-close{
+  position:absolute; top:24px; right:24px;
+  font-family:var(--mono); font-size:9px; letter-spacing:3px;
+  color:var(--text3); background:transparent; border:1px solid var(--line2);
+  padding:6px 14px; transition:all .15s; text-transform:uppercase;
+}
+.lb-close:hover{ border-color:var(--Y); color:var(--Y); }
+.lb-info{
+  position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+  font-family:var(--mono); font-size:9px; letter-spacing:3px;
+  color:var(--text3); text-transform:uppercase; white-space:nowrap;
+}
+
+/* ═══════════════════════════════════
+   애니메이션
+═══════════════════════════════════ */
+@keyframes cutIn{
+  from{ opacity:0; transform:translateX(-12px); }
+  to  { opacity:1; transform:translateX(0); }
+}
+@keyframes fadeIn{
+  from{ opacity:0; } to{ opacity:1; }
+}
+
+/* ═══════════════════════════════════
+   반응형
+═══════════════════════════════════ */
+@media(max-width:1100px){
+  .pf-grid-l2d{ grid-template-columns:repeat(6,1fr); }
+  .pf-grid-l2d .pf-item{ aspect-ratio:3/4; }
+  .pf-grid-l2d .pf-item:nth-child(1){ grid-column:span 6; min-height:0; aspect-ratio:16/9; }
+  .pf-grid-l2d .pf-item:nth-child(n+2){ grid-column:span 3; }
+  .pf-grid-char{ grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:1200px){
+  .hero-left{ padding:60px 40px 60px 40px; }
+}
+@media(max-width:960px){
+  .hero{ grid-template-columns:1fr; min-height:auto; }
+  .hero-right{ min-height:50vw; max-height:600px; }
+  .hero-title{ white-space:normal; font-size:clamp(48px,12vw,100px); }
+  nav{ padding:0 24px; }
+  .nav-center{ display:none; }
+  .sec, .pf-sec{ padding:72px 24px; }
+  .contact-inner{ padding:72px 24px; }
+  .skills-wrap{ grid-template-columns:1fr; }
+  .contact-grid{ grid-template-columns:1fr; }
+  .contact-left{ border-right:none; border-bottom:1px solid var(--line); }
+  footer{ padding:16px 24px; }
+  .pf-grid-char{ grid-template-columns:repeat(2,1fr); }
+  .pf-sep{ padding:0 24px; }
+}
+@media(max-width:600px){
+  .hero-left{ padding:48px 20px; }
+  .pf-sec{ padding:48px 16px; }
+  .pf-cat-label{ flex-wrap:wrap; }
+  .pf-cat-en{ display:none; }
+  .pf-grid-l2d{ grid-template-columns:repeat(2,1fr); }
+  .pf-grid-l2d .pf-item:nth-child(1){ grid-column:span 2; aspect-ratio:16/9; min-height:0; }
+  .pf-grid-l2d .pf-item:nth-child(n+2){ grid-column:span 1; }
+  .pf-grid-char{ grid-template-columns:repeat(2,1fr); }
+  .ct-heading{ font-size:clamp(40px,12vw,72px); }
+  .hero-contacts{ margin-top:auto; }
+  .sec{ padding:56px 20px; }
+  .pf-sep{ padding:0 16px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- 라이트박스 -->
+<div class="lightbox" id="lightbox" onclick="if(event.target===this)closeLightbox()">
+  <div class="lb-corner lb-c-tl"></div>
+  <div class="lb-corner lb-c-tr"></div>
+  <div class="lb-corner lb-c-bl"></div>
+  <div class="lb-corner lb-c-br"></div>
+  <button class="lb-close" onclick="closeLightbox()">ESC · CLOSE</button>
+  <img class="lb-img" id="lbImg" src="" alt="">
+  <div class="lb-info" id="lbInfo"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#"><span>M</span>OMUKKO</a>
+  <div class="nav-center">
+    <a class="nav-link" href="#skills" data-t="nav_skills">SKILLS</a>
+    <a class="nav-link" href="#portfolio" data-t="nav_portfolio">PORTFOLIO</a>
+    <a class="nav-link" href="#contact" data-t="nav_contact">CONTACT</a>
+  </div>
+  <div class="nav-right">
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="라이트/다크 모드">●</button>
+  <div class="lang-wrap" id="langWrap">
+    <button class="lang-btn" id="langBtn" onclick="toggleLangMenu()">
+      <span id="langCurrent">KO</span> <span class="lang-arrow">▾</span>
+    </button>
+    <div class="lang-menu" id="langMenu">
+      <button class="lang-option" onclick="setLang('ko')"><span class="lo-code">KO</span><span class="lo-name">한국어</span></button>
+      <button class="lang-option" onclick="setLang('en')"><span class="lo-code">EN</span><span class="lo-name">English</span></button>
+      <button class="lang-option" onclick="setLang('ja')"><span class="lo-code">JP</span><span class="lo-name">日本語</span></button>
+      <button class="lang-option" onclick="setLang('zh')"><span class="lo-code">ZH</span><span class="lo-name">中文</span></button>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="bg-deco">MM</div>
+    <div class="hero-slash">
+      <span data-t="hero_eyebrow">캐릭터 일러스트레이터 · Live2D 디자이너</span>
+      <div class="hero-slash-line"></div>
+    </div>
+    <div class="hero-title">
+      MOM<span class="hero-title-accent">UK</span>KO
+    </div>
+    <div class="hero-sub-kr">모 무 꼬 · MOMUKKO</div>
+    <div class="hero-rule"></div>
+    <div class="hero-role"
+      data-t="hero_role">
+      서브컬쳐 캐릭터 일러스트 &amp; Live2D 모델 디자이너
+    </div>
+    <div class="hero-role-en" data-t="hero_role_en">SUBCULTURAL CHARACTER ILLUSTRATOR &amp; LIVE2D MODEL DESIGNER</div>
+    <div class="hero-contacts">
+      <a class="hc-item" href="https://x.com/Momuko8" target="_blank">
+        <div class="hc-tag">X</div>
+        <div class="hc-val">@Momuko8</div>
+      </a>
+      <a class="hc-item" href="mailto:wjsdntjr1339@gmail.com">
+        <div class="hc-tag">MAIL</div>
+        <div class="hc-val">wjsdntjr1339@gmail.com</div>
+      </a>
+      <a class="hc-item" href="https://tally.so/r/vGAV98" target="_blank">
+        <div class="hc-tag">FORM</div>
+        <div class="hc-val" data-t="form_link">커미션 신청 · Tally Form</div>
+      </a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img class="hero-img" src="https://unavatar.io/twitter/Momuko8" alt="MOMUKKO"
+      onerror="this.style.opacity='.05'">
+    <div class="hero-img-fallback">MM</div>
+    <div class="hero-right-overlay"></div>
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+    <div class="hero-stat-wrap">
+      <div class="hero-stat">
+        <span class="hs-val">KR</span>
+        <div class="hs-lbl">MARKET</div>
+      </div>
+      <div class="hero-stat">
+        <span class="hs-val">JP</span>
+        <div class="hs-lbl">MARKET</div>
+      </div>
+      <div class="hero-stat">
+        <span class="hs-val">L2D</span>
+        <div class="hs-lbl">SPECIALIST</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-bar"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="sec">
+    <div class="sec-head reveal">
+      <div class="sec-num">// 01</div>
+      <div class="sec-title-block">
+        <div class="sec-title">WHAT I <span class="sec-title-accent">DO</span></div>
+        <span class="sec-title-en" data-t="sec_skills_sub">할 수 있는 일 · 전문 분야</span>
+      </div>
+      <div class="sec-head-right">Services</div>
+    </div>
+    <div class="skills-wrap">
+      <div class="skill-card reveal rd1">
+        <div class="sk-num">01</div>
+        <span class="sk-idx">// 01</span>
+        <div class="sk-name" data-t="sk1_name">캐릭터 디자인</div>
+        <span class="sk-name-en">Character Design</span>
+        <p class="sk-body"
+          data-t="sk1_body">
+          서브컬쳐 감성의 오리지널 캐릭터 디자인. 버튜버 데뷔 세트, 캐릭터 시트, 세계관 구축까지 일관된 비주얼 아이덴티티를 만들어드립니다.
+        </p>
+        <p class="sk-body-en">Original character design with subcultural sensibility. VTuber debut sets to character sheets.</p>
+      </div>
+      <div class="skill-card reveal rd2">
+        <div class="sk-num">02</div>
+        <span class="sk-idx">// 02</span>
+        <div class="sk-name" data-t="sk2_name">Live2D 일러스트 &amp; 파츠 분리</div>
+        <span class="sk-name-en">Live2D Illustration · Parts Separation</span>
+        <p class="sk-body"
+          data-t="sk2_body">
+          Live2D 리깅에 최적화된 캐릭터 일러스트 제작. 레이어 구조 설계부터 파츠 분리까지 정밀하게 작업합니다.
+        </p>
+        <p class="sk-body-en">Illustrations optimized for Live2D rigging. Precision parts separation for smooth animation.</p>
+      </div>
+      <div class="skill-card reveal rd3">
+        <div class="sk-num">03</div>
+        <span class="sk-idx">// 03</span>
+        <div class="sk-name" data-t="sk3_name">캐릭터 일러스트</div>
+        <span class="sk-name-en">Character Illustration</span>
+        <p class="sk-body"
+          data-t="sk3_body">
+          개인작부터 외주 일러스트까지. 전신·반신·흉상 등 다양한 구도와 서브컬쳐 특유의 채색감으로 캐릭터의 매력을 극대화합니다.
+        </p>
+        <p class="sk-body-en">From personal works to commissioned illustrations. Maximizing character appeal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+
+  <!-- LIVE2D -->
+  <div class="pf-sec">
+    <div class="pf-cat-label reveal">
+      <div class="pf-cat-tag">02</div>
+      <div class="pf-cat-name">LIVE2D <span style="color:var(--Y)">WORKS</span></div>
+      <div class="pf-cat-en" data-t="pf_l2d_sub">Live2D 일러스트 · 파츠 분리</div>
+    </div>
+    <div class="pf-grid-l2d" id="l2dGrid">
+      <div class="pf-empty">
+        <span class="pf-empty-num">L2D</span>
+        <div id="l2dStatus">portfolio/live2d/ 폴더에 이미지를 올려주세요</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 구분선 -->
+  <div class="pf-sep"><div class="pf-sep-line"></div></div>
+
+  <!-- CHARACTER -->
+  <div class="pf-sec" style="padding-top:0">
+    <div class="pf-cat-label reveal">
+      <div class="pf-cat-tag">03</div>
+      <div class="pf-cat-name">CHARACTER <span style="color:var(--Y)">ILLUST</span></div>
+      <div class="pf-cat-en" data-t="pf_char_sub">캐릭터 일러스트 · 개인작</div>
+    </div>
+    <div class="pf-grid-char" id="charGrid">
+      <div class="pf-empty">
+        <span class="pf-empty-num">CHR</span>
+        <div id="charStatus">portfolio/character/ 폴더에 이미지를 올려주세요</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 구분선 -->
+  <div class="pf-sep"><div class="pf-sep-line"></div></div>
+
+  <!-- DESIGN -->
+  <div class="pf-sec" style="padding-top:0">
+    <div class="pf-cat-label reveal">
+      <div class="pf-cat-tag">04</div>
+      <div class="pf-cat-name">DESIGN <span style="color:var(--Y)">WORKS</span></div>
+      <div class="pf-cat-en" data-t="pf_design_sub">디자인 · 그래픽</div>
+    </div>
+    <div class="pf-grid-char" id="designGrid">
+      <div class="pf-empty">
+        <span class="pf-empty-num">DSN</span>
+        <div id="designStatus">portfolio/design/ 폴더에 이미지를 올려주세요</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="sec-head reveal" style="margin-bottom:48px">
+      <div class="sec-num">// 05</div>
+      <div class="sec-title-block">
+        <div class="sec-title">GET IN <span class="sec-title-accent">TOUCH</span></div>
+        <span class="sec-title-en" data-t="ct_sub">외주 의뢰 · 협업 · 비즈니스 문의</span>
+      </div>
+    </div>
+    <div class="contact-grid reveal">
+      <div class="contact-left">
+        <div class="ct-heading"><span data-t="ct_heading">함께</span><span class="ct-heading-accent" data-t="ct_heading2">만들자</span></div>
+        <span class="ct-sub" data-t="ct_let">LET'S CREATE TOGETHER</span>
+        <p class="ct-desc"
+          data-t="ct_desc">
+          외주 의뢰, 협업 제안, 비즈니스 문의 모두 환영합니다. 아래 채널로 편하게 연락해 주세요.
+        </p>
+        <p class="ct-desc-en" data-t="ct_desc_en">Open to commissions, collaborations, and business inquiries.</p>
+      </div>
+      <div class="contact-right reveal rd1">
+        <a class="ct-item" href="https://x.com/Momuko8" target="_blank">
+          <div class="ct-icon-wrap">𝕏</div>
+          <div class="ct-body">
+            <span class="ct-label">Twitter / X</span>
+            <div class="ct-val">@Momuko8</div>
+          </div>
+          <div class="ct-arrow">→</div>
+        </a>
+        <a class="ct-item" href="mailto:wjsdntjr1339@gmail.com">
+          <div class="ct-icon-wrap">✉</div>
+          <div class="ct-body">
+            <span class="ct-label">Email</span>
+            <div class="ct-val">wjsdntjr1339@gmail.com</div>
+          </div>
+          <div class="ct-arrow">→</div>
+        </a>
+        <a class="ct-item" href="https://tally.so/r/vGAV98" target="_blank">
+          <div class="ct-icon-wrap">📋</div>
+          <div class="ct-body">
+            <span class="ct-label" data-t="ct_comm">커미션 신청</span>
+            <div class="ct-val">Tally Form</div>
+          </div>
+          <div class="ct-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="ft-left"><span>M</span>OMUKKO · 모무꼬 © 2025</div>
+  <div class="ft-right">CHARACTER ILLUSTRATOR · LIVE2D DESIGNER</div>
+</footer>
+
+<script>
+var _lang = 'ko';
+
+/* 테마 */
+var _dark = false;
+function toggleTheme(){
+  _dark = !_dark;
+  document.body.classList.toggle('light', !_dark);
+  document.getElementById('themeBtn').textContent = _dark ? '●' : '○';
+  document.body.classList.toggle('light', !_dark);
+  try{ localStorage.setItem('mm-theme', _dark?'dark':'light'); }catch(e){}
+}
+// 저장된 테마 복원
+(function(){
+  try{
+    var t=localStorage.getItem('mm-theme');
+    if(t==='dark'){ _dark=true; document.body.classList.remove('light'); document.getElementById('themeBtn').textContent='●'; }
+    else{ document.body.classList.add('light'); document.getElementById('themeBtn').textContent='○'; }
+  }catch(e){ document.body.classList.add('light'); }
+})();
+
+/* ════════════════════════════════════════
+   번역 테이블 — 텍스트 바꾸고 싶으면 여기만 수정!
+   각 키마다 ko/en/ja/zh 네 가지 입력
+════════════════════════════════════════ */
+var T = {
+  /* NAV */
+  nav_skills:    { ko:'SKILLS',      en:'SKILLS',      ja:'スキル',      zh:'技能'      },
+  nav_portfolio: { ko:'PORTFOLIO',   en:'PORTFOLIO',   ja:'作品集',      zh:'作品集'    },
+  nav_contact:   { ko:'CONTACT',     en:'CONTACT',     ja:'お問い合わせ', zh:'联系我'    },
+
+  /* HERO */
+  hero_eyebrow:  { ko:'캐릭터 일러스트레이터 · Live2D 디자이너',
+                   en:'CHARACTER ILLUSTRATOR · LIVE2D DESIGNER',
+                   ja:'キャラクターイラストレーター · Live2Dデザイナー',
+                   zh:'角色插画师 · Live2D模型设计师' },
+  hero_role:     { ko:'서브컬쳐 캐릭터 일러스트 & Live2D 모델 디자이너',
+                   en:'SUBCULTURAL ILLUSTRATOR & LIVE2D DESIGNER',
+                   ja:'サブカルチャー系キャラクターイラスト & Live2Dモデルデザイナー',
+                   zh:'二次元角色插画 & Live2D模型设计师' },
+  hero_role_en:  { ko:'SUBCULTURAL CHARACTER ILLUSTRATOR & LIVE2D MODEL DESIGNER',
+                   en:'SUBCULTURAL CHARACTER ILLUSTRATOR & LIVE2D MODEL DESIGNER',
+                   ja:'Subcultural Character Illustrator & Live2D Model Designer',
+                   zh:'Subcultural Character Illustrator & Live2D Model Designer' },
+  form_link:     { ko:'커미션 신청 · Tally Form',
+                   en:'Commission Form · Tally',
+                   ja:'依頼フォーム · Tally',
+                   zh:'委托申请 · Tally表单' },
+
+  /* SKILLS 섹션 */
+  sec_skills_title: { ko:'할 수 있는 일',    en:'WHAT I DO',     ja:'できること',      zh:'我的服务'      },
+  sec_skills_sub:   { ko:'할 수 있는 일 · 전문 분야', en:'Services · Specialties', ja:'サービス · 専門分野', zh:'服务 · 专业领域' },
+
+  sk1_name: { ko:'캐릭터 디자인', en:'CHARACTER DESIGN', ja:'キャラクターデザイン', zh:'角色设计' },
+  sk1_body: { ko:'서브컬쳐 감성의 오리지널 캐릭터 디자인. 버튜버 데뷔 세트, 캐릭터 시트, 세계관 구축까지 일관된 비주얼 아이덴티티를 만들어드립니다.',
+              en:'Original character design with subcultural sensibility. VTuber debut sets, character sheets, and world-building — consistent visual identities.',
+              ja:'サブカルチャー感性のオリジナルキャラクターデザイン。VTuberデビューセット、キャラクターシートから世界観構築まで一貫したビジュアルアイデンティティを制作します。',
+              zh:'具有二次元风格的原创角色设计。从VTuber出道套装、角色设定表到世界观构建，打造统一的视觉形象。' },
+  sk1_en:   { ko:'Original character design with subcultural sensibility. VTuber debut sets to character sheets.',
+              en:'Original character design with subcultural sensibility. VTuber debut sets to character sheets.',
+              ja:'サブカルチャー感性のキャラクターデザイン。デビューセットからシートまで。',
+              zh:'二次元风格原创角色设计，从出道套装到角色设定表。' },
+
+  sk2_name: { ko:'Live2D 일러스트 & 파츠 분리', en:'LIVE2D ILLUST & PARTS', ja:'Live2Dイラスト & パーツ分け', zh:'Live2D插画 & 部件分离' },
+  sk2_body: { ko:'Live2D 리깅에 최적화된 캐릭터 일러스트 제작. 레이어 구조 설계부터 파츠 분리까지 정밀하게 작업합니다.',
+              en:'Character illustrations optimized for Live2D rigging. Precision layer structure design to parts separation.',
+              ja:'Live2Dリギングに最適化されたキャラクターイラスト制作。レイヤー構造設計からパーツ分けまで精密に対応します。',
+              zh:'专为Live2D绑定优化的角色插画制作。从图层结构设计到部件分离，精细处理。' },
+  sk2_en:   { ko:'Illustrations optimized for Live2D rigging. Precision parts separation for smooth animation.',
+              en:'Illustrations optimized for Live2D rigging. Precision parts separation for smooth animation.',
+              ja:'Live2Dリギング向けイラスト。スムーズなアニメーションのためのパーツ分け。',
+              zh:'专为Live2D绑定优化的插画，精细部件分离保证流畅动画。' },
+
+  sk3_name: { ko:'캐릭터 일러스트', en:'CHARACTER ILLUST', ja:'キャラクターイラスト', zh:'角色插画' },
+  sk3_body: { ko:'개인작부터 외주 일러스트까지. 전신·반신·흉상 등 다양한 구도와 서브컬쳐 특유의 채색감으로 캐릭터의 매력을 극대화합니다.',
+              en:'From personal works to commissions. Full body to bust shots — maximizing character appeal with subcultural coloring.',
+              ja:'個人制作から外注イラストまで。全身・半身・バストアップなど多彩な構図とサブカルチャー独自の彩色でキャラクターの魅力を最大化します。',
+              zh:'从个人创作到外包插画。全身、半身、胸像等多种构图，用二次元独特配色展现角色魅力。' },
+  sk3_en:   { ko:'From personal works to commissioned illustrations. Maximizing character appeal.',
+              en:'From personal works to commissioned illustrations. Maximizing character appeal.',
+              ja:'個人作から外注まで。キャラクターの魅力を最大化します。',
+              zh:'从个人创作到委托插画，展现角色最大魅力。' },
+
+  /* PORTFOLIO */
+  pf_l2d_sub:   { ko:'Live2D 일러스트 · 파츠 분리', en:'Illustration · Parts Separation', ja:'イラスト · パーツ分け', zh:'插画 · 部件分离' },
+  pf_char_sub:  { ko:'캐릭터 일러스트 · 개인작',    en:'Original · Commission Works',    ja:'キャラクターイラスト · 個人制作', zh:'角色插画 · 个人创作' },
+  pf_design_sub: { ko:'디자인 · 그래픽 작업',         en:'Design · Graphic Works',         ja:'デザイン · グラフィック',        zh:'设计 · 平面作品' },
+
+  /* CONTACT */
+  ct_sub:       { ko:'외주 의뢰 · 협업 · 비즈니스 문의', en:'Commission · Collaboration · Business', ja:'外注依頼 · コラボ · ビジネスお問い合わせ', zh:'外包委托 · 合作 · 商务咨询' },
+  ct_heading:   { ko:'항상', en:'ALWAYS',  ja:'いつでも', zh:'随时' },
+  ct_heading2:  { ko:'기다리고 있겠습니다', en:'WAITING FOR YOU', ja:'お待ちしております', zh:'恭候您的联系' },
+  ct_let:       { ko:'언제든 편하게 연락 주세요', en:'Feel free to reach out anytime.', ja:'お気軽にご連絡ください', zh:'欢迎随时与我联系' },
+  ct_desc:      { ko:'외주 의뢰, 협업 제안, 비즈니스 문의 모두 진심으로 환영합니다. 작은 문의도 소중히 여기겠습니다.',
+                  en:'Commissions, collaborations, and business inquiries are all sincerely welcome. Every inquiry is important to me.',
+                  ja:'外注依頼・コラボ提案・ビジネスのお問い合わせを心よりお待ちしております。どんな些細なご相談もお気軽にどうぞ。',
+                  zh:'诚挚欢迎外包委托、合作提案及商务咨询。无论大小事宜，我都会认真对待每一份来信。' },
+  ct_desc_en:   { ko:'모든 문의에 성실히 답변 드리겠습니다.',
+                  en:'I will respond to every message with care and sincerity.',
+                  ja:'すべてのお問い合わせに誠実にお答えいたします。',
+                  zh:'我将认真回复每一封来信。' },
+  ct_comm:      { ko:'커미션 신청', en:'Commission', ja:'依頼する', zh:'申请委托' },
+};
+
+/* ── 언어 적용 함수 ── */
+var _lang = 'ko';
+
+function setLang(lang){
+  _lang = lang;
+  // 드롭다운 닫기
+  document.getElementById('langWrap').classList.remove('open');
+  // 현재 언어 표시
+  var codes = { ko:'KO', en:'EN', ja:'JP', zh:'ZH' };
+  document.getElementById('langCurrent').textContent = codes[lang];
+  // 활성 표시
+  document.querySelectorAll('.lang-option').forEach(function(btn){
+    btn.classList.toggle('active', btn.getAttribute('onclick').includes("'"+lang+"'"));
+  });
+  applyLang();
+  try{ localStorage.setItem('mm-lang', lang); }catch(e){}
+}
+
+function applyLang(){
+  // data-t 속성으로 번역 적용
+  document.querySelectorAll('[data-t]').forEach(function(el){
+    var key = el.getAttribute('data-t');
+    if(T[key] && T[key][_lang]) el.innerHTML = T[key][_lang];
+  });
+}
+
+function toggleLangMenu(){
+  document.getElementById('langWrap').classList.toggle('open');
+}
+// 바깥 클릭시 닫기
+document.addEventListener('click', function(e){
+  if(!e.target.closest('#langWrap')) document.getElementById('langWrap').classList.remove('open');
+});
+
+// 저장된 언어 복원 or 브라우저 언어 감지
+(function(){
+  try{
+    var saved = localStorage.getItem('mm-lang');
+    if(saved){ setLang(saved); return; }
+  }catch(e){}
+  var bl = (navigator.language||'').toLowerCase();
+  if(bl.startsWith('ja'))      setLang('ja');
+  else if(bl.startsWith('zh')) setLang('zh');
+  else if(!bl.startsWith('ko')) setLang('en');
+  else applyLang();
+})();
+
+/* 커서 */
+var cur=document.getElementById('cursor');
+document.addEventListener('mousemove',function(e){
+  cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px';
+});
+document.querySelectorAll('a,button,.pf-item').forEach(function(el){
+  el.addEventListener('mouseenter',function(){ cur.classList.add('big'); });
+  el.addEventListener('mouseleave',function(){ cur.classList.remove('big'); });
+});
+
+/* 스크롤 reveal */
+var io=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:0.07});
+document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+/* ════════════════════════════════════════
+   포트폴리오 자동 로드 — GitHub API 사용
+   폴더에 이미지 올리면 자동으로 표시됨
+   data.json 불필요!
+════════════════════════════════════════ */
+var GITHUB_USER = 'Tmabe';
+var GITHUB_REPO = 'momuuko';
+var GITHUB_BRANCH = 'main'; /* 브랜치명 다르면 여기 수정 (main 또는 master) */
+var IMG_EXTS = ['png','jpg','jpeg','gif','webp','PNG','JPG','JPEG'];
+
+function isImage(name){
+  return IMG_EXTS.some(function(e){ return name.endsWith('.'+e); });
+}
+
+/* GitHub API로 폴더 파일 목록 가져오기 */
+function fetchFolder(folder){
+  var apiUrl = 'https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO
+    +'/contents/portfolio/'+folder+'?ref='+GITHUB_BRANCH;
+  return fetch(apiUrl)
+    .then(function(r){
+      if(!r.ok) throw new Error('folder_not_found');
+      return r.json();
+    })
+    .then(function(files){
+      return files.filter(function(f){ return f.type==='file' && isImage(f.name); });
+    });
+}
+
+/* 파일명에서 제목 생성 (확장자·앞 숫자 제거) */
+function parseName(filename){
+  var title = filename
+    .replace(/\.[^.]+$/, '')
+    .replace(/^[\d_\-]+/, '')
+    .replace(/[_\-]+/g, ' ')
+    .trim() || filename;
+  return title;
+}
+
+/* 폴더명을 태그로 변환 (그대로 대문자 표시) */
+function folderToTag(folderName){
+  return folderName.toUpperCase();
+}
+
+/* GitHub API — 폴더 내 파일+하위폴더 재귀 수집
+   반환값: [ { name, path, tag } ]
+*/
+function fetchFolderRecursive(apiPath, tag){
+  var url = 'https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO
+    +'/contents/'+apiPath+'?ref='+GITHUB_BRANCH;
+  return fetch(url)
+    .then(function(r){ if(!r.ok) throw new Error('not_found'); return r.json(); })
+    .then(function(items){
+      var promises = [];
+      items.forEach(function(item){
+        if(item.type === 'file' && isImage(item.name)){
+          /* 파일 — 현재 태그로 수집 */
+          promises.push(Promise.resolve([{ name:item.name, path:item.path, tag:tag }]));
+        } else if(item.type === 'dir'){
+          /* 하위폴더 — 폴더명을 태그로 재귀 */
+          promises.push(fetchFolderRecursive(item.path, folderToTag(item.name)));
+        }
+      });
+      return Promise.all(promises).then(function(results){
+        return [].concat.apply([], results);
+      });
+    });
+}
+
+function renderGrid(gridId, files){
+  var g = document.getElementById(gridId);
+  if(!files.length) return;
+  g.innerHTML = '';
+  files.forEach(function(file, i){
+    var src = 'https://raw.githubusercontent.com/'+GITHUB_USER+'/'+GITHUB_REPO
+      +'/'+GITHUB_BRANCH+'/'+file.path;
+    var title = parseName(file.name);
+    var tag   = file.tag || '';
+    var el = document.createElement('div');
+    el.className = 'pf-item reveal';
+    el.style.transitionDelay = (i * 0.05) + 's';
+    el.innerHTML =
+      '<img src="'+src+'" alt="'+title+'" loading="lazy">'
+      +(tag ? '<div class="pf-tag">'+tag+'</div>' : '')
+      +'<div class="pf-overlay">'
+        +'<div class="pf-overlay-title">'+title+'</div>'
+        +(tag ? '<div class="pf-overlay-en">'+tag+'</div>' : '')
+      +'</div>'
+      +'<div class="pf-corner tl"></div>'
+      +'<div class="pf-corner br"></div>';
+    el.addEventListener('click', function(){ openLb(src, title+(tag?' · '+tag:'')); });
+    g.appendChild(el);
+    io.observe(el);
+  });
+}
+
+function setStatus(statusId, msg){
+  var el = document.getElementById(statusId);
+  if(el) el.textContent = msg;
+}
+
+function loadFolder(folder, gridId, statusId){
+  setStatus(statusId, '불러오는 중...');
+  fetchFolderRecursive('portfolio/'+folder, '')
+    .then(function(files){
+      if(!files.length){
+        setStatus(statusId, 'portfolio/'+folder+'/ 폴더에 이미지를 올려주세요');
+      } else {
+        renderGrid(gridId, files);
+      }
+    })
+    .catch(function(){
+      setStatus(statusId, 'portfolio/'+folder+'/ 폴더를 GitHub에 생성해주세요');
+    });
+}
+
+function loadPortfolio(){
+  loadFolder('live2d',    'l2dGrid',    'l2dStatus');
+  loadFolder('character', 'charGrid',   'charStatus');
+  loadFolder('design',    'designGrid', 'designStatus');
+}
+function openLb(src,cap){
+  document.getElementById('lbImg').src=src;
+  document.getElementById('lbInfo').textContent=cap.toUpperCase();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLightbox(); });
+
+loadPortfolio();
+</script>
+</body>
+</html>
