@@ -528,18 +528,17 @@ body.light .hs-lbl{ color:var(--text3); }
 }
 
 /* ═══════════════════════════════════
-   PORTFOLIO — 스크롤 자연 나열
+   PORTFOLIO
 ═══════════════════════════════════ */
 #portfolio{ background:var(--bg); }
 .pf-sec{ padding:100px 0; }
-.pf-sec > *:not(.pf-carousel){ padding:0 48px; max-width:1400px; margin-left:auto; margin-right:auto; }
-.pf-carousel{ padding:0 48px; }
+.pf-sec > *:not(.pf-carousel-wrap){ padding:0 48px; max-width:1400px; margin-left:auto; margin-right:auto; }
 
-/* 카테고리 라벨 */
 .pf-cat-label{
-  display:flex; align-items:center; gap:0;
+  display:flex; align-items:center; gap:0; padding:0 48px;
   margin-bottom:40px; border:1px solid var(--line);
   overflow:hidden; flex-wrap:nowrap; min-width:0;
+  max-width:1400px; margin-left:auto; margin-right:auto;
 }
 .pf-cat-tag{
   font-family:var(--display); font-size:11px; letter-spacing:3px;
@@ -557,74 +556,59 @@ body.light .hs-lbl{ color:var(--text3); }
   border-left:1px solid var(--line);
 }
 
-/* ── 가로 스크롤 캐러셀 ── */
-/* 래퍼 — overflow 클립 담당 */
-.pf-carousel{
+/* 캐러셀 래퍼 — 클립 영역 */
+.pf-carousel-wrap{
   overflow:hidden;
+  padding:0 48px;
   cursor:grab;
   user-select:none;
-  padding-bottom:4px;
 }
-.pf-carousel:active{ cursor:grabbing; }
-/* 트랙 — transform 이동 담당 */
+.pf-carousel-wrap:active{ cursor:grabbing; }
+
+/* 캐러셀 트랙 — transform 으로 이동 */
 .pf-track{
-  display:flex; gap:3px; align-items:flex-start;
+  display:flex;
+  gap:4px;
   will-change:transform;
+  transition:none;
 }
+
 /* 아이템 */
-.pf-carousel .pf-item{
-  flex:0 0 360px;
-  height:480px;
-}
-.pf-carousel .pf-item img{
-  width:100%; height:100%;
-  object-fit:cover; object-position:top center;
-}
-
-/* 빈 상태 — 캐러셀 내 */
-.pf-carousel .pf-empty{
-  flex:0 0 auto; width:400px; height:480px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  border:1px solid var(--line);
-}
-
-/* 공통 아이템 */
 .pf-item{
+  flex:0 0 340px;
+  height:480px;
   position:relative; overflow:hidden; background:var(--bg3);
-  transition:transform .4s cubic-bezier(.22,1,.36,1);
+  transition:transform .3s;
 }
 .pf-item:hover{ transform:scale(1.01); z-index:2; }
 .pf-item img{
-  width:100%; height:100%; object-fit:cover;
-  filter:saturate(.85) contrast(1.05);
-  transition:filter .4s, transform .6s;
+  width:100%; height:100%;
+  object-fit:cover; object-position:top center;
+  display:block;
+  filter:saturate(.88) contrast(1.03);
+  transition:filter .3s, transform .5s;
 }
-.pf-item:hover img{ filter:saturate(1.1); transform:scale(1.06); }
-/* 오버레이 */
+.pf-item:hover img{ filter:saturate(1.1); transform:scale(1.05); }
 .pf-overlay{
   position:absolute; inset:0;
-  background:linear-gradient(0deg,rgba(8,8,13,.9) 0%,transparent 50%);
+  background:linear-gradient(0deg,rgba(8,8,13,.88) 0%,transparent 50%);
   opacity:0; transition:opacity .3s;
-  display:flex; flex-direction:column; justify-content:flex-end;
-  padding:16px;
+  display:flex; flex-direction:column; justify-content:flex-end; padding:16px;
 }
 .pf-item:hover .pf-overlay{ opacity:1; }
 .pf-overlay-title{
   font-family:var(--cond); font-size:16px; font-weight:700;
-  letter-spacing:1px; color:var(--text); text-transform:uppercase;
-  margin-bottom:2px; line-height:1.1;
+  letter-spacing:1px; color:#fff; text-transform:uppercase; line-height:1.1;
 }
 .pf-overlay-en{
-  font-family:var(--mono); font-size:9px; letter-spacing:1px; color:var(--text3);
+  font-family:var(--mono); font-size:9px; letter-spacing:1px; color:rgba(255,255,255,.5);
+  margin-top:2px;
 }
-/* 태그 */
 .pf-tag{
   position:absolute; top:0; left:0;
   font-family:var(--display); font-size:9px; letter-spacing:2px;
-  padding:4px 10px; background:var(--Y); color:var(--bg);
-  text-transform:uppercase;
+  padding:4px 10px; background:var(--Y); color:var(--bg); text-transform:uppercase;
 }
-/* 코너 데코 — 호버 시 나타남 */
 .pf-corner{
   position:absolute; width:12px; height:12px;
   border-color:var(--Y); border-style:solid;
@@ -635,30 +619,49 @@ body.light .hs-lbl{ color:var(--text3); }
 .pf-corner.br{ bottom:8px; right:8px; border-width:0 1px 1px 0; }
 
 /* 빈 상태 */
+.pf-empty-wrap{
+  padding:0 48px; max-width:1400px; margin:0 auto;
+}
 .pf-empty{
-  grid-column:1/-1; padding:60px 40px; text-align:center;
+  padding:60px 40px; text-align:center;
   border:1px solid var(--line);
   font-family:var(--mono); font-size:10px; color:var(--text3);
   letter-spacing:2px; line-height:2.5; text-transform:uppercase;
 }
 .pf-empty-num{
   font-family:var(--display); font-size:64px; color:var(--Y);
-  display:block; margin-bottom:8px;
+  display:block; margin-bottom:8px; opacity:.3;
 }
 
-/* 카테고리 구분선 */
+/* 구분선 */
 .pf-sep{
   height:80px; display:flex; align-items:center;
   padding:0 48px; max-width:1280px; margin:0 auto;
 }
 .pf-sep-line{
-  flex:1; height:1px; background:var(--line);
-  position:relative;
+  flex:1; height:1px; background:var(--line); position:relative;
 }
 .pf-sep-line::after{
   content:''; position:absolute; left:50%; top:-2px;
   width:4px; height:4px; background:var(--Y);
   transform:translateX(-50%) rotate(45deg);
+}
+
+@media(max-width:960px){
+  .pf-item{ flex:0 0 240px; height:320px; }
+  .pf-carousel-wrap{ padding:0 24px; }
+  .pf-cat-label{ padding:0 24px; }
+  .pf-empty-wrap{ padding:0 24px; }
+  .pf-sec{ padding:72px 0; }
+  .pf-sec > *:not(.pf-carousel-wrap){ padding:0 24px; }
+  .pf-sep{ padding:0 24px; }
+}
+@media(max-width:600px){
+  .pf-item{ flex:0 0 180px; height:240px; }
+  .pf-carousel-wrap{ padding:0 16px; }
+  .pf-cat-label{ padding:0 16px; }
+  .pf-cat-en{ display:none; }
+  .pf-sec{ padding:56px 0; }
 }
 
 /* ═══════════════════════════════════
@@ -820,8 +823,6 @@ footer::before{
   .nav-center{ display:none; }
   .sec{ padding:72px 24px; }
   .pf-sec{ padding:72px 0; }
-  .pf-sec > *:not(.pf-carousel){ padding:0 24px; }
-  .pf-carousel{ padding:0 24px; }
   .contact-inner{ padding:72px 24px; }
   .skills-wrap{ grid-template-columns:1fr; }
   .contact-grid{ grid-template-columns:1fr; }
@@ -1136,8 +1137,11 @@ footer::before{
       <div class="pf-cat-name">LIVE2D <span style="color:var(--Y)">WORKS</span></div>
       <div class="pf-cat-en" data-t="pf_l2d_sub">Live2D 일러스트 · 파츠 분리</div>
     </div>
-    <div class="pf-carousel" id="l2dGrid">
-      <div class="pf-empty">
+    <div class="pf-carousel-wrap" id="l2dGridWrap">
+      <div class="pf-track" id="l2dGrid"></div>
+    </div>
+    <div class="pf-empty-wrap" id="l2dGridEmptyWrap">
+      <div class="pf-empty" id="l2dGridEmpty" style="display:none">
         <span class="pf-empty-num">L2D</span>
         <div id="l2dStatus">portfolio/live2d/ 폴더에 이미지를 올려주세요</div>
       </div>
@@ -1154,8 +1158,11 @@ footer::before{
       <div class="pf-cat-name">CHARACTER <span style="color:var(--Y)">ILLUST</span></div>
       <div class="pf-cat-en" data-t="pf_char_sub">캐릭터 일러스트 · 개인작</div>
     </div>
-    <div class="pf-carousel" id="charGrid">
-      <div class="pf-empty">
+    <div class="pf-carousel-wrap" id="charGridWrap">
+      <div class="pf-track" id="charGrid"></div>
+    </div>
+    <div class="pf-empty-wrap" id="charGridEmptyWrap">
+      <div class="pf-empty" id="charGridEmpty" style="display:none">
         <span class="pf-empty-num">CHR</span>
         <div id="charStatus">portfolio/character/ 폴더에 이미지를 올려주세요</div>
       </div>
@@ -1172,8 +1179,11 @@ footer::before{
       <div class="pf-cat-name">DESIGN <span style="color:var(--Y)">WORKS</span></div>
       <div class="pf-cat-en" data-t="pf_design_sub">디자인 · 그래픽</div>
     </div>
-    <div class="pf-carousel" id="designGrid">
-      <div class="pf-empty">
+    <div class="pf-carousel-wrap" id="designGridWrap">
+      <div class="pf-track" id="designGrid"></div>
+    </div>
+    <div class="pf-empty-wrap" id="designGridEmptyWrap">
+      <div class="pf-empty" id="designGridEmpty" style="display:none">
         <span class="pf-empty-num">DSN</span>
         <div id="designStatus">portfolio/design/ 폴더에 이미지를 올려주세요</div>
       </div>
@@ -1437,167 +1447,233 @@ var io=new IntersectionObserver(function(entries){
 document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 
 /* ════════════════════════════════════════
-   포트폴리오 자동 로드 — GitHub API 사용
-   폴더에 이미지 올리면 자동으로 표시됨
-   data.json 불필요!
+   포트폴리오 — GitHub API 자동 로드 + 무한 슬라이드
 ════════════════════════════════════════ */
-var GITHUB_USER = 'Tmabe';
-var GITHUB_REPO = 'momuuko';
-var GITHUB_BRANCH = 'main'; /* 브랜치명 다르면 여기 수정 (main 또는 master) */
-var IMG_EXTS = ['png','jpg','jpeg','gif','webp','PNG','JPG','JPEG'];
+var GITHUB_USER   = 'Tmabe';
+var GITHUB_REPO   = 'momuuko';
+var GITHUB_BRANCH = 'main';
+var IMG_EXTS = ['png','jpg','jpeg','gif','webp','PNG','JPG','JPEG','GIF','WEBP'];
 
 function isImage(name){
-  return IMG_EXTS.some(function(e){ return name.endsWith('.'+e); });
+  return IMG_EXTS.some(function(ext){ return name.toLowerCase().endsWith('.'+ext.toLowerCase()); });
 }
 
-/* 파일명에서 제목 생성 (확장자·앞 숫자 제거) */
 function parseName(filename){
-  var title = filename
+  return filename
     .replace(/\.[^.]+$/, '')
     .replace(/^[\d_\-]+/, '')
     .replace(/[_\-]+/g, ' ')
     .trim() || filename;
-  return title;
 }
 
-/* 폴더명을 태그로 변환 (그대로 대문자 표시) */
-function folderToTag(folderName){
-  return folderName.toUpperCase();
-}
+function folderToTag(name){ return name.toUpperCase(); }
 
-/* GitHub API — 폴더 내 파일+하위폴더 재귀 수집
-   반환값: [ { name, path, tag } ]
-*/
+/* GitHub API 재귀 수집 */
 function fetchFolderRecursive(apiPath, tag){
   var url = 'https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO
     +'/contents/'+apiPath+'?ref='+GITHUB_BRANCH;
   return fetch(url)
-    .then(function(r){ if(!r.ok) throw new Error('not_found'); return r.json(); })
+    .then(function(r){
+      if(!r.ok) throw new Error(r.status+' '+apiPath);
+      return r.json();
+    })
     .then(function(items){
-      var promises = [];
-      items.forEach(function(item){
-        if(item.type === 'file' && isImage(item.name)){
-          /* 파일 — 현재 태그로 수집 */
-          promises.push(Promise.resolve([{ name:item.name, path:item.path, tag:tag }]));
-        } else if(item.type === 'dir'){
-          /* 하위폴더 — 폴더명을 태그로 재귀 */
-          promises.push(fetchFolderRecursive(item.path, folderToTag(item.name)));
+      var promises = items.map(function(item){
+        if(item.type==='file' && isImage(item.name)){
+          return Promise.resolve([{ name:item.name, path:item.path, tag:tag }]);
+        } else if(item.type==='dir'){
+          return fetchFolderRecursive(item.path, folderToTag(item.name));
         }
+        return Promise.resolve([]);
       });
-      return Promise.all(promises).then(function(results){
-        return [].concat.apply([], results);
+      return Promise.all(promises).then(function(res){
+        return [].concat.apply([], res);
       });
     });
 }
 
-function renderGrid(gridId, files){
-  var g = document.getElementById(gridId);
-  if(!files.length) return;
-  /* 트랙 div 생성 — transform 이동용 */
-  g.innerHTML = '<div class="pf-track" id="'+gridId+'Track"></div>';
-  var track = document.getElementById(gridId+'Track');
-  files.forEach(function(file, i){
-    var src = 'https://raw.githubusercontent.com/'+GITHUB_USER+'/'+GITHUB_REPO
-      +'/'+GITHUB_BRANCH+'/'+file.path;
-    var title = parseName(file.name);
-    var tag   = file.tag || '';
-    var el = document.createElement('div');
-    el.className = 'pf-item';
-    el.innerHTML =
-      '<img src="'+src+'" alt="'+title+'" loading="eager">'
-      +(tag ? '<div class="pf-tag">'+tag+'</div>' : '')
-      +'<div class="pf-overlay">'
-        +'<div class="pf-overlay-title">'+title+'</div>'
-        +(tag ? '<div class="pf-overlay-en">'+tag+'</div>' : '')
-      +'</div>'
-      +'<div class="pf-corner tl"></div>'
-      +'<div class="pf-corner br"></div>';
-    el.addEventListener('click', function(){ openLb(src, title+(tag?' · '+tag:'')); });
-    track.appendChild(el);
+/* 이미지 아이템 생성 */
+function makeItem(file){
+  var src = 'https://raw.githubusercontent.com/'+GITHUB_USER+'/'+GITHUB_REPO
+    +'/'+GITHUB_BRANCH+'/'+file.path;
+  var title = parseName(file.name);
+  var tag   = file.tag || '';
+  var el = document.createElement('div');
+  el.className = 'pf-item';
+  el.innerHTML =
+    '<img src="'+src+'" alt="'+title+'">'
+    +(tag?'<div class="pf-tag">'+tag+'</div>':'')
+    +'<div class="pf-overlay">'
+      +'<div class="pf-overlay-title">'+title+'</div>'
+      +(tag?'<div class="pf-overlay-en">'+tag+'</div>':'')
+    +'</div>'
+    +'<div class="pf-corner tl"></div>'
+    +'<div class="pf-corner br"></div>';
+  el.addEventListener('click', function(){ openLb(src, title+(tag?' · '+tag:'')); });
+  return el;
+}
+
+/* 그리드 렌더 */
+function renderGrid(trackId, files){
+  var track = document.getElementById(trackId);
+  if(!track){ console.error('track not found:', trackId); return; }
+  track.innerHTML = '';
+  files.forEach(function(file){
+    track.appendChild(makeItem(file));
   });
+  /* 렌더 확인 로그 */
+  console.log('['+trackId+'] 렌더 완료 — '+files.length+'장');
 }
 
-function setStatus(statusId, msg){
-  var el = document.getElementById(statusId);
-  if(el) el.textContent = msg;
+/* 빈 상태 표시 */
+function showEmpty(trackId, msg){
+  var emptyEl = document.getElementById(trackId+'Empty');
+  var statusEl = document.getElementById(trackId.replace('Grid','')+'Status');
+  if(emptyEl){
+    emptyEl.style.display = '';
+    if(statusEl) statusEl.textContent = msg;
+  }
 }
 
-function loadFolder(folder, gridId, statusId){
-  setStatus(statusId, '불러오는 중...');
+/* 폴더 로드 */
+function loadFolder(folder, trackId){
+  console.log('[loadFolder]', folder, '->', trackId);
   fetchFolderRecursive('portfolio/'+folder, '')
     .then(function(files){
+      console.log('['+trackId+'] API 응답 —', files.length, '개');
       if(!files.length){
-        setStatus(statusId, 'portfolio/'+folder+'/ 폴더에 이미지를 올려주세요');
+        showEmpty(trackId, 'portfolio/'+folder+'/ 폴더에 이미지를 올려주세요');
       } else {
-        renderGrid(gridId, files);
-        /* 이미지 로드 후 자동 슬라이드 시작 */
-        setTimeout(function(){ initAutoSlide(gridId); }, 500);
+        renderGrid(trackId, files);
+        setTimeout(function(){ initSlide(trackId); }, 200);
       }
     })
-    .catch(function(){
-      setStatus(statusId, 'portfolio/'+folder+'/ 폴더를 GitHub에 생성해주세요');
+    .catch(function(err){
+      console.error('['+trackId+'] 로드 실패:', err.message);
+      showEmpty(trackId, '로드 실패: '+err.message);
     });
 }
 
 function loadPortfolio(){
-  loadFolder('live2d',    'l2dGrid',    'l2dStatus');
-  loadFolder('character', 'charGrid',   'charStatus');
-  loadFolder('design',    'designGrid', 'designStatus');
+  loadFolder('live2d',    'l2dGrid');
+  loadFolder('character', 'charGrid');
+  loadFolder('design',    'designGrid');
 }
-function openLb(src,cap){
-  document.getElementById('lbImg').src=src;
-  document.getElementById('lbInfo').textContent=cap.toUpperCase();
+
+/* ── 라이트박스 ── */
+function openLb(src, cap){
+  document.getElementById('lbImg').src = src;
+  document.getElementById('lbInfo').textContent = cap.toUpperCase();
   document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
 function closeLightbox(){
   document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow='';
+  document.body.style.overflow = '';
 }
-document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLightbox(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLightbox(); });
 
-/* ════════════════════════════
+/* ════════════════════════════════════════
    무한 자동 슬라이드
-   - 2초마다 1장씩 왼쪽으로
-   - 마지막 다음 → 처음으로
-════════════════════════════ */
-function initAutoSlide(trackId){
+   track = pf-track (flex 컨테이너, transform 이동)
+   wrap  = pf-carousel-wrap (overflow:hidden)
+════════════════════════════════════════ */
+function initSlide(trackId){
   var track = document.getElementById(trackId);
   if(!track) return;
+  var items = Array.prototype.slice.call(track.querySelectorAll('.pf-item'));
+  if(items.length < 1) return;
 
-  /* 렌더링 완료 후 실행 */
-  setTimeout(function(){
-    var items = track.querySelectorAll('.pf-item');
-    if(items.length < 2) return;
+  /* 아이템 너비 측정 (track이 보여야 함) */
+  var iw = items[0].getBoundingClientRect().width || 340;
+  var gap = 4;
+  var step = iw + gap;
+  var n = items.length;
 
-    /* 아이템들을 복제해서 뒤에 붙임 (무한루프용) */
-    items.forEach(function(item){
-      var clone = item.cloneNode(true);
-      clone.classList.add('clone');
-      track.appendChild(clone);
-    });
+  /* 클론 붙이기 */
+  items.forEach(function(item){
+    var c = item.cloneNode(true);
+    c.classList.add('clone');
+    /* 클론 클릭도 원본과 동일하게 */
+    var img = item.querySelector('img');
+    if(img){
+      c.addEventListener('click', function(){
+        openLb(img.src, item.querySelector('.pf-overlay-title').textContent);
+      });
+    }
+    track.appendChild(c);
+  });
 
-    var itemW   = items[0].offsetWidth + 3; /* 아이템 너비 + gap */
-    var total   = items.length;
-    var current = 0;
+  var idx = 0;
+  var sliding = false;
 
-    setInterval(function(){
-      current++;
-      track.style.transition = 'transform .6s cubic-bezier(.4,0,.2,1)';
-      track.style.transform  = 'translateX(-' + (current * itemW) + 'px)';
+  function moveTo(newIdx, animate){
+    idx = newIdx;
+    track.style.transition = animate ? 'transform .55s cubic-bezier(.4,0,.2,1)' : 'none';
+    track.style.transform  = 'translateX(-'+(idx * step)+'px)';
+    if(animate) sliding = true;
+  }
 
-      /* 원본 마지막 도달 → 슬쩍 처음으로 리셋 */
-      if(current >= total){
-        setTimeout(function(){
-          track.style.transition = 'none';
-          track.style.transform  = 'translateX(0)';
-          current = 0;
-        }, 650);
-      }
-    }, 2000);
-  }, 300);
+  function next(){
+    if(sliding) return;
+    moveTo(idx + 1, true);
+    if(idx >= n){
+      setTimeout(function(){
+        moveTo(0, false);
+        sliding = false;
+      }, 560);
+    } else {
+      setTimeout(function(){ sliding = false; }, 560);
+    }
+  }
+
+  var timer = setInterval(next, 2500);
+
+  /* 드래그 */
+  var wrap = track.parentElement;
+  var dsx=0, doff=0, dragging=false, moved=false;
+
+  wrap.addEventListener('mousedown', function(e){
+    dragging=true; moved=false;
+    dsx=e.clientX; doff=-(idx*step);
+    track.style.transition='none';
+    clearInterval(timer);
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', function(e){
+    if(!dragging) return;
+    var dx=e.clientX-dsx;
+    if(Math.abs(dx)>4) moved=true;
+    track.style.transform='translateX('+(doff+dx)+'px)';
+  });
+  window.addEventListener('mouseup', function(e){
+    if(!dragging) return;
+    dragging=false;
+    var dx=e.clientX-dsx;
+    if(moved){
+      if(dx < -80) moveTo(Math.min(idx+1, n*2-1), true);
+      else if(dx > 80) moveTo(Math.max(idx-1,0), true);
+      else moveTo(idx, true);
+      if(idx>=n) setTimeout(function(){ moveTo(0,false); sliding=false; },560);
+      else setTimeout(function(){ sliding=false; },560);
+    }
+    timer=setInterval(next,2500);
+  });
+
+  /* 터치 */
+  var tsx=0;
+  wrap.addEventListener('touchstart',function(e){ tsx=e.touches[0].clientX; track.style.transition='none'; clearInterval(timer); },{passive:true});
+  wrap.addEventListener('touchmove',function(e){ track.style.transform='translateX('+(-(idx*step)+(e.touches[0].clientX-tsx))+'px)'; },{passive:true});
+  wrap.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-tsx;
+    if(dx<-50) moveTo(Math.min(idx+1,n*2-1),true);
+    else if(dx>50) moveTo(Math.max(idx-1,0),true);
+    else moveTo(idx,true);
+    if(idx>=n) setTimeout(function(){ moveTo(0,false); sliding=false; },560);
+    else setTimeout(function(){ sliding=false; },560);
+    timer=setInterval(next,2500);
+  });
 }
-
 
 /* ── 스플래시 인트로 ── */
 window.addEventListener('load', function(){
