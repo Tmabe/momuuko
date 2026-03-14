@@ -37,7 +37,7 @@ body{
   --nav-bg:rgba(22,22,30,.88);
   --lb-bg: rgba(20,20,28,.97);
   --hero-overlay:rgba(20,20,28,.8);
-  --img-filter:var(--img-filter);
+  --img-filter:contrast(1.05) saturate(.85);
 }
 
 /* ── 라이트 모드 ── */
@@ -242,7 +242,7 @@ nav::before{
   width:100%;
 }
 .lang-option:last-child{ border-bottom:none; }
-.lang-option:hover{ background:rgba(255,208,0,.08); color:var(--text); }
+.lang-option:hover{ background:rgba(61,142,240,.08); color:var(--text); }
 .lang-option.active{ color:var(--Y); }
 .lo-code{ font-family:var(--display); font-size:13px; letter-spacing:1px; min-width:24px; }
 .lo-name{ font-family:var(--mono); font-size:10px; letter-spacing:1px; }
@@ -255,7 +255,7 @@ nav::before{
 .theme-btn:hover{ border-color:var(--Y); color:var(--Y); }
 /* 라이트 모드 전환 시 밝은 요소들 조정 */
 body.light .hero-img-fallback{ color:rgba(255,208,0,.06); }
-body.light .bg-deco{ color:rgba(75,159,225,.05); }
+body.light .bg-deco{ color:rgba(61,142,240,.04); }
 body.light .lb-close{ color:var(--text2); }
 body.light .pf-empty{ border-color:var(--line2); }
 body.light .pf-empty-num{ opacity:.3; }
@@ -350,7 +350,7 @@ body.light .hs-lbl{ color:var(--text3); }
   transition:all .2s; overflow:hidden; min-width:0;
 }
 .hc-item:last-child{ border-bottom:none; }
-.hc-item:hover{ color:var(--text); background:rgba(255,208,0,.04); }
+.hc-item:hover{ color:var(--text); background:rgba(61,142,240,.04); }
 .hc-item:hover .hc-tag{ background:var(--Y); color:var(--bg); }
 .hc-tag{
   font-family:var(--display); font-size:11px; letter-spacing:2px;
@@ -379,7 +379,7 @@ body.light .hs-lbl{ color:var(--text3); }
 .hero-img-fallback{
   position:absolute; inset:0;
   display:flex; align-items:center; justify-content:center;
-  font-family:var(--display); font-size:180px; color:rgba(255,208,0,.06);
+  font-family:var(--display); font-size:180px; color:rgba(61,142,240,.06);
   letter-spacing:-8px; user-select:none;
 }
 /* 오른쪽 패널 오버레이 */
@@ -515,7 +515,7 @@ body.light .hs-lbl{ color:var(--text3); }
 .skill-card:hover::before{ transform:scaleX(1); }
 /* 번호 */
 .sk-num{
-  font-family:var(--display); font-size:64px; color:rgba(255,208,0,.06);
+  font-family:var(--display); font-size:64px; color:rgba(61,142,240,.06);
   position:absolute; top:16px; right:20px; line-height:1; letter-spacing:-2px;
   user-select:none;
 }
@@ -684,13 +684,10 @@ body.light .hs-lbl{ color:var(--text3); }
 }
 .contact-inner{ max-width:1280px; margin:0 auto; padding:100px 48px; }
 .contact-grid{
-  display:grid; grid-template-columns:1fr 1fr; gap:0;
+  display:grid; grid-template-columns:1fr; gap:0;
   border:1px solid var(--line); overflow:hidden;
 }
-.contact-left{
-  padding:64px 56px; border-right:1px solid var(--line);
-  position:relative; overflow:hidden;
-}
+.contact-left{ display:none; }
 .contact-left::before{
   content:''; position:absolute; left:0; top:0; bottom:0;
   width:3px; background:var(--Y);
@@ -725,7 +722,7 @@ body.light .hs-lbl{ color:var(--text3); }
   transition:all .2s; flex:1;
 }
 .ct-item:last-child{ border-bottom:none; }
-.ct-item:hover{ background:rgba(255,208,0,.04); color:var(--text); }
+.ct-item:hover{ background:rgba(61,142,240,.04); color:var(--text); }
 .ct-item:hover .ct-icon-wrap{ background:var(--Y); color:var(--bg); }
 .ct-icon-wrap{
   width:64px; display:flex; align-items:center; justify-content:center;
@@ -825,13 +822,6 @@ footer::before{
 /* ═══════════════════════════════════
    반응형
 ═══════════════════════════════════ */
-@media(max-width:1100px){
-  .pf-grid-l2d{ grid-template-columns:repeat(6,1fr); }
-  .pf-grid-l2d .pf-item{ aspect-ratio:3/4; }
-  .pf-grid-l2d .pf-item:nth-child(1){ grid-column:span 6; min-height:0; aspect-ratio:16/9; }
-  .pf-grid-l2d .pf-item:nth-child(n+2){ grid-column:span 3; }
-  .pf-grid-char{ grid-template-columns:repeat(3,1fr); }
-}
 @media(max-width:1200px){
   .hero-left{ padding:60px 40px 60px 40px; }
 }
@@ -842,13 +832,15 @@ footer::before{
   .hero-title{ white-space:normal; font-size:clamp(48px,12vw,100px); }
   nav{ padding:0 24px; }
   .nav-center{ display:none; }
-  .sec, .pf-sec{ padding:72px 24px; }
+  .sec{ padding:72px 24px; }
+  .pf-sec{ padding:72px 0; }
+  .pf-sec > *:not(.pf-carousel){ padding:0 24px; }
+  .pf-carousel{ padding:0 24px; }
   .contact-inner{ padding:72px 24px; }
   .skills-wrap{ grid-template-columns:1fr; }
   .contact-grid{ grid-template-columns:1fr; }
   .contact-left{ border-right:none; border-bottom:1px solid var(--line); }
   footer{ padding:16px 24px; }
-  .pf-grid-char{ grid-template-columns:repeat(2,1fr); }
   .pf-sep{ padding:0 24px; }
 }
 @media(max-width:600px){
@@ -868,9 +860,133 @@ footer::before{
   .sec{ padding:56px 20px; }
   .pf-sep{ padding:0 16px; }
 }
+
+/* ═══════════════════════════════════
+   스플래시 인트로
+═══════════════════════════════════ */
+#splash{
+  position:fixed; inset:0; z-index:9000;
+  background:var(--bg);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  pointer-events:none;
+}
+#splash.hide{
+  animation:splashOut .7s .1s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes splashOut{
+  to{ opacity:0; transform:translateY(-8px); visibility:hidden; }
+}
+.splash-logo{
+  font-family:var(--display); font-size:clamp(52px,10vw,120px);
+  letter-spacing:6px; color:var(--text);
+  overflow:hidden; display:flex;
+}
+.splash-logo span{
+  display:inline-block;
+  opacity:0; transform:translateY(20px);
+  animation:splashChar .5s cubic-bezier(.22,1,.36,1) forwards;
+}
+.splash-line{
+  width:0; height:2px; background:var(--Y);
+  margin-top:20px;
+  animation:splashLine .6s .5s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes splashChar{
+  to{ opacity:1; transform:translateY(0); }
+}
+@keyframes splashLine{
+  to{ width:clamp(200px,30vw,400px); }
+}
+.splash-sub{
+  font-family:var(--mono); font-size:10px; letter-spacing:4px;
+  color:var(--text3); text-transform:uppercase; margin-top:16px;
+  opacity:0; animation:splashFade .5s .8s ease forwards;
+}
+@keyframes splashFade{
+  to{ opacity:1; }
+}
+
+/* ═══════════════════════════════════
+   SNS 섹션
+═══════════════════════════════════ */
+#sns{
+  background:var(--bg2);
+  border-top:1px solid var(--line);
+}
+.sns-inner{
+  max-width:1280px; margin:0 auto; padding:100px 48px;
+}
+.sns-grid{
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:32px; align-items:start;
+}
+.sns-left{}
+.sns-desc{
+  font-size:13px; color:var(--text2); line-height:2;
+  margin-top:24px; margin-bottom:32px;
+}
+.sns-desc-en{
+  font-family:var(--mono); font-size:10px; color:var(--text3);
+  line-height:1.9; margin-bottom:32px;
+}
+.sns-link{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; text-decoration:none;
+  color:var(--text2); border:1px solid var(--line2);
+  padding:10px 20px; transition:all .2s;
+}
+.sns-link:hover{ border-color:var(--Y); color:var(--Y); }
+.sns-right{
+  /* Twitter 타임라인 컨테이너 */
+  border:1px solid var(--line); overflow:hidden;
+  background:var(--bg3);
+  min-height:500px;
+  position:relative;
+}
+.sns-right iframe{
+  display:block; width:100%;
+}
+/* 타임라인 다크 오버레이 마스크 */
+.sns-right::after{
+  content:''; position:absolute; bottom:0; left:0; right:0;
+  height:80px;
+  background:linear-gradient(0deg, var(--bg2), transparent);
+  pointer-events:none;
+}
+.sns-loading{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:10px; color:var(--text3);
+  letter-spacing:2px; text-transform:uppercase;
+}
+
+@media(max-width:960px){
+  .sns-grid{ grid-template-columns:1fr; }
+  .sns-inner{ padding:72px 24px; }
+  .sns-right{ min-height:400px; }
+}
+
 </style>
 </head>
 <body>
+
+
+<!-- 스플래시 인트로 -->
+<div id="splash">
+  <div class="splash-logo">
+    <span style="animation-delay:.05s">M</span>
+    <span style="animation-delay:.1s">O</span>
+    <span style="animation-delay:.15s">M</span>
+    <span style="animation-delay:.2s;color:var(--Y)">U</span>
+    <span style="animation-delay:.25s;color:var(--Y)">K</span>
+    <span style="animation-delay:.3s">K</span>
+    <span style="animation-delay:.35s">O</span>
+  </div>
+  <div class="splash-line"></div>
+  <div class="splash-sub">CHARACTER ILLUSTRATOR · LIVE2D DESIGNER</div>
+</div>
 
 <div id="cursor"></div>
 <div class="bg-side bg-side-left"></div>
@@ -895,6 +1011,7 @@ footer::before{
     <a class="nav-link" href="#skills" data-t="nav_skills">SKILLS</a>
     <a class="nav-link" href="#portfolio" data-t="nav_portfolio">PORTFOLIO</a>
     <a class="nav-link" href="#contact" data-t="nav_contact">CONTACT</a>
+    <a class="nav-link" href="#sns" style="border-right:1px solid var(--line)">SNS</a>
   </div>
   <div class="nav-right">
   <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="라이트/다크 모드">●</button>
@@ -1092,12 +1209,6 @@ footer::before{
     </div>
     <div class="contact-grid reveal">
       <div class="contact-left">
-        <div class="ct-heading"><span data-t="ct_heading">함께</span><span class="ct-heading-accent" data-t="ct_heading2">만들자</span></div>
-        <p class="ct-desc"
-          data-t="ct_desc">
-          외주 의뢰, 협업 제안, 비즈니스 문의 모두 환영합니다. 아래 채널로 편하게 연락해 주세요.
-        </p>
-        <p class="ct-desc-en" data-t="ct_desc_en">Open to commissions, collaborations, and business inquiries.</p>
       </div>
       <div class="contact-right reveal rd1">
         <a class="ct-item" href="https://x.com/Momuko8" target="_blank">
@@ -1123,6 +1234,45 @@ footer::before{
             <div class="ct-val">Tally Form</div>
           </div>
           <div class="ct-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SNS 섹션 -->
+<section id="sns">
+  <div class="sns-inner">
+    <div class="sec-head reveal">
+      <div class="sec-num">// 05</div>
+      <div class="sec-title-block">
+        <div class="sec-title">LATEST <span class="sec-title-accent">POSTS</span></div>
+        <span class="sec-title-en">X (Twitter) · @Momuko8</span>
+      </div>
+    </div>
+    <div class="sns-grid">
+      <div class="sns-left reveal">
+        <p class="sns-desc"
+          data-t="sns_desc">
+          X(Twitter)에서 최근 작업 근황과 WIP를 확인하세요.
+        </p>
+        <p class="sns-desc-en" data-t="sns_desc_en">
+          Follow for latest works, WIPs, and updates.
+        </p>
+        <a class="sns-link" href="https://x.com/Momuko8" target="_blank">
+          𝕏 &nbsp; @Momuko8 →
+        </a>
+      </div>
+      <div class="sns-right reveal rd1">
+        <div class="sns-loading" id="snsLoading">LOADING FEED...</div>
+        <a class="twitter-timeline"
+          data-lang="ko"
+          data-height="520"
+          data-theme="dark"
+          data-chrome="noheader nofooter noborders transparent"
+          data-tweet-limit="5"
+          href="https://twitter.com/Momuko8">
         </a>
       </div>
     </div>
@@ -1220,6 +1370,14 @@ var T = {
   /* PORTFOLIO */
   pf_l2d_sub:   { ko:'Live2D 일러스트 · 파츠 분리', en:'Illustration · Parts Separation', ja:'イラスト · パーツ分け', zh:'插画 · 部件分离' },
   pf_char_sub:  { ko:'캐릭터 일러스트 · 개인작',    en:'Original · Commission Works',    ja:'キャラクターイラスト · 個人制作', zh:'角色插画 · 个人创作' },
+  sns_desc:      { ko:'X(Twitter)에서 최근 작업 근황과 WIP를 확인하세요.',
+                   en:'Follow for latest works, WIPs, and updates.',
+                   ja:'最新の作業状況やWIPはXでご確認ください。',
+                   zh:'在X上查看最新作品动态和WIP。' },
+  sns_desc_en:   { ko:'X에서 팔로우해서 최신 소식을 받아보세요.',
+                   en:'Follow for the latest news and updates.',
+                   ja:'最新情報はXでフォローしてご確認ください。',
+                   zh:'关注X获取最新动态。' },
   pf_design_sub: { ko:'디자인 · 그래픽 작업',         en:'Design · Graphic Works',         ja:'デザイン · グラフィック',        zh:'设计 · 平面作品' },
 
   /* CONTACT */
@@ -1317,20 +1475,6 @@ var IMG_EXTS = ['png','jpg','jpeg','gif','webp','PNG','JPG','JPEG'];
 
 function isImage(name){
   return IMG_EXTS.some(function(e){ return name.endsWith('.'+e); });
-}
-
-/* GitHub API로 폴더 파일 목록 가져오기 */
-function fetchFolder(folder){
-  var apiUrl = 'https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO
-    +'/contents/portfolio/'+folder+'?ref='+GITHUB_BRANCH;
-  return fetch(apiUrl)
-    .then(function(r){
-      if(!r.ok) throw new Error('folder_not_found');
-      return r.json();
-    })
-    .then(function(files){
-      return files.filter(function(f){ return f.type==='file' && isImage(f.name); });
-    });
 }
 
 /* 파일명에서 제목 생성 (확장자·앞 숫자 제거) */
@@ -1480,6 +1624,35 @@ function initAutoSlide(trackId){
     }, 2000);
   }, 300);
 }
+
+
+/* ── 스플래시 인트로 ── */
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    var splash = document.getElementById('splash');
+    if(splash){
+      splash.classList.add('hide');
+      setTimeout(function(){ splash.style.display='none'; }, 800);
+    }
+  }, 1600); /* 1.6초 후 사라짐 */
+});
+
+/* ── Twitter 위젯 로드 ── */
+(function(){
+  var s = document.createElement('script');
+  s.src = 'https://platform.twitter.com/widgets.js';
+  s.async = true;
+  s.onload = function(){
+    if(window.twttr && window.twttr.widgets){
+      window.twttr.widgets.load();
+      window.twttr.events.bind('rendered', function(){
+        var loading = document.getElementById('snsLoading');
+        if(loading) loading.style.display = 'none';
+      });
+    }
+  };
+  document.head.appendChild(s);
+})();
 
 loadPortfolio();
 </script>
