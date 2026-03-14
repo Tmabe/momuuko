@@ -558,20 +558,23 @@ body.light .hs-lbl{ color:var(--text3); }
 }
 
 /* ── 가로 스크롤 캐러셀 ── */
+/* 래퍼 — overflow 클립 담당 */
 .pf-carousel{
-  display:flex; gap:3px; align-items:flex-start;
   overflow:hidden;
-  padding-bottom:4px;
   cursor:grab;
   user-select:none;
+  padding-bottom:4px;
 }
 .pf-carousel:active{ cursor:grabbing; }
-.pf-carousel::-webkit-scrollbar{ display:none; }
-/* 캐러셀 아이템 — 높이 고정, 너비는 이미지 비율대로 */
+/* 트랙 — transform 이동 담당 */
+.pf-track{
+  display:flex; gap:3px; align-items:flex-start;
+  will-change:transform;
+}
+/* 아이템 */
 .pf-carousel .pf-item{
-  flex:0 0 auto;
+  flex:0 0 360px;
   height:480px;
-  width:360px;        /* 기본 너비 */
 }
 .pf-carousel .pf-item img{
   width:100%; height:100%;
@@ -809,7 +812,7 @@ footer::before{
   .hero-left{ padding:60px 40px 60px 40px; }
 }
 @media(max-width:960px){
-  .pf-carousel .pf-item{ height:320px; width:240px; }
+  .pf-carousel .pf-item{ flex:0 0 240px; height:320px; }
   .hero{ grid-template-columns:1fr; min-height:auto; }
   .hero-right{ display:none; }
   .hero-title{ white-space:normal; font-size:clamp(48px,12vw,100px); }
@@ -827,7 +830,7 @@ footer::before{
   .pf-sep{ padding:0 24px; }
 }
 @media(max-width:600px){
-  .pf-carousel .pf-item{ height:240px; width:180px; }
+  .pf-carousel .pf-item{ flex:0 0 180px; height:240px; }
   .hero-left{ padding:48px 20px; }
   .scroll-cue{ display:none; }
   .hero-stat-wrap{ display:none; }
@@ -1490,7 +1493,9 @@ function fetchFolderRecursive(apiPath, tag){
 function renderGrid(gridId, files){
   var g = document.getElementById(gridId);
   if(!files.length) return;
-  g.innerHTML = '';
+  /* 트랙 div 생성 — transform 이동용 */
+  g.innerHTML = '<div class="pf-track" id="'+gridId+'Track"></div>';
+  var track = document.getElementById(gridId+'Track');
   files.forEach(function(file, i){
     var src = 'https://raw.githubusercontent.com/'+GITHUB_USER+'/'+GITHUB_REPO
       +'/'+GITHUB_BRANCH+'/'+file.path;
@@ -1508,7 +1513,7 @@ function renderGrid(gridId, files){
       +'<div class="pf-corner tl"></div>'
       +'<div class="pf-corner br"></div>';
     el.addEventListener('click', function(){ openLb(src, title+(tag?' · '+tag:'')); });
-    g.appendChild(el);
+    track.appendChild(el);
   });
 }
 
