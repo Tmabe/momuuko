@@ -7,14 +7,14 @@
 <meta name="description" content="서브컬쳐 캐릭터 일러스트 & Live2D 모델 디자이너 모무꼬">
 <meta property="og:title" content="MOMUKKO · NAMECARD">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&family=Noto+Sans+KR:wght@300;400;700;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&family=Noto+Sans+KR:wght@300;400;700;900&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════
    ROOT — 단 하나의 포인트 컬러
 ═══════════════════════════════════ */
 :root{
-  --Y:       #FFD000;
-  --Y2:      #CC9900;
+  --Y:       #3D8EF0;
+  --Y2:      #1A6AD4;
   --mono:    'DM Mono', monospace;
   --cond:    'Barlow Condensed', sans-serif;
   --display: 'Bebas Neue', sans-serif;
@@ -64,13 +64,19 @@ body{
 /* ═══════════════════════════════════
    커스텀 커서
 ═══════════════════════════════════ */
-*, a, button{ cursor:none !important; }
+@media(pointer:fine){
+  *, a, button{ cursor:none !important; }
+}
+@media(pointer:coarse){
+  *, a, button{ cursor:auto !important; }
+  #cursor{ display:none !important; }
+}
 #cursor{
   position:fixed; width:8px; height:8px;
   background:var(--Y); pointer-events:none; z-index:9999;
   transform:translate(-50%,-50%);
   transition:width .15s, height .15s;
-  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%); /* 마름모 */
+  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
 }
 #cursor.big{ width:20px; height:20px; }
 
@@ -156,7 +162,7 @@ nav::before{
 .theme-btn:hover{ border-color:var(--Y); color:var(--Y); }
 /* 라이트 모드 전환 시 밝은 요소들 조정 */
 body.light .hero-img-fallback{ color:rgba(255,208,0,.06); }
-body.light .bg-deco{ color:rgba(255,208,0,.05); }
+body.light .bg-deco{ color:rgba(75,159,225,.05); }
 body.light .lb-close{ color:var(--text2); }
 body.light .pf-empty{ border-color:var(--line2); }
 body.light .pf-empty-num{ opacity:.3; }
@@ -165,8 +171,8 @@ body.light .ct-heading{ color:var(--text); }
 body.light .contact-left::before{ background:var(--Y); }
 body.light #contact{ background:var(--bg2); border-top:1px solid var(--line); }
 body.light .ct-desc{ color:var(--text); }
-body.light .ct-heading-accent{ color:var(--Y2); }
-body.light .hero-stat-wrap .hero-stat{ background:rgba(255,255,255,.7); }
+body.light .ct-heading-accent{ color:var(--Y); }
+body.light .hero-stat-wrap .hero-stat{ background:rgba(255,255,255,.75); }
 body.light .hs-lbl{ color:var(--text3); }
 
 /* ═══════════════════════════════════
@@ -321,7 +327,7 @@ body.light .hs-lbl{ color:var(--text3); }
 /* 배경 데코 텍스트 */
 .bg-deco{
   position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  font-family:var(--display); font-size:clamp(120px,18vw,240px); color:rgba(255,208,0,.04);
+  font-family:var(--display); font-size:clamp(120px,18vw,240px); color:rgba(61,142,240,.04);
   letter-spacing:-8px; user-select:none; white-space:nowrap; z-index:0;
   pointer-events:none; max-width:100%; overflow:hidden;
 }
@@ -591,11 +597,12 @@ body.light .hs-lbl{ color:var(--text3); }
 }
 /* 엄청 큰 타이틀 */
 .ct-heading{
-  font-family:var(--display); font-size:clamp(56px,8vw,110px);
-  letter-spacing:2px; line-height:.85; color:var(--text);
-  text-transform:uppercase; margin-bottom:8px;
+  font-family:'Playfair Display', serif; font-size:clamp(56px,8vw,112px);
+  font-weight:400; font-style:italic;
+  letter-spacing:-1px; line-height:.9; color:var(--text);
+  text-transform:none; margin-bottom:8px;
 }
-.ct-heading-accent{ color:var(--Y); display:block; }
+.ct-heading-accent{ color:var(--Y); display:block; font-style:italic; }
 .ct-sub{
   font-family:var(--mono); font-size:12px; letter-spacing:3px;
   color:var(--text2); text-transform:uppercase; margin-bottom:40px; display:block;
@@ -730,7 +737,7 @@ footer::before{
 }
 @media(max-width:960px){
   .hero{ grid-template-columns:1fr; min-height:auto; }
-  .hero-right{ min-height:50vw; max-height:600px; }
+  .hero-right{ display:none; }
   .hero-title{ white-space:normal; font-size:clamp(48px,12vw,100px); }
   nav{ padding:0 24px; }
   .nav-center{ display:none; }
@@ -745,6 +752,8 @@ footer::before{
 }
 @media(max-width:600px){
   .hero-left{ padding:48px 20px; }
+  .scroll-cue{ display:none; }
+  .hero-stat-wrap{ display:none; }
   .pf-sec{ padding:48px 16px; }
   .pf-cat-label{ flex-wrap:wrap; }
   .pf-cat-en{ display:none; }
@@ -1172,15 +1181,19 @@ document.addEventListener('click', function(e){
   else applyLang();
 })();
 
-/* 커서 */
+/* 커서 — 터치 기기 제외 */
 var cur=document.getElementById('cursor');
-document.addEventListener('mousemove',function(e){
-  cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px';
-});
-document.querySelectorAll('a,button,.pf-item').forEach(function(el){
-  el.addEventListener('mouseenter',function(){ cur.classList.add('big'); });
-  el.addEventListener('mouseleave',function(){ cur.classList.remove('big'); });
-});
+if(window.matchMedia('(pointer:fine)').matches){
+  document.addEventListener('mousemove',function(e){
+    cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px';
+  });
+  document.querySelectorAll('a,button,.pf-item').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ cur.classList.add('big'); });
+    el.addEventListener('mouseleave',function(){ cur.classList.remove('big'); });
+  });
+} else {
+  cur.style.display='none';
+}
 
 /* 스크롤 reveal */
 var io=new IntersectionObserver(function(entries){
