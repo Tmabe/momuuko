@@ -815,7 +815,7 @@ footer::before{
   .hero-left{ padding:60px 40px 60px 40px; }
 }
 @media(max-width:960px){
-  .pf-carousel .pf-item{ flex:0 0 240px; height:320px; }
+  .pf-item{ flex:0 0 220px; height:300px; }
   .hero{ grid-template-columns:1fr; min-height:auto; }
   .hero-right{ display:none; }
   .hero-title{ white-space:normal; font-size:clamp(48px,12vw,100px); }
@@ -831,7 +831,7 @@ footer::before{
   .pf-sep{ padding:0 24px; }
 }
 @media(max-width:600px){
-  .pf-carousel .pf-item{ flex:0 0 180px; height:240px; }
+  .pf-item{ flex:0 0 160px; height:220px; }
   .hero-left{ padding:48px 20px; }
   .scroll-cue{ display:none; }
   .hero-stat-wrap{ display:none; }
@@ -1513,29 +1513,37 @@ function makeItem(file){
   return el;
 }
 
-/* 그리드 렌더 */
+/* 마퀴 렌더 — 원본 + 클론 붙여서 무한루프 */
 function renderGrid(trackId, files){
   var track = document.getElementById(trackId);
   if(!track){ console.error('track not found:', trackId); return; }
   track.innerHTML = '';
+
+  /* 원본 세트 */
+  files.forEach(function(file){ track.appendChild(makeItem(file)); });
+  /* 클론 세트 — 원본과 이어붙여서 seamless 루프 */
   files.forEach(function(file){
-    track.appendChild(makeItem(file));
+    var clone = makeItem(file);
+    clone.classList.add('clone');
+    track.appendChild(clone);
   });
-  /* 렌더 확인 로그 */
-  console.log('['+trackId+'] 렌더 완료 — '+files.length+'장');
+
+  /* 이미지 수에 따라 속도 조정 (장수 * 3초) */
+  var duration = Math.max(files.length * 3, 15);
+  track.style.animationDuration = duration + 's';
+
+  console.log('['+trackId+'] 렌더 완료 — '+files.length+'장 ('+duration+'s)');
 }
 
-/* 빈 상태 표시 */
 function showEmpty(trackId, msg){
   var emptyEl = document.getElementById(trackId+'Empty');
-  var statusEl = document.getElementById(trackId.replace('Grid','')+'Status');
-  if(emptyEl){
-    emptyEl.style.display = '';
-    if(statusEl) statusEl.textContent = msg;
-  }
+  var statusEl = document.getElementById(
+    trackId.replace('Grid', 'Status').replace('l2d','l2d').replace('char','char').replace('design','design')
+  );
+  if(emptyEl) emptyEl.style.display = '';
+  if(statusEl) statusEl.textContent = msg;
 }
 
-/* 폴더 로드 */
 function loadFolder(folder, trackId){
   console.log('[loadFolder]', folder, '->', trackId);
   fetchFolderRecursive('portfolio/'+folder, '')
@@ -1545,7 +1553,6 @@ function loadFolder(folder, trackId){
         showEmpty(trackId, 'portfolio/'+folder+'/ 폴더에 이미지를 올려주세요');
       } else {
         renderGrid(trackId, files);
-        setTimeout(function(){ initSlide(trackId); }, 200);
       }
     })
     .catch(function(err){
@@ -1573,107 +1580,6 @@ function closeLightbox(){
 }
 document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLightbox(); });
 
-/* ════════════════════════════════════════
-   무한 자동 슬라이드
-   track = pf-track (flex 컨테이너, transform 이동)
-   wrap  = pf-carousel-wrap (overflow:hidden)
-════════════════════════════════════════ */
-function initSlide(trackId){
-  var track = document.getElementById(trackId);
-  if(!track) return;
-  var items = Array.prototype.slice.call(track.querySelectorAll('.pf-item'));
-  if(items.length < 1) return;
-
-  /* 아이템 너비 측정 (track이 보여야 함) */
-  var iw = items[0].getBoundingClientRect().width || 340;
-  var gap = 4;
-  var step = iw + gap;
-  var n = items.length;
-
-  /* 클론 붙이기 */
-  items.forEach(function(item){
-    var c = item.cloneNode(true);
-    c.classList.add('clone');
-    /* 클론 클릭도 원본과 동일하게 */
-    var img = item.querySelector('img');
-    if(img){
-      c.addEventListener('click', function(){
-        openLb(img.src, item.querySelector('.pf-overlay-title').textContent);
-      });
-    }
-    track.appendChild(c);
-  });
-
-  var idx = 0;
-  var sliding = false;
-
-  function moveTo(newIdx, animate){
-    idx = newIdx;
-    track.style.transition = animate ? 'transform .55s cubic-bezier(.4,0,.2,1)' : 'none';
-    track.style.transform  = 'translateX(-'+(idx * step)+'px)';
-    if(animate) sliding = true;
-  }
-
-  function next(){
-    if(sliding) return;
-    moveTo(idx + 1, true);
-    if(idx >= n){
-      setTimeout(function(){
-        moveTo(0, false);
-        sliding = false;
-      }, 560);
-    } else {
-      setTimeout(function(){ sliding = false; }, 560);
-    }
-  }
-
-  var timer = setInterval(next, 2500);
-
-  /* 드래그 */
-  var wrap = track.parentElement;
-  var dsx=0, doff=0, dragging=false, moved=false;
-
-  wrap.addEventListener('mousedown', function(e){
-    dragging=true; moved=false;
-    dsx=e.clientX; doff=-(idx*step);
-    track.style.transition='none';
-    clearInterval(timer);
-    e.preventDefault();
-  });
-  window.addEventListener('mousemove', function(e){
-    if(!dragging) return;
-    var dx=e.clientX-dsx;
-    if(Math.abs(dx)>4) moved=true;
-    track.style.transform='translateX('+(doff+dx)+'px)';
-  });
-  window.addEventListener('mouseup', function(e){
-    if(!dragging) return;
-    dragging=false;
-    var dx=e.clientX-dsx;
-    if(moved){
-      if(dx < -80) moveTo(Math.min(idx+1, n*2-1), true);
-      else if(dx > 80) moveTo(Math.max(idx-1,0), true);
-      else moveTo(idx, true);
-      if(idx>=n) setTimeout(function(){ moveTo(0,false); sliding=false; },560);
-      else setTimeout(function(){ sliding=false; },560);
-    }
-    timer=setInterval(next,2500);
-  });
-
-  /* 터치 */
-  var tsx=0;
-  wrap.addEventListener('touchstart',function(e){ tsx=e.touches[0].clientX; track.style.transition='none'; clearInterval(timer); },{passive:true});
-  wrap.addEventListener('touchmove',function(e){ track.style.transform='translateX('+(-(idx*step)+(e.touches[0].clientX-tsx))+'px)'; },{passive:true});
-  wrap.addEventListener('touchend',function(e){
-    var dx=e.changedTouches[0].clientX-tsx;
-    if(dx<-50) moveTo(Math.min(idx+1,n*2-1),true);
-    else if(dx>50) moveTo(Math.max(idx-1,0),true);
-    else moveTo(idx,true);
-    if(idx>=n) setTimeout(function(){ moveTo(0,false); sliding=false; },560);
-    else setTimeout(function(){ sliding=false; },560);
-    timer=setInterval(next,2500);
-  });
-}
 
 /* ── 스플래시 인트로 ── */
 window.addEventListener('load', function(){
