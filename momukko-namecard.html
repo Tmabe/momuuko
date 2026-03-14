@@ -579,8 +579,10 @@ body.light .hs-lbl{ color:var(--text3); }
   display:flex; gap:3px; align-items:flex-start;
   overflow:hidden;
   padding-bottom:4px;
-  cursor:default;
+  cursor:grab;
+  user-select:none;
 }
+.pf-carousel:active{ cursor:grabbing; }
 .pf-carousel::-webkit-scrollbar{ display:none; }
 /* 캐러셀 아이템 — 높이 고정, 너비는 이미지 비율대로 */
 .pf-carousel .pf-item{
