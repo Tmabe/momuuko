@@ -154,24 +154,7 @@ body.light::after{
     rgba(0,0,0,.03) 100%);
 }
 
-/* ═══════════════════════════════════
-   커스텀 커서
-═══════════════════════════════════ */
-@media(pointer:fine){
-  *, a, button{ cursor:none !important; }
-}
-@media(pointer:coarse){
-  *, a, button{ cursor:auto !important; }
-  #cursor{ display:none !important; }
-}
-#cursor{
-  position:fixed; width:8px; height:8px;
-  background:var(--Y); pointer-events:none; z-index:9999;
-  transform:translate(-50%,-50%);
-  transition:transform .08s, width .2s, height .2s;
-  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
-}
-#cursor.big{ width:20px; height:20px; }
+
 
 /* ═══════════════════════════════════
    NAV
@@ -605,7 +588,7 @@ body.light .hs-lbl{ color:var(--text3); }
 /* 공통 아이템 */
 .pf-item{
   position:relative; overflow:hidden; background:var(--bg3);
-  cursor:none !important; transition:transform .4s cubic-bezier(.22,1,.36,1);
+  transition:transform .4s cubic-bezier(.22,1,.36,1);
 }
 .pf-item:hover{ transform:scale(1.01); z-index:2; }
 .pf-item img{
@@ -988,7 +971,6 @@ footer::before{
   <div class="splash-sub">CHARACTER ILLUSTRATOR · LIVE2D DESIGNER</div>
 </div>
 
-<div id="cursor"></div>
 <div class="bg-side bg-side-left"></div>
 <div class="bg-side bg-side-right"></div>
 <div class="bg-diag"></div>
@@ -1443,19 +1425,7 @@ document.addEventListener('click', function(e){
   else applyLang();
 })();
 
-/* 커서 — 터치 기기 제외 */
-var cur=document.getElementById('cursor');
-if(window.matchMedia('(pointer:fine)').matches){
-  document.addEventListener('mousemove',function(e){
-    cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px';
-  });
-  document.querySelectorAll('a,button,.pf-item').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ cur.classList.add('big'); });
-    el.addEventListener('mouseleave',function(){ cur.classList.remove('big'); });
-  });
-} else {
-  cur.style.display='none';
-}
+
 
 /* 스크롤 reveal */
 var io=new IntersectionObserver(function(entries){
@@ -1527,10 +1497,9 @@ function renderGrid(gridId, files){
     var title = parseName(file.name);
     var tag   = file.tag || '';
     var el = document.createElement('div');
-    el.className = 'pf-item reveal';
-    el.style.transitionDelay = (i * 0.04) + 's';
+    el.className = 'pf-item';
     el.innerHTML =
-      '<img src="'+src+'" alt="'+title+'" loading="lazy">'
+      '<img src="'+src+'" alt="'+title+'" loading="eager">'
       +(tag ? '<div class="pf-tag">'+tag+'</div>' : '')
       +'<div class="pf-overlay">'
         +'<div class="pf-overlay-title">'+title+'</div>'
@@ -1540,7 +1509,6 @@ function renderGrid(gridId, files){
       +'<div class="pf-corner br"></div>';
     el.addEventListener('click', function(){ openLb(src, title+(tag?' · '+tag:'')); });
     g.appendChild(el);
-    io.observe(el);
   });
 }
 
