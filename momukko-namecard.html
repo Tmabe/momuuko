@@ -532,7 +532,7 @@ body.light .hs-lbl{ color:var(--text3); }
 ═══════════════════════════════════ */
 #portfolio{ background:var(--bg); }
 .pf-sec{ padding:100px 0; }
-.pf-sec > *:not(.pf-carousel-wrap){ padding:0 48px; max-width:1400px; margin-left:auto; margin-right:auto; }
+.pf-sec > *:not(.pf-carousel-outer){ padding:0 48px; max-width:1400px; margin-left:auto; margin-right:auto; }
 
 .pf-cat-label{
   display:flex; align-items:center; gap:0; padding:0 48px;
@@ -556,7 +556,6 @@ body.light .hs-lbl{ color:var(--text3); }
   border-left:1px solid var(--line);
 }
 
-/* 캐러셀 래퍼 — 클립 영역 */
 /* 패딩 담당 래퍼 */
 .pf-carousel-outer{
   padding:0 48px;
@@ -823,6 +822,7 @@ footer::before{
 }
 @media(max-width:960px){
   .pf-carousel-wrap{ height:300px; }
+  .pf-carousel-outer{ padding:0 24px; }
   .pf-item{ flex:0 0 220px !important; height:300px !important; }
   .hero{ grid-template-columns:1fr; min-height:auto; }
   .hero-right{ display:none; }
@@ -831,6 +831,7 @@ footer::before{
   .nav-center{ display:none; }
   .sec{ padding:72px 24px; }
   .pf-sec{ padding:72px 0; }
+  .pf-sec > *:not(.pf-carousel-outer){ padding:0 24px; }
   .contact-inner{ padding:72px 24px; }
   .skills-wrap{ grid-template-columns:1fr; }
   .contact-grid{ grid-template-columns:1fr; }
@@ -840,17 +841,14 @@ footer::before{
 }
 @media(max-width:600px){
   .pf-carousel-wrap{ height:220px; }
+  .pf-carousel-outer{ padding:0 16px; }
   .pf-item{ flex:0 0 160px !important; height:220px !important; }
   .hero-left{ padding:48px 20px; }
   .scroll-cue{ display:none; }
   .hero-stat-wrap{ display:none; }
-  .pf-sec{ padding:48px 16px; }
+  .pf-sec{ padding:48px 0; }
   .pf-cat-label{ flex-wrap:wrap; }
   .pf-cat-en{ display:none; }
-  .pf-grid-l2d{ grid-template-columns:repeat(2,1fr); }
-  .pf-grid-l2d .pf-item:nth-child(1){ grid-column:span 2; aspect-ratio:16/9; min-height:0; }
-  .pf-grid-l2d .pf-item:nth-child(n+2){ grid-column:span 1; }
-  .pf-grid-char{ grid-template-columns:repeat(2,1fr); }
   .ct-heading{ font-size:clamp(18px,5.5vw,48px); white-space:normal; overflow:visible; }
   .hero-contacts{ margin-top:auto; }
   .sec{ padding:56px 20px; }
@@ -1546,7 +1544,7 @@ function renderGrid(trackId, files){
     track.appendChild(c);
   });
 
-  var setW   = files.length * (ITEM_W + GAP);
+  var setW   = files.length * ITEM_W + Math.max(files.length - 1, 0) * GAP;
   var dur    = Math.max(files.length * 2.5, 12);
   var kfName = 'mq_' + trackId;
 
@@ -1571,12 +1569,10 @@ function renderGrid(trackId, files){
 }
 
 function showEmpty(trackId, msg){
-  var emptyEl = document.getElementById(trackId+'Empty');
-  var statusEl = document.getElementById(
-    trackId.replace('Grid', 'Status').replace('l2d','l2d').replace('char','char').replace('design','design')
-  );
-  if(emptyEl) emptyEl.style.display = '';
-  if(statusEl) statusEl.textContent = msg;
+  var emptyEl  = document.getElementById(trackId + 'Empty');
+  var statusEl = document.getElementById(trackId.replace('Grid', 'Status'));
+  if(emptyEl)  emptyEl.style.display = '';
+  if(statusEl) statusEl.textContent  = msg;
 }
 
 function loadFolder(folder, trackId){
