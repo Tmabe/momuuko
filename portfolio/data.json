@@ -1,0 +1,30 @@
+{
+  "live2d": [
+    {
+      "file": "sample1.jpg",
+      "title": "Live2D 샘플 작품 1",
+      "title_en": "Live2D Sample Work 1",
+      "tag": "Full Model"
+    },
+    {
+      "file": "sample2.jpg",
+      "title": "Live2D 샘플 작품 2",
+      "title_en": "Live2D Sample Work 2",
+      "tag": "Character Sheet"
+    }
+  ],
+  "character": [
+    {
+      "file": "sample1.jpg",
+      "title": "캐릭터 일러스트 1",
+      "title_en": "Character Illustration 1",
+      "tag": "Original"
+    },
+    {
+      "file": "sample2.jpg",
+      "title": "캐릭터 일러스트 2",
+      "title_en": "Character Illustration 2",
+      "tag": "Fan Art"
+    }
+  ]
+}
