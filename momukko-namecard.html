@@ -548,7 +548,9 @@ body.light .hs-lbl{ color:var(--text3); }
    PORTFOLIO — 스크롤 자연 나열
 ═══════════════════════════════════ */
 #portfolio{ background:var(--bg); }
-.pf-sec{ padding:100px 48px; max-width:1400px; margin:0 auto; }
+.pf-sec{ padding:100px 0; }
+.pf-sec > *:not(.pf-carousel):not(.pf-nav){ padding:0 48px; max-width:1400px; margin-left:auto; margin-right:auto; }
+.pf-carousel{ padding:0 48px; }
 
 /* 카테고리 라벨 */
 .pf-cat-label{
@@ -574,8 +576,8 @@ body.light .hs-lbl{ color:var(--text3); }
 
 /* ── 가로 스크롤 캐러셀 ── */
 .pf-carousel{
-  display:flex; gap:3px;
-  overflow-x:auto; overflow-y:visible;
+  display:flex; gap:3px; align-items:flex-start;
+  overflow-x:auto; overflow-y:hidden;
   scroll-behavior:smooth;
   scrollbar-width:none; -ms-overflow-style:none;
   -webkit-overflow-scrolling:touch;
@@ -584,12 +586,15 @@ body.light .hs-lbl{ color:var(--text3); }
 }
 .pf-carousel:active{ cursor:grabbing; }
 .pf-carousel::-webkit-scrollbar{ display:none; }
-/* 캐러셀 아이템 — 고정 높이, 비율 유지 */
+/* 캐러셀 아이템 — 높이 고정, 너비는 이미지 비율대로 */
 .pf-carousel .pf-item{
   flex:0 0 auto;
   height:480px;
-  width:auto;
-  aspect-ratio:3/4;
+  width:360px;        /* 기본 너비 */
+}
+.pf-carousel .pf-item img{
+  width:100%; height:100%;
+  object-fit:cover; object-position:top center;
 }
 /* 좌우 스크롤 버튼 */
 .pf-nav{
@@ -844,7 +849,7 @@ footer::before{
   .hero-left{ padding:60px 40px 60px 40px; }
 }
 @media(max-width:960px){
-  .pf-carousel .pf-item{ height:360px; }
+  .pf-carousel .pf-item{ height:320px; width:240px; }
   .hero{ grid-template-columns:1fr; min-height:auto; }
   .hero-right{ display:none; }
   .hero-title{ white-space:normal; font-size:clamp(48px,12vw,100px); }
@@ -860,7 +865,7 @@ footer::before{
   .pf-sep{ padding:0 24px; }
 }
 @media(max-width:600px){
-  .pf-carousel .pf-item{ height:260px; }
+  .pf-carousel .pf-item{ height:240px; width:180px; }
   .hero-left{ padding:48px 20px; }
   .scroll-cue{ display:none; }
   .hero-stat-wrap{ display:none; }
