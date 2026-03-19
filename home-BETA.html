@@ -8,20 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#08070f;
-  --card:#111020;
-  --card2:#181628;
-  --border:rgba(180,140,255,.08);
-  --border2:rgba(180,140,255,.18);
-  --text:#ede8ff;
-  --text2:#8b82b0;
-  --text3:#45405a;
-  --pink:#f06292;
-  --pink2:#c2185b;
-  --lilac:#c084fc;
-  --sky:#67e8f9;
-  --gold:#fcd34d;
-  --green:#6ee7b7;
+  --bg:#1A1A22;
+  --card:#22222C;
+  --card2:#25252F;
+  --border:rgba(255,255,255,.12);
+  --border2:rgba(255,255,255,.24);
+  --text:#F0EEE8;
+  --text2:#B8B4AC;
+  --text3:#7A7870;
+  --accent:#3D8EF0;
+  --accent-dark:#1A6AD4;
   --mono:'DM Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -34,9 +30,9 @@ body{
 /* ── 배경 ── */
 .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .orb{position:absolute;border-radius:50%;filter:blur(100px);animation:drift 20s ease-in-out infinite alternate;}
-.o1{width:700px;height:700px;background:radial-gradient(circle,rgba(192,100,252,.12),transparent 70%);top:-200px;left:-200px;animation-delay:0s;}
-.o2{width:500px;height:500px;background:radial-gradient(circle,rgba(240,98,146,.1),transparent 70%);bottom:-100px;right:-100px;animation-delay:-8s;}
-.o3{width:400px;height:400px;background:radial-gradient(circle,rgba(103,232,249,.07),transparent 70%);top:40%;left:40%;animation-delay:-14s;}
+.o1{width:700px;height:700px;background:radial-gradient(circle,rgba(61,142,240,.08),transparent 70%);top:-200px;left:-200px;animation-delay:0s;}
+.o2{width:500px;height:500px;background:radial-gradient(circle,rgba(61,142,240,.06),transparent 70%);bottom:-100px;right:-100px;animation-delay:-8s;}
+.o3{width:400px;height:400px;background:radial-gradient(circle,rgba(61,142,240,.04),transparent 70%);top:40%;left:40%;animation-delay:-14s;}
 @keyframes drift{from{transform:translate(0,0) scale(1);}to{transform:translate(50px,30px) scale(1.1);}}
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -61,7 +57,7 @@ body::before{
 }
 .logo em{
   font-style:italic;
-  background:linear-gradient(135deg,var(--pink),var(--lilac),var(--sky));
+  background:linear-gradient(135deg,#3D8EF0,#1A6AD4);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
 .tagline{
@@ -102,7 +98,7 @@ body::before{
 .app-card:hover{
   transform:translateY(-6px) scale(1.02);
   border-color:var(--card-accent,var(--border));
-  box-shadow:0 20px 60px var(--card-shadow,rgba(0,0,0,.4));
+  box-shadow:0 20px 60px var(--card-shadow,rgba(61,142,240,.15));
 }
 .app-card:hover::before{opacity:1;}
 .app-card:active{transform:scale(.98);}
@@ -138,51 +134,51 @@ body::before{
 
 /* 카드별 색상 */
 .c-commission{
-  --card-accent:rgba(240,98,146,.35);
-  --card-shadow:rgba(240,98,146,.15);
-  --card-glow:linear-gradient(135deg,rgba(240,98,146,.06) 0%,transparent 60%);
+  --card-accent:rgba(61,142,240,.35);
+  --card-shadow:rgba(61,142,240,.15);
+  --card-glow:linear-gradient(135deg,rgba(61,142,240,.06) 0%,transparent 60%);
 }
-.c-commission .card-name{color:#fce4ec;}
-.c-commission .card-tag{color:var(--pink);}
+.c-commission .card-name{color:#F0EEE8;}
+.c-commission .card-tag{color:#3D8EF0;}
 
 .c-dashboard{
-  --card-accent:rgba(103,232,249,.3);
-  --card-shadow:rgba(103,232,249,.12);
-  --card-glow:linear-gradient(135deg,rgba(103,232,249,.05) 0%,transparent 60%);
+  --card-accent:rgba(61,142,240,.3);
+  --card-shadow:rgba(61,142,240,.12);
+  --card-glow:linear-gradient(135deg,rgba(61,142,240,.05) 0%,transparent 60%);
 }
-.c-dashboard .card-name{color:#e0f7ff;}
-.c-dashboard .card-tag{color:var(--sky);}
+.c-dashboard .card-name{color:#F0EEE8;}
+.c-dashboard .card-tag{color:#3D8EF0;}
 
 .c-links{
-  --card-accent:rgba(192,132,252,.3);
-  --card-shadow:rgba(192,132,252,.12);
-  --card-glow:linear-gradient(135deg,rgba(192,132,252,.06) 0%,transparent 60%);
+  --card-accent:rgba(61,142,240,.3);
+  --card-shadow:rgba(61,142,240,.12);
+  --card-glow:linear-gradient(135deg,rgba(61,142,240,.06) 0%,transparent 60%);
 }
-.c-links .card-name{color:#f3e8ff;}
-.c-links .card-tag{color:var(--lilac);}
+.c-links .card-name{color:#F0EEE8;}
+.c-links .card-tag{color:#3D8EF0;}
 
 .c-practice{
-  --card-accent:rgba(252,211,77,.3);
-  --card-shadow:rgba(252,211,77,.12);
-  --card-glow:linear-gradient(135deg,rgba(252,211,77,.05) 0%,transparent 60%);
+  --card-accent:rgba(61,142,240,.3);
+  --card-shadow:rgba(61,142,240,.12);
+  --card-glow:linear-gradient(135deg,rgba(61,142,240,.05) 0%,transparent 60%);
 }
-.c-practice .card-name{color:#fef9c3;}
-.c-practice .card-tag{color:var(--gold);}
+.c-practice .card-name{color:#F0EEE8;}
+.c-practice .card-tag{color:#3D8EF0;}
 
 .c-tally{
-  --card-accent:rgba(110,231,183,.3);
-  --card-shadow:rgba(110,231,183,.12);
-  --card-glow:linear-gradient(135deg,rgba(110,231,183,.06) 0%,transparent 60%);
+  --card-accent:rgba(61,142,240,.3);
+  --card-shadow:rgba(61,142,240,.12);
+  --card-glow:linear-gradient(135deg,rgba(61,142,240,.06) 0%,transparent 60%);
 }
-.c-tally .card-name{color:#d1fae5;}
-.c-tally .card-tag{color:var(--green);}
+.c-tally .card-name{color:#F0EEE8;}
+.c-tally .card-tag{color:#3D8EF0;}
 
 .c-x{
   --card-accent:rgba(255,255,255,.15);
-  --card-shadow:rgba(0,0,0,.4);
+  --card-shadow:rgba(61,142,240,.12);
   --card-glow:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 60%);
 }
-.c-x .card-name{color:#fff;}
+.c-x .card-name{color:#F0EEE8;}
 .c-x .card-tag{color:var(--text2);}
 
 /* ── 특별 강조 카드 (연습 트래커 — 와이드) ── */
@@ -220,7 +216,7 @@ body::before{
   line-height:2;
 }
 .footer a{color:var(--text3);text-decoration:none;transition:color .15s;}
-.footer a:hover{color:var(--lilac);}
+.footer a:hover{color:#3D8EF0;}
 
 /* ── 입장 애니메이션 ── */
 .header{opacity:0;transform:translateY(20px);animation:reveal .7s .05s cubic-bezier(.34,1.56,.64,1) forwards;}
