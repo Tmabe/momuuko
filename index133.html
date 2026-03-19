@@ -983,7 +983,7 @@ textarea.msg-box:focus{border-color:var(--sky)}
 @media(max-width:768px){.status-bar{left:0;display:none}}
 
 /* ── HERO SPLIT ── */
-.hero-split{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 37px);margin-top:37px;overflow:hidden}
+.hero-split{display:grid;grid-template-columns:1fr 1fr;min-height:clamp(560px, calc(100vh - 37px), 860px);margin-top:37px;overflow:hidden}
 .hero-left{background:var(--bg2);padding:72px 52px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--line);position:relative;overflow:hidden;will-change:transform}
 .hero-left::before{content:'';position:absolute;bottom:-80px;left:-80px;width:240px;height:240px;border-radius:50%;border:1px solid var(--line);pointer-events:none}
 .hero-left::after{content:'';position:absolute;bottom:-40px;left:-40px;width:140px;height:140px;border-radius:50%;border:1px solid var(--line2);pointer-events:none}
