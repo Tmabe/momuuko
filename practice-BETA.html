@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="모무꼬">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&family=Noto+Sans+KR:wght@300;400;700;900&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
 /* 스크롤바 숨기기 */
 *::-webkit-scrollbar { display: none; }
@@ -23,6 +23,8 @@
   --text:#F0EEE8; --text2:#B8B4AC; --text3:#7A7870;
   --gold:#3D8EF0; --gold2:#1A6AD4; --orange:#f07030;
   --red:#e05040; --green:#60c080; --sky:#60b8d8; --purple:#b080f0;
+  --display:'Bebas Neue',sans-serif;
+  --cond:'Barlow Condensed',sans-serif;
   --mono:'DM Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -58,14 +60,14 @@ body::before{
   display:flex; align-items:center; justify-content:space-between;
   padding-bottom:20px; border-bottom:1px solid var(--border);
 }
-.logo{ font-family:'Syne',sans-serif; font-weight:800; font-size:20px; color:var(--gold); }
+.logo{ font-family:'Bebas Neue',sans-serif; font-weight:800; font-size:20px; color:var(--gold); }
 .logo span{ font-weight:400; font-size:12px; color:var(--text3); margin-left:8px; }
 .header-right{ display:flex; align-items:center; gap:16px; }
 .streak-pill{
   display:flex; align-items:center; gap:8px;
   background:rgba(61,142,240,.1); border:1px solid var(--border2);
   border-radius:20px; padding:7px 16px;
-  font-family:'Syne',sans-serif; font-weight:700; font-size:18px; color:var(--gold);
+  font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:18px; color:var(--gold);
 }
 .streak-pill small{ font-size:11px; font-weight:400; color:var(--text3); font-family:'Noto Sans KR',sans-serif; }
 .focus-trigger{
@@ -87,7 +89,7 @@ body::before{
   margin-bottom:18px;
 }
 .sec-title{
-  font-family:'Syne',sans-serif; font-weight:700; font-size:13px;
+  font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:13px;
   letter-spacing:1.5px; text-transform:uppercase; color:var(--text3);
 }
 .sec-action{
@@ -103,7 +105,7 @@ body::before{
 }
 .timer-display-wrap{ flex:1; }
 .timer-display{
-  font-family:var(--mono); font-size:72px; font-weight:500;
+  font-family:'Bebas Neue',sans-serif; font-size:72px; font-weight:500;
   letter-spacing:4px; line-height:1; color:var(--text);
   transition:color .3s;
 }
@@ -206,7 +208,7 @@ body::before{
 
 /* ══ 캘린더 ══ */
 .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-.cal-month-label{ font-family:'Syne',sans-serif; font-weight:700; font-size:14px; }
+.cal-month-label{ font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:14px; }
 .cal-nav-row{ display:flex; gap:6px; align-items:center; }
 .cal-nav-btn{
   width:26px; height:26px; border-radius:7px;
@@ -242,7 +244,7 @@ body::before{
   display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px;
 }
 .sstat{ background:var(--bg2); border-radius:12px; padding:12px 14px; border:1px solid var(--border); }
-.sstat-val{ font-family:'Syne',sans-serif; font-weight:700; font-size:20px; color:var(--gold); }
+.sstat-val{ font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; color:var(--gold); }
 .sstat-lbl{ font-size:10px; color:var(--text3); margin-top:2px; }
 
 /* ══ 개인작 로그 ══ */
@@ -314,7 +316,7 @@ body::before{
 .focus-overlay.open{ display:flex; animation:fadeIn .4s ease; }
 @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
 .focus-timer{
-  font-family:var(--mono); font-size:120px; font-weight:500;
+  font-family:'Bebas Neue',sans-serif; font-size:120px; font-weight:500;
   color:var(--gold); letter-spacing:8px; line-height:1;
   transition:color .3s;
 }
@@ -353,7 +355,7 @@ body::before{
 .modal-box{ background:var(--card); border:1px solid rgba(255,255,255,.1); border-radius:20px; width:100%; max-width:460px; animation:slideUp .25s cubic-bezier(.34,1.56,.64,1); }
 @keyframes slideUp{ from{opacity:0;transform:translateY(20px)scale(.97)} to{opacity:1;transform:none} }
 .modal-head{ padding:20px 24px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-.modal-title{ font-family:'Syne',sans-serif; font-weight:700; font-size:15px; }
+.modal-title{ font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:15px; }
 .modal-close{ width:28px; height:28px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--text3); cursor:pointer; }
 .modal-close:hover{ border-color:var(--red); color:var(--red); }
 .modal-body{ padding:18px 24px; display:flex; flex-direction:column; gap:14px; }
@@ -433,7 +435,7 @@ input[type=range]{ flex:1; accent-color:var(--gold); }
 .rev-stat{
   background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:14px 16px;
 }
-.rev-val{ font-family:'Syne',sans-serif; font-weight:700; font-size:20px; color:var(--gold); }
+.rev-val{ font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; color:var(--gold); }
 .rev-val.green{ color:var(--green); }
 .rev-val.orange{ color:var(--orange); }
 .rev-lbl{ font-size:10px; color:var(--text3); margin-top:2px; }
@@ -528,7 +530,7 @@ body.is-electron{
 }
 body.is-electron .widget-bar{ display: flex; }
 .wbar-title{
-  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px;
   color: rgba(61,142,240,.7); letter-spacing: 1px;
   -webkit-app-region: drag;
 }
