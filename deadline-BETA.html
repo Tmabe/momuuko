@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>모무꼬 · 마감 캘린더</title>
+<meta name="theme-color" content="#1A1A22">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&family=Noto+Sans+KR:wght@300;400;700;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; -ms-overflow-style: none; box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --Y: #3D8EF0;
+  --Y2: #1A6AD4;
+  --display: 'Bebas Neue', sans-serif;
+  --cond: 'Barlow Condensed', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+
+body {
+  --bg: #1A1A22;
+  --bg2: #1F1F28;
+  --bg3: #25252F;
+  --card: #22222C;
+  --card2: #25252F;
+  --border: rgba(255,255,255,.12);
+  --border2: rgba(255,255,255,.24);
+  --text: #F0EEE8;
+  --text2: #B8B4AC;
+  --text3: #7A7870;
+  --red: #e05040;
+  --green: #60c080;
+  --orange: #f07030;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 40px,
+      rgba(61,142,240,.025) 40px,
+      rgba(61,142,240,.025) 41px
+    );
+}
+
+/* ══ Layout ══ */
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 28px 36px 80px;
+  display: grid;
+  grid-template-columns: 320px 1fr 300px;
+  grid-template-rows: auto 1fr;
+  gap: 24px;
+}
+
+.app-header { grid-column: 1 / -1; }
+
+.col-left { display: flex; flex-direction: column; gap: 24px; }
+.col-mid { display: flex; flex-direction: column; gap: 24px; }
+.col-right { display: flex; flex-direction: column; gap: 24px; }
+
+/* ══ Header ══ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.header-left {}
+
+.logo {
+  font-family: var(--display);
+  font-size: 28px;
+  color: var(--Y);
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+.logo-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 1px;
+  margin-top: 3px;
+}
+
+.header-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(61,142,240,.1);
+  border: 1px solid var(--Y);
+  border-radius: 20px;
+  padding: 7px 16px;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--Y);
+  white-space: nowrap;
+}
+
+.stat-pill small {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text3);
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* ══ Sections ══ */
+.sec {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px 26px;
+}
+
+.sec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.sec-title {
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+/* ══ Calendar ══ */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.cal-nav-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text3);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+}
+
+.cal-nav-btn:hover {
+  border-color: var(--Y);
+  color: var(--Y);
+}
+
+.cal-month {
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text);
+  letter-spacing: .5px;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.cal-dow {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  padding: 4px 0;
+  letter-spacing: .5px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px 2px 4px;
+  cursor: pointer;
+  transition: background .15s;
+  border: 1px solid transparent;
+  min-height: 0;
+}
+
+.cal-day:hover {
+  background: rgba(255,255,255,.05);
+}
+
+.cal-day.today {
+  background: rgba(61,142,240,.2);
+  border-color: var(--Y);
+}
+
+.cal-day.other-month .cal-day-num {
+  color: var(--text3);
+  opacity: .4;
+}
+
+.cal-day-num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1;
+}
+
+.cal-day.today .cal-day-num {
+  color: var(--Y);
+  font-weight: 500;
+}
+
+.cal-dots {
+  display: flex;
+  gap: 2px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cal-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cal-dot.urgent { background: var(--red); }
+.cal-dot.normal { background: var(--Y); }
+.cal-dot.relaxed { background: var(--green); }
+
+/* ══ Quick Add Form ══ */
+.form-field {
+  width: 100%;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border .2s;
+}
+
+.form-field:focus {
+  border-color: var(--Y);
+}
+
+.form-field::placeholder {
+  color: var(--text3);
+}
+
+.form-field option {
+  background: var(--bg2);
+  color: var(--text);
+}
+
+.form-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.form-row .form-field {
+  flex: 1;
+}
+
+.btn-add {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--Y);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+
+.btn-add:hover {
+  background: var(--Y2);
+}
+
+.btn-add:active {
+  transform: scale(.98);
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%,60% { transform: translateX(-6px); }
+  40%,80% { transform: translateX(6px); }
+}
+
+.shake { animation: shake .35s ease; }
+
+/* ══ Deadline List ══ */
+.list-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.list-select {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  color: var(--text2);
+  font-family: var(--mono);
+  font-size: 11px;
+  outline: none;
+  cursor: pointer;
+  transition: border .15s;
+}
+
+.list-select:focus {
+  border-color: var(--Y);
+}
+
+.list-select option {
+  background: var(--bg2);
+}
+
+.dl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: calc(100vh - 260px);
+  overflow-y: auto;
+}
+
+.dl-empty {
+  text-align: center;
+  color: var(--text3);
+  font-style: italic;
+  font-size: 14px;
+  padding: 40px 0;
+}
+
+.dl-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--bg2);
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  transition: all .2s;
+  position: relative;
+}
+
+.dl-item:hover {
+  border-color: var(--border);
+  border-left-color: inherit;
+}
+
+.dl-item.priority-urgent { border-left-color: var(--red); }
+.dl-item.priority-normal { border-left-color: var(--Y); }
+.dl-item.priority-relaxed { border-left-color: var(--green); }
+
+.dl-item.is-done {
+  opacity: .5;
+}
+
+.dl-item.is-overdue:not(.is-done) {
+  background: rgba(224,80,64,.06);
+}
+
+.dl-item.highlighted {
+  border-color: var(--Y);
+  border-left-color: inherit;
+  box-shadow: 0 0 0 1px var(--Y);
+}
+
+.dl-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border2);
+  background: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+  font-size: 12px;
+  color: transparent;
+}
+
+.dl-check:hover {
+  border-color: var(--green);
+}
+
+.dl-item.is-done .dl-check {
+  background: var(--green);
+  border-color: var(--green);
+  color: #1A1A22;
+}
+
+.dl-center {
+  flex: 1;
+  min-width: 0;
+}
+
+.dl-title {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color .15s;
+}
+
+.dl-item.is-done .dl-title {
+  text-decoration: line-through;
+  color: var(--text3);
+}
+
+.dl-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
+.cat-badge {
+  font-family: var(--cond);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(255,255,255,.07);
+  color: var(--text3);
+}
+
+.dl-note {
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.dl-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dl-countdown {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .5px;
+}
+
+.dl-countdown.red { color: var(--red); }
+.dl-countdown.orange { color: var(--orange); }
+.dl-countdown.blue { color: var(--Y); }
+.dl-countdown.green { color: var(--green); }
+
+.dl-del {
+  font-size: 13px;
+  color: var(--text3);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s, color .15s;
+  padding: 2px 4px;
+  line-height: 1;
+}
+
+.dl-item:hover .dl-del {
+  opacity: 1;
+}
+
+.dl-del:hover {
+  color: var(--red);
+}
+
+.dl-confirm {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  opacity: 0;
+  transition: opacity .15s;
+}
+
+.dl-item:hover .dl-confirm {
+  opacity: 1;
+}
+
+.dl-confirm-yes, .dl-confirm-no {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+}
+
+.dl-confirm-yes {
+  background: rgba(224,80,64,.2);
+  color: var(--red);
+}
+
+.dl-confirm-yes:hover {
+  background: rgba(224,80,64,.4);
+}
+
+.dl-confirm-no {
+  background: rgba(255,255,255,.07);
+  color: var(--text3);
+}
+
+.dl-confirm-no:hover {
+  background: rgba(255,255,255,.12);
+}
+
+/* ══ Right column ══ */
+.today-list, .week-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.today-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--bg2);
+}
+
+.today-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.today-dot.urgent { background: var(--red); }
+.today-dot.normal { background: var(--Y); }
+.today-dot.relaxed { background: var(--green); }
+
+.today-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.today-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 1.5px solid var(--border2);
+  background: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: transparent;
+  transition: all .15s;
+}
+
+.today-check:hover { border-color: var(--green); }
+.today-check.checked { background: var(--green); border-color: var(--green); color: #1A1A22; }
+
+.week-day-group {
+  margin-bottom: 10px;
+}
+
+.week-day-label {
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .5px;
+  color: var(--text3);
+  margin-bottom: 5px;
+  padding-left: 2px;
+}
+
+.week-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--bg2);
+  margin-bottom: 4px;
+}
+
+.week-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.week-dot.urgent { background: var(--red); }
+.week-dot.normal { background: var(--Y); }
+.week-dot.relaxed { background: var(--green); }
+
+.week-title {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ══ Stats ══ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat-box {
+  background: var(--bg2);
+  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+}
+
+.stat-val {
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--text);
+  line-height: 1;
+}
+
+.stat-lbl {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 4px;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* ══ Empty states ══ */
+.empty-msg {
+  color: var(--text3);
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+  padding: 12px 0;
+}
+
+/* ══ Toast ══ */
+.toast-container {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 10px 22px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  animation: toastIn .25s ease;
+}
+
+.toast.out {
+  animation: toastOut .25s ease forwards;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(10px); }
+}
+
+/* ══ Entrance animation ══ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sec {
+  animation: fadeUp .35s ease both;
+}
+
+.col-left .sec:nth-child(1) { animation-delay: .05s; }
+.col-left .sec:nth-child(2) { animation-delay: .1s; }
+.col-mid .sec:nth-child(1) { animation-delay: .08s; }
+.col-right .sec:nth-child(1) { animation-delay: .06s; }
+.col-right .sec:nth-child(2) { animation-delay: .12s; }
+.col-right .sec:nth-child(3) { animation-delay: .16s; }
+
+/* ══ Date input ══ */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(.5);
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ══ HEADER ══ -->
+  <div class="app-header">
+    <div class="header">
+      <div class="header-left">
+        <div class="logo">마감 캘린더</div>
+        <div class="logo-sub">DEADLINE TRACKER · MOMUUKO</div>
+        <div class="header-date" id="headerDate"></div>
+      </div>
+      <div class="header-right">
+        <div class="stat-pill" id="statActive">
+          <small>진행 중</small>
+          <span id="statActiveN">0</span>건
+        </div>
+        <div class="stat-pill" id="statWeek">
+          <small>이번 주</small>
+          <span id="statWeekN">0</span>건
+        </div>
+        <div class="stat-pill" id="statUrgent">
+          <small>마감 임박</small>
+          <span id="statUrgentN">0</span>건
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LEFT COLUMN ══ -->
+  <div class="col-left">
+
+    <!-- Monthly Calendar -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-title">월간 캘린더</div>
+      </div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" id="calPrev">&#8249;</button>
+        <div class="cal-month" id="calMonthLabel"></div>
+        <button class="cal-nav-btn" id="calNext">&#8250;</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+
+    <!-- Quick Add -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-title">빠른 추가</div>
+      </div>
+
+      <input type="text" class="form-field" id="fTitle" placeholder="마감 제목 *">
+
+      <div class="form-row">
+        <input type="date" class="form-field" id="fDate">
+        <select class="form-field" id="fPriority">
+          <option value="normal">보통</option>
+          <option value="urgent">긴급</option>
+          <option value="relaxed">여유</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <select class="form-field" id="fCategory">
+          <option value="commission">커미션</option>
+          <option value="personal">개인작</option>
+          <option value="other">기타</option>
+        </select>
+        <input type="text" class="form-field" id="fNote" placeholder="메모 (선택)">
+      </div>
+
+      <button class="btn-add" id="btnAdd">추가</button>
+    </div>
+
+  </div>
+
+  <!-- ══ MIDDLE COLUMN ══ -->
+  <div class="col-mid">
+    <div class="sec" style="flex:1;">
+      <div class="sec-head">
+        <div class="sec-title">마감 목록</div>
+        <div class="list-controls">
+          <select class="list-select" id="sortSelect">
+            <option value="date">날짜순</option>
+            <option value="priority">우선순위순</option>
+          </select>
+          <select class="list-select" id="filterSelect">
+            <option value="all">전체</option>
+            <option value="active">진행중</option>
+            <option value="done">완료</option>
+          </select>
+        </div>
+      </div>
+      <div class="dl-list" id="dlList">
+        <div class="dl-empty">마감이 없습니다</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT COLUMN ══ -->
+  <div class="col-right">
+
+    <!-- Today -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-title">오늘 마감</div>
+        <div class="header-date" id="todayLabel"></div>
+      </div>
+      <div class="today-list" id="todayList">
+        <div class="empty-msg">없음</div>
+      </div>
+    </div>
+
+    <!-- This Week -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-title">이번 주</div>
+        <div class="header-date" id="weekRangeLabel"></div>
+      </div>
+      <div class="week-list" id="weekList">
+        <div class="empty-msg">이번 주 마감 없음</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-title">통계</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-val" id="stTotal">0</div>
+          <div class="stat-lbl">전체 건수</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stWeek">0</div>
+          <div class="stat-lbl">이번 주 마감</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stImminentStat">0</div>
+          <div class="stat-lbl">마감 임박</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stDone">0</div>
+          <div class="stat-lbl">완료</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ══ Storage ══
+const STORAGE_KEY = 'momuuko_deadlines';
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+
+function save(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// ══ Date helpers ══
+function today() {
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function daysUntil(dateStr) {
+  const t = today();
+  const due = new Date(dateStr);
+  due.setHours(0,0,0,0);
+  return Math.round((due - t) / 86400000);
+}
+
+function toYMD(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dy = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dy}`;
+}
+
+function formatDateKR(d) {
+  const days = ['일','월','화','수','목','금','토'];
+  return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`;
+}
+
+function getWeekRange() {
+  const t = today();
+  const dow = t.getDay(); // 0=Sun
+  // Mon-Sun week
+  const mon = new Date(t); mon.setDate(t.getDate() - ((dow+6)%7));
+  const sun = new Date(mon); sun.setDate(mon.getDate()+6);
+  return { mon, sun };
+}
+
+function isInWeek(dateStr) {
+  const { mon, sun } = getWeekRange();
+  const d = new Date(dateStr); d.setHours(0,0,0,0);
+  return d >= mon && d <= sun;
+}
+
+// ══ Countdown rendering ══
+function renderCountdown(item) {
+  if (item.done) return `<span class="dl-countdown green">완료</span>`;
+  const d = daysUntil(item.dueDate);
+  if (d < 0) return `<span class="dl-countdown red">D+${Math.abs(d)}</span>`;
+  if (d === 0) return `<span class="dl-countdown red">오늘!</span>`;
+  if (d <= 3) return `<span class="dl-countdown red">D-${d}</span>`;
+  if (d <= 7) return `<span class="dl-countdown orange">D-${d}</span>`;
+  return `<span class="dl-countdown blue">D-${d}</span>`;
+}
+
+function catLabel(cat) {
+  return { commission: '커미션', personal: '개인작', other: '기타' }[cat] || cat;
+}
+
+// ══ Calendar state ══
+let calYear = today().getFullYear();
+let calMonth = today().getMonth();
+
+// ══ Delete confirm state ══
+let pendingDelete = null;
+
+// ══ Render all ══
+function render() {
+  const data = load();
+  renderHeader(data);
+  renderCalendar(data);
+  renderList(data);
+  renderToday(data);
+  renderWeek(data);
+  renderStats(data);
+}
+
+function renderHeader(data) {
+  const t = today();
+  document.getElementById('headerDate').textContent = formatDateKR(t);
+  document.getElementById('todayLabel').textContent = `${t.getMonth()+1}/${t.getDate()}`;
+
+  const { mon, sun } = getWeekRange();
+  document.getElementById('weekRangeLabel').textContent =
+    `${mon.getMonth()+1}/${mon.getDate()} – ${sun.getMonth()+1}/${sun.getDate()}`;
+
+  const active = data.filter(x => !x.done).length;
+  const week = data.filter(x => !x.done && isInWeek(x.dueDate)).length;
+  const imminent = data.filter(x => !x.done && daysUntil(x.dueDate) <= 3).length;
+
+  document.getElementById('statActiveN').textContent = active;
+  document.getElementById('statWeekN').textContent = week;
+  document.getElementById('statUrgentN').textContent = imminent;
+}
+
+function renderCalendar(data) {
+  const label = `${calYear}년 ${calMonth+1}월`;
+  document.getElementById('calMonthLabel').textContent = label;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  // Day of week headers
+  ['월','화','수','목','금','토','일'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-dow';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  // First day of month (convert Sun=0 to Mon=0)
+  const firstDay = new Date(calYear, calMonth, 1);
+  const startDow = (firstDay.getDay() + 6) % 7; // Mon=0
+
+  const todayStr = toYMD(today());
+
+  // Build date index from data
+  const dateMap = {};
+  data.forEach(item => {
+    if (!dateMap[item.dueDate]) dateMap[item.dueDate] = [];
+    dateMap[item.dueDate].push(item);
+  });
+
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const daysInPrev = new Date(calYear, calMonth, 0).getDate();
+
+  const totalCells = Math.ceil((startDow + daysInMonth) / 7) * 7;
+
+  for (let i = 0; i < totalCells; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+
+    let dateStr;
+    if (i < startDow) {
+      // Prev month
+      const day = daysInPrev - startDow + i + 1;
+      const prevMonth = calMonth === 0 ? 11 : calMonth - 1;
+      const prevYear = calMonth === 0 ? calYear - 1 : calYear;
+      dateStr = `${prevYear}-${String(prevMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      el.classList.add('other-month');
+    } else if (i >= startDow + daysInMonth) {
+      // Next month
+      const day = i - startDow - daysInMonth + 1;
+      const nextMonth = calMonth === 11 ? 0 : calMonth + 1;
+      const nextYear = calMonth === 11 ? calYear + 1 : calYear;
+      dateStr = `${nextYear}-${String(nextMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      el.classList.add('other-month');
+    } else {
+      const day = i - startDow + 1;
+      dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    }
+
+    if (dateStr === todayStr) el.classList.add('today');
+
+    const dayNum = document.createElement('div');
+    dayNum.className = 'cal-day-num';
+    dayNum.textContent = parseInt(dateStr.split('-')[2]);
+    el.appendChild(dayNum);
+
+    const items = dateMap[dateStr];
+    if (items && items.length > 0) {
+      const dots = document.createElement('div');
+      dots.className = 'cal-dots';
+      const shown = items.slice(0, 3);
+      shown.forEach(item => {
+        const dot = document.createElement('div');
+        dot.className = `cal-dot ${item.priority}`;
+        dots.appendChild(dot);
+      });
+      el.appendChild(dots);
+
+      const capDateStr = dateStr;
+      el.addEventListener('click', () => highlightByDate(capDateStr));
+      el.style.cursor = 'pointer';
+    }
+
+    grid.appendChild(el);
+  }
+}
+
+function highlightByDate(dateStr) {
+  // Scroll middle column and highlight items with this date
+  document.querySelectorAll('.dl-item').forEach(el => {
+    if (el.dataset.date === dateStr) {
+      el.classList.add('highlighted');
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      setTimeout(() => el.classList.remove('highlighted'), 2000);
+    }
+  });
+}
+
+function renderList(data) {
+  const sort = document.getElementById('sortSelect').value;
+  const filter = document.getElementById('filterSelect').value;
+
+  let items = [...data];
+
+  // Filter
+  if (filter === 'active') items = items.filter(x => !x.done);
+  else if (filter === 'done') items = items.filter(x => x.done);
+
+  // Sort: done items to bottom, then by sort param
+  const priorityOrder = { urgent: 0, normal: 1, relaxed: 2 };
+
+  items.sort((a, b) => {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    if (sort === 'date') return a.dueDate.localeCompare(b.dueDate);
+    if (sort === 'priority') return priorityOrder[a.priority] - priorityOrder[b.priority];
+    return 0;
+  });
+
+  const list = document.getElementById('dlList');
+
+  if (items.length === 0) {
+    list.innerHTML = '<div class="dl-empty">마감이 없습니다</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+
+  items.forEach(item => {
+    const d = daysUntil(item.dueDate);
+    const isOverdue = d < 0 && !item.done;
+
+    const el = document.createElement('div');
+    el.className = `dl-item priority-${item.priority}${item.done ? ' is-done' : ''}${isOverdue ? ' is-overdue' : ''}`;
+    el.dataset.id = item.id;
+    el.dataset.date = item.dueDate;
+
+    const checkMark = item.done ? '✓' : '';
+
+    el.innerHTML = `
+      <div class="dl-check" data-check="${item.id}" title="완료 토글">${checkMark}</div>
+      <div class="dl-center">
+        <div class="dl-title">${escHtml(item.title)}</div>
+        <div class="dl-meta">
+          <span class="cat-badge">${catLabel(item.category)}</span>
+          ${item.note ? `<span class="dl-note">${escHtml(item.note)}</span>` : ''}
+        </div>
+      </div>
+      <div class="dl-right">
+        ${renderCountdown(item)}
+        <div style="display:flex;gap:4px;align-items:center;">
+          <span class="dl-del-wrap" data-delwrap="${item.id}">
+            <button class="dl-del" data-del="${item.id}" title="삭제">✕</button>
+          </span>
+          <span class="dl-confirm" id="confirm-${item.id}" style="display:none;">
+            <button class="dl-confirm-yes" data-confirmyes="${item.id}">삭제</button>
+            <button class="dl-confirm-no" data-confirmno="${item.id}">취소</button>
+          </span>
+        </div>
+      </div>
+    `;
+
+    list.appendChild(el);
+  });
+
+  // Events
+  list.querySelectorAll('[data-check]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleDone(el.dataset.check);
+    });
+  });
+
+  list.querySelectorAll('[data-del]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = el.dataset.del;
+      showDeleteConfirm(id);
+    });
+  });
+
+  list.querySelectorAll('[data-confirmyes]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      deleteItem(el.dataset.confirmyes);
+    });
+  });
+
+  list.querySelectorAll('[data-confirmno]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      hideDeleteConfirm(el.dataset.confirmno);
+    });
+  });
+}
+
+function showDeleteConfirm(id) {
+  // Hide any previous confirm
+  if (pendingDelete && pendingDelete !== id) {
+    hideDeleteConfirm(pendingDelete);
+  }
+  pendingDelete = id;
+  const conf = document.getElementById(`confirm-${id}`);
+  const delBtn = document.querySelector(`[data-del="${id}"]`);
+  if (conf) conf.style.display = 'flex';
+  if (delBtn) delBtn.style.display = 'none';
+}
+
+function hideDeleteConfirm(id) {
+  const conf = document.getElementById(`confirm-${id}`);
+  const delBtn = document.querySelector(`[data-del="${id}"]`);
+  if (conf) conf.style.display = 'none';
+  if (delBtn) delBtn.style.display = '';
+  if (pendingDelete === id) pendingDelete = null;
+}
+
+function renderToday(data) {
+  const todayStr = toYMD(today());
+  const items = data.filter(x => x.dueDate === todayStr);
+  const list = document.getElementById('todayList');
+
+  if (items.length === 0) {
+    list.innerHTML = '<div class="empty-msg">없음</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'today-item';
+    el.innerHTML = `
+      <div class="today-dot ${item.priority}"></div>
+      <div class="today-title">${escHtml(item.title)}</div>
+      <div class="today-check ${item.done ? 'checked' : ''}" data-todaycheck="${item.id}">${item.done ? '✓' : ''}</div>
+    `;
+    list.appendChild(el);
+  });
+
+  list.querySelectorAll('[data-todaycheck]').forEach(el => {
+    el.addEventListener('click', () => toggleDone(el.dataset.todaycheck));
+  });
+}
+
+function renderWeek(data) {
+  const { mon, sun } = getWeekRange();
+  const weekItems = data.filter(x => !x.done && isInWeek(x.dueDate));
+
+  const list = document.getElementById('weekList');
+  if (weekItems.length === 0) {
+    list.innerHTML = '<div class="empty-msg">이번 주 마감 없음</div>';
+    return;
+  }
+
+  // Group by date
+  const grouped = {};
+  weekItems.forEach(item => {
+    if (!grouped[item.dueDate]) grouped[item.dueDate] = [];
+    grouped[item.dueDate].push(item);
+  });
+
+  const dayNames = ['일','월','화','수','목','금','토'];
+
+  list.innerHTML = '';
+  Object.keys(grouped).sort().forEach(dateStr => {
+    const d = new Date(dateStr);
+    const dayLabel = `${dayNames[d.getDay()]} ${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+
+    const group = document.createElement('div');
+    group.className = 'week-day-group';
+
+    const label = document.createElement('div');
+    label.className = 'week-day-label';
+    label.textContent = dayLabel;
+    group.appendChild(label);
+
+    grouped[dateStr].forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'week-item';
+      el.innerHTML = `
+        <div class="week-dot ${item.priority}"></div>
+        <div class="week-title">${escHtml(item.title)}</div>
+      `;
+      group.appendChild(el);
+    });
+
+    list.appendChild(group);
+  });
+}
+
+function renderStats(data) {
+  const active = data.filter(x => !x.done).length;
+  const week = data.filter(x => !x.done && isInWeek(x.dueDate)).length;
+  const imminent = data.filter(x => !x.done && daysUntil(x.dueDate) <= 3).length;
+  const done = data.filter(x => x.done).length;
+
+  document.getElementById('stTotal').textContent = active;
+  document.getElementById('stWeek').textContent = week;
+  document.getElementById('stImminentStat').textContent = imminent;
+  document.getElementById('stDone').textContent = done;
+}
+
+// ══ Actions ══
+function addItem() {
+  const title = document.getElementById('fTitle').value.trim();
+  const dueDate = document.getElementById('fDate').value;
+  const priority = document.getElementById('fPriority').value;
+  const category = document.getElementById('fCategory').value;
+  const note = document.getElementById('fNote').value.trim();
+
+  if (!title) {
+    shake(document.getElementById('fTitle'));
+    return;
+  }
+  if (!dueDate) {
+    shake(document.getElementById('fDate'));
+    return;
+  }
+
+  const item = {
+    id: Date.now().toString(),
+    title,
+    dueDate,
+    category,
+    priority,
+    note,
+    done: false,
+    createdAt: new Date().toISOString()
+  };
+
+  const data = load();
+  data.push(item);
+  save(data);
+
+  // Reset form
+  document.getElementById('fTitle').value = '';
+  document.getElementById('fDate').value = '';
+  document.getElementById('fNote').value = '';
+
+  toast('마감이 추가되었습니다 ✓');
+  render();
+}
+
+function toggleDone(id) {
+  const data = load();
+  const item = data.find(x => x.id === id);
+  if (!item) return;
+  item.done = !item.done;
+  save(data);
+  render();
+}
+
+function deleteItem(id) {
+  const data = load();
+  const idx = data.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  data.splice(idx, 1);
+  save(data);
+  pendingDelete = null;
+  toast('삭제되었습니다');
+  render();
+}
+
+// ══ Utils ══
+function escHtml(str) {
+  return str
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function shake(el) {
+  el.classList.remove('shake');
+  void el.offsetWidth;
+  el.classList.add('shake');
+  el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true });
+}
+
+function toast(msg) {
+  const container = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('out');
+    el.addEventListener('animationend', () => el.remove());
+  }, 2200);
+}
+
+// ══ Event listeners ══
+document.getElementById('btnAdd').addEventListener('click', addItem);
+
+document.getElementById('fTitle').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addItem();
+});
+
+document.getElementById('calPrev').addEventListener('click', () => {
+  calMonth--;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  const data = load();
+  renderCalendar(data);
+});
+
+document.getElementById('calNext').addEventListener('click', () => {
+  calMonth++;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  const data = load();
+  renderCalendar(data);
+});
+
+document.getElementById('sortSelect').addEventListener('change', () => {
+  const data = load();
+  renderList(data);
+});
+
+document.getElementById('filterSelect').addEventListener('change', () => {
+  const data = load();
+  renderList(data);
+});
+
+// ══ Init ══
+(function init() {
+  // Set today as default date
+  document.getElementById('fDate').value = toYMD(today());
+  render();
+})();
+</script>
+</body>
+</html>
