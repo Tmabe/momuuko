@@ -345,6 +345,10 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
       <div class="app-logo">momuuko <span>의뢰 관리</span></div>
     </div>
     <div class="header-actions">
+      <div id="syncIndicator" style="display:none;align-items:center;gap:6px;font-size:11px;color:var(--text3);font-family:var(--mono)">
+  <span id="syncDot" style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>
+  <span id="syncLabel">동기화됨</span>
+</div>
       <div class="stat-pill">진행 중 <b id="hStatActive">0</b></div>
       <div class="deadline-pill ok" id="hNextDeadline" title="가장 임박한 마감">📅 마감 없음</div>
       <div class="stat-pill">이번 달 수익 <b id="hStatIncome">0원</b></div>
@@ -513,6 +517,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
         <input class="field" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx">
       </div>
       <div id="ghStatus" class="gh-status"></div>
+      <div id="ghDataUrl" style="display:none;margin-top:8px;font-size:11px;color:var(--text3);font-family:var(--mono);word-break:break-all;background:var(--bg2);padding:8px 12px;border-radius:8px;border:1px solid var(--border)"></div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeGhModal()">취소</button>
@@ -678,6 +683,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 /* ─── 데이터 ─── */
 function saveData(){
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(commissions)); }catch(e){}
+  scheduleSync();
 }
 function loadData(){
   try{
@@ -973,8 +979,54 @@ function dlvGmail(){
     '&su='+su+'&body='+bd,'_blank');
 }
 
+/* ─── 자동 데이터 동기화 ─── */
+var _syncTimer=null;
+var _syncSha=null;
+
+function scheduleSync(){
+  var ind=document.getElementById('syncIndicator');
+  if(ind) ind.style.display='flex';
+  var dot=document.getElementById('syncDot');
+  var lbl=document.getElementById('syncLabel');
+  if(dot) dot.style.background='var(--yellow)';
+  if(lbl) lbl.textContent='동기화 중...';
+  if(_syncTimer) clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(autoSyncData,2000);
+}
+
+async function autoSyncData(){
+  var c=_ghCfg();
+  if(!c.token||!c.user||!c.repo) return;
+  var dot=document.getElementById('syncDot');
+  var lbl=document.getElementById('syncLabel');
+  try{
+    var payload={updated:new Date().toISOString(),commissions:commissions};
+    var content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
+    if(!_syncSha) _syncSha=await _ghGetSha(c.user,c.repo,c.token,'data/commissions.json');
+    var body={message:'auto: sync commissions data',content:content};
+    if(_syncSha) body.sha=_syncSha;
+    var res=await fetch('https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/data/commissions.json',{
+      method:'PUT',
+      headers:{'Authorization':'token '+c.token,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(res.ok){
+      var json=await res.json();
+      _syncSha=json.content&&json.content.sha||json.commit&&json.commit.sha||_syncSha;
+      if(dot) dot.style.background='var(--green)';
+      if(lbl) lbl.textContent='동기화됨 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+    } else {
+      if(dot) dot.style.background='var(--red)';
+      if(lbl) lbl.textContent='동기화 실패';
+    }
+  }catch(e){
+    if(dot) dot.style.background='var(--red)';
+    if(lbl) lbl.textContent='동기화 오류';
+  }
+}
+
 /* ─── GitHub ─── */
-function _ghCfg(){ return {user:sessionStorage.getItem('gh_user')||'',repo:sessionStorage.getItem('gh_repo')||'',token:sessionStorage.getItem('gh_token')||''}; }
+function _ghCfg(){ return {user:localStorage.getItem('gh_user')||'',repo:localStorage.getItem('gh_repo')||'',token:localStorage.getItem('gh_token')||''}; }
 function openGhModal(){
   var c=_ghCfg();
   document.getElementById('ghUser').value=c.user||'Tmabe';
@@ -982,12 +1034,19 @@ function openGhModal(){
   document.getElementById('ghToken').value=c.token||'';
   document.getElementById('ghStatus').className='gh-status';
   document.getElementById('ghModal').classList.add('open');
+  var u=document.getElementById('ghUser').value||'Tmabe';
+  var r=document.getElementById('ghRepo').value||'momuuko';
+  var urlEl=document.getElementById('ghDataUrl');
+  if(urlEl){
+    urlEl.style.display='block';
+    urlEl.textContent='데이터 URL: https://raw.githubusercontent.com/'+u+'/'+r+'/main/data/commissions.json';
+  }
 }
 function closeGhModal(){ document.getElementById('ghModal').classList.remove('open'); }
 function saveGhSettings(){
-  sessionStorage.setItem('gh_user', document.getElementById('ghUser').value.trim());
-  sessionStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
-  sessionStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
+  localStorage.setItem('gh_user', document.getElementById('ghUser').value.trim());
+  localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
+  localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
   closeGhModal(); showToast('✅ GitHub 설정 저장 완료!');
 }
 async function testGhToken(){

@@ -777,6 +777,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(.5);
   cursor: pointer;
 }
+
+/* ══ 의뢰 연동 ══ */
+.sync-cfg{ display:flex; flex-direction:column; gap:10px; }
+.sync-url-row{ display:flex; gap:8px; }
+.sync-badge{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:10px; font-weight:700; padding:2px 8px; border-radius:8px;
+  font-family:var(--cond); letter-spacing:.5px;
+}
+.sync-badge.commission{ background:rgba(167,139,250,.12); color:#a78bfa; border:1px solid rgba(167,139,250,.25); }
+.sync-dot{ width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.sync-status{ font-size:11px; font-family:var(--mono); color:var(--text3); }
+.comm-item{ border-left-color:#a78bfa !important; }
+.comm-item .dl-countdown{ color:#a78bfa !important; }
+.field-label{ font-size:11px; color:var(--text3); font-family:var(--cond); letter-spacing:.5px; text-transform:uppercase; margin-bottom:5px; }
+.field{ width:100%; background:var(--bg2); border:1.5px solid var(--border); border-radius:10px; padding:8px 12px; color:var(--text); font-family:'Noto Sans KR',sans-serif; font-size:13px; outline:none; transition:border .2s; flex:1; }
+.field:focus{ border-color:var(--Y); }
+.field::placeholder{ color:var(--text3); }
+.sec-action{ background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:8px; padding:5px 12px; color:var(--text2); font-family:var(--cond); font-size:12px; font-weight:700; letter-spacing:.5px; cursor:pointer; transition:all .15s; }
+.sec-action:hover{ border-color:var(--Y); color:var(--Y); }
 </style>
 </head>
 <body>
@@ -928,6 +948,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       </div>
     </div>
 
+    <!-- 의뢰 연동 -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-title">의뢰 연동</div>
+        <button class="sec-action" onclick="syncNow()">↻ 지금 동기화</button>
+      </div>
+      <div class="sync-cfg">
+        <div>
+          <div class="field-label">GitHub Raw JSON URL</div>
+          <div class="sync-url-row">
+            <input class="field" id="syncUrl" placeholder="https://raw.githubusercontent.com/Tmabe/momuuko/main/data/commissions.json" style="font-size:11px;font-family:var(--mono)">
+            <button class="btn" style="background:#3D8EF0;color:#fff;border:none;padding:0 14px;border-radius:10px;font-size:12px;white-space:nowrap" onclick="saveSyncUrl()">저장</button>
+          </div>
+        </div>
+        <div class="sync-status" id="syncStatus">연동 설정 후 동기화됩니다</div>
+        <div style="font-size:11px;color:var(--text3);line-height:1.6">
+          동일 브라우저라면 자동으로 의뢰 데이터를 읽어옵니다.<br>
+          다른 기기에서 접근하려면 GitHub URL을 입력하세요.
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1020,6 +1062,17 @@ function render() {
   renderStats(data);
 }
 
+function renderAll() {
+  const data = load();
+  const combined = data.concat(_commissions);
+  renderHeader(combined);
+  renderCalendar(combined);
+  renderList(data); // renderList handles commission merging internally
+  renderToday(combined);
+  renderWeek(combined);
+  renderStats(combined);
+}
+
 function renderHeader(data) {
   const t = today();
   document.getElementById('headerDate').textContent = formatDateKR(t);
@@ -1029,9 +1082,11 @@ function renderHeader(data) {
   document.getElementById('weekRangeLabel').textContent =
     `${mon.getMonth()+1}/${mon.getDate()} – ${sun.getMonth()+1}/${sun.getDate()}`;
 
-  const active = data.filter(x => !x.done).length;
-  const week = data.filter(x => !x.done && isInWeek(x.dueDate)).length;
-  const imminent = data.filter(x => !x.done && daysUntil(x.dueDate) <= 3).length;
+  // Include active commissions in header stats
+  const allActive = data.concat(_commissions.filter(c => !c.done));
+  const active = allActive.filter(x => !x.done).length;
+  const week = allActive.filter(x => !x.done && isInWeek(x.dueDate)).length;
+  const imminent = allActive.filter(x => !x.done && daysUntil(x.dueDate) <= 3).length;
 
   document.getElementById('statActiveN').textContent = active;
   document.getElementById('statWeekN').textContent = week;
@@ -1059,9 +1114,9 @@ function renderCalendar(data) {
 
   const todayStr = toYMD(today());
 
-  // Build date index from data
+  // Build date index from data + commissions
   const dateMap = {};
-  data.forEach(item => {
+  data.concat(_commissions).forEach(item => {
     if (!dateMap[item.dueDate]) dateMap[item.dueDate] = [];
     dateMap[item.dueDate].push(item);
   });
@@ -1109,7 +1164,12 @@ function renderCalendar(data) {
       const shown = items.slice(0, 3);
       shown.forEach(item => {
         const dot = document.createElement('div');
-        dot.className = `cal-dot ${item.priority}`;
+        if (item.isCommission) {
+          dot.className = 'cal-dot';
+          dot.style.background = '#a78bfa';
+        } else {
+          dot.className = `cal-dot ${item.priority}`;
+        }
         dots.appendChild(dot);
       });
       el.appendChild(dots);
@@ -1138,7 +1198,8 @@ function renderList(data) {
   const sort = document.getElementById('sortSelect').value;
   const filter = document.getElementById('filterSelect').value;
 
-  let items = [...data];
+  // Merge regular deadlines with commission deadlines
+  let items = data.concat(_commissions);
 
   // Filter
   if (filter === 'active') items = items.filter(x => !x.done);
@@ -1166,33 +1227,42 @@ function renderList(data) {
   items.forEach(item => {
     const d = daysUntil(item.dueDate);
     const isOverdue = d < 0 && !item.done;
+    const isComm = !!item.isCommission;
 
     const el = document.createElement('div');
-    el.className = `dl-item priority-${item.priority}${item.done ? ' is-done' : ''}${isOverdue ? ' is-overdue' : ''}`;
+    el.className = `dl-item priority-${item.priority}${item.done ? ' is-done' : ''}${isOverdue ? ' is-overdue' : ''}${isComm ? ' comm-item' : ''}`;
     el.dataset.id = item.id;
     el.dataset.date = item.dueDate;
 
     const checkMark = item.done ? '✓' : '';
 
+    const categoryBadge = isComm
+      ? `<span class="sync-badge commission"><span class="sync-dot" style="background:#a78bfa"></span>의뢰</span>`
+      : `<span class="cat-badge">${catLabel(item.category)}</span>`;
+
+    const deleteSection = isComm
+      ? `<span style="font-size:10px;color:var(--text3);font-family:var(--mono)">대시보드</span>`
+      : `<span class="dl-del-wrap" data-delwrap="${item.id}">
+            <button class="dl-del" data-del="${item.id}" title="삭제">✕</button>
+          </span>
+          <span class="dl-confirm" id="confirm-${item.id}" style="display:none;">
+            <button class="dl-confirm-yes" data-confirmyes="${item.id}">삭제</button>
+            <button class="dl-confirm-no" data-confirmno="${item.id}">취소</button>
+          </span>`;
+
     el.innerHTML = `
-      <div class="dl-check" data-check="${item.id}" title="완료 토글">${checkMark}</div>
+      <div class="dl-check" data-check="${item.id}" data-iscomm="${isComm}" title="${isComm ? '대시보드에서 수정하세요' : '완료 토글'}">${checkMark}</div>
       <div class="dl-center">
         <div class="dl-title">${escHtml(item.title)}</div>
         <div class="dl-meta">
-          <span class="cat-badge">${catLabel(item.category)}</span>
+          ${categoryBadge}
           ${item.note ? `<span class="dl-note">${escHtml(item.note)}</span>` : ''}
         </div>
       </div>
       <div class="dl-right">
         ${renderCountdown(item)}
         <div style="display:flex;gap:4px;align-items:center;">
-          <span class="dl-del-wrap" data-delwrap="${item.id}">
-            <button class="dl-del" data-del="${item.id}" title="삭제">✕</button>
-          </span>
-          <span class="dl-confirm" id="confirm-${item.id}" style="display:none;">
-            <button class="dl-confirm-yes" data-confirmyes="${item.id}">삭제</button>
-            <button class="dl-confirm-no" data-confirmno="${item.id}">취소</button>
-          </span>
+          ${deleteSection}
         </div>
       </div>
     `;
@@ -1204,6 +1274,10 @@ function renderList(data) {
   list.querySelectorAll('[data-check]').forEach(el => {
     el.addEventListener('click', e => {
       e.stopPropagation();
+      if (el.dataset.iscomm === 'true') {
+        toast('대시보드에서 수정하세요');
+        return;
+      }
       toggleDone(el.dataset.check);
     });
   });
@@ -1325,9 +1399,11 @@ function renderWeek(data) {
 }
 
 function renderStats(data) {
-  const active = data.filter(x => !x.done).length;
-  const week = data.filter(x => !x.done && isInWeek(x.dueDate)).length;
-  const imminent = data.filter(x => !x.done && daysUntil(x.dueDate) <= 3).length;
+  // Merge in active commissions for stat counting
+  const allItems = data.concat(_commissions.filter(c => !c.done));
+  const active = allItems.filter(x => !x.done).length;
+  const week = allItems.filter(x => !x.done && isInWeek(x.dueDate)).length;
+  const imminent = allItems.filter(x => !x.done && daysUntil(x.dueDate) <= 3).length;
   const done = data.filter(x => x.done).length;
 
   document.getElementById('stTotal').textContent = active;
@@ -1462,6 +1538,101 @@ document.getElementById('filterSelect').addEventListener('change', () => {
   document.getElementById('fDate').value = toYMD(today());
   render();
 })();
+
+/* ══ 의뢰 연동 ══ */
+var _commissions = []; // loaded from dashboard
+
+function loadSyncUrl(){
+  var url = localStorage.getItem('mm_sync_url') || '';
+  var el = document.getElementById('syncUrl');
+  if(el) el.value = url;
+  return url;
+}
+
+function saveSyncUrl(){
+  var url = document.getElementById('syncUrl').value.trim();
+  localStorage.setItem('mm_sync_url', url);
+  showToast('✅ URL 저장됨');
+  syncNow();
+}
+
+function setSyncStatus(msg, color){
+  var el = document.getElementById('syncStatus');
+  if(el){ el.textContent = msg; el.style.color = color || 'var(--text3)'; }
+}
+
+/* read dashboard localStorage on same browser */
+function readLocalDashboard(){
+  try{
+    var raw = localStorage.getItem('mm_dash_v1');
+    if(!raw) return [];
+    return JSON.parse(raw).filter(function(c){ return c.deadline && c.stage < 7; });
+  }catch(e){ return []; }
+}
+
+/* fetch from GitHub raw URL */
+async function fetchGitHubData(url){
+  if(!url) return null;
+  try{
+    var res = await fetch(url + '?t=' + Date.now());
+    if(!res.ok) return null;
+    var json = await res.json();
+    return json.commissions || null;
+  }catch(e){ return null; }
+}
+
+function mergeCommissions(local, remote){
+  /* prefer remote if available; merge by client+deadline */
+  var all = remote || local || [];
+  return all.filter(function(c){ return c.deadline && c.stage < 7; });
+}
+
+function commissionsToDeadlines(comms){
+  return comms.map(function(c){
+    return {
+      id: 'comm_' + (c.id || c.client + c.deadline),
+      title: (c.client || '미정') + (c.type ? ' · ' + c.type : ''),
+      dueDate: c.deadline,
+      category: 'commission',
+      priority: (function(){
+        var d = daysUntil(c.deadline);
+        return d <= 3 ? 'urgent' : d <= 7 ? 'normal' : 'relaxed';
+      })(),
+      note: c.note || '',
+      done: c.stage === 7,
+      isCommission: true // read-only flag
+    };
+  });
+}
+
+function showToast(msg){ toast(msg); }
+
+async function syncNow(){
+  setSyncStatus('동기화 중...', 'var(--text3)');
+  var url = loadSyncUrl();
+  var local = readLocalDashboard();
+  var remote = await fetchGitHubData(url);
+  var merged = mergeCommissions(local, remote);
+  _commissions = commissionsToDeadlines(merged);
+
+  var src = remote ? 'GitHub' : local.length ? '로컬 브라우저' : null;
+  if(!src){
+    setSyncStatus('의뢰 데이터 없음 (대시보드를 먼저 열어주세요)', 'var(--text3)');
+  } else {
+    setSyncStatus(
+      src + '에서 ' + merged.length + '건 로드됨 · ' + new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'}),
+      'var(--green)'
+    );
+  }
+  renderAll();
+}
+
+/* call on page load */
+window.addEventListener('load', function(){
+  loadSyncUrl();
+  syncNow();
+  setInterval(syncNow, 5 * 60 * 1000); // auto refresh every 5min
+});
 </script>
 </body>
 </html>
