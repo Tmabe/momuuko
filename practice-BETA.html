@@ -978,6 +978,20 @@ function now(){ return new Date(); }
 
 /* ══════════ 타이머 ══════════ */
 var _tTotal=25*60, _tLeft=25*60, _tIv=null, _tRunning=false, _tName='집중 세션';
+var _audioCtx=null;
+function beep(freq, dur){
+  try{
+    if(!_audioCtx) _audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    var o=_audioCtx.createOscillator();
+    var g=_audioCtx.createGain();
+    o.connect(g); g.connect(_audioCtx.destination);
+    o.type='sine'; o.frequency.value=freq;
+    g.gain.setValueAtTime(0.4, _audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, _audioCtx.currentTime+dur);
+    o.start(_audioCtx.currentTime);
+    o.stop(_audioCtx.currentTime+dur);
+  }catch(e){}
+}
 document.querySelectorAll('.preset').forEach(function(b){
   b.addEventListener('click',function(){
     if(_tRunning) return;
@@ -1014,6 +1028,7 @@ function startTimer(){
   _tIv=setInterval(function(){
     _tLeft--;
     updateTimerUI();
+    if(_tLeft>0 && _tLeft<=10){ beep(_tLeft===1?880:440, _tLeft===1?0.3:0.08); }
     if(_tLeft<=0){
       clearInterval(_tIv); _tRunning=false;
       document.getElementById('timerDisplay').classList.remove('running');
