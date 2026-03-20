@@ -695,6 +695,10 @@ body.is-electron .widget-bar{ display: flex; }
             <button class="preset" data-min="90" data-name="마라톤 세션">1.5h</button>
             <button class="preset" data-min="5" data-name="휴식">5분 휴식</button>
           </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
+            <input class="field-sm" id="customMinInput" type="number" min="1" max="480" placeholder="직접 입력 (분)" style="width:130px" onkeydown="if(event.key==='Enter')setCustomTimer()">
+            <button class="preset" onclick="setCustomTimer()" style="flex-shrink:0">설정</button>
+          </div>
           <div class="session-name-row">
             <input class="field-sm" id="timerNameInput" placeholder="세션 이름 (예: 손 연습, 배경 스터디...)">
           </div>
@@ -978,6 +982,18 @@ function now(){ return new Date(); }
 
 /* ══════════ 타이머 ══════════ */
 var _tTotal=25*60, _tLeft=25*60, _tIv=null, _tRunning=false, _tName='집중 세션';
+function setCustomTimer(){
+  var val=parseInt(document.getElementById('customMinInput').value);
+  if(!val||val<1) return;
+  if(_tRunning) return;
+  _tTotal=val*60; _tLeft=_tTotal;
+  _tName=val+'분 세션';
+  document.getElementById('timerNameInput').placeholder=_tName;
+  document.getElementById('customMinInput').value='';
+  document.querySelectorAll('.preset').forEach(function(b){ b.classList.remove('active'); });
+  updateTimerUI();
+  document.getElementById('timerSessionLabel').textContent=val+'분 세션 준비됨';
+}
 var _audioCtx=null;
 function beep(freq, dur){
   try{
