@@ -418,9 +418,15 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
           <div class="field-label">금액 (원)</div>
           <input class="field" id="fAmount" type="number" placeholder="1100000">
         </div>
-        <div>
-          <div class="field-label">마감일</div>
-          <input class="field" id="fDeadline" type="date">
+        <div style="display:flex;gap:8px">
+          <div style="flex:1">
+            <div class="field-label">시작일 (선택)</div>
+            <input class="field" id="fStartDate" type="date" style="width:100%">
+          </div>
+          <div style="flex:1">
+            <div class="field-label">마감일</div>
+            <input class="field" id="fDeadline" type="date" style="width:100%">
+          </div>
         </div>
       </div>
       <div>
@@ -546,9 +552,15 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
           <input class="field" id="parseClient" placeholder="닉네임 입력...">
         </div>
         <div class="parse-row">
-          <div>
-            <div class="field-label">마감일</div>
-            <input class="field" type="date" id="parseDeadline">
+          <div style="display:flex;gap:8px">
+            <div style="flex:1">
+              <div class="field-label">시작일 (선택)</div>
+              <input class="field" type="date" id="parseStartDate" style="width:100%">
+            </div>
+            <div style="flex:1">
+              <div class="field-label">마감일</div>
+              <input class="field" type="date" id="parseDeadline" style="width:100%">
+            </div>
           </div>
           <div>
             <div class="field-label">금액 확인/수정</div>
@@ -808,7 +820,12 @@ function renderCards(){
       +'<div class="cc-progress"><div class="cc-stages">'+stages+'</div>'
       +'<div class="cc-bar"><div class="cc-bar-fill'+(isDone?' done-bar':'')+'" style="width:'+pct+'%"></div></div></div>'
       +(c.note?'<div class="cc-note">📝 '+c.note+'</div>':'')+(c.memo?'<div class="cc-memo">🗒 '+c.memo+'</div>':'')
-      +'<div class="cc-footer"><div class="cc-deadline '+dlClass+'">'+dlText+'</div>'
+      +(function(){
+          var dateRangeStr=c.startDate
+            ?'<div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px">'+c.startDate.slice(5).replace('-','/')+' → '+c.deadline.slice(5).replace('-','/')+'</div>'
+            :(c.deadline?'<div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px">'+c.deadline.slice(5).replace('-','/')+'</div>':'');
+          return '<div class="cc-footer"><div><div class="cc-deadline '+dlClass+'">'+dlText+'</div>'+dateRangeStr+'</div>';
+        })()
       +'<div class="cc-actions" onclick="event.stopPropagation()">'
       +confirmHtml
       +'<button class="cc-act deliver" onclick="openDlvFor('+i+')">📦 납품</button>'
@@ -866,6 +883,7 @@ function openModal(idx){
   document.getElementById('fType').value=c.type||'';
   document.getElementById('fAmount').value=c.amount||'';
   document.getElementById('fDeadline').value=c.deadline||'';
+  document.getElementById('fStartDate').value=c.startDate||'';
   document.getElementById('fEmail').value=c.email||'';
   document.getElementById('fNote').value=c.note||'';
   if(document.getElementById('fMemo')) document.getElementById('fMemo').value=c.memo||'';
@@ -910,6 +928,7 @@ function saveModal(){
     client:client, type:document.getElementById('fType').value.trim(),
     amount:document.getElementById('fAmount').value,
     deadline:document.getElementById('fDeadline').value,
+    startDate:document.getElementById('fStartDate').value,
     email:document.getElementById('fEmail').value.trim(),
     note:document.getElementById('fNote').value.trim(),
     memo:document.getElementById('fMemo')?document.getElementById('fMemo').value.trim():(_editIdx>=0?(commissions[_editIdx].memo||''):''),
@@ -1181,6 +1200,7 @@ function confirmParse(){
     type:'신청서 파싱',
     amount:amount,
     deadline:deadline,
+    startDate:document.getElementById('parseStartDate').value||'',
     email:_parsed.email||'',
     note:note,
     memo:'레퍼런스: '+(_parsed.ref||'없음')+'\n원문:\n'+txt.substring(0,400),
