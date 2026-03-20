@@ -510,6 +510,60 @@ input[type=range]{ flex:1; accent-color:var(--gold); }
   .focus-timer{ font-size:72px; }
 }
 
+/* ══ 탭 스위처 ══ */
+.task-tabs {
+  display: flex; gap: 4px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 3px; margin-bottom: 16px;
+}
+.task-tab {
+  flex: 1; padding: 5px 0; border-radius: 7px; border: none;
+  background: transparent; color: var(--text3);
+  font-family: var(--cond); font-size: 12px; font-weight: 700;
+  letter-spacing: .5px; cursor: pointer; transition: all .15s;
+}
+.task-tab.active { background: var(--card2); color: var(--text); }
+
+/* ══ 일일 퀘스트 ══ */
+.dq-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.dq-list { display: flex; flex-direction: column; gap: 6px; max-height: 380px; overflow-y: auto; }
+.dq-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 12px;
+  background: var(--bg2); border: 1px solid var(--border);
+  transition: all .15s;
+}
+.dq-item.done-today { opacity: .5; }
+.dq-item.done-today .dq-title { text-decoration: line-through; color: var(--text3); }
+.dq-check {
+  width: 20px; height: 20px; border-radius: 6px;
+  border: 1.5px solid var(--border2); background: transparent;
+  cursor: pointer; flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 11px; transition: all .15s;
+}
+.dq-item.done-today .dq-check {
+  background: var(--gold); border-color: var(--gold); color: #fff;
+}
+.dq-body { flex: 1; }
+.dq-title { font-size: 13px; color: var(--text); line-height: 1.4; }
+.dq-streak {
+  font-family: var(--mono); font-size: 10px; color: var(--gold);
+  margin-top: 2px;
+}
+.dq-del {
+  background: transparent; border: none; color: var(--text3);
+  cursor: pointer; font-size: 12px; padding: 2px 6px;
+  border-radius: 6px; transition: color .15s; flex-shrink: 0;
+}
+.dq-del:hover { color: var(--red); }
+.dq-empty { font-size: 12px; color: var(--text3); text-align: center; padding: 24px; font-style: italic; }
+.dq-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 10px; font-family: var(--mono); font-size: 10px; color: var(--text3);
+}
+.dq-progress-wrap { height: 4px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+.dq-progress-fill { height: 100%; border-radius: 2px; background: var(--gold); transition: width .4s; }
+
 /* ══ Electron 위젯 타이틀바 ══ */
 body.is-electron{
   /* 상단 타이틀바 공간 확보 */
@@ -658,6 +712,11 @@ body.is-electron .widget-bar{ display: flex; }
         <div class="sec-title">오늘 할 것 <span style="font-size:10px;color:var(--text3);font-style:italic;text-transform:none;letter-spacing:0;margin-left:6px">작게 쪼갤수록 완료하기 쉬워요</span></div>
         <button class="sec-action" onclick="clearDoneTasks()">완료 항목 지우기</button>
       </div>
+      <div class="task-tabs">
+        <button class="task-tab active" id="tabToday" onclick="switchTaskTab('today')">오늘 할 것</button>
+        <button class="task-tab" id="tabDQ" onclick="switchTaskTab('dq')">일일 퀘스트</button>
+      </div>
+      <div id="taskPanel-today">
       <div class="task-input-row">
         <input class="field-sm" id="taskInput" placeholder="할 것 추가 (Enter로 입력)" style="flex:1">
         <button class="btn btn-gold" onclick="addTask()" style="padding:8px 14px;font-size:12px">추가</button>
@@ -668,6 +727,18 @@ body.is-electron .widget-bar{ display: flex; }
       <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-align:right;margin:4px 0 10px" id="taskProgLabel">0 / 0</div>
       <div class="task-list" id="taskList">
         <div class="task-empty">할 것을 추가해보세요 ✦</div>
+      </div>
+      </div>
+      <div id="taskPanel-dq" style="display:none">
+        <div class="dq-input-row">
+          <input class="field-sm" id="dqInput" placeholder="매일 할 것 추가 (Enter)" style="flex:1">
+          <button class="btn btn-gold" onclick="addDQ()" style="padding:8px 14px;font-size:12px">추가</button>
+        </div>
+        <div class="dq-progress-wrap"><div class="dq-progress-fill" id="dqProgFill" style="width:0%"></div></div>
+        <div class="dq-footer"><span id="dqProgLabel">0 / 0 완료</span><span id="dqStreakLabel"></span></div>
+        <div class="dq-list" id="dqList">
+          <div class="dq-empty">매일 반복할 퀘스트를 추가해보세요 ⚔️</div>
+        </div>
       </div>
     </div>
 
@@ -1561,6 +1632,115 @@ function renderDonutChart(incomes, canvas, wrap){
     }
   });
 }
+
+/* ══ 일일 퀘스트 ══ */
+var DQ_KEY = 'mm_daily_quests';
+var DQ_DONE_KEY = 'mm_dq_done_'; // + YYYY-MM-DD
+
+function dqToday(){ return new Date().toISOString().slice(0,10); }
+
+function dqLoad(){ try{ return JSON.parse(localStorage.getItem(DQ_KEY)||'[]'); }catch(e){ return []; } }
+function dqSave(list){ localStorage.setItem(DQ_KEY, JSON.stringify(list)); }
+
+function dqLoadDone(date){
+  try{ return JSON.parse(localStorage.getItem(DQ_DONE_KEY+date)||'[]'); }catch(e){ return []; }
+}
+function dqSaveDone(date, ids){ localStorage.setItem(DQ_DONE_KEY+date, JSON.stringify(ids)); }
+
+function switchTaskTab(tab){
+  document.getElementById('taskPanel-today').style.display = tab==='today' ? 'block' : 'none';
+  document.getElementById('taskPanel-dq').style.display    = tab==='dq'    ? 'block' : 'none';
+  document.getElementById('tabToday').classList.toggle('active', tab==='today');
+  document.getElementById('tabDQ').classList.toggle('active', tab==='dq');
+  if(tab==='dq') renderDQ();
+}
+
+function addDQ(){
+  var inp = document.getElementById('dqInput');
+  var title = inp.value.trim();
+  if(!title) return;
+  var list = dqLoad();
+  list.push({ id: Date.now().toString(), title: title, createdAt: dqToday() });
+  dqSave(list);
+  inp.value = '';
+  renderDQ();
+}
+
+function toggleDQ(id){
+  var today = dqToday();
+  var done = dqLoadDone(today);
+  var idx = done.indexOf(id);
+  if(idx === -1) done.push(id);
+  else done.splice(idx, 1);
+  dqSaveDone(today, done);
+  renderDQ();
+}
+
+function deleteDQ(id){
+  var list = dqLoad().filter(function(q){ return q.id !== id; });
+  dqSave(list);
+  renderDQ();
+}
+
+function getDQStreak(id){
+  /* count consecutive days including today where this quest was done */
+  var streak = 0;
+  var d = new Date();
+  while(streak < 365){
+    var str = d.toISOString().slice(0,10);
+    var done = dqLoadDone(str);
+    if(done.indexOf(id) === -1) break;
+    streak++;
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+
+function renderDQ(){
+  var list = dqLoad();
+  var today = dqToday();
+  var done = dqLoadDone(today);
+  var el = document.getElementById('dqList');
+  var fill = document.getElementById('dqProgFill');
+  var lbl = document.getElementById('dqProgLabel');
+
+  if(!list.length){
+    el.innerHTML = '<div class="dq-empty">매일 반복할 퀘스트를 추가해보세요 ⚔️</div>';
+    if(fill) fill.style.width = '0%';
+    if(lbl) lbl.textContent = '0 / 0 완료';
+    return;
+  }
+
+  var doneCount = list.filter(function(q){ return done.indexOf(q.id) !== -1; }).length;
+  var pct = Math.round(doneCount / list.length * 100);
+  if(fill) fill.style.width = pct + '%';
+  if(lbl) lbl.textContent = doneCount + ' / ' + list.length + ' 완료';
+
+  /* sort: undone first, done at bottom */
+  var sorted = list.slice().sort(function(a,b){
+    var ad = done.indexOf(a.id) !== -1, bd = done.indexOf(b.id) !== -1;
+    return ad === bd ? 0 : ad ? 1 : -1;
+  });
+
+  el.innerHTML = sorted.map(function(q){
+    var isDone = done.indexOf(q.id) !== -1;
+    var streak = isDone ? getDQStreak(q.id) : 0;
+    var streakHtml = streak > 1
+      ? '<div class="dq-streak">🔥 ' + streak + '일 연속</div>'
+      : streak === 1 ? '<div class="dq-streak">✦ 오늘 완료</div>' : '';
+    return '<div class="dq-item'+(isDone?' done-today':'')+'">'
+      + '<div class="dq-check" onclick="toggleDQ(\''+q.id+'\')">'+( isDone?'✓':'' )+'</div>'
+      + '<div class="dq-body"><div class="dq-title">'+q.title+'</div>'+streakHtml+'</div>'
+      + '<button class="dq-del" onclick="deleteDQ(\''+q.id+'\')">✕</button>'
+      + '</div>';
+  }).join('');
+}
+
+/* Enter key on dq input */
+document.addEventListener('DOMContentLoaded', function(){
+  var inp = document.getElementById('dqInput');
+  if(inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter') addDQ(); });
+});
 
 /* ══════════ 초기화 ══════════ */
 updateTimerUI();
