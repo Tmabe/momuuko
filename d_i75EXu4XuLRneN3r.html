@@ -316,6 +316,21 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .tag-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border .15s}
 .tag-swatch.sel{border-color:#fff}
 
+/* ── 플랫폼 배지 ── */
+.platform-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 7px;border-radius:20px;
+  font-size:10px;font-weight:700;letter-spacing:.3px;
+  margin-left:5px;vertical-align:middle;
+}
+.platform-picker{display:flex;gap:5px;flex-wrap:wrap;}
+.pp-btn{
+  padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700;
+  border:1.5px solid var(--border);color:var(--text3);cursor:pointer;
+  font-family:inherit;background:transparent;transition:all .15s;
+}
+.pp-btn.sel{color:#fff;}
+
 /* ── 12. 다음 마감 카운트다운 ── */
 .deadline-pill{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);
   color:var(--red);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;cursor:default}
@@ -436,6 +451,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
       <div>
         <div class="field-label">현재 단계</div>
         <div class="stage-picker" id="stagePicker"></div>
+      </div>
+      <div>
+        <div class="field-label">신청 플랫폼</div>
+        <div class="platform-picker" id="platformPicker"></div>
+      </div>
+      <div>
+        <div class="field-label">연락처 (디스코드, SNS 등)</div>
+        <input class="field" id="fContact" placeholder="discord#1234 · @handle · DM링크">
       </div>
       <div>
         <div class="field-label">색상 태그</div>
@@ -567,6 +590,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
             <input class="field" type="number" id="parseAmount" placeholder="자동 파싱됨">
           </div>
         </div>
+        <div style="margin-top:10px">
+          <div class="field-label">신청 플랫폼</div>
+          <div class="platform-picker" id="parsePlatformPicker"></div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="field-label">연락처 (디스코드, SNS 등)</div>
+          <input class="field" id="parseContact" placeholder="discord#1234 · @handle · DM링크">
+        </div>
         <div class="pending-warn">⚠️ <b>결제 대기</b> 상태로 등록돼요. 입금 확인 후 카드의 <b>✅ 결제 확정</b> 버튼을 눌러주세요.</div>
       </div>
     </div>
@@ -643,6 +674,13 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 var DASH_HASH = 'cc8cace2712ebbf2a6e7816c25341b7ee4579a962340c8237966983ffd7d2749';
 var STORAGE_KEY = 'mm_dash_v1';
 var STAGES = ['접수','입금확인','러프','러프컨펌','선화','채색','완성','전달완료'];
+var PLATFORMS = {
+  '':       {label:'없음',        color:'#7A7870', bg:'rgba(122,120,112,.15)'},
+  'artmug': {label:'아트머그',    color:'#ff6b6b', bg:'rgba(255,107,107,.15)'},
+  'tally':  {label:'Tally',       color:'#4ecdc4', bg:'rgba(78,205,196,.15)'},
+  'x':      {label:'X (트위터)', color:'#1d9bf0', bg:'rgba(29,155,240,.15)'},
+  'dm':     {label:'직접 DM',   color:'#a78bfa', bg:'rgba(167,139,250,.15)'},
+};
 var TAG_COLORS = {
   '': {label:'없음', bg:'transparent', border:'#2d3748', text:'#4a5568'},
   'sky':   {label:'전신', bg:'rgba(61,142,240,.18)', border:'#3D8EF0', text:'#3D8EF0'},
@@ -659,9 +697,10 @@ async function _hashPw(pw){
 
 /* ─── 상태 ─── */
 var commissions = [];
-var _editIdx    = -1;
-var _editStage  = 0;
-var _editTag    = '';
+var _editIdx      = -1;
+var _editStage    = 0;
+var _editTag      = '';
+var _editPlatform = '';
 var _filter     = 'all';
 var _confirmIdx = -1; /* 인라인 확인 대상 인덱스 */
 var _dlvFiles   = [];
@@ -801,6 +840,10 @@ function renderCards(){
     var tagCfg=TAG_COLORS[tagKey]||TAG_COLORS[''];
     var tagBorderStyle=tagKey?'border-left:3px solid '+tagCfg.border+';':'';
     var tagHtml=tagKey?'<span class="tag-pill" style="background:'+tagCfg.bg+';color:'+tagCfg.text+'">'+tagCfg.label+'</span>':'';
+    /* 플랫폼 배지 */
+    var platKey=c.platform||'';
+    var platCfg=PLATFORMS[platKey]||null;
+    var platHtml=platKey&&platCfg?'<span class="platform-badge" style="background:'+platCfg.bg+';color:'+platCfg.color+'">'+platCfg.label+'</span>':'';
 
     /* 1. 인라인 확인 UI — onclick에 숫자 인덱스만 사용해 따옴표 충돌 방지 */
     var confirmHtml=c.pending
@@ -815,7 +858,7 @@ function renderCards(){
       +'<button class="cc-act del" id="icbtn_del_'+i+'" onclick="event.stopPropagation();showDelConfirm('+i+')">✕</button>';
 
     return '<div class="comm-card'+(isDone?' done':dlClass==='over'?' overdue':'')+(c.pending?' pending':'')+'" style="'+tagBorderStyle+'" onclick="openModal('+i+')">'
-      +'<div class="cc-header"><div><div class="cc-client">'+c.client+(c.pending?'<span class="pending-badge">결제대기</span>':'')+tagHtml+'</div><div class="cc-type">'+(c.type||'')+'</div></div>'
+      +'<div class="cc-header"><div><div class="cc-client">'+c.client+(c.pending?'<span class="pending-badge">결제대기</span>':'')+platHtml+tagHtml+'</div><div class="cc-type">'+(c.type||'')+(c.contact?'<span style="margin-left:6px;color:var(--text3);font-size:10px">📱 '+c.contact+'</span>':'')+'</div></div>'
       +(c.amount?'<div class="cc-amount">'+parseInt(c.amount).toLocaleString()+'원</div>':'')+'</div>'
       +'<div class="cc-progress"><div class="cc-stages">'+stages+'</div>'
       +'<div class="cc-bar"><div class="cc-bar-fill'+(isDone?' done-bar':'')+'" style="width:'+pct+'%"></div></div></div>'
@@ -886,11 +929,14 @@ function openModal(idx){
   document.getElementById('fStartDate').value=c.startDate||'';
   document.getElementById('fEmail').value=c.email||'';
   document.getElementById('fNote').value=c.note||'';
+  document.getElementById('fContact').value=c.contact||'';
   if(document.getElementById('fMemo')) document.getElementById('fMemo').value=c.memo||'';
   _editStage=c.stage||0;
   _editTag=c.tag||'';
+  _editPlatform=c.platform||'';
   renderStagePicker();
   renderTagSwatches();
+  renderPlatformPicker('platformPicker', '_editPlatform');
   document.getElementById('editModal').classList.add('open');
 }
 function closeModal(){ document.getElementById('editModal').classList.remove('open'); }
@@ -921,6 +967,24 @@ function renderTagSwatches(){
 function pickTag(k){
   _editTag=k; renderTagSwatches();
 }
+
+/* ─── 플랫폼 피커 ─── */
+var _parsePlatform='';
+function renderPlatformPicker(containerId, stateVar){
+  var wrap=document.getElementById(containerId); if(!wrap)return;
+  var cur=stateVar==='_editPlatform'?_editPlatform:_parsePlatform;
+  wrap.innerHTML=Object.keys(PLATFORMS).map(function(k){
+    var p=PLATFORMS[k];
+    var isSel=k===cur;
+    var selStyle=isSel?'border-color:'+p.color+';background:'+p.bg+';color:'+p.color+';':'' ;
+    return '<button class="pp-btn'+(isSel?' sel':'')+'" style="'+selStyle+'" onclick="pickPlatform(\''+k+'\',\''+containerId+'\',\''+stateVar+'\')">'+p.label+'</button>';
+  }).join('');
+}
+function pickPlatform(k, containerId, stateVar){
+  if(stateVar==='_editPlatform') _editPlatform=k;
+  else _parsePlatform=k;
+  renderPlatformPicker(containerId, stateVar);
+}
 function saveModal(){
   var client=document.getElementById('fClient').value.trim();
   if(!client){alert('의뢰인 닉네임을 입력해주세요');return;}
@@ -933,6 +997,8 @@ function saveModal(){
     note:document.getElementById('fNote').value.trim(),
     memo:document.getElementById('fMemo')?document.getElementById('fMemo').value.trim():(_editIdx>=0?(commissions[_editIdx].memo||''):''),
     tag:_editTag||'',
+    platform:_editPlatform||'',
+    contact:document.getElementById('fContact').value.trim(),
     stage:_editStage,
     paidAt:_editIdx>=0?commissions[_editIdx].paidAt:undefined
   };
@@ -1124,7 +1190,9 @@ function openParseModal(){
   document.getElementById('parseTa').value='';
   document.getElementById('parsePreviewWrap').style.display='none';
   document.getElementById('parseRegBtn').style.display='none';
+  document.getElementById('parseContact').value='';
   _parsed={};
+  _parsePlatform='';
   document.getElementById('parseModal').classList.add('open');
 }
 function closeParseModal(){ document.getElementById('parseModal').classList.remove('open'); }
@@ -1181,6 +1249,7 @@ function parseLive(){
 
   document.getElementById('parseResult').innerHTML=html;
   document.getElementById('parsePreviewWrap').style.display='block';
+  renderPlatformPicker('parsePlatformPicker','_parsePlatform');
 }
 
 function confirmParse(){
@@ -1204,6 +1273,8 @@ function confirmParse(){
     email:_parsed.email||'',
     note:note,
     memo:'레퍼런스: '+(_parsed.ref||'없음')+'\n원문:\n'+txt.substring(0,400),
+    platform:_parsePlatform||'',
+    contact:document.getElementById('parseContact').value.trim(),
     stage:0,
     pending:true,
     paidAt:undefined
@@ -1218,11 +1289,13 @@ function confirmParse(){
 /* ─── 10. CSV 내보내기 ─── */
 function exportCSV(){
   if(!commissions.length){showToast('📋 내보낼 의뢰가 없어요');return;}
-  var headers=['이름','작품종류','금액','마감일','이메일','단계','상태','등록월','메모','태그'];
+  var headers=['이름','작품종류','플랫폼','연락처','금액','마감일','이메일','단계','상태','등록월','메모','태그'];
   var rows=commissions.map(function(c){
     return [
       c.client||'',
       c.type||'',
+      (PLATFORMS[c.platform||'']||{label:''}).label,
+      c.contact||'',
       c.amount||'',
       c.deadline||'',
       c.email||'',
