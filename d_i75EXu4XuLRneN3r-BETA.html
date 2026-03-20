@@ -912,7 +912,7 @@ function saveModal(){
     deadline:document.getElementById('fDeadline').value,
     email:document.getElementById('fEmail').value.trim(),
     note:document.getElementById('fNote').value.trim(),
-    memo:document.getElementById('fMemo')?document.getElementById('fMemo').value.trim():'',
+    memo:document.getElementById('fMemo')?document.getElementById('fMemo').value.trim():(_editIdx>=0?(commissions[_editIdx].memo||''):''),
     tag:_editTag||'',
     stage:_editStage,
     paidAt:_editIdx>=0?commissions[_editIdx].paidAt:undefined
@@ -1288,7 +1288,7 @@ if(window.__DASH_BAKED__&&window.__DASH_BAKED__.commissions){
   commissions=window.__DASH_BAKED__.commissions;
   saveData();
 }
-if(sessionStorage.getItem('dash_auth')==='1'){ renderAll(); }
+if(sessionStorage.getItem('dash_auth')==='1'){ applyNotice(); renderAll(); }
 </script>
 </body>
 </html>
