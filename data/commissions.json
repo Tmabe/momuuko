@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-20T08:56:40.838Z",
+  "updated": "2026-03-20T08:58:15.948Z",
   "commissions": [
     {
       "client": "AirBir(아트머그)",
@@ -14,6 +14,19 @@
       "pending": false,
       "paidAt": "2026-03",
       "_idx": 0
+    },
+    {
+      "client": "J이사(루나모아)",
+      "type": "라투디 전신",
+      "amount": "1015000",
+      "deadline": "2026-03-26",
+      "startDate": "2026-02-26",
+      "email": "디스코드",
+      "note": "루나모아 이사님 전신모델",
+      "memo": "",
+      "tag": "pink",
+      "stage": 0,
+      "_idx": 1
     }
   ]
 }
