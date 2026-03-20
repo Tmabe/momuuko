@@ -797,6 +797,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .field::placeholder{ color:var(--text3); }
 .sec-action{ background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:8px; padding:5px 12px; color:var(--text2); font-family:var(--cond); font-size:12px; font-weight:700; letter-spacing:.5px; cursor:pointer; transition:all .15s; }
 .sec-action:hover{ border-color:var(--Y); color:var(--Y); }
+
+/* ══ 날짜 범위 ══ */
+.cal-day.range-start { border-radius: 12px 0 0 12px; }
+.cal-day.range-end   { border-radius: 0 12px 12px 0; }
+.cal-day.range-mid   { border-radius: 0; }
+.cal-day.range-start,
+.cal-day.range-mid,
+.cal-day.range-end   { background: rgba(61,142,240,.08); }
+.cal-day.range-start.today,
+.cal-day.range-end.today { background: rgba(61,142,240,.2); }
+.date-range-label {
+  font-size: 10px; color: var(--text3); font-family: var(--mono);
+  margin-top: 2px;
+}
 </style>
 </head>
 <body>
@@ -852,8 +866,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
       <input type="text" class="form-field" id="fTitle" placeholder="마감 제목 *">
 
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <div style="flex:1">
+          <div class="field-label">시작일 (선택)</div>
+          <input class="field" id="fStartDate" type="date" style="width:100%">
+        </div>
+        <div style="flex:1">
+          <div class="field-label">마감일 *</div>
+          <input class="field" id="fDate" type="date" style="width:100%">
+        </div>
+      </div>
+
       <div class="form-row">
-        <input type="date" class="form-field" id="fDate">
         <select class="form-field" id="fPriority">
           <option value="normal">보통</option>
           <option value="urgent">긴급</option>
@@ -1123,6 +1147,23 @@ function renderCalendar(data) {
     dateMap[item.dueDate].push(item);
   });
 
+  // Build range highlight map
+  const rangeMap = {}; // dateStr -> 'start' | 'mid' | 'end' | 'single'
+  data.concat(_commissions).forEach(item => {
+    if (!item.startDate || item.startDate >= item.dueDate) return;
+    const s = new Date(item.startDate);
+    const e = new Date(item.dueDate);
+    for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+      const str = toYMD(d);
+      const isStart = str === item.startDate;
+      const isEnd   = str === item.dueDate;
+      if (isStart && isEnd) rangeMap[str] = 'single';
+      else if (isStart) rangeMap[str] = rangeMap[str] === 'end' ? 'mid' : 'start';
+      else if (isEnd)   rangeMap[str] = rangeMap[str] === 'start' ? 'mid' : 'end';
+      else              rangeMap[str] = 'mid';
+    }
+  });
+
   const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
   const daysInPrev = new Date(calYear, calMonth, 0).getDate();
 
@@ -1153,6 +1194,7 @@ function renderCalendar(data) {
     }
 
     if (dateStr === todayStr) el.classList.add('today');
+    if (rangeMap[dateStr]) el.classList.add('range-' + rangeMap[dateStr]);
 
     const dayNum = document.createElement('div');
     dayNum.className = 'cal-day-num';
@@ -1252,6 +1294,10 @@ function renderList(data) {
             <button class="dl-confirm-no" data-confirmno="${item.id}">취소</button>
           </span>`;
 
+    const dateRangeHtml = item.startDate
+      ? `<span class="date-range-label">${item.startDate.slice(5).replace('-','/')} → ${item.dueDate.slice(5).replace('-','/')}</span>`
+      : `<span class="date-range-label">${item.dueDate.slice(5).replace('-','/')}</span>`;
+
     el.innerHTML = `
       <div class="dl-check" data-check="${item.id}" data-iscomm="${isComm}" title="${isComm ? '대시보드에서 수정하세요' : '완료 토글'}">${checkMark}</div>
       <div class="dl-center">
@@ -1260,6 +1306,7 @@ function renderList(data) {
           ${categoryBadge}
           ${item.note ? `<span class="dl-note">${escHtml(item.note)}</span>` : ''}
         </div>
+        ${dateRangeHtml}
       </div>
       <div class="dl-right">
         ${renderCountdown(item)}
@@ -1421,6 +1468,7 @@ function addItem() {
   const priority = document.getElementById('fPriority').value;
   const category = document.getElementById('fCategory').value;
   const note = document.getElementById('fNote').value.trim();
+  const startDate = document.getElementById('fStartDate').value || '';
 
   if (!title) {
     shake(document.getElementById('fTitle'));
@@ -1434,6 +1482,7 @@ function addItem() {
   const item = {
     id: Date.now().toString(),
     title,
+    startDate,
     dueDate,
     category,
     priority,
@@ -1448,6 +1497,7 @@ function addItem() {
 
   // Reset form
   document.getElementById('fTitle').value = '';
+  document.getElementById('fStartDate').value = '';
   document.getElementById('fDate').value = '';
   document.getElementById('fNote').value = '';
 
@@ -1591,6 +1641,7 @@ function commissionsToDeadlines(comms){
     return {
       id: 'comm_' + (c.id || c.client + c.deadline),
       title: (c.client || '미정') + (c.type ? ' · ' + c.type : ''),
+      startDate: c.startDate || '',
       dueDate: c.deadline,
       category: 'commission',
       priority: (function(){
