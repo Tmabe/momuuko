@@ -1,28 +1,33 @@
 <!DOCTYPE html>
-<html lang="ko"><head>
-<script>if(window.__DASH_BAKED__)Object.assign(window,window.__DASH_BAKED__);window.__DASH_BAKED__={"commissions":[{"client":"Alt(아트머그 AirBir)","type":"신청서 파싱","amount":"1950000","deadline":"2026-04-30","email":"raphirozo27lm@gmail.com","note":"기본 일러스트: 디자인, 전신, 알몸파츠(추후 신의상에 용의), 게임기, 저작권(리깅x)+기본표정파츠 전체 / 기본 제공 표정(기본 5개 무료) (무료): 정색 (얼굴 어두워짐), 반짝이는 눈, 하트눈, 땀, 볼빵빵","memo":"","tag":"sky","stage":4,"paidAt":"2026-03","_idx":0}]};</script>
+<html lang="ko" data-kantu="1"><head>
+<script>if(window.__DASH_BAKED__)Object.assign(window,window.__DASH_BAKED__);window.__DASH_BAKED__={"commissions":[{"client":"AirBir(아트머그)","type":"신청서 파싱","amount":"2090000","deadline":"2026-04-30","startDate":"2026-04-15","email":"raphirozo27lm@gmail.com","note":"기본 일러스트: 디자인, 전신, 알몸파츠(추후 신의상에 용의), 게임기, 저작권(리깅x)+기본표정파츠 전체 / 리깅 협업 세트: 하예나 님 리깅 + 전신 세트 (5만원 할인) / 추가 옵션: 꼬리 / 기본 제공 표정…","memo":"레퍼런스: https://www.figma.com/board/eJAccxBBwKm5JpeAScaxmE/Altair-DB?node-id=0-1&t=gfWsBgKysS2FThQg-1\n원문:\n모무꼬 작가 · Live2D 의뢰 양식\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n▸ 기본 일러스트\n  · 디자인, 전신, 알몸파츠(추후 신의상에 용의), 게임기, 저작권(리깅x)+기본표정파츠 전체\n    → 1,950,000원\n\n▸ 리깅 협업 세트\n  · 하예나 님 리깅 + 전신 세트 (5만원 할인)\n    → 500,000원\n\n▸ 추가 옵션\n  · 꼬리\n    → 10,000원\n\n▸ 기본 제공 표정(기본 5개 무료) (무료)\n  · 빠직, 정색 (얼굴 어두워짐), 반짝이는 눈, 눈물, 볼빵빵\n\n─────────────────────────────\n  합계 금액 : 2,460,000원\n─────────────────────────────\n\n[ 신청양식 ]\n▸ 방송 및 유튜브의 주소 혹은 닉네임 ","stage":1,"pending":false,"paidAt":"2026-03","_idx":0},{"client":"J이사(루나모아)","type":"라투디 전신","amount":"1015000","deadline":"2026-03-26","startDate":"2026-02-26","email":"디스코드","note":"루나모아 이사님 전신모델","memo":"","tag":"pink","stage":2,"_idx":1}]};</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>모무꼬 · 의뢰 관리</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&amp;family=Noto+Sans+KR:wght@300;400;700;900&amp;family=DM+Mono:wght@300;400;500&amp;family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&amp;family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0e1a;
-  --card:#111827;
-  --card2:#1a2235;
-  --border:#1e2d45;
-  --sky:#38bdf8;
-  --sky2:#0ea5e9;
+  --bg:#1A1A22;
+  --bg2:#1F1F28;
+  --bg3:#25252F;
+  --card:#22222C;
+  --card2:#25252F;
+  --border:rgba(255,255,255,.12);
+  --border2:rgba(255,255,255,.24);
+  --sky:#3D8EF0;
+  --sky2:#1A6AD4;
   --pink:#f472b6;
   --green:#34d399;
   --yellow:#fbbf24;
   --red:#f87171;
   --purple:#a78bfa;
-  --text:#e2e8f0;
-  --text2:#94a3b8;
-  --text3:#4a5568;
+  --text:#F0EEE8;
+  --text2:#B8B4AC;
+  --text3:#7A7870;
   --mono:'DM Mono',monospace;
+  --display:'Bebas Neue',sans-serif;
+  --cond:'Barlow Condensed',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh}
@@ -40,12 +45,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   padding:40px;
   width:340px;
   text-align:center;
-  box-shadow:0 0 60px rgba(56,189,248,.08);
+  box-shadow:0 0 60px rgba(61,142,240,.08);
 }
-.login-logo{font-size:28px;font-weight:900;color:var(--sky);letter-spacing:-1px;margin-bottom:6px}
+.login-logo{font-size:28px;font-weight:900;font-family:var(--display);color:var(--sky);letter-spacing:-1px;margin-bottom:6px}
 .login-sub{font-size:12px;color:var(--text3);margin-bottom:28px}
 .login-input{
-  width:100%;background:#0d1424;border:1.5px solid var(--border);
+  width:100%;background:#25252F;border:1.5px solid var(--border);
   border-radius:10px;padding:13px 16px;font-size:14px;
   color:var(--text);font-family:inherit;outline:none;transition:border .2s;
   text-align:center;letter-spacing:2px;
@@ -71,7 +76,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:100;
 }
-.app-logo{font-size:18px;font-weight:900;color:var(--sky);letter-spacing:-0.5px}
+.app-logo{font-size:18px;font-weight:900;font-family:var(--display);color:var(--sky);letter-spacing:-0.5px}
 .app-logo span{color:var(--text2);font-weight:400;font-size:13px;margin-left:8px}
 .header-actions{display:flex;gap:8px;align-items:center}
 .stat-pill{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--text2)}
@@ -83,7 +88,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 /* 상단 통계 */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
-.stat-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.stat-label{font-size:11px;color:var(--text3);font-weight:600;font-family:var(--cond);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
 .stat-value{font-size:28px;font-weight:900;font-family:var(--mono)}
 .stat-value.sky{color:var(--sky)}
 .stat-value.green{color:var(--green)}
@@ -116,11 +121,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   background:var(--card);border:1px solid var(--border);border-radius:16px;
   padding:20px;position:relative;transition:all .2s;cursor:pointer;
 }
-.comm-card:hover{border-color:var(--sky);transform:translateY(-2px);box-shadow:0 8px 32px rgba(56,189,248,.1)}
-.comm-card.done{border-color:var(--green);background:linear-gradient(135deg,var(--card),#0d1f19)}
+.comm-card:hover{border-color:var(--sky);transform:translateY(-2px);box-shadow:0 8px 32px rgba(61,142,240,.1)}
+.comm-card.done{border-color:var(--green);background:linear-gradient(135deg,var(--card),#1F2420)}
 .comm-card.overdue{border-color:var(--red)}
 .cc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
-.cc-client{font-size:17px;font-weight:700}
+.cc-client{font-size:17px;font-weight:700;font-family:var(--cond)}
 .cc-type{font-size:11px;color:var(--text3);margin-top:3px}
 .cc-amount{font-size:14px;font-weight:700;color:var(--sky);font-family:var(--mono)}
 /* 단계 진행바 */
@@ -132,9 +137,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   transition:all .15s;font-family:inherit;background:transparent;font-weight:600;
 }
 .cc-stage:hover{border-color:var(--sky);color:var(--sky)}
-.cc-stage.prev{border-color:#1e3a4a;background:#0d2030;color:#4a8fa8}
-.cc-stage.cur{border-color:var(--sky);background:var(--sky);color:#0a0e1a}
-.cc-stage.done-s{border-color:var(--green);background:var(--green);color:#0a0e1a}
+.cc-stage.prev{border-color:rgba(61,142,240,.25);background:rgba(61,142,240,.08);color:rgba(61,142,240,.6)}
+.cc-stage.cur{border-color:var(--sky);background:var(--sky);color:#fff}
+.cc-stage.done-s{border-color:var(--green);background:var(--green);color:#1A1A22}
 .cc-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
 .cc-bar-fill{height:100%;border-radius:2px;transition:width .4s;background:linear-gradient(90deg,var(--sky2),var(--sky))}
 .cc-bar-fill.done-bar{background:linear-gradient(90deg,#059669,var(--green))}
@@ -151,7 +156,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 }
 .cc-act:hover{border-color:var(--sky);color:var(--sky)}
 .cc-act.deliver{border-color:var(--green);color:var(--green)}
-.cc-act.deliver:hover{background:var(--green);color:#0a0e1a}
+.cc-act.deliver:hover{background:var(--green);color:#1A1A22}
 .cc-act.del{border-color:var(--border)}
 .cc-act.del:hover{border-color:var(--red);color:var(--red)}
 .cc-note{font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5}
@@ -180,14 +185,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 }
 @keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
 .modal-head{padding:22px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.modal-title{font-size:16px;font-weight:700}
+.modal-title{font-size:16px;font-weight:700;font-family:var(--cond)}
 .modal-close{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:inherit}
 .modal-close:hover{border-color:var(--red);color:var(--red)}
 .modal-body{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
 .modal-foot{padding:14px 24px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
-.field-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.field-label{font-size:11px;font-weight:700;font-family:var(--cond);color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
 .field{
-  width:100%;background:#0d1424;border:1.5px solid var(--border);
+  width:100%;background:#25252F;border:1.5px solid var(--border);
   border-radius:10px;padding:11px 14px;font-size:13px;
   color:var(--text);font-family:inherit;outline:none;transition:border .2s;
 }
@@ -196,7 +201,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .btn{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;border:none}
 .btn-sky{background:var(--sky2);color:#fff}.btn-sky:hover{background:var(--sky)}
 .btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--sky);color:var(--sky)}
-.btn-red{background:#7f1d1d;color:var(--red);border:1px solid #991b1b}.btn-red:hover{background:#991b1b}
+.btn-red{background:rgba(127,29,29,.7);color:var(--red);border:1px solid rgba(153,27,27,.8)}.btn-red:hover{background:rgba(153,27,27,.9)}
 
 /* 단계 선택 */
 .stage-picker{display:flex;gap:4px;flex-wrap:wrap}
@@ -205,7 +210,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   border:1.5px solid var(--border);color:var(--text3);cursor:pointer;
   font-family:inherit;background:transparent;transition:all .15s;
 }
-.sp-btn.sel{border-color:var(--sky);background:var(--sky);color:#0a0e1a}
+.sp-btn.sel{border-color:var(--sky);background:var(--sky);color:#fff}
 
 /* 납품 모달 */
 .dlv-box{max-width:500px}
@@ -213,18 +218,18 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   border:2px dashed var(--border);border-radius:12px;
   padding:24px;text-align:center;cursor:pointer;transition:all .15s;
 }
-.file-zone:hover{border-color:var(--sky);background:rgba(56,189,248,.04)}
+.file-zone:hover{border-color:var(--sky);background:rgba(61,142,240,.04)}
 .file-list{margin-top:8px;max-height:120px;overflow-y:auto}
 .file-item{font-size:11px;color:var(--text2);padding:3px 0;border-bottom:1px solid var(--border);font-family:var(--mono)}
 .prog{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:8px;display:none}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--sky2),var(--sky));border-radius:2px;transition:width .3s;width:0%}
 
 /* GitHub 모달 */
-.gh-hint{font-size:11px;color:var(--text3);line-height:1.6;background:#0d1424;border-radius:10px;padding:12px 14px;border:1px solid var(--border)}
+.gh-hint{font-size:11px;color:var(--text3);line-height:1.6;background:#25252F;border-radius:10px;padding:12px 14px;border:1px solid var(--border)}
 .gh-status{font-size:12px;padding:10px 14px;border-radius:10px;font-weight:600;display:none}
-.gh-status.ok{display:block;background:#052e16;color:var(--green);border:1px solid #166534}
-.gh-status.err{display:block;background:#3b0b0b;color:var(--red);border:1px solid #7f1d1d}
-.gh-status.load{display:block;background:#0d1424;color:var(--sky);border:1px solid var(--border)}
+.gh-status.ok{display:block;background:rgba(5,46,22,.6);color:var(--green);border:1px solid rgba(22,101,52,.7)}
+.gh-status.err{display:block;background:rgba(59,11,11,.6);color:var(--red);border:1px solid rgba(127,29,29,.7)}
+.gh-status.load{display:block;background:#25252F;color:var(--sky);border:1px solid var(--border)}
 
 /* 토스트 */
 #toast{
@@ -260,11 +265,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .cc-act.confirm:hover{background:rgba(52,211,153,.28)}
 
 /* ── 신청서 파싱 모달 ── */
-.parse-ta{width:100%;min-height:160px;background:#0d1424;border:1.5px solid var(--border);
+.parse-ta{width:100%;min-height:160px;background:#25252F;border:1.5px solid var(--border);
   border-radius:10px;padding:13px;font-size:12px;color:var(--text);font-family:var(--mono);
   resize:vertical;outline:none;line-height:1.7;transition:border .2s}
 .parse-ta:focus{border-color:var(--sky)}
-.parse-preview{background:#0d1424;border:1.5px solid var(--border);border-radius:10px;
+.parse-preview{background:#25252F;border:1.5px solid var(--border);border-radius:10px;
   padding:14px 16px;font-size:12px;line-height:2;color:var(--text2)}
 .parse-preview .pk{color:var(--sky);font-weight:700}
 .parse-preview .pv{color:var(--text)}
@@ -273,7 +278,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   border:1px solid rgba(251,191,36,.22);border-radius:10px;font-size:12px;color:#fbbf24}
 
 /* ── 작업 메모 ── */
-.memo-ta{width:100%;min-height:80px;background:#0d1424;border:1.5px solid var(--border);
+.memo-ta{width:100%;min-height:80px;background:#25252F;border:1.5px solid var(--border);
   border-radius:10px;padding:11px;font-size:12px;color:var(--text);font-family:inherit;
   resize:vertical;outline:none;line-height:1.7;transition:border .2s}
 .memo-ta:focus{border-color:#a78bfa}
@@ -317,7 +322,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .deadline-pill.warn{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.3);color:var(--yellow)}
 .deadline-pill.ok{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.25);color:var(--green)}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script><style type="text/css" id="operaUserStyle"></style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -340,8 +345,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
       <div class="app-logo">momuuko <span>의뢰 관리</span></div>
     </div>
     <div class="header-actions">
-      <div class="stat-pill">진행 중 <b id="hStatActive">1</b></div>
-      <div class="deadline-pill ok" id="hNextDeadline" title="가장 임박한 마감">📅 Alt(아트머그 AirBir) D-42</div>
+      <div id="syncIndicator" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); font-family: var(--mono);">
+  <span id="syncDot" style="width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block;"></span>
+  <span id="syncLabel">동기화됨 오후 05:58</span>
+</div>
+      <div class="stat-pill">진행 중 <b id="hStatActive">2</b></div>
+      <div class="deadline-pill ok" id="hNextDeadline" title="가장 임박한 마감">📅 J이사(루나모아) D-7</div>
       <div class="stat-pill">이번 달 수익 <b id="hStatIncome">0원</b></div>
       <button class="tb-btn" onclick="openNoticeEdit()" id="noticeBtnLabel">📢 공지</button>
       <button class="tb-btn" onclick="openGhModal()">⚙️ GitHub</button>
@@ -352,8 +361,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   <main class="app-body">
     <!-- 통계 -->
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-label">전체 의뢰</div><div class="stat-value sky" id="stTotal">1</div></div>
-      <div class="stat-card"><div class="stat-label">진행 중</div><div class="stat-value yellow" id="stActive">1</div></div>
+      <div class="stat-card"><div class="stat-label">전체 의뢰</div><div class="stat-value sky" id="stTotal">2</div></div>
+      <div class="stat-card"><div class="stat-label">진행 중</div><div class="stat-value yellow" id="stActive">2</div></div>
       <div class="stat-card"><div class="stat-label">완료</div><div class="stat-value green" id="stDone">0</div></div>
       <div class="stat-card"><div class="stat-label">이번 달 수익</div><div class="stat-value pink" id="stIncome">0</div></div>
       <div class="stat-card"><div class="stat-label">전체 누적 수익</div><div class="stat-value purple" id="stAllTime">0원</div></div>
@@ -382,7 +391,32 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
     </div>
 
     <!-- 의뢰 카드 -->
-    <div class="comm-grid" id="commGrid"><div class="comm-card" style="border-left:3px solid #38bdf8;" onclick="openModal(0)"><div class="cc-header"><div><div class="cc-client">Alt(아트머그 AirBir)<span class="tag-pill" style="background:rgba(56,189,248,.18);color:#38bdf8">전신</span></div><div class="cc-type">신청서 파싱</div></div><div class="cc-amount">1,950,000원</div></div><div class="cc-progress"><div class="cc-stages"><button class="cc-stage prev" onclick="event.stopPropagation();setStage(0,0)">접수</button><button class="cc-stage prev" onclick="event.stopPropagation();setStage(0,1)">입금확인</button><button class="cc-stage prev" onclick="event.stopPropagation();setStage(0,2)">러프</button><button class="cc-stage prev" onclick="event.stopPropagation();setStage(0,3)">러프컨펌</button><button class="cc-stage cur" onclick="event.stopPropagation();setStage(0,4)">선화</button><button class="cc-stage " onclick="event.stopPropagation();setStage(0,5)">채색</button><button class="cc-stage " onclick="event.stopPropagation();setStage(0,6)">완성</button><button class="cc-stage " onclick="event.stopPropagation();setStage(0,7)">전달완료</button></div><div class="cc-bar"><div class="cc-bar-fill" style="width:57%"></div></div></div><div class="cc-note">📝 기본 일러스트: 디자인, 전신, 알몸파츠(추후 신의상에 용의), 게임기, 저작권(리깅x)+기본표정파츠 전체 / 기본 제공 표정(기본 5개 무료) (무료): 정색 (얼굴 어두워짐), 반짝이는 눈, 하트눈, 땀, 볼빵빵</div><div class="cc-footer"><div class="cc-deadline ">42일 남음</div><div class="cc-actions" onclick="event.stopPropagation()"><button class="cc-act deliver" onclick="openDlvFor(0)">📦 납품</button><div class="inline-confirm" id="ic_del_0"><span class="ic-msg">삭제?</span><button class="ic-yes" style="border-color:var(--red);color:var(--red)" onclick="event.stopPropagation();doDelComm(0)">삭제</button><button class="ic-no" onclick="event.stopPropagation();hideDelConfirm(0)">✕</button></div><button class="cc-act del" id="icbtn_del_0" onclick="event.stopPropagation();showDelConfirm(0)">✕</button></div></div></div></div>
+    <div class="comm-grid" id="commGrid"><div class="comm-card" style="" onclick="openModal(0)"><div class="cc-header"><div><div class="cc-client">AirBir(아트머그)</div><div class="cc-type">신청서 파싱</div></div><div class="cc-amount">2,090,000원</div></div><div class="cc-progress"><div class="cc-stages"><button class="cc-stage prev" onclick="event.stopPropagation();setStage(0,0)">접수</button><button class="cc-stage cur" onclick="event.stopPropagation();setStage(0,1)">입금확인</button><button class="cc-stage " onclick="event.stopPropagation();setStage(0,2)">러프</button><button class="cc-stage " onclick="event.stopPropagation();setStage(0,3)">러프컨펌</button><button class="cc-stage " onclick="event.stopPropagation();setStage(0,4)">선화</button><button class="cc-stage " onclick="event.stopPropagation();setStage(0,5)">채색</button><button class="cc-stage " onclick="event.stopPropagation();setStage(0,6)">완성</button><button class="cc-stage " onclick="event.stopPropagation();setStage(0,7)">전달완료</button></div><div class="cc-bar"><div class="cc-bar-fill" style="width:14%"></div></div></div><div class="cc-note">📝 기본 일러스트: 디자인, 전신, 알몸파츠(추후 신의상에 용의), 게임기, 저작권(리깅x)+기본표정파츠 전체 / 리깅 협업 세트: 하예나 님 리깅 + 전신 세트 (5만원 할인) / 추가 옵션: 꼬리 / 기본 제공 표정…</div><div class="cc-memo">🗒 레퍼런스: https://www.figma.com/board/eJAccxBBwKm5JpeAScaxmE/Altair-DB?node-id=0-1&amp;t=gfWsBgKysS2FThQg-1
+원문:
+모무꼬 작가 · Live2D 의뢰 양식
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+▸ 기본 일러스트
+  · 디자인, 전신, 알몸파츠(추후 신의상에 용의), 게임기, 저작권(리깅x)+기본표정파츠 전체
+    → 1,950,000원
+
+▸ 리깅 협업 세트
+  · 하예나 님 리깅 + 전신 세트 (5만원 할인)
+    → 500,000원
+
+▸ 추가 옵션
+  · 꼬리
+    → 10,000원
+
+▸ 기본 제공 표정(기본 5개 무료) (무료)
+  · 빠직, 정색 (얼굴 어두워짐), 반짝이는 눈, 눈물, 볼빵빵
+
+─────────────────────────────
+  합계 금액 : 2,460,000원
+─────────────────────────────
+
+[ 신청양식 ]
+▸ 방송 및 유튜브의 주소 혹은 닉네임 </div><div class="cc-footer"><div><div class="cc-deadline ">42일 남음</div><div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px">04/15 → 04/30</div></div><div class="cc-actions" onclick="event.stopPropagation()"><button class="cc-act deliver" onclick="openDlvFor(0)">📦 납품</button><div class="inline-confirm" id="ic_del_0"><span class="ic-msg">삭제?</span><button class="ic-yes" style="border-color:var(--red);color:var(--red)" onclick="event.stopPropagation();doDelComm(0)">삭제</button><button class="ic-no" onclick="event.stopPropagation();hideDelConfirm(0)">✕</button></div><button class="cc-act del" id="icbtn_del_0" onclick="event.stopPropagation();showDelConfirm(0)">✕</button></div></div></div><div class="comm-card" style="border-left:3px solid #f472b6;" onclick="openModal(1)"><div class="cc-header"><div><div class="cc-client">J이사(루나모아)<span class="tag-pill" style="background:rgba(244,114,182,.18);color:#f472b6">반신</span></div><div class="cc-type">라투디 전신</div></div><div class="cc-amount">1,015,000원</div></div><div class="cc-progress"><div class="cc-stages"><button class="cc-stage prev" onclick="event.stopPropagation();setStage(1,0)">접수</button><button class="cc-stage prev" onclick="event.stopPropagation();setStage(1,1)">입금확인</button><button class="cc-stage cur" onclick="event.stopPropagation();setStage(1,2)">러프</button><button class="cc-stage " onclick="event.stopPropagation();setStage(1,3)">러프컨펌</button><button class="cc-stage " onclick="event.stopPropagation();setStage(1,4)">선화</button><button class="cc-stage " onclick="event.stopPropagation();setStage(1,5)">채색</button><button class="cc-stage " onclick="event.stopPropagation();setStage(1,6)">완성</button><button class="cc-stage " onclick="event.stopPropagation();setStage(1,7)">전달완료</button></div><div class="cc-bar"><div class="cc-bar-fill" style="width:29%"></div></div></div><div class="cc-note">📝 루나모아 이사님 전신모델</div><div class="cc-footer"><div><div class="cc-deadline ">7일 남음</div><div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px">02/26 → 03/26</div></div><div class="cc-actions" onclick="event.stopPropagation()"><button class="cc-act deliver" onclick="openDlvFor(1)">📦 납품</button><div class="inline-confirm" id="ic_del_1"><span class="ic-msg">삭제?</span><button class="ic-yes" style="border-color:var(--red);color:var(--red)" onclick="event.stopPropagation();doDelComm(1)">삭제</button><button class="ic-no" onclick="event.stopPropagation();hideDelConfirm(1)">✕</button></div><button class="cc-act del" id="icbtn_del_1" onclick="event.stopPropagation();showDelConfirm(1)">✕</button></div></div></div></div>
   </main>
 </div>
 
@@ -390,7 +424,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="modal" id="editModal" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
     <div class="modal-head">
-      <div class="modal-title" id="editTitle">의뢰 수정</div>
+      <div class="modal-title" id="editTitle">새 의뢰 추가</div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
@@ -409,9 +443,15 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
           <div class="field-label">금액 (원)</div>
           <input class="field" id="fAmount" type="number" placeholder="1100000">
         </div>
-        <div>
-          <div class="field-label">마감일</div>
-          <input class="field" id="fDeadline" type="date">
+        <div style="display:flex;gap:8px">
+          <div style="flex:1">
+            <div class="field-label">시작일 (선택)</div>
+            <input class="field" id="fStartDate" type="date" style="width:100%">
+          </div>
+          <div style="flex:1">
+            <div class="field-label">마감일</div>
+            <input class="field" id="fDeadline" type="date" style="width:100%">
+          </div>
         </div>
       </div>
       <div>
@@ -420,11 +460,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
       </div>
       <div>
         <div class="field-label">현재 단계</div>
-        <div class="stage-picker" id="stagePicker"><button class="sp-btn" onclick="pickStage(0)">접수</button><button class="sp-btn sel" onclick="pickStage(1)">입금확인</button><button class="sp-btn" onclick="pickStage(2)">러프</button><button class="sp-btn" onclick="pickStage(3)">러프컨펌</button><button class="sp-btn" onclick="pickStage(4)">선화</button><button class="sp-btn" onclick="pickStage(5)">채색</button><button class="sp-btn" onclick="pickStage(6)">완성</button><button class="sp-btn" onclick="pickStage(7)">전달완료</button></div>
+        <div class="stage-picker" id="stagePicker"><button class="sp-btn sel" onclick="pickStage(0)">접수</button><button class="sp-btn" onclick="pickStage(1)">입금확인</button><button class="sp-btn" onclick="pickStage(2)">러프</button><button class="sp-btn" onclick="pickStage(3)">러프컨펌</button><button class="sp-btn" onclick="pickStage(4)">선화</button><button class="sp-btn" onclick="pickStage(5)">채색</button><button class="sp-btn" onclick="pickStage(6)">완성</button><button class="sp-btn" onclick="pickStage(7)">전달완료</button></div>
       </div>
       <div>
         <div class="field-label">색상 태그</div>
-        <div class="tag-swatches" id="tagSwatches"><div class="tag-swatch" style="background:var(--card2);border-color:#2d3748" title="없음" data-tagkey=""></div><div class="tag-swatch sel" style="background:rgba(56,189,248,.18);border-color:#38bdf8" title="전신" data-tagkey="sky"></div><div class="tag-swatch" style="background:rgba(244,114,182,.18);border-color:#f472b6" title="반신" data-tagkey="pink"></div><div class="tag-swatch" style="background:rgba(52,211,153,.18);border-color:#34d399" title="데뷔축전" data-tagkey="green"></div><div class="tag-swatch" style="background:rgba(251,191,36,.18);border-color:#fbbf24" title="리깅세트" data-tagkey="yellow"></div><div class="tag-swatch" style="background:rgba(167,139,250,.18);border-color:#a78bfa" title="기타" data-tagkey="purple"></div><span style="font-size:11px;color:var(--text3);align-self:center;margin-left:4px" id="tagLabel">전신</span></div>
+        <div class="tag-swatches" id="tagSwatches"><div class="tag-swatch" style="background:var(--card2);border-color:#2d3748" title="없음" data-tagkey=""></div><div class="tag-swatch" style="background:rgba(61,142,240,.18);border-color:#3D8EF0" title="전신" data-tagkey="sky"></div><div class="tag-swatch sel" style="background:rgba(244,114,182,.18);border-color:#f472b6" title="반신" data-tagkey="pink"></div><div class="tag-swatch" style="background:rgba(52,211,153,.18);border-color:#34d399" title="데뷔축전" data-tagkey="green"></div><div class="tag-swatch" style="background:rgba(251,191,36,.18);border-color:#fbbf24" title="리깅세트" data-tagkey="yellow"></div><div class="tag-swatch" style="background:rgba(167,139,250,.18);border-color:#a78bfa" title="기타" data-tagkey="purple"></div><span style="font-size:11px;color:var(--text3);align-self:center;margin-left:4px" id="tagLabel">반신</span></div>
       </div>
       <div>
         <div class="field-label">메모</div>
@@ -508,6 +548,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
         <input class="field" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx">
       </div>
       <div id="ghStatus" class="gh-status ok">✅ 연결 성공! 저장을 눌러주세요.</div>
+      <div id="ghDataUrl" style="display: block; margin-top: 8px; font-size: 11px; color: var(--text3); font-family: var(--mono); word-break: break-all; background: var(--bg2); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);">데이터 URL: https://raw.githubusercontent.com/Tmabe/momuuko/main/data/commissions.json</div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeGhModal()">취소</button>
@@ -530,17 +571,23 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
       <textarea class="parse-ta" id="parseTa" placeholder="━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    모무꼬 작가 · Live2D 의뢰 양식
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━..." oninput="parseLive()"></textarea>
-      <div id="parsePreviewWrap" style="display:none;margin-top:14px">
+      <div id="parsePreviewWrap" style="display: block; margin-top: 14px;">
         <div class="field-label" style="margin-bottom:6px">📌 파싱 결과</div>
-        <div class="parse-preview" id="parseResult"></div>
+        <div class="parse-preview" id="parseResult"><span class="pk">금액</span> <span class="pv">2,460,000원</span><br><span class="pk">이메일</span> <span class="pv">raphirozo27lm@gmail.com</span><br><span class="pk">레퍼런스</span> <span class="pv">https://www.figma.com/board/eJAccxBBwKm5JpeAScaxmE/Altair-DB?node-id=0-1&amp;t=gfWsBgKysS2FThQg-1</span><br><span class="pk">선택 옵션</span><br><span class="pv" style="font-size:11px;padding-left:8px">· 기본 일러스트: 디자인, 전신, 알몸파츠(추후 신의상에 용의), 게임기, 저작권(리깅x)+기본표정파츠 전체</span><br><span class="pv" style="font-size:11px;padding-left:8px">· 리깅 협업 세트: 하예나 님 리깅 + 전신 세트 (5만원 할인)</span><br><span class="pv" style="font-size:11px;padding-left:8px">· 추가 옵션: 꼬리</span><br><span class="pv" style="font-size:11px;padding-left:8px">· 기본 제공 표정(기본 5개 무료) (무료): 빠직, 정색 (얼굴 어두워짐), 반짝이는 눈, 눈물, 볼빵빵</span><br></div>
         <div style="margin-top:10px">
           <div class="field-label">의뢰인 닉네임 <span style="color:var(--pink);font-size:10px">*등록 후 수정 가능</span></div>
           <input class="field" id="parseClient" placeholder="닉네임 입력...">
         </div>
         <div class="parse-row">
-          <div>
-            <div class="field-label">마감일</div>
-            <input class="field" type="date" id="parseDeadline">
+          <div style="display:flex;gap:8px">
+            <div style="flex:1">
+              <div class="field-label">시작일 (선택)</div>
+              <input class="field" type="date" id="parseStartDate" style="width:100%">
+            </div>
+            <div style="flex:1">
+              <div class="field-label">마감일</div>
+              <input class="field" type="date" id="parseDeadline" style="width:100%">
+            </div>
           </div>
           <div>
             <div class="field-label">금액 확인/수정</div>
@@ -552,7 +599,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeParseModal()">취소</button>
-      <button class="btn btn-sky" id="parseRegBtn" style="display:none" onclick="confirmParse()">💳 결제 대기로 등록</button>
+      <button class="btn btn-sky" id="parseRegBtn" style="" onclick="confirmParse()">💳 결제 대기로 등록</button>
     </div>
   </div>
 </div>
@@ -625,7 +672,7 @@ var STORAGE_KEY = 'mm_dash_v1';
 var STAGES = ['접수','입금확인','러프','러프컨펌','선화','채색','완성','전달완료'];
 var TAG_COLORS = {
   '': {label:'없음', bg:'transparent', border:'#2d3748', text:'#4a5568'},
-  'sky':   {label:'전신', bg:'rgba(56,189,248,.18)', border:'#38bdf8', text:'#38bdf8'},
+  'sky':   {label:'전신', bg:'rgba(61,142,240,.18)', border:'#3D8EF0', text:'#3D8EF0'},
   'pink':  {label:'반신', bg:'rgba(244,114,182,.18)', border:'#f472b6', text:'#f472b6'},
   'green': {label:'데뷔축전', bg:'rgba(52,211,153,.18)', border:'#34d399', text:'#34d399'},
   'yellow':{label:'리깅세트', bg:'rgba(251,191,36,.18)', border:'#fbbf24', text:'#fbbf24'},
@@ -675,6 +722,7 @@ if(sessionStorage.getItem('dash_auth')==='1'){
 /* ─── 데이터 ─── */
 function saveData(){
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(commissions)); }catch(e){}
+  scheduleSync();
 }
 function loadData(){
   try{
@@ -799,7 +847,12 @@ function renderCards(){
       +'<div class="cc-progress"><div class="cc-stages">'+stages+'</div>'
       +'<div class="cc-bar"><div class="cc-bar-fill'+(isDone?' done-bar':'')+'" style="width:'+pct+'%"></div></div></div>'
       +(c.note?'<div class="cc-note">📝 '+c.note+'</div>':'')+(c.memo?'<div class="cc-memo">🗒 '+c.memo+'</div>':'')
-      +'<div class="cc-footer"><div class="cc-deadline '+dlClass+'">'+dlText+'</div>'
+      +(function(){
+          var dateRangeStr=c.startDate
+            ?'<div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px">'+c.startDate.slice(5).replace('-','/')+' → '+c.deadline.slice(5).replace('-','/')+'</div>'
+            :(c.deadline?'<div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px">'+c.deadline.slice(5).replace('-','/')+'</div>':'');
+          return '<div class="cc-footer"><div><div class="cc-deadline '+dlClass+'">'+dlText+'</div>'+dateRangeStr+'</div>';
+        })()
       +'<div class="cc-actions" onclick="event.stopPropagation()">'
       +confirmHtml
       +'<button class="cc-act deliver" onclick="openDlvFor('+i+')">📦 납품</button>'
@@ -857,6 +910,7 @@ function openModal(idx){
   document.getElementById('fType').value=c.type||'';
   document.getElementById('fAmount').value=c.amount||'';
   document.getElementById('fDeadline').value=c.deadline||'';
+  document.getElementById('fStartDate').value=c.startDate||'';
   document.getElementById('fEmail').value=c.email||'';
   document.getElementById('fNote').value=c.note||'';
   if(document.getElementById('fMemo')) document.getElementById('fMemo').value=c.memo||'';
@@ -901,9 +955,10 @@ function saveModal(){
     client:client, type:document.getElementById('fType').value.trim(),
     amount:document.getElementById('fAmount').value,
     deadline:document.getElementById('fDeadline').value,
+    startDate:document.getElementById('fStartDate').value,
     email:document.getElementById('fEmail').value.trim(),
     note:document.getElementById('fNote').value.trim(),
-    memo:document.getElementById('fMemo')?document.getElementById('fMemo').value.trim():'',
+    memo:document.getElementById('fMemo')?document.getElementById('fMemo').value.trim():(_editIdx>=0?(commissions[_editIdx].memo||''):''),
     tag:_editTag||'',
     stage:_editStage,
     paidAt:_editIdx>=0?commissions[_editIdx].paidAt:undefined
@@ -970,8 +1025,54 @@ function dlvGmail(){
     '&su='+su+'&body='+bd,'_blank');
 }
 
+/* ─── 자동 데이터 동기화 ─── */
+var _syncTimer=null;
+var _syncSha=null;
+
+function scheduleSync(){
+  var ind=document.getElementById('syncIndicator');
+  if(ind) ind.style.display='flex';
+  var dot=document.getElementById('syncDot');
+  var lbl=document.getElementById('syncLabel');
+  if(dot) dot.style.background='var(--yellow)';
+  if(lbl) lbl.textContent='동기화 중...';
+  if(_syncTimer) clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(autoSyncData,2000);
+}
+
+async function autoSyncData(){
+  var c=_ghCfg();
+  if(!c.token||!c.user||!c.repo) return;
+  var dot=document.getElementById('syncDot');
+  var lbl=document.getElementById('syncLabel');
+  try{
+    var payload={updated:new Date().toISOString(),commissions:commissions};
+    var content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
+    if(!_syncSha) _syncSha=await _ghGetSha(c.user,c.repo,c.token,'data/commissions.json');
+    var body={message:'auto: sync commissions data',content:content};
+    if(_syncSha) body.sha=_syncSha;
+    var res=await fetch('https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/data/commissions.json',{
+      method:'PUT',
+      headers:{'Authorization':'token '+c.token,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(res.ok){
+      var json=await res.json();
+      _syncSha=json.content&&json.content.sha||json.commit&&json.commit.sha||_syncSha;
+      if(dot) dot.style.background='var(--green)';
+      if(lbl) lbl.textContent='동기화됨 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+    } else {
+      if(dot) dot.style.background='var(--red)';
+      if(lbl) lbl.textContent='동기화 실패';
+    }
+  }catch(e){
+    if(dot) dot.style.background='var(--red)';
+    if(lbl) lbl.textContent='동기화 오류';
+  }
+}
+
 /* ─── GitHub ─── */
-function _ghCfg(){ return {user:sessionStorage.getItem('gh_user')||'',repo:sessionStorage.getItem('gh_repo')||'',token:sessionStorage.getItem('gh_token')||''}; }
+function _ghCfg(){ return {user:localStorage.getItem('gh_user')||'',repo:localStorage.getItem('gh_repo')||'',token:localStorage.getItem('gh_token')||''}; }
 function openGhModal(){
   var c=_ghCfg();
   document.getElementById('ghUser').value=c.user||'Tmabe';
@@ -979,12 +1080,19 @@ function openGhModal(){
   document.getElementById('ghToken').value=c.token||'';
   document.getElementById('ghStatus').className='gh-status';
   document.getElementById('ghModal').classList.add('open');
+  var u=document.getElementById('ghUser').value||'Tmabe';
+  var r=document.getElementById('ghRepo').value||'momuuko';
+  var urlEl=document.getElementById('ghDataUrl');
+  if(urlEl){
+    urlEl.style.display='block';
+    urlEl.textContent='데이터 URL: https://raw.githubusercontent.com/'+u+'/'+r+'/main/data/commissions.json';
+  }
 }
 function closeGhModal(){ document.getElementById('ghModal').classList.remove('open'); }
 function saveGhSettings(){
-  sessionStorage.setItem('gh_user', document.getElementById('ghUser').value.trim());
-  sessionStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
-  sessionStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
+  localStorage.setItem('gh_user', document.getElementById('ghUser').value.trim());
+  localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
+  localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
   closeGhModal(); showToast('✅ GitHub 설정 저장 완료!');
 }
 async function testGhToken(){
