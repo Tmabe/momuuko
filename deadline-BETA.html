@@ -798,6 +798,52 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .sec-action{ background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:8px; padding:5px 12px; color:var(--text2); font-family:var(--cond); font-size:12px; font-weight:700; letter-spacing:.5px; cursor:pointer; transition:all .15s; }
 .sec-action:hover{ border-color:var(--Y); color:var(--Y); }
 
+/* ══ 날짜 클릭 모달 ══ */
+.date-modal {
+  display:none; position:fixed; inset:0; z-index:800;
+  align-items:center; justify-content:center; padding:20px;
+  background:rgba(0,0,0,.7); backdrop-filter:blur(8px);
+}
+.date-modal.open { display:flex; animation:toastIn .2s ease; }
+.date-modal-box {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:20px; width:100%; max-width:440px;
+  box-shadow:0 24px 80px rgba(0,0,0,.5);
+  max-height:80vh; display:flex; flex-direction:column;
+}
+.date-modal-head {
+  padding:20px 22px 14px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+}
+.date-modal-title { font-family:var(--cond); font-weight:700; font-size:16px; color:var(--text); }
+.date-modal-close {
+  width:28px; height:28px; border-radius:8px; border:1px solid var(--border);
+  background:transparent; color:var(--text3); cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center; transition:all .15s;
+}
+.date-modal-close:hover { border-color:var(--red); color:var(--red); }
+.date-modal-body { padding:16px 22px 20px; overflow-y:auto; display:flex; flex-direction:column; gap:14px; }
+.date-section-label {
+  font-family:var(--cond); font-size:11px; font-weight:700; letter-spacing:1px;
+  text-transform:uppercase; color:var(--text3); margin-bottom:8px;
+}
+.date-item {
+  padding:10px 14px; border-radius:12px; background:var(--bg2);
+  border-left:3px solid var(--border2);
+}
+.date-item.urgent { border-left-color:var(--red); }
+.date-item.normal { border-left-color:var(--Y); }
+.date-item.relaxed { border-left-color:var(--green); }
+.date-item.comm { border-left-color:#a78bfa; }
+.date-item-title { font-weight:700; font-size:14px; color:var(--text); margin-bottom:4px; }
+.date-item-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.plat-badge {
+  display:inline-flex; align-items:center; padding:2px 7px;
+  border-radius:20px; font-size:10px; font-weight:700; letter-spacing:.3px;
+}
+.date-item-note { font-size:11px; color:var(--text3); margin-top:4px; }
+.date-empty { color:var(--text3); font-size:13px; text-align:center; padding:12px 0; }
+
 /* ══ 날짜 범위 ══ */
 .cal-day.range-start { border-radius: 12px 0 0 12px; }
 .cal-day.range-end   { border-radius: 0 12px 12px 0; }
@@ -997,9 +1043,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   </div>
 </div>
 
+<!-- 날짜 클릭 모달 -->
+<div class="date-modal" id="dateModal" onclick="if(event.target===this)closeDateModal()">
+  <div class="date-modal-box">
+    <div class="date-modal-head">
+      <div class="date-modal-title" id="dateModalTitle"></div>
+      <button class="date-modal-close" onclick="closeDateModal()">✕</button>
+    </div>
+    <div class="date-modal-body" id="dateModalBody"></div>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
+// ══ Platform config (대시보드와 동일) ══
+const PLATFORMS = {
+  '':       {label:'없음',       color:'#7A7870', bg:'rgba(122,120,112,.15)'},
+  'artmug': {label:'아트머그',   color:'#ff6b6b', bg:'rgba(255,107,107,.15)'},
+  'tally':  {label:'Tally',      color:'#4ecdc4', bg:'rgba(78,205,196,.15)'},
+  'x':      {label:'X (트위터)', color:'#1d9bf0', bg:'rgba(29,155,240,.15)'},
+  'dm':     {label:'직접 DM',   color:'#a78bfa', bg:'rgba(167,139,250,.15)'},
+};
+const STAGES = ['접수','입금확인','러프','러프컨펌','선화','채색','완성','전달완료'];
+
 // ══ Storage ══
 const STORAGE_KEY = 'momuuko_deadlines';
 
@@ -1217,25 +1284,94 @@ function renderCalendar(data) {
         dots.appendChild(dot);
       });
       el.appendChild(dots);
-
-      const capDateStr = dateStr;
-      el.addEventListener('click', () => highlightByDate(capDateStr));
-      el.style.cursor = 'pointer';
     }
+
+    // 모든 날짜 클릭 가능
+    const capDateStr = dateStr;
+    el.addEventListener('click', () => showDateDetail(capDateStr));
+    el.style.cursor = 'pointer';
 
     grid.appendChild(el);
   }
 }
 
-function highlightByDate(dateStr) {
-  // Scroll middle column and highlight items with this date
-  document.querySelectorAll('.dl-item').forEach(el => {
-    if (el.dataset.date === dateStr) {
-      el.classList.add('highlighted');
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      setTimeout(() => el.classList.remove('highlighted'), 2000);
-    }
-  });
+function showDateDetail(dateStr) {
+  const data = load();
+  const all = data.concat(_commissions);
+
+  // 마감일이 이 날짜인 항목
+  const dueItems = all.filter(x => x.dueDate === dateStr);
+  // 진행 중인 항목 (startDate ~ dueDate 범위에 포함되고, 마감일은 아닌 것)
+  const inProgressItems = all.filter(x =>
+    x.startDate && x.startDate <= dateStr && x.dueDate > dateStr
+  );
+
+  const d = new Date(dateStr);
+  const dayNames = ['일','월','화','수','목','금','토'];
+  const title = `${d.getMonth()+1}월 ${d.getDate()}일 (${dayNames[d.getDay()]})`;
+  document.getElementById('dateModalTitle').textContent = title;
+
+  const body = document.getElementById('dateModalBody');
+  body.innerHTML = '';
+
+  function buildSection(label, items) {
+    if (items.length === 0) return;
+    const sec = document.createElement('div');
+    const lbl = document.createElement('div');
+    lbl.className = 'date-section-label';
+    lbl.textContent = label;
+    sec.appendChild(lbl);
+
+    items.forEach(item => {
+      const el = document.createElement('div');
+      const cls = item.isCommission ? 'comm' : item.priority;
+      el.className = `date-item ${cls}`;
+
+      // 플랫폼 배지 (의뢰 항목)
+      let platHtml = '';
+      if (item.isCommission && item.platform) {
+        const p = PLATFORMS[item.platform];
+        if (p && item.platform) {
+          platHtml = `<span class="plat-badge" style="background:${p.bg};color:${p.color}">${p.label}</span>`;
+        }
+      }
+
+      // 단계 표시 (의뢰 항목)
+      let stageHtml = '';
+      if (item.isCommission && item.stageLabel) {
+        stageHtml = `<span style="font-size:10px;color:#a78bfa;font-family:var(--mono)">${item.stageLabel}</span>`;
+      }
+
+      // 카운트다운
+      const cd = renderCountdown(item);
+
+      el.innerHTML = `
+        <div class="date-item-title">${escHtml(item.title)}</div>
+        <div class="date-item-meta">
+          ${platHtml}${stageHtml}
+          <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">${item.startDate ? item.startDate.slice(5).replace('-','/') + ' → ' : ''}${item.dueDate.slice(5).replace('-','/')}</span>
+          ${cd}
+        </div>
+        ${item.contact ? `<div class="date-item-note">📱 ${escHtml(item.contact)}</div>` : ''}
+        ${item.note ? `<div class="date-item-note">📝 ${escHtml(item.note)}</div>` : ''}
+      `;
+      sec.appendChild(el);
+    });
+    body.appendChild(sec);
+  }
+
+  buildSection('🔴 마감', dueItems);
+  buildSection('🔵 진행 중', inProgressItems);
+
+  if (dueItems.length === 0 && inProgressItems.length === 0) {
+    body.innerHTML = '<div class="date-empty">이 날짜에 해당하는 항목이 없어요</div>';
+  }
+
+  document.getElementById('dateModal').classList.add('open');
+}
+
+function closeDateModal() {
+  document.getElementById('dateModal').classList.remove('open');
 }
 
 function renderList(data) {
@@ -1280,8 +1416,15 @@ function renderList(data) {
 
     const checkMark = item.done ? '✓' : '';
 
+    const platCfg = isComm && item.platform ? PLATFORMS[item.platform] : null;
+    const platBadge = platCfg && item.platform
+      ? `<span class="plat-badge" style="background:${platCfg.bg};color:${platCfg.color}">${platCfg.label}</span>`
+      : '';
+    const stageBadge = isComm && item.stageLabel
+      ? `<span style="font-size:10px;color:#a78bfa;font-family:var(--mono)">${item.stageLabel}</span>`
+      : '';
     const categoryBadge = isComm
-      ? `<span class="sync-badge commission"><span class="sync-dot" style="background:#a78bfa"></span>의뢰</span>`
+      ? `<span class="sync-badge commission"><span class="sync-dot" style="background:#a78bfa"></span>의뢰</span>${platBadge}${stageBadge}`
       : `<span class="cat-badge">${catLabel(item.category)}</span>`;
 
     const deleteSection = isComm
@@ -1305,6 +1448,7 @@ function renderList(data) {
         <div class="dl-meta">
           ${categoryBadge}
           ${item.note ? `<span class="dl-note">${escHtml(item.note)}</span>` : ''}
+          ${isComm && item.contact ? `<span class="dl-note">📱 ${escHtml(item.contact)}</span>` : ''}
         </div>
         ${dateRangeHtml}
       </div>
@@ -1650,7 +1794,10 @@ function commissionsToDeadlines(comms){
       })(),
       note: c.note || '',
       done: c.stage === 7,
-      isCommission: true // read-only flag
+      isCommission: true,
+      platform: c.platform || '',
+      contact: c.contact || '',
+      stageLabel: STAGES[c.stage] || ''
     };
   });
 }
