@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-01T10:00:50.029Z",
+  "updated": "2026-04-01T10:07:15.413Z",
   "commissions": [
     {
       "client": "AirBir(아트머그)",
@@ -27,6 +27,21 @@
       "tag": "sky",
       "stage": 5,
       "_idx": 1
+    },
+    {
+      "client": "komemo(아트머그)",
+      "type": "전신",
+      "amount": "1150000",
+      "deadline": "",
+      "startDate": "",
+      "email": "",
+      "note": "삼면도 추가신청 15\n헤어 색 변경, 모자on off가능, 뿔자리 헤어 추가 총 13만원",
+      "memo": "",
+      "tag": "sky",
+      "platform": "artmug",
+      "contact": "디스코드 komeko",
+      "stage": 2,
+      "_idx": 2
     }
   ]
 }
