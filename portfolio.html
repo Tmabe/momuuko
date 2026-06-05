@@ -1169,8 +1169,11 @@ function loadPortfolio(){
           +'<div class="pf-grid-char reveal"></div>';
         wrap.appendChild(sec);
         var grid=sec.querySelector('.pf-grid-char');
-        io.observe(sec.querySelector('.pf-cat-label'));
         renderGrid(grid,cat.id,items);
+      });
+      // 동적 생성 항목은 옵저버가 놓칠 수 있어 명시적으로 등장시킴 (페이드인 유지)
+      requestAnimationFrame(function(){
+        document.querySelectorAll('#pfSections .reveal').forEach(function(el){ el.classList.add('in'); });
       });
     })
     .catch(function(){ /* 빈 상태 유지 */ });
