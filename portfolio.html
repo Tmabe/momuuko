@@ -491,56 +491,71 @@ body.light .hs-lbl{ color:var(--text3); }
 
 /* 캐릭터 그리드 — 균등 4열 */
 .pf-grid-char{
-  display:grid; grid-template-columns:repeat(4,1fr);
-  gap:2px;
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:20px;
 }
 .pf-grid-char .pf-item{ aspect-ratio:3/4; }
 
-/* 공통 아이템 */
+/* 공통 아이템 — 전문 갤러리 카드 */
 .pf-item{
   position:relative; overflow:hidden; background:var(--bg3);
-  cursor:none !important; transition:transform .4s cubic-bezier(.22,1,.36,1);
+  border-radius:14px; border:1px solid rgba(255,255,255,.06);
+  cursor:none !important;
+  box-shadow:0 8px 24px rgba(0,0,0,.22);
+  transition:transform .5s cubic-bezier(.22,1,.36,1), box-shadow .5s cubic-bezier(.22,1,.36,1), border-color .5s;
+  will-change:transform;
 }
-.pf-item:hover{ transform:scale(1.01); z-index:2; }
+.pf-item:hover{
+  transform:translateY(-8px); z-index:2;
+  border-color:rgba(61,142,240,.45);
+  box-shadow:0 26px 56px rgba(0,0,0,.45), 0 0 0 1px rgba(61,142,240,.18);
+}
 .pf-item img{
-  width:100%; height:100%; object-fit:cover;
-  filter:saturate(.85) contrast(1.05);
-  transition:filter .4s, transform .6s;
+  width:100%; height:100%; object-fit:cover; object-position:50% 14%;
+  filter:saturate(.9) contrast(1.03);
+  transition:filter .55s, transform .8s cubic-bezier(.22,1,.36,1);
 }
-.pf-item:hover img{ filter:saturate(1.1); transform:scale(1.06); }
+.pf-item:hover img{ filter:saturate(1.12) contrast(1.05); transform:scale(1.08); }
 /* 오버레이 */
 .pf-overlay{
   position:absolute; inset:0;
-  background:linear-gradient(0deg,rgba(8,8,13,.9) 0%,transparent 50%);
-  opacity:0; transition:opacity .3s;
+  background:linear-gradient(0deg,rgba(8,8,13,.94) 0%,rgba(8,8,13,.4) 32%,transparent 62%);
+  opacity:0; transition:opacity .45s cubic-bezier(.22,1,.36,1);
   display:flex; flex-direction:column; justify-content:flex-end;
-  padding:16px;
+  padding:20px 18px 17px;
 }
 .pf-item:hover .pf-overlay{ opacity:1; }
 .pf-overlay-title{
-  font-family:var(--cond); font-size:16px; font-weight:700;
-  letter-spacing:1px; color:var(--text); text-transform:uppercase;
-  margin-bottom:2px; line-height:1.1;
+  font-family:var(--cond); font-size:18px; font-weight:700;
+  letter-spacing:.6px; color:#fff; text-transform:uppercase;
+  margin-bottom:3px; line-height:1.12;
+  transform:translateY(12px); transition:transform .5s cubic-bezier(.22,1,.36,1) .04s;
 }
 .pf-overlay-en{
-  font-family:var(--mono); font-size:9px; letter-spacing:1px; color:var(--text3);
+  font-family:var(--mono); font-size:9.5px; letter-spacing:1.5px; color:rgba(240,238,232,.62);
+  transform:translateY(12px); transition:transform .5s cubic-bezier(.22,1,.36,1) .1s;
 }
-/* 태그 */
+.pf-item:hover .pf-overlay-title, .pf-item:hover .pf-overlay-en{ transform:translateY(0); }
+/* 태그 — 상시 표시 글래스 핀 */
 .pf-tag{
-  position:absolute; top:0; left:0;
-  font-family:var(--display); font-size:9px; letter-spacing:2px;
-  padding:4px 10px; background:var(--Y); color:var(--bg);
-  text-transform:uppercase;
+  position:absolute; top:12px; left:12px;
+  font-family:var(--display); font-size:10px; letter-spacing:2px;
+  padding:4px 11px; background:rgba(18,18,26,.62); color:var(--Y);
+  border:1px solid rgba(61,142,240,.42); border-radius:30px;
+  text-transform:uppercase; backdrop-filter:blur(8px);
+  transition:background .4s, color .4s;
 }
-/* 코너 데코 — 호버 시 나타남 */
+.pf-item:hover .pf-tag{ background:var(--Y); color:#fff; border-color:var(--Y); }
+/* 코너 데코 — 호버 시 */
 .pf-corner{
-  position:absolute; width:12px; height:12px;
+  position:absolute; width:15px; height:15px;
   border-color:var(--Y); border-style:solid;
-  opacity:0; transition:opacity .2s;
+  opacity:0; transition:opacity .35s, transform .35s;
 }
-.pf-item:hover .pf-corner{ opacity:1; }
-.pf-corner.tl{ top:8px; left:8px; border-width:1px 0 0 1px; }
-.pf-corner.br{ bottom:8px; right:8px; border-width:0 1px 1px 0; }
+.pf-item:hover .pf-corner{ opacity:.9; }
+.pf-corner.tl{ top:11px; left:11px; border-width:1.5px 0 0 1.5px; transform:translate(3px,3px); }
+.pf-corner.br{ bottom:11px; right:11px; border-width:0 1.5px 1.5px 0; transform:translate(-3px,-3px); }
+.pf-item:hover .pf-corner.tl, .pf-item:hover .pf-corner.br{ transform:translate(0,0); }
 
 /* 빈 상태 */
 .pf-empty{
@@ -1171,10 +1186,18 @@ function loadPortfolio(){
         var grid=sec.querySelector('.pf-grid-char');
         renderGrid(grid,cat.id,items);
       });
-      // 동적 생성 항목은 옵저버가 놓칠 수 있어 명시적으로 등장시킴 (페이드인 유지)
-      requestAnimationFrame(function(){
-        document.querySelectorAll('#pfSections .reveal').forEach(function(el){ el.classList.add('in'); });
-      });
+      // 스크롤에 맞춰 작품이 순차적으로 부드럽게 등장 (전문적 페이드업)
+      var pObs=new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); pObs.unobserve(e.target); } });
+      },{ threshold:0.05, rootMargin:'0px 0px -6% 0px' });
+      document.querySelectorAll('#pfSections .reveal').forEach(function(el){ pObs.observe(el); });
+      // 안전장치: 화면 안에 있는데 1.3초 뒤에도 안 뜬 항목은 강제 표시
+      setTimeout(function(){
+        document.querySelectorAll('#pfSections .reveal:not(.in)').forEach(function(el){
+          var r=el.getBoundingClientRect();
+          if(r.top<window.innerHeight && r.bottom>0) el.classList.add('in');
+        });
+      },1300);
     })
     .catch(function(){ /* 빈 상태 유지 */ });
 }
