@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>모무꼬 · 커미션 편집</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;scrollbar-width:thin;scrollbar-color:#3a3a46 transparent}
+*::-webkit-scrollbar{width:7px;height:7px}*::-webkit-scrollbar-thumb{background:#3a3a46;border-radius:4px}
+:root{
+  --Y:#3D8EF0; --Yd:#2c6fc4; --pink:#ff6fae;
+  --bg:#1A1A22; --bg2:#22222c; --bg3:#2a2a36;
+  --border:rgba(255,255,255,.12); --border2:rgba(255,255,255,.07);
+  --text:#F0EEE8; --text2:#B8B4AC; --text3:#7A7870;
+  --green:#34d399; --red:#f87171;
+  --cond:'Barlow Condensed',sans-serif; --mono:'DM Mono',monospace; --kr:'Noto Sans KR',sans-serif;
+}
+body{font-family:var(--kr);background:var(--bg);color:var(--text);line-height:1.5;padding:0 0 80px}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:14px;padding:13px 20px;background:rgba(26,26,34,.97);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+.tb-title{font-family:'Bebas Neue';font-size:20px;letter-spacing:1.5px;color:var(--Y)}
+.tb-sub{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.5px}
+.tb-spacer{flex:1}
+.tb-status{font-family:var(--mono);font-size:11px;color:var(--text3);display:none}
+.tb-status.show{display:block}
+.tb-status.ok{color:var(--green)}.tb-status.err{color:var(--red)}.tb-status.load{color:var(--Y)}
+.btn{border:none;border-radius:9px;font-family:var(--cond);font-weight:700;font-size:14px;letter-spacing:.4px;padding:9px 18px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-save{background:linear-gradient(135deg,var(--Y),var(--Yd));color:#fff;box-shadow:0 4px 16px rgba(61,142,240,.35)}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 7px 22px rgba(61,142,240,.45)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--Y)}
+
+.wrap{max-width:860px;margin:0 auto;padding:22px 20px}
+
+/* section card */
+.ed{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;overflow:hidden}
+.ed-head{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .15s}
+.ed.open .ed-head{border-bottom-color:var(--border2)}
+.ed-ico{font-size:17px}
+.ed-title{font-family:var(--cond);font-size:17px;font-weight:900;letter-spacing:.4px}
+.ed-meta{font-family:var(--mono);font-size:11px;color:var(--text3);margin-left:auto}
+.ed-arr{color:var(--text3);transition:transform .2s;font-size:12px}
+.ed.open .ed-arr{transform:rotate(180deg)}
+.ed-body{display:none;padding:16px 18px}
+.ed.open .ed-body{display:block}
+
+label.fl{display:block;font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--text3);text-transform:uppercase;margin:0 0 5px}
+input.f,textarea.f,select.f{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--kr);font-size:13px;outline:none;transition:border-color .15s}
+input.f:focus,textarea.f:focus{border-color:var(--Y)}
+textarea.f{resize:vertical;min-height:60px;line-height:1.6}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{min-width:0}
+.mini{font-family:var(--cond);font-size:12px;font-weight:700;border:none;border-radius:7px;padding:6px 11px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.mini-add{background:rgba(61,142,240,.15);color:var(--Y);border:1px dashed var(--Y)}
+.mini-add:hover{background:rgba(61,142,240,.25)}
+.mini-del{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+.mini-del:hover{background:rgba(248,113,113,.22)}
+.mini-up{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+
+/* slots */
+.slot-edit{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;flex-wrap:wrap}
+.slot-edit input{width:70px;flex-shrink:0}
+.sdot{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--Y);background:transparent;color:var(--Y);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.sdot.on{background:var(--Y);color:#fff}
+.sdot-add,.sdot-rm{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text3);cursor:pointer;font-size:13px}
+
+/* item rows */
+.item-row{display:grid;grid-template-columns:1fr 1fr 110px 34px;gap:7px;align-items:center;margin-bottom:7px}
+.item-row input{font-size:12.5px;padding:8px 10px}
+.price-in{text-align:right;font-family:var(--mono)}
+.sec-block{background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:13px;margin-bottom:11px}
+.sec-block-head{display:flex;gap:7px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.sec-block-head input{font-size:13px}
+.tag-pill{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:5px;background:var(--bg3);color:var(--text3)}
+.hint{font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--kr)}
+.col-head{display:grid;grid-template-columns:1fr 1fr 110px 34px;gap:7px;font-family:var(--cond);font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding:0 2px}
+
+/* gh settings */
+.gh-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.gh-note{font-size:11.5px;color:var(--text3);background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 13px;line-height:1.6;margin-top:4px}
+.gh-note b{color:var(--Y)}
+.json-ta{width:100%;min-height:240px;background:#15151c;border:1px solid var(--border);border-radius:9px;padding:12px;color:#cfe3ff;font-family:var(--mono);font-size:11.5px;line-height:1.6;outline:none;resize:vertical}
+
+/* toast */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9000;background:#000;border:1px solid var(--border);color:#fff;padding:12px 22px;border-radius:10px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s;box-shadow:0 12px 40px rgba(0,0,0,.5);font-family:var(--kr)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--green)}.toast.err{border-color:var(--red)}
+
+@media(max-width:560px){
+  .item-row,.col-head{grid-template-columns:1fr 80px 30px}
+  .item-row .en-in,.col-head .en-col{display:none}
+  .gh-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-title">EDIT</div>
+  <div class="tb-sub">커미션 페이지</div>
+  <div class="tb-spacer"></div>
+  <div class="tb-status" id="status"></div>
+  <button class="btn btn-ghost" onclick="reloadData()">↻ 새로고침</button>
+  <button class="btn btn-save" onclick="save()">💾 저장 (배포)</button>
+</div>
+
+<div class="wrap">
+
+  <!-- 히어로 -->
+  <div class="ed" id="ed-hero">
+    <div class="ed-head" onclick="toggleEd('hero')">
+      <span class="ed-ico">✨</span><span class="ed-title">히어로 (상단 문구)</span>
+      <span class="ed-arr">▼</span>
+    </div>
+    <div class="ed-body">
+      <label class="fl">배지 (한국어)</label><input class="f" id="heroBadgeKo" oninput="D.hero.badgeKo=this.value" style="margin-bottom:9px">
+      <label class="fl">Badge (EN)</label><input class="f" id="heroBadgeEn" oninput="D.hero.badgeEn=this.value" style="margin-bottom:9px">
+      <label class="fl">소개 문구 (한국어 · &lt;br&gt; 줄바꿈 가능)</label><textarea class="f" id="heroSubKo" oninput="D.hero.subKo=this.value" style="margin-bottom:9px"></textarea>
+      <label class="fl">Intro (EN)</label><textarea class="f" id="heroSubEn" oninput="D.hero.subEn=this.value"></textarea>
+      <div class="hint">제목 "Momukko Live2D Illustration"은 디자인 고정이라 여기서 바꾸지 않아요.</div>
+    </div>
+  </div>
+
+  <!-- 슬롯 -->
+  <div class="ed open" id="ed-slots">
+    <div class="ed-head" onclick="toggleEd('slots')">
+      <span class="ed-ico">⚡</span><span class="ed-title">작업 슬롯</span>
+      <span class="ed-meta" id="meta-slots"></span><span class="ed-arr">▼</span>
+    </div>
+    <div class="ed-body">
+      <div id="slotsBox"></div>
+      <div class="row" style="gap:7px;margin-top:4px">
+        <button class="mini mini-add" onclick="addSlot()">＋ 월 추가</button>
+        <button class="mini" style="background:rgba(52,211,153,.14);color:var(--green);border:1px solid rgba(52,211,153,.35)" onclick="autoSlots()">🔄 대시보드에서 자동 계산</button>
+      </div>
+      <div class="hint">● = 마감 / ○ = 오픈 · 클릭해서 토글 · 자동 계산은 진행중 의뢰의 마감 월을 세어 채워줍니다</div>
+    </div>
+  </div>
+
+  <!-- 상태 칩 -->
+  <div class="ed" id="ed-chips">
+    <div class="ed-head" onclick="toggleEd('chips')">
+      <span class="ed-ico">🏷</span><span class="ed-title">상태 칩</span>
+      <span class="ed-meta" id="meta-chips"></span><span class="ed-arr">▼</span>
+    </div>
+    <div class="ed-body">
+      <div id="chipsBox"></div>
+      <button class="mini mini-add" onclick="addChip()">＋ 칩 추가</button>
+      <div class="hint">&lt;b&gt;강조&lt;/b&gt; 태그로 굵게 표시할 수 있어요 · LIVE = 깜빡이는 점</div>
+    </div>
+  </div>
+
+  <!-- 가격 메뉴 -->
+  <div class="ed open" id="ed-price">
+    <div class="ed-head" onclick="toggleEd('price')">
+      <span class="ed-ico">💰</span><span class="ed-title">가격 메뉴</span>
+      <span class="ed-meta" id="meta-price"></span><span class="ed-arr">▼</span>
+    </div>
+    <div class="ed-body">
+      <div id="priceBox"></div>
+      <button class="mini mini-add" onclick="addSection()">＋ 섹션 추가</button>
+    </div>
+  </div>
+
+  <!-- 작업순서 -->
+  <div class="ed" id="ed-steps">
+    <div class="ed-head" onclick="toggleEd('steps')">
+      <span class="ed-ico">📐</span><span class="ed-title">작업 순서 (STEP)</span>
+      <span class="ed-meta" id="meta-steps"></span><span class="ed-arr">▼</span>
+    </div>
+    <div class="ed-body">
+      <div id="stepsBox"></div>
+      <button class="mini mini-add" onclick="addStep()">＋ 단계 추가</button>
+      <div class="hint">번호 · 이름 · 보조설명(선택) 순. 마지막 단계는 핑크로 강조됩니다.</div>
+    </div>
+  </div>
+
+  <!-- 약관 -->
+  <div class="ed" id="ed-notice">
+    <div class="ed-head" onclick="toggleEd('notice')">
+      <span class="ed-ico">📋</span><span class="ed-title">작업 안내 / 약관</span>
+      <span class="ed-meta" id="meta-notice"></span><span class="ed-arr">▼</span>
+    </div>
+    <div class="ed-body">
+      <div id="noticeBox"></div>
+      <button class="mini mini-add" onclick="addNotice()">＋ 항목 추가</button>
+    </div>
+  </div>
+
+  <!-- 신청 질문 -->
+  <div class="ed" id="ed-apply">
+    <div class="ed-head" onclick="toggleEd('apply')">
+      <span class="ed-ico">✦</span><span class="ed-title">신청 질문</span>
+      <span class="ed-meta" id="meta-apply"></span><span class="ed-arr">▼</span>
+    </div>
+    <div class="ed-body">
+      <div id="applyBox"></div>
+      <button class="mini mini-add" onclick="addApply()">＋ 질문 추가</button>
+    </div>
+  </div>
+
+  <!-- 포트폴리오 -->
+  <div class="ed" id="ed-port">
+    <div class="ed-head" onclick="toggleEd('port')">
+      <span class="ed-ico">🖼</span><span class="ed-title">포트폴리오 이미지</span>
+      <span class="ed-meta" id="meta-port"></span><span class="ed-arr">▼</span>
+    </div>
+    <div class="ed-body">
+      <div id="portBox" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px"></div>
+      <div class="row" style="margin-top:11px;gap:7px">
+        <label class="mini mini-add" style="text-align:center;cursor:pointer;display:inline-block">＋ 이미지 업로드<input type="file" accept="image/*" multiple style="display:none" onchange="uploadPort(this)"></label>
+        <button class="mini mini-up" onclick="loadPort()">↻ 새로고침</button>
+      </div>
+      <div class="hint">업로드/삭제는 즉시 GitHub에 반영 · 순서는 ↑↓ 변경 후 "💾 저장(배포)"로 확정</div>
+    </div>
+  </div>
+
+  <!-- GitHub 설정 / RAW -->
+  <div class="ed" id="ed-gh">
+    <div class="ed-head" onclick="toggleEd('gh')">
+      <span class="ed-ico">⚙</span><span class="ed-title">GitHub 설정 & 고급</span>
+      <span class="ed-arr">▼</span>
+    </div>
+    <div class="ed-body">
+      <div class="gh-grid">
+        <div><label class="fl">GitHub 사용자</label><input class="f" id="ghUser" placeholder="Tmabe"></div>
+        <div><label class="fl">저장소</label><input class="f" id="ghRepo" placeholder="momuuko"></div>
+      </div>
+      <label class="fl">토큰 (repo 권한)</label>
+      <input class="f" id="ghToken" type="password" placeholder="ghp_...">
+      <div class="gh-note">대시보드에서 이미 토큰을 설정했다면 <b>자동으로 공유</b>됩니다.<br>없다면: GitHub → Settings → Developer settings → Personal access tokens → <b>repo</b> 체크 → 생성</div>
+      <div style="margin-top:14px">
+        <label class="fl">RAW JSON (직접 편집 · 고급)</label>
+        <textarea class="json-ta" id="rawJson" spellcheck="false"></textarea>
+        <div class="row" style="margin-top:8px">
+          <button class="mini mini-up" onclick="applyRaw()">↑ RAW를 폼에 반영</button>
+          <button class="mini mini-up" onclick="syncRaw()">↓ 폼을 RAW로 추출</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:8px">
+    <a href="artmug.html" target="_blank" style="color:var(--Y);font-family:var(--cond);font-weight:700;font-size:14px;text-decoration:none">🔗 공개 페이지 미리보기 →</a>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var D={hero:{},steps:[],chips:[],slots:[],sections:[],notice:[],apply:[],portfolioOrder:[]};
+var _sha=null;
+var portFiles=[];
+
+/* ───── helpers ───── */
+function esc(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function won(n){return Number(n||0).toLocaleString('en-US');}
+function status(msg,cls){var e=document.getElementById('status');e.textContent=msg;e.className='tb-status show '+(cls||'');}
+function toast(msg,cls){var e=document.getElementById('toast');e.textContent=msg;e.className='toast show '+(cls||'');clearTimeout(e._t);e._t=setTimeout(function(){e.className='toast';},2600);}
+function toggleEd(id){document.getElementById('ed-'+id).classList.toggle('open');}
+function ghCfg(){return {user:(document.getElementById('ghUser').value||localStorage.getItem('gh_user')||'').trim(),repo:(document.getElementById('ghRepo').value||localStorage.getItem('gh_repo')||'').trim(),token:(document.getElementById('ghToken').value||localStorage.getItem('gh_token')||'').trim()};}
+
+/* ───── load ───── */
+function loadGhFields(){
+  document.getElementById('ghUser').value=localStorage.getItem('gh_user')||'Tmabe';
+  document.getElementById('ghRepo').value=localStorage.getItem('gh_repo')||'momuuko';
+  document.getElementById('ghToken').value=localStorage.getItem('gh_token')||'';
+}
+function reloadData(){
+  status('불러오는 중...','load');
+  fetch('data/commission.json?t='+Date.now())
+    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
+    .then(function(j){
+      D={hero:j.hero||{},steps:j.steps||[],chips:j.chips||[],slots:j.slots||[],sections:j.sections||[],notice:j.notice||[],apply:j.apply||[],portfolioOrder:j.portfolioOrder||[]};
+      renderAll();loadPort();status('불러옴 ✓','ok');
+    })
+    .catch(function(e){status('불러오기 실패 — 기본값 사용','err');renderAll();});
+}
+
+/* ───── render ───── */
+function renderAll(){renderHero();renderSlots();renderChips();renderSteps();renderPrice();renderNotice();renderApply();syncRaw();updateMeta();}
+function renderHero(){
+  if(!D.hero)D.hero={};
+  document.getElementById('heroBadgeKo').value=D.hero.badgeKo||'';
+  document.getElementById('heroBadgeEn').value=D.hero.badgeEn||'';
+  document.getElementById('heroSubKo').value=D.hero.subKo||'';
+  document.getElementById('heroSubEn').value=D.hero.subEn||'';
+}
+function renderSteps(){
+  var h='';
+  D.steps.forEach(function(s,i){
+    h+='<div class="slot-edit" style="gap:7px">';
+    h+='<input class="f" value="'+esc(s.num)+'" oninput="D.steps['+i+'].num=this.value" placeholder="STEP 01" style="width:78px;font-family:var(--mono);font-size:11px">';
+    h+='<input class="f" value="'+esc(s.ko)+'" oninput="D.steps['+i+'].ko=this.value" placeholder="이름" style="flex:1;min-width:80px">';
+    h+='<input class="f" value="'+esc(s.koSub||'')+'" oninput="D.steps['+i+'].koSub=this.value" placeholder="보조(선택)" style="width:90px">';
+    h+='<input class="f" value="'+esc(s.en||'')+'" oninput="D.steps['+i+'].en=this.value" placeholder="EN" style="width:90px;font-size:12px">';
+    h+='<button class="mini '+(s.last?'mini-add':'mini-up')+'" onclick="D.steps.forEach(function(x){x.last=false});D.steps['+i+'].last=!D.steps['+i+'].last;renderSteps()" title="마지막 강조">★</button>';
+    h+='<button class="mini mini-up" onclick="moveStep('+i+',-1)">↑</button><button class="mini mini-up" onclick="moveStep('+i+',1)">↓</button>';
+    h+='<button class="mini mini-del" onclick="D.steps.splice('+i+',1);renderSteps()">×</button></div>';
+  });
+  document.getElementById('stepsBox').innerHTML=h;updateMeta();
+}
+function addStep(){D.steps.push({num:'STEP '+('0'+(D.steps.length+1)).slice(-2),ko:'새 단계',koSub:'',en:'',enSub:''});renderSteps();}
+function moveStep(i,d){var j=i+d;if(j<0||j>=D.steps.length)return;var t=D.steps[i];D.steps[i]=D.steps[j];D.steps[j]=t;renderSteps();}
+function updateMeta(){
+  document.getElementById('meta-slots').textContent=D.slots.length+'개월';
+  document.getElementById('meta-chips').textContent=D.chips.length+'개';
+  var items=D.sections.reduce(function(s,sec){return s+(sec.items?sec.items.length:0);},0);
+  document.getElementById('meta-price').textContent=D.sections.length+'섹션 · '+items+'항목';
+  document.getElementById('meta-notice').textContent=D.notice.length+'개';
+  document.getElementById('meta-apply').textContent=D.apply.length+'개';
+  var ms=document.getElementById('meta-steps');if(ms)ms.textContent=D.steps.length+'단계';
+}
+
+function renderSlots(){
+  var h='';
+  D.slots.forEach(function(s,i){
+    h+='<div class="slot-edit"><input class="f" value="'+esc(s.ko)+'" oninput="D.slots['+i+'].ko=this.value" placeholder="4월">';
+    h+='<input class="f" value="'+esc(s.en||'')+'" oninput="D.slots['+i+'].en=this.value" placeholder="April" style="width:80px">';
+    h+='<div class="row" style="gap:5px">';
+    s.filled.forEach(function(f,di){
+      h+='<button class="sdot'+(f?' on':'')+'" onclick="toggleDot('+i+','+di+')">'+(f?'●':'○')+'</button>';
+    });
+    h+='<button class="sdot-rm" onclick="rmDotSlot('+i+',-1)" title="자리 빼기">－</button>';
+    h+='<button class="sdot-add" onclick="rmDotSlot('+i+',1)" title="자리 추가">＋</button>';
+    h+='</div><button class="mini mini-del" style="margin-left:auto" onclick="rmSlot('+i+')">삭제</button></div>';
+  });
+  document.getElementById('slotsBox').innerHTML=h;updateMeta();
+}
+function toggleDot(i,di){D.slots[i].filled[di]=!D.slots[i].filled[di];renderSlots();}
+function rmDotSlot(i,d){var f=D.slots[i].filled;if(d>0)f.push(false);else if(f.length>1)f.pop();renderSlots();}
+function addSlot(){D.slots.push({ko:'새 월',en:'',filled:[false,false,false]});renderSlots();}
+function rmSlot(i){D.slots.splice(i,1);renderSlots();}
+function autoSlots(){
+  var raw; try{raw=JSON.parse(localStorage.getItem('mm_dash_v1')||'[]');}catch(e){raw=[];}
+  var comms=Array.isArray(raw)?raw:(raw.commissions||[]);
+  if(!comms.length){toast('대시보드 의뢰 데이터가 없어요 (같은 브라우저에서 대시보드를 먼저 여세요)','err');return;}
+  var DONE=7, byMonth={};
+  comms.forEach(function(c){
+    var active=(typeof c.stage==='number'?c.stage<DONE:c.stage!=='전달완료')&&!c.hidden;
+    if(!active||!c.deadline)return;
+    var m=new Date(c.deadline).getMonth()+1;
+    byMonth[m]=(byMonth[m]||0)+1;
+  });
+  var filled=0;
+  D.slots.forEach(function(s){
+    var mm=(String(s.ko).match(/(\d+)/)||[])[1];
+    if(!mm)return;
+    var cnt=byMonth[parseInt(mm,10)]||0; filled+=cnt;
+    s.filled=s.filled.map(function(_,i){return i<cnt;});
+  });
+  renderSlots();
+  toast('진행중 의뢰 '+filled+'건을 슬롯에 반영했어요 ✓ (검토 후 저장)','ok');
+}
+
+function renderChips(){
+  var h='';
+  D.chips.forEach(function(c,i){
+    h+='<div class="row" style="margin-bottom:7px">';
+    h+='<input class="f" value="'+esc(c.ko)+'" oninput="D.chips['+i+'].ko=this.value" placeholder="한국어 (예: 접수 &lt;b&gt;진행중&lt;/b&gt;)">';
+    h+='<input class="f" value="'+esc(c.en||'')+'" oninput="D.chips['+i+'].en=this.value" placeholder="English">';
+    h+='<button class="mini '+(c.live?'mini-add':'mini-up')+'" onclick="D.chips['+i+'].live=!D.chips['+i+'].live;renderChips()" title="깜빡이는 점">LIVE</button>';
+    h+='<button class="mini '+(c.pk?'mini-add':'mini-up')+'" onclick="D.chips['+i+'].pk=!D.chips['+i+'].pk;renderChips()" title="핑크 강조">PINK</button>';
+    h+='<button class="mini mini-del" onclick="D.chips.splice('+i+',1);renderChips()">×</button></div>';
+  });
+  document.getElementById('chipsBox').innerHTML=h;updateMeta();
+}
+function addChip(){D.chips.push({ko:'새 칩',en:''});renderChips();}
+
+function renderPrice(){
+  var h='';
+  D.sections.forEach(function(sec,si){
+    h+='<div class="sec-block">';
+    h+='<div class="sec-block-head">';
+    h+='<input class="f" value="'+esc(sec.ko)+'" oninput="D.sections['+si+'].ko=this.value" placeholder="섹션 제목" style="flex:1">';
+    h+='<select class="f" style="width:96px" onchange="D.sections['+si+'].type=this.value;renderPrice()">';
+    ['radio','pill','expr'].forEach(function(t){h+='<option value="'+t+'"'+(sec.type===t?' selected':'')+'>'+(t==='radio'?'단일선택':t==='pill'?'다중선택':'표정(무료)')+'</option>';});
+    h+='</select>';
+    h+='<button class="mini mini-up" onclick="moveSec('+si+',-1)">↑</button><button class="mini mini-up" onclick="moveSec('+si+',1)">↓</button>';
+    h+='<button class="mini mini-del" onclick="rmSec('+si+')">섹션삭제</button></div>';
+    // koLabel / en
+    h+='<div class="row" style="margin-bottom:9px">';
+    h+='<input class="f" value="'+esc(sec.en||'')+'" oninput="D.sections['+si+'].en=this.value" placeholder="English 제목" style="font-size:12px">';
+    h+='<input class="f" value="'+esc(sec.koLabel||'')+'" oninput="D.sections['+si+'].koLabel=this.value" placeholder="주문서용 라벨 (예: 기본 일러스트)" style="font-size:12px">';
+    h+='</div>';
+    h+='<div class="col-head"><span>한국어 항목명</span><span class="en-col">English</span><span style="text-align:right">가격</span><span></span></div>';
+    (sec.items||[]).forEach(function(it,ii){
+      var isExpr=sec.type==='expr';
+      h+='<div class="item-row">';
+      h+='<input class="f" value="'+esc(it.ko)+'" oninput="D.sections['+si+'].items['+ii+'].ko=this.value" placeholder="항목명">';
+      h+='<input class="f en-in" value="'+esc(it.en||'')+'" oninput="D.sections['+si+'].items['+ii+'].en=this.value" placeholder="English">';
+      if(isExpr){h+='<input class="f price-in" value="무료" disabled style="opacity:.5">';}
+      else{h+='<input class="f price-in" type="number" value="'+(it.p||0)+'" oninput="D.sections['+si+'].items['+ii+'].p=parseInt(this.value)||0" placeholder="0">';}
+      h+='<button class="mini mini-del" onclick="rmItem('+si+','+ii+')">×</button></div>';
+    });
+    h+='<button class="mini mini-add" onclick="addItem('+si+')">＋ 항목</button>';
+    // sub note/hint/tag
+    h+='<div style="margin-top:9px"><input class="f" value="'+esc(sec.noteKo||'')+'" oninput="D.sections['+si+'].noteKo=this.value" placeholder="안내 노트 (선택)" style="font-size:12px;margin-bottom:5px">';
+    h+='<input class="f" value="'+esc(sec.hintKo||'')+'" oninput="D.sections['+si+'].hintKo=this.value" placeholder="주의 힌트 (선택)" style="font-size:12px"></div>';
+    h+='</div>';
+  });
+  document.getElementById('priceBox').innerHTML=h;updateMeta();
+}
+function addItem(si){var sec=D.sections[si];if(!sec.items)sec.items=[];var pre=sec.id||'s'+si;sec.items.push({id:pre+'_'+Date.now().toString(36),ko:'새 항목',en:'',p:0});renderPrice();}
+function rmItem(si,ii){D.sections[si].items.splice(ii,1);renderPrice();}
+function addSection(){D.sections.push({id:'sec'+Date.now().toString(36),ko:'▸ 새 섹션',en:'New Section',koLabel:'새 섹션',type:'pill',items:[]});renderPrice();}
+function rmSec(si){if(confirm('이 섹션을 삭제할까요?')){D.sections.splice(si,1);renderPrice();}}
+function moveSec(si,d){var j=si+d;if(j<0||j>=D.sections.length)return;var t=D.sections[si];D.sections[si]=D.sections[j];D.sections[j]=t;renderPrice();}
+
+function renderNotice(){
+  var h='';
+  D.notice.forEach(function(n,i){
+    h+='<div class="sec-block"><div class="row" style="margin-bottom:7px">';
+    h+='<input class="f" value="'+esc(n.ico||'')+'" oninput="D.notice['+i+'].ico=this.value" placeholder="🎨" style="width:54px;text-align:center">';
+    h+='<input class="f" value="'+esc(n.qKo)+'" oninput="D.notice['+i+'].qKo=this.value" placeholder="제목 (한국어)">';
+    h+='<input class="f" value="'+esc(n.qEn||'')+'" oninput="D.notice['+i+'].qEn=this.value" placeholder="Title (EN)">';
+    h+='<button class="mini mini-del" onclick="D.notice.splice('+i+',1);renderNotice()">×</button></div>';
+    h+='<textarea class="f" oninput="D.notice['+i+'].aKo=this.value" placeholder="내용 (한국어)" style="margin-bottom:5px">'+esc(n.aKo)+'</textarea>';
+    h+='<textarea class="f" oninput="D.notice['+i+'].aEn=this.value" placeholder="Content (EN)">'+esc(n.aEn||'')+'</textarea></div>';
+  });
+  document.getElementById('noticeBox').innerHTML=h;updateMeta();
+}
+function addNotice(){D.notice.push({ico:'✦',qKo:'새 항목',qEn:'',aKo:'',aEn:''});renderNotice();}
+
+function renderApply(){
+  var h='';
+  D.apply.forEach(function(q,i){
+    h+='<div class="row" style="margin-bottom:7px">';
+    h+='<span style="color:var(--text3);font-family:var(--mono);font-size:12px;width:18px;text-align:center">'+(i+1)+'</span>';
+    h+='<input class="f" value="'+esc(q.ko)+'" oninput="D.apply['+i+'].ko=this.value" placeholder="질문 (한국어)">';
+    h+='<input class="f" value="'+esc(q.en||'')+'" oninput="D.apply['+i+'].en=this.value" placeholder="Question (EN)">';
+    h+='<button class="mini mini-del" onclick="D.apply.splice('+i+',1);renderApply()">×</button></div>';
+  });
+  document.getElementById('applyBox').innerHTML=h;updateMeta();
+}
+function addApply(){D.apply.push({ko:'새 질문',en:''});renderApply();}
+
+/* ───── RAW JSON ───── */
+function syncRaw(){document.getElementById('rawJson').value=JSON.stringify(buildJson(),null,2);}
+function applyRaw(){
+  try{var j=JSON.parse(document.getElementById('rawJson').value);
+    D={hero:j.hero||{},steps:j.steps||[],chips:j.chips||[],slots:j.slots||[],sections:j.sections||[],notice:j.notice||[],apply:j.apply||[],portfolioOrder:j.portfolioOrder||[]};
+    renderAll();toast('RAW를 폼에 반영했어요 ✓','ok');
+  }catch(e){toast('JSON 형식 오류: '+e.message,'err');}
+}
+function buildJson(){
+  return {updated:new Date().toISOString(),hero:D.hero,steps:D.steps,chips:D.chips,slots:D.slots,sections:D.sections,notice:D.notice,apply:D.apply,portfolioOrder:D.portfolioOrder||[]};
+}
+
+/* ───── 포트폴리오 관리 ───── */
+function loadPort(){
+  var c=ghCfg();if(!c.user||!c.repo){return;}
+  fetch('https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/portfolio?t='+Date.now())
+    .then(function(r){return r.ok?r.json():[];})
+    .then(function(data){
+      portFiles=(data||[]).filter(function(f){return f.type==='file'&&/\.(png|jpe?g|gif|webp)$/i.test(f.name);}).map(function(f){return {name:f.name,sha:f.sha};});
+      if(D.portfolioOrder&&D.portfolioOrder.length){
+        portFiles.sort(function(a,b){var ia=D.portfolioOrder.indexOf(a.name),ib=D.portfolioOrder.indexOf(b.name);return (ia<0?999:ia)-(ib<0?999:ib);});
+      }
+      renderPort();
+    }).catch(function(){renderPort();});
+}
+function renderPort(){
+  var c=ghCfg();var base='https://'+c.user+'.github.io/'+c.repo+'/portfolio/';
+  var h='';
+  portFiles.forEach(function(f,i){
+    h+='<div style="position:relative;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg)">'+
+       '<img src="'+base+encodeURIComponent(f.name)+'" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block">'+
+       '<div style="position:absolute;top:3px;right:3px;display:flex;gap:2px">'+
+       '<button class="mini mini-up" style="padding:1px 5px" onclick="movePort('+i+',-1)">↑</button>'+
+       '<button class="mini mini-up" style="padding:1px 5px" onclick="movePort('+i+',1)">↓</button>'+
+       '<button class="mini mini-del" style="padding:1px 5px" onclick="delPort('+i+')">×</button></div></div>';
+  });
+  document.getElementById('portBox').innerHTML=h||'<div class="hint" style="grid-column:1/-1">이미지가 없어요. 업로드해 보세요.</div>';
+  var mp=document.getElementById('meta-port');if(mp)mp.textContent=portFiles.length+'장';
+}
+function movePort(i,d){var j=i+d;if(j<0||j>=portFiles.length)return;var t=portFiles[i];portFiles[i]=portFiles[j];portFiles[j]=t;D.portfolioOrder=portFiles.map(function(f){return f.name;});renderPort();toast('순서 변경됨 · 저장(배포)하면 확정','ok');}
+function delPort(i){
+  var c=ghCfg();if(!c.token){toast('토큰이 필요해요 (⚙ 설정)','err');return;}
+  var f=portFiles[i];if(!confirm('"'+f.name+'" 삭제할까요?'))return;
+  status('삭제 중...','load');
+  fetch('https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/portfolio/'+encodeURIComponent(f.name),{
+    method:'DELETE',headers:{'Authorization':'token '+c.token,'Content-Type':'application/json'},
+    body:JSON.stringify({message:'🗑 포트폴리오 삭제 '+f.name,sha:f.sha})
+  }).then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});}).then(function(res){
+    if(res.ok){portFiles.splice(i,1);renderPort();status('삭제됨 ✓','ok');toast('삭제 완료 ✓','ok');}
+    else{status('실패','err');toast('삭제 실패: '+(res.j.message||''),'err');}
+  });
+}
+function uploadPort(input){
+  var c=ghCfg();if(!c.token){toast('토큰이 필요해요 (⚙ 설정)','err');return;}
+  var files=Array.prototype.slice.call(input.files);if(!files.length)return;
+  status('업로드 중... ('+files.length+'장)','load');
+  var done=0,fail=0;
+  files.forEach(function(file){
+    var rd=new FileReader();
+    rd.onload=function(){
+      var b64=rd.result.split(',')[1];
+      var name=file.name.replace(/[^\w.\-가-힣]/g,'_');
+      fetch('https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/portfolio/'+encodeURIComponent(name),{
+        method:'PUT',headers:{'Authorization':'token '+c.token,'Content-Type':'application/json'},
+        body:JSON.stringify({message:'📷 포트폴리오 추가 '+name,content:b64})
+      }).then(function(r){if(!r.ok)fail++;done++;if(done===files.length){setTimeout(loadPort,1300);status(fail?(fail+'장 실패'):'업로드 완료 ✓',fail?'err':'ok');toast(fail?(fail+'장 실패'):'업로드 완료 ✓',fail?'err':'ok');}});
+    };
+    rd.readAsDataURL(file);
+  });
+  input.value='';
+}
+
+/* ───── save to GitHub ───── */
+function b64(str){return btoa(unescape(encodeURIComponent(str)));}
+function save(){
+  var c=ghCfg();
+  if(!c.token){toast('먼저 GitHub 토큰을 입력해 주세요 (⚙ 설정)','err');document.getElementById('ed-gh').classList.add('open');return;}
+  // persist creds for sharing with dashboard
+  localStorage.setItem('gh_user',c.user);localStorage.setItem('gh_repo',c.repo);localStorage.setItem('gh_token',c.token);
+  status('저장 중...','load');
+  var content=b64(JSON.stringify(buildJson(),null,2));
+  var url='https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/data/commission.json';
+  // get latest sha
+  fetch(url+'?t='+Date.now(),{headers:{'Authorization':'token '+c.token}})
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(j){var sha=j&&j.sha?j.sha:undefined;
+      return fetch(url,{method:'PUT',headers:{'Authorization':'token '+c.token,'Content-Type':'application/json'},
+        body:JSON.stringify({message:'✏️ 커미션 페이지 수정 '+new Date().toLocaleString('ko-KR'),content:content,sha:sha})});
+    })
+    .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+    .then(function(res){
+      if(res.ok){status('배포 완료 ✓','ok');toast('저장 완료! 공개 페이지에 곧 반영돼요 🎉','ok');}
+      else{status('실패','err');toast('저장 실패: '+(res.j.message||'알 수 없는 오류'),'err');}
+    })
+    .catch(function(e){status('오류','err');toast('네트워크 오류: '+e.message,'err');});
+}
+
+/* ───── init ───── */
+loadGhFields();
+reloadData();
+</script>
+</body>
+</html>

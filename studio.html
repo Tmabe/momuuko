@@ -77,6 +77,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
     <button class="tab-btn active" onclick="switchTab('dashboard')">대시보드</button>
     <button class="tab-btn" onclick="switchTab('deadline')">마감캘린더</button>
     <button class="tab-btn" onclick="switchTab('practice')">연습트래커</button>
+    <button class="tab-btn" onclick="switchTab('editor')">커미션편집</button>
+    <button class="tab-btn" onclick="switchTab('stats')">통계</button>
+    <button class="tab-btn" onclick="switchTab('quote')">견적서</button>
   </nav>
   <div class="shell-stats">
     <span class="shell-stat">진행 <b id="stat-wip">-</b>건</span>
@@ -85,13 +88,16 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
   </div>
 </div>
 
-<iframe id="panel-dashboard" class="panel active" src="d_i75EXu4XuLRneN3r-BETA.html"></iframe>
-<iframe id="panel-deadline"  class="panel"        src="deadline-BETA.html"></iframe>
-<iframe id="panel-practice"  class="panel"        src="practice-BETA.html"></iframe>
+<iframe id="panel-dashboard" class="panel active" src="d_i75EXu4XuLRneN3r.html"></iframe>
+<iframe id="panel-deadline"  class="panel"        src="deadline.html"></iframe>
+<iframe id="panel-practice"  class="panel"        src="practice.html"></iframe>
+<iframe id="panel-editor"    class="panel"        src="commission-editor.html"></iframe>
+<iframe id="panel-stats"     class="panel"        src="stats.html"></iframe>
+<iframe id="panel-quote"     class="panel"        src="quote.html"></iframe>
 
 <script>
 function switchTab(id) {
-  var ids = ['dashboard', 'deadline', 'practice'];
+  var ids = ['dashboard', 'deadline', 'practice', 'editor', 'stats', 'quote'];
   document.querySelectorAll('.tab-btn').forEach(function(b, i) {
     b.classList.toggle('active', ids[i] === id);
   });
@@ -105,23 +111,23 @@ function switchTab(id) {
 function updateStats() {
   // 진행 건수 & 이번주 마감
   try {
-    var dash = JSON.parse(localStorage.getItem('mm_dash_v1') || '{}');
-    var comms = dash.commissions || [];
-    var wip = comms.filter(function(c) {
-      return c.stage !== '전달완료' && !c.hidden;
-    }).length;
-    document.getElementById('stat-wip').textContent = wip;
+    // mm_dash_v1 = 의뢰 배열(직접 저장). stage=숫자(0~7), 7=전달완료, 마감=deadline
+    var raw = JSON.parse(localStorage.getItem('mm_dash_v1') || '[]');
+    var comms = Array.isArray(raw) ? raw : (raw.commissions || []);
+    var DONE = 7;
+    function isActive(c){ return (typeof c.stage === 'number' ? c.stage < DONE : c.stage !== '전달완료') && !c.hidden; }
+    document.getElementById('stat-wip').textContent = comms.filter(isActive).length;
 
     var now = new Date();
     var weekStart = new Date(now);
-    weekStart.setDate(now.getDate() - now.getDay() + 1);
+    weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7)); // 월요일 시작
     weekStart.setHours(0,0,0,0);
     var weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
     weekEnd.setHours(23,59,59,999);
     var weekCount = comms.filter(function(c) {
-      if (!c.due || c.hidden) return false;
-      var d = new Date(c.due);
+      var dd = c.deadline || c.due; if (!dd || !isActive(c)) return false;
+      var d = new Date(dd);
       return d >= weekStart && d <= weekEnd;
     }).length;
     document.getElementById('stat-week').textContent = weekCount;
@@ -134,8 +140,9 @@ function updateStats() {
     var streak = 0;
     var check = new Date();
     check.setHours(0,0,0,0);
+    function _ld(d){ return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
     for (var i = 0; i < 365; i++) {
-      var ds = check.toISOString().slice(0,10);
+      var ds = _ld(check); // 연습트래커와 동일한 로컬 날짜 형식 (KST 어긋남 방지)
       if (!sessions.some(function(s) { return s.date === ds; })) break;
       streak++;
       check.setDate(check.getDate() - 1);

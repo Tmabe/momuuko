@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>모무꼬 · 통계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;scrollbar-width:thin;scrollbar-color:#3a3a46 transparent}
+*::-webkit-scrollbar{width:7px;height:7px}*::-webkit-scrollbar-thumb{background:#3a3a46;border-radius:4px}
+:root{
+  --Y:#3D8EF0; --pink:#ff6fae; --green:#34d399; --amber:#fbbf24; --purple:#a78bfa;
+  --bg:#1A1A22; --bg2:#22222c; --bg3:#2a2a36;
+  --border:rgba(255,255,255,.12); --border2:rgba(255,255,255,.06);
+  --text:#F0EEE8; --text2:#B8B4AC; --text3:#7A7870;
+  --display:'Bebas Neue',sans-serif; --cond:'Barlow Condensed',sans-serif; --mono:'DM Mono',monospace; --kr:'Noto Sans KR',sans-serif;
+}
+body{font-family:var(--kr);background:var(--bg);color:var(--text);line-height:1.5;padding:0 0 60px}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:13px 20px;background:rgba(26,26,34,.97);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+.tb-title{font-family:var(--display);font-size:20px;letter-spacing:1.5px;color:var(--Y)}
+.tb-sub{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.5px}
+.tb-spacer{flex:1}
+.btn{border:none;border-radius:9px;font-family:var(--cond);font-weight:700;font-size:14px;letter-spacing:.4px;padding:8px 16px;cursor:pointer;background:var(--bg3);color:var(--text2);border:1px solid var(--border);transition:all .15s}
+.btn:hover{color:var(--text);border-color:var(--Y)}
+.wrap{max-width:900px;margin:0 auto;padding:20px}
+
+/* summary cards */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:640px){.cards{grid-template-columns:1fr 1fr}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:16px 18px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--Y)}
+.card.g::before{background:var(--green)}.card.p::before{background:var(--pink)}.card.a::before{background:var(--amber)}
+.card-lbl{font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3)}
+.card-val{font-family:var(--display);font-size:34px;letter-spacing:1px;margin-top:4px;line-height:1}
+.card-sub{font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:4px}
+
+/* panels */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.panel-h{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.panel-h .ico{font-size:16px}
+.panel-h .t{font-family:var(--cond);font-size:17px;font-weight:900;letter-spacing:.4px}
+.panel-h .m{font-family:var(--mono);font-size:11px;color:var(--text3);margin-left:auto}
+
+/* monthly revenue bar chart */
+.bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:18px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;min-width:0}
+.bar-val{font-family:var(--mono);font-size:10px;color:var(--text2);white-space:nowrap}
+.bar{width:100%;max-width:42px;background:linear-gradient(180deg,var(--Y),#2c6fc4);border-radius:6px 6px 0 0;min-height:3px;transition:height .4s cubic-bezier(.2,.8,.2,1);position:relative}
+.bar.cur{background:linear-gradient(180deg,var(--pink),#d6477f)}
+.bar-lbl{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--text3);white-space:nowrap}
+
+/* horizontal distribution bars */
+.dist{display:flex;flex-direction:column;gap:9px}
+.dist-row{display:flex;align-items:center;gap:10px}
+.dist-name{width:120px;flex-shrink:0;font-size:12.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.dist-track{flex:1;height:22px;background:var(--bg3);border-radius:6px;overflow:hidden;position:relative}
+.dist-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--Y),#5ba3f5);min-width:2px;transition:width .4s}
+.dist-fill.s1{background:linear-gradient(90deg,var(--pink),#ff97c6)}
+.dist-fill.s2{background:linear-gradient(90deg,var(--purple),#c4b1ff)}
+.dist-fill.s3{background:linear-gradient(90deg,var(--green),#6ee7b7)}
+.dist-fill.s4{background:linear-gradient(90deg,var(--amber),#fcd34d)}
+.dist-cnt{width:54px;flex-shrink:0;text-align:right;font-family:var(--mono);font-size:12px;color:var(--text2)}
+
+/* stage pipeline */
+.stages{display:flex;gap:5px;flex-wrap:wrap}
+.stage{flex:1;min-width:74px;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:11px 8px;text-align:center}
+.stage-n{font-family:var(--display);font-size:24px;color:var(--Y);line-height:1}
+.stage-l{font-family:var(--kr);font-size:11px;color:var(--text3);margin-top:4px;font-weight:500}
+.stage.done .stage-n{color:var(--green)}
+
+.empty{text-align:center;padding:50px 20px;color:var(--text3);font-size:13px}
+.empty .ico{font-size:38px;margin-bottom:10px;opacity:.5}
+.foot{text-align:center;color:var(--text3);font-size:11px;font-family:var(--mono);padding:14px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-title">STATS</div>
+  <div class="tb-sub">의뢰 통계 · 수익</div>
+  <div class="tb-spacer"></div>
+  <button class="btn" onclick="render()">↻ 새로고침</button>
+</div>
+
+<div class="wrap" id="wrap"></div>
+
+<script>
+var STAGES=['접수','입금확인','러프','러프컨펌','선화','채색','완성','전달완료'];
+var DONE=7;
+function won(n){return Number(n||0).toLocaleString('en-US');}
+function manwon(n){n=Number(n||0);return n>=10000?(Math.round(n/10000).toLocaleString())+'만':won(n);}
+function loadComms(){
+  var raw; try{raw=JSON.parse(localStorage.getItem('mm_dash_v1')||'[]');}catch(e){raw=[];}
+  return Array.isArray(raw)?raw:(raw.commissions||[]);
+}
+function isActive(c){return (typeof c.stage==='number'?c.stage<DONE:c.stage!=='전달완료')&&!c.hidden;}
+function isDone(c){return (typeof c.stage==='number'?c.stage===DONE:c.stage==='전달완료')&&!c.hidden;}
+function ymNow(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2);}
+
+function render(){
+  var C=loadComms().filter(function(c){return !c.hidden;});
+  var wrap=document.getElementById('wrap');
+  if(!C.length){
+    wrap.innerHTML='<div class="empty"><div class="ico">📊</div>아직 의뢰 데이터가 없어요.<br>같은 브라우저에서 대시보드에 의뢰를 등록하면 통계가 표시됩니다.</div>';
+    return;
+  }
+  var active=C.filter(isActive).length, done=C.filter(isDone).length;
+  var paid=C.filter(function(c){return c.amount&&(c.paidAt||isDone(c));});
+  var totalRev=paid.reduce(function(s,c){return s+parseInt(c.amount||0);},0);
+  var thisMonthRev=C.filter(function(c){return c.amount&&c.paidAt&&c.paidAt.indexOf(ymNow())===0;}).reduce(function(s,c){return s+parseInt(c.amount||0);},0);
+  var amounts=C.filter(function(c){return c.amount;}).map(function(c){return parseInt(c.amount);});
+  var avgAmt=amounts.length?Math.round(amounts.reduce(function(a,b){return a+b;},0)/amounts.length):0;
+  // avg duration (startDate → deadline)
+  var durs=C.filter(function(c){return c.startDate&&c.deadline;}).map(function(c){return (new Date(c.deadline)-new Date(c.startDate))/86400000;}).filter(function(d){return d>0&&d<400;});
+  var avgDur=durs.length?Math.round(durs.reduce(function(a,b){return a+b;},0)/durs.length):0;
+
+  var h='';
+  // summary cards
+  h+='<div class="cards">';
+  h+='<div class="card"><div class="card-lbl">총 의뢰</div><div class="card-val">'+C.length+'</div><div class="card-sub">건</div></div>';
+  h+='<div class="card a"><div class="card-lbl">진행중</div><div class="card-val">'+active+'</div><div class="card-sub">건 작업중</div></div>';
+  h+='<div class="card g"><div class="card-lbl">완료</div><div class="card-val">'+done+'</div><div class="card-sub">건 전달</div></div>';
+  h+='<div class="card p"><div class="card-lbl">누적 매출</div><div class="card-val">'+manwon(totalRev)+'</div><div class="card-sub">원 · 이번달 '+manwon(thisMonthRev)+'</div></div>';
+  h+='</div>';
+
+  // monthly revenue chart (last 6 months)
+  var months=[];var nd=new Date();
+  for(var i=5;i>=0;i--){var d=new Date(nd.getFullYear(),nd.getMonth()-i,1);months.push(d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2));}
+  var revByM={};paid.forEach(function(c){var m=c.paidAt||'';if(m){revByM[m]=(revByM[m]||0)+parseInt(c.amount||0);}});
+  var maxRev=Math.max(1,...months.map(function(m){return revByM[m]||0;}));
+  h+='<div class="panel"><div class="panel-h"><span class="ico">💰</span><span class="t">월별 매출</span><span class="m">최근 6개월</span></div><div class="bars">';
+  months.forEach(function(m){
+    var v=revByM[m]||0;var pct=Math.round(v/maxRev*100);
+    var cur=(m===ymNow());
+    h+='<div class="bar-col"><div class="bar-val">'+(v?manwon(v):'')+'</div><div class="bar'+(cur?' cur':'')+'" style="height:'+pct+'%"></div><div class="bar-lbl">'+m.slice(5)+'월</div></div>';
+  });
+  h+='</div></div>';
+
+  // type distribution
+  var byType={};C.forEach(function(c){var t=(c.type||'기타').trim()||'기타';byType[t]=(byType[t]||0)+1;});
+  var types=Object.keys(byType).map(function(k){return {k:k,v:byType[k]};}).sort(function(a,b){return b.v-a.v;}).slice(0,8);
+  var maxT=Math.max(1,...types.map(function(t){return t.v;}));
+  h+='<div class="panel"><div class="panel-h"><span class="ico">🏷</span><span class="t">의뢰 유형</span><span class="m">'+types.length+'종</span></div><div class="dist">';
+  types.forEach(function(t,i){h+='<div class="dist-row"><div class="dist-name" title="'+t.k+'">'+t.k+'</div><div class="dist-track"><div class="dist-fill s'+(i%5)+'" style="width:'+Math.round(t.v/maxT*100)+'%"></div></div><div class="dist-cnt">'+t.v+'건</div></div>';});
+  h+='</div></div>';
+
+  // stage pipeline
+  var byStage={};C.forEach(function(c){var s=(typeof c.stage==='number')?c.stage:STAGES.indexOf(c.stage);if(s<0)s=0;byStage[s]=(byStage[s]||0)+1;});
+  h+='<div class="panel"><div class="panel-h"><span class="ico">📐</span><span class="t">단계별 현황</span></div><div class="stages">';
+  STAGES.forEach(function(name,si){h+='<div class="stage'+(si===DONE?' done':'')+'"><div class="stage-n">'+(byStage[si]||0)+'</div><div class="stage-l">'+name+'</div></div>';});
+  h+='</div></div>';
+
+  // averages
+  h+='<div class="panel"><div class="panel-h"><span class="ico">📈</span><span class="t">평균 지표</span></div><div class="dist">';
+  h+='<div class="dist-row"><div class="dist-name">평균 의뢰 금액</div><div class="dist-track"><div class="dist-fill" style="width:100%"></div></div><div class="dist-cnt" style="width:80px">'+won(avgAmt)+'원</div></div>';
+  h+='<div class="dist-row"><div class="dist-name">평균 작업 기간</div><div class="dist-track"><div class="dist-fill s2" style="width:100%"></div></div><div class="dist-cnt" style="width:80px">'+avgDur+'일</div></div>';
+  h+='</div><div style="font-size:11px;color:var(--text3);margin-top:8px;font-family:var(--mono)">* 기간 = 시작일→마감일 기준</div></div>';
+
+  wrap.innerHTML=h;
+}
+render();
+</script>
+</body>
+</html>

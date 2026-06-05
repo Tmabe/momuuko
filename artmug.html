@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모무꼬 · 커미션 안내 ✦ Momukko Live2D</title>
+<meta name="description" content="Live2D 일러스트레이터 모무꼬 · 커미션 및 작업 안내">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#3ea8e8; --sky-d:#1f88cc; --sky-dd:#136aa8; --sky-l:#bfe4f8; --sky-pl:#ecf7fd; --sky-bg:#f3fafe;
+  --accent:#ff7fbc; --accent-d:#ec5a9e; --accent-l:#ffd0e6; --accent-pl:#fff2f8;
+  --ink:#1d3447; --ink2:#56758a; --ink3:#9fb6c6;
+  --line:#d6e9f6; --line2:#e8f2fa;
+  --r:12px; --r-sm:8px; --r-xs:6px;
+  --sh:0 2px 10px rgba(60,140,210,.09);
+  --sh-md:0 6px 22px rgba(60,140,210,.14);
+  --sh-lg:0 14px 40px rgba(40,120,190,.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:'Zen Kaku Gothic New','Noto Sans KR',sans-serif;
+  color:var(--ink); line-height:1.6;
+  background:
+    radial-gradient(1000px 600px at 8% -10%, #e4f3fc 0%, transparent 55%),
+    radial-gradient(1000px 600px at 100% 0%, #eaf6fd 0%, transparent 50%),
+    linear-gradient(180deg,#f4fbfe 0%,#eef7fc 100%);
+  min-height:100vh; overflow-x:hidden;
+}
+.wrap{max-width:980px;margin:0 auto;padding:0 22px;position:relative;z-index:1}
+.section{margin-bottom:42px}
+
+/* lang toggle */
+.lang-toggle{position:fixed;top:16px;right:16px;z-index:200;display:flex;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden;box-shadow:var(--sh-md)}
+.lang-toggle button{border:none;background:#fff;color:var(--ink2);font-family:inherit;font-size:12px;font-weight:800;padding:8px 13px;cursor:pointer;transition:all .15s;letter-spacing:.03em}
+.lang-toggle button.on{background:linear-gradient(135deg,var(--sky),var(--sky-d));color:#fff}
+
+/* section heading */
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.sec-titles{display:flex;flex-direction:column;gap:1px}
+.sec-jp{font-family:'Shippori Mincho',serif;font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--sky-d);opacity:.75}
+.sec-title{font-size:18px;font-weight:900;letter-spacing:-.01em;color:var(--ink)}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--sky-l),transparent)}
+.sec-badge{font-size:10px;font-weight:900;letter-spacing:.06em;padding:3px 10px;border-radius:var(--r-xs);background:var(--sky-pl);color:var(--sky-d);border:1px solid var(--sky-l)}
+
+/* HERO */
+.hero{padding:64px 22px 26px;max-width:980px;margin:0 auto}
+.hero-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:34px 34px 30px;box-shadow:var(--sh-md);position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--sky),var(--accent))}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--sky-pl);color:var(--sky-dd);border:1px solid var(--sky-l);font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:5px 13px;border-radius:var(--r-xs);margin-bottom:16px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5.4vw,46px);line-height:1.08;letter-spacing:-.01em;color:var(--ink)}
+.hero h1 .g{background:linear-gradient(120deg,var(--sky-d),var(--accent-d) 80%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1 .jp{display:block;font-family:'Zen Kaku Gothic New',sans-serif;font-size:.32em;font-weight:900;letter-spacing:.18em;color:var(--ink2);margin-top:9px}
+.hero-sub{font-size:13.5px;color:var(--ink2);margin-top:14px;line-height:1.85;font-weight:500}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:var(--sky-bg);border:1px solid var(--line);border-radius:var(--r-xs);font-size:12px;font-weight:700;color:var(--ink2)}
+.chip b{color:var(--sky-d)}
+.chip.pk b{color:var(--accent-d)}
+.chip .dotlive{width:7px;height:7px;border-radius:50%;background:var(--accent-d);box-shadow:0 0 0 0 rgba(236,90,158,.5);animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(236,90,158,.5)}70%{box-shadow:0 0 0 7px rgba(236,90,158,0)}100%{box-shadow:0 0 0 0 rgba(236,90,158,0)}}
+.hero-cta{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 22px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:13.5px;font-weight:800;cursor:pointer;transition:transform .14s,box-shadow .14s,opacity .14s;text-decoration:none;letter-spacing:.01em}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-main{background:linear-gradient(135deg,var(--sky),var(--sky-d));color:#fff;box-shadow:0 6px 18px rgba(31,136,204,.32)}
+.btn-main:hover{box-shadow:0 10px 24px rgba(31,136,204,.42)}
+.btn-ghost{background:#fff;color:var(--ink2);border:1px solid var(--line);box-shadow:var(--sh)}
+.btn-ghost:hover{border-color:var(--sky-l);color:var(--sky-d)}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;box-shadow:var(--sh)}
+
+/* SLOTS */
+.slot-row{display:flex;align-items:center;gap:14px;padding:12px 2px;border-bottom:1px solid var(--line2)}
+.slot-row:last-child{border-bottom:none}
+.slot-month{font-size:14px;font-weight:900;width:64px;flex-shrink:0;color:var(--ink)}
+.slot-dots{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.dot{width:28px;height:28px;border-radius:var(--r-xs);border:1.5px solid var(--sky-l);background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px}
+.dot.filled{background:linear-gradient(135deg,var(--sky),var(--sky-d));border-color:var(--sky-d);color:#fff}
+.dot.open{color:var(--sky)}
+.slot-tag{font-size:11px;font-weight:900;padding:3px 11px;border-radius:var(--r-xs);flex-shrink:0;border:1px solid}
+.slot-tag.open{background:var(--sky-pl);color:var(--sky-d);border-color:var(--sky-l)}
+.slot-tag.full{background:var(--accent-pl);color:var(--accent-d);border-color:var(--accent-l)}
+
+/* PORTFOLIO */
+.port-wrap{display:none}
+.port-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px}
+.port-item{position:relative;aspect-ratio:3/4;border-radius:var(--r-sm);overflow:hidden;cursor:pointer;border:1px solid var(--line);box-shadow:var(--sh);background:var(--sky-pl);transition:transform .16s,box-shadow .16s,border-color .16s}
+.port-item:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:var(--sky-l)}
+.port-item img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
+.port-item .cap{position:absolute;left:0;right:0;bottom:0;padding:14px 10px 7px;font-size:11px;font-weight:700;color:#fff;background:linear-gradient(to top,rgba(20,45,70,.8),transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.port-loading,.port-empty{text-align:center;padding:34px;color:var(--ink3);font-size:13px;font-weight:600}
+.lb{display:none;position:fixed;inset:0;z-index:6000;background:rgba(15,40,65,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;flex-direction:column;gap:14px}
+.lb.open{display:flex;animation:fade .2s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.lb img{max-width:92vw;max-height:78vh;border-radius:10px;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.lb-cap{color:#fff;font-weight:700;font-size:14px}
+.lb-nav{display:flex;gap:12px}
+.lb-nav button,.lb-x{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:var(--r-sm);padding:9px 20px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;transition:background .15s}
+.lb-nav button:hover,.lb-x:hover{background:rgba(255,255,255,.3)}
+.lb-x{position:absolute;top:20px;right:20px;width:44px;height:44px;border-radius:var(--r-sm);padding:0;font-size:18px}
+
+/* PRICE form */
+.fgroup{margin-bottom:22px}
+.fgroup:last-child{margin-bottom:0}
+.fgroup-head{display:flex;align-items:center;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.fgroup-title{font-size:14.5px;font-weight:900;color:var(--ink)}
+.fgroup-tag{font-size:10px;font-weight:900;letter-spacing:.04em;padding:2px 8px;border-radius:var(--r-xs)}
+.fgroup-tag.req{background:var(--accent);color:#fff}
+.fgroup-tag.free{background:var(--sky);color:#fff}
+.fgroup-note{font-size:12px;color:var(--ink2);background:var(--sky-pl);border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 12px;margin-bottom:10px;line-height:1.6;font-weight:600}
+.fgroup-hint{font-size:11.5px;color:var(--accent-d);margin-top:9px;font-weight:700}
+.opt-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:9px}
+.opt-card{position:relative;background:#fff;border:1.5px solid var(--line);border-radius:var(--r-sm);padding:14px 15px;cursor:pointer;transition:all .15s;user-select:none}
+.opt-card:hover{border-color:var(--sky-l);box-shadow:var(--sh)}
+.opt-card.sel{border-color:var(--sky);background:var(--sky-pl);box-shadow:0 0 0 1px var(--sky) inset}
+.opt-card.sel::after{content:'✓';position:absolute;top:8px;right:10px;width:20px;height:20px;border-radius:var(--r-xs);background:var(--sky);color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.opt-card .n{font-size:13px;font-weight:700;line-height:1.45;color:var(--ink);padding-right:16px}
+.opt-card .p{font-size:16px;font-weight:900;color:var(--sky-d);margin-top:7px}
+.opt-card .sub{display:inline-block;font-size:10.5px;font-weight:900;color:var(--accent-d);background:var(--accent-pl);border:1px solid var(--accent-l);border-radius:var(--r-xs);padding:2px 8px;margin-top:6px}
+.pills{display:flex;flex-wrap:wrap;gap:7px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:#fff;font-size:12.5px;font-weight:700;color:var(--ink2);cursor:pointer;transition:all .14s;user-select:none}
+.pill:hover{border-color:var(--sky-l);color:var(--sky-d)}
+.pill.sel{background:var(--sky-pl);border-color:var(--sky);color:var(--sky-dd)}
+.pill .pp{font-weight:900;color:var(--sky-d)}
+
+/* sub card (message / apply) */
+.subcard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-top:16px}
+.subcard-lbl{font-size:13.5px;font-weight:900;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ta,.inp{width:100%;border:1.5px solid var(--line);border-radius:var(--r-sm);padding:11px 13px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--sky-bg);outline:none;transition:border-color .15s;line-height:1.7}
+.ta{min-height:88px;resize:vertical}
+.ta:focus,.inp:focus{border-color:var(--sky)}
+.aq-fill{margin-bottom:12px}
+.aq-fill:last-child{margin-bottom:0}
+.aq-fill-lbl{font-size:12px;font-weight:800;color:var(--ink);margin-bottom:5px;display:flex;align-items:flex-start;gap:5px}
+.aq-fill-num{flex-shrink:0;width:18px;height:18px;border-radius:var(--r-xs);background:var(--sky-pl);color:var(--sky-d);font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.field-hint{font-size:11px;color:var(--ink3);margin-top:5px;font-weight:600}
+
+/* work order steps */
+.wo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.wo-cell{background:linear-gradient(150deg,#1e3a52,#163044);border:1px solid rgba(62,168,232,.3);color:#e8f6ff;border-radius:var(--r-sm);padding:11px 8px;text-align:center;position:relative;overflow:hidden}
+.wo-cell.last{background:linear-gradient(150deg,#3a1e40,#2a1430);border-color:rgba(255,127,188,.4)}
+.wo-num{font-size:9px;font-weight:900;letter-spacing:.08em;color:var(--sky-l);opacity:.9;margin-bottom:3px}
+.wo-cell.last .wo-num{color:var(--accent-l)}
+.wo-name{font-size:12px;font-weight:800;color:#eaf6ff;line-height:1.3}
+.wo-sub{font-size:10px;color:rgba(200,230,250,.7);margin-top:2px}
+
+/* live preview */
+.preview-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-md);position:sticky;top:16px}
+.preview-head{background:var(--sky-pl);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.preview-head-t{font-size:13px;font-weight:900;color:var(--ink)}
+.preview-head-b{font-size:9px;font-weight:900;letter-spacing:.1em;color:#fff;background:linear-gradient(135deg,var(--sky),var(--accent));padding:3px 8px;border-radius:var(--r-xs);animation:pulse2 2.4s infinite}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:.55}}
+.preview-body{padding:14px 16px;font-family:'Noto Sans KR',monospace;font-size:11.5px;line-height:1.85;white-space:pre-wrap;color:var(--ink);max-height:46vh;overflow-y:auto;background:var(--sky-bg)}
+.preview-total{padding:14px 18px;border-top:1px solid var(--line);background:var(--sky-pl);text-align:center}
+.preview-total-lbl{font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:4px}
+.preview-total-amt{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--sky-d);line-height:1}
+.preview-total-won{font-size:15px;font-weight:900;color:var(--ink2)}
+.preview-total-cnt{font-size:11px;color:var(--ink3);font-weight:700}
+.preview-copy{width:100%;padding:15px;border:none;background:linear-gradient(135deg,var(--sky),var(--sky-d));color:#fff;font-family:inherit;font-size:14px;font-weight:900;cursor:pointer;transition:opacity .15s;letter-spacing:.02em}
+.preview-copy:hover{opacity:.9}
+.preview-reset{display:block;width:100%;padding:8px;border:none;border-top:1px solid var(--line);background:#fff;color:var(--ink3);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
+.preview-reset:hover{color:var(--accent-d)}
+
+.form-2col{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start;margin-top:18px}
+@media(max-width:860px){.form-2col{grid-template-columns:1fr}.preview-card{position:static}}
+
+/* NOTICE accordion */
+.notice-list{display:flex;flex-direction:column;gap:8px}
+.nt{background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden;transition:border-color .15s}
+.nt.open{border-color:var(--sky-l)}
+.nt-q{display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;font-size:13.5px;font-weight:800;color:var(--ink);user-select:none}
+.nt-ico{flex-shrink:0;font-size:15px}
+.nt-arr{margin-left:auto;color:var(--sky-d);font-size:12px;transition:transform .2s;flex-shrink:0}
+.nt.open .nt-arr{transform:rotate(180deg)}
+.nt-a{max-height:0;overflow:hidden;transition:max-height .25s ease;font-size:13px;line-height:1.85;color:var(--ink2);font-weight:500}
+.nt-a-inner{padding:0 16px 15px;white-space:pre-line}
+
+.foot{text-align:center;padding:26px 20px 40px;color:var(--ink3);font-size:11.5px;font-weight:600}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9000;background:var(--ink);color:#fff;padding:12px 22px;border-radius:var(--r-sm);font-size:13px;font-weight:800;opacity:0;pointer-events:none;transition:all .3s;box-shadow:var(--sh-lg)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:760px){
+  .wrap{padding:0 16px}
+  .hero{padding:50px 16px 20px}
+  .hero-card{padding:26px 22px 24px}
+  .opt-cards{grid-template-columns:1fr 1fr}
+  .wo-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:430px){
+  .opt-cards{grid-template-columns:1fr}
+  .port-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="lang-toggle">
+  <button id="langKo" class="on" onclick="setLang('ko')">한국어</button>
+  <button id="langEn" onclick="setLang('en')">EN</button>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-card">
+    <div class="hero-badge" id="heroBadge"></div>
+    <h1><span class="g">Momukko</span><br><span class="g">Live2D Illustration</span><span class="jp">コミッション ご案内</span></h1>
+    <p class="hero-sub" id="heroSub"></p>
+    <div class="chips" id="chips"></div>
+    <div class="hero-cta">
+      <a class="btn btn-main" id="ctaPrice" href="#price"></a>
+      <a class="btn btn-ghost" id="ctaPort" href="#port"></a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- SLOTS -->
+  <section class="section">
+    <div class="sec-head">
+      <div class="sec-titles"><div class="sec-jp">受付状況</div><div class="sec-title" id="t-slots"></div></div>
+      <div class="sec-line"></div><span class="sec-badge" id="b-slots"></span>
+    </div>
+    <div class="card" id="slotCard"></div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="section" id="port">
+    <div class="sec-head">
+      <div class="sec-titles"><div class="sec-jp">ポートフォリオ</div><div class="sec-title" id="t-port"></div></div>
+      <div class="sec-line"></div><span class="sec-badge" id="b-port"></span>
+    </div>
+    <div class="port-loading" id="portLoading"></div>
+    <div class="port-empty" id="portEmpty" style="display:none"></div>
+    <div class="port-wrap" id="portWrap"><div class="port-grid" id="portGrid"></div></div>
+  </section>
+
+  <!-- WORK ORDER -->
+  <section class="section">
+    <div class="sec-head">
+      <div class="sec-titles"><div class="sec-jp">作業の流れ</div><div class="sec-title" id="t-work"></div></div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="card"><div class="wo-grid" id="woGrid"></div></div>
+  </section>
+
+  <!-- PRICE BUILDER -->
+  <section class="section" id="price">
+    <div class="sec-head">
+      <div class="sec-titles"><div class="sec-jp">料金 ・ ご注文</div><div class="sec-title" id="t-price"></div></div>
+      <div class="sec-line"></div><span class="sec-badge" id="b-price"></span>
+    </div>
+    <div class="card"><div id="formGroups"></div></div>
+
+    <div class="form-2col">
+      <!-- LEFT: message + apply -->
+      <div>
+        <div class="subcard">
+          <div class="subcard-lbl" id="l-msg"></div>
+          <textarea class="ta" id="formMsg" oninput="rebuild()"></textarea>
+          <div class="field-hint" id="h-msg"></div>
+        </div>
+        <div class="subcard">
+          <div class="subcard-lbl" id="l-apply"></div>
+          <div id="aqFill"></div>
+          <div class="aq-fill" style="margin-top:14px">
+            <div class="aq-fill-lbl" id="l-ref"></div>
+            <input class="inp" id="fixedRef" type="url" placeholder="https://..." oninput="rebuild()">
+          </div>
+          <div class="aq-fill">
+            <div class="aq-fill-lbl" id="l-email"></div>
+            <input class="inp" id="fixedEmail" type="email" placeholder="example@gmail.com" oninput="rebuild()">
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: live preview -->
+      <div class="preview-card">
+        <div class="preview-head"><span class="preview-head-t" id="l-preview"></span><span class="preview-head-b">LIVE</span></div>
+        <div class="preview-body" id="previewBody"></div>
+        <div class="preview-total">
+          <div class="preview-total-lbl" id="l-total"></div>
+          <div><span class="preview-total-amt" id="totalAmt">0</span> <span class="preview-total-won" id="t-won"></span> <span class="preview-total-cnt" id="totalCnt"></span></div>
+        </div>
+        <button class="preview-copy" id="btnCopy" onclick="copyForm()"></button>
+        <button class="preview-reset" id="btnReset" onclick="resetForm()"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTICE -->
+  <section class="section">
+    <div class="sec-head">
+      <div class="sec-titles"><div class="sec-jp">注意事項</div><div class="sec-title" id="t-notice"></div></div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="notice-list" id="noticeList"></div>
+  </section>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<!-- lightbox -->
+<div class="lb" id="lb">
+  <button class="lb-x" onclick="closeLb()">✕</button>
+  <img id="lbImg" src="" alt="">
+  <div class="lb-cap" id="lbCap"></div>
+  <div class="lb-nav"><button id="lbPrev" onclick="lbNav(-1)"></button><button id="lbNext" onclick="lbNav(1)"></button></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════ UI strings ════════ */
+var UI={
+  ko:{
+    heroBadge:'✦ Live2D Illustrator · 모무꼬',
+    heroSub:'퀄리티 높고 가성비 있는 그림을 지향합니다.<br>편하게 문의주세요 ✦',
+    ctaPrice:'💰 가격 계산하기', ctaPort:'🖼 포트폴리오 보기',
+    tSlots:'작업 슬롯 현황', bSlots:'실시간',
+    tPort:'포트폴리오', bPort:'갤러리',
+    tWork:'작업 순서',
+    tPrice:'가격 계산 & 신청서', bPrice:'간편',
+    tNotice:'작업 안내 & 약관',
+    lMsg:'✉ 작가님께 전할 말', hMsg:'캐릭터 설명, 특이사항 등 자유롭게 작성해 주세요',
+    lApply:'✦ 신청양식', lRef:'📎 레퍼런스 링크 (이미지 URL 등)', lEmail:'📧 파일 수령 이메일',
+    lPreview:'작업양식 미리보기', lTotal:'현재 선택 합계', won:'원',
+    cnt:function(n){return '· '+n+'개 선택';}, copy:'📋 양식 복사하기', reset:'↺ 초기화',
+    foot:'© 모무꼬 · Momukko Live2D Illustration · BETA',
+    lbPrev:'‹ 이전', lbNext:'다음 ›',
+    portLoad:'🔄 작품을 불러오는 중...', portEmpty:'아직 등록된 작품이 없어요 ✦', portErr:'⚠ 작품을 불러오지 못했어요.',
+    slotOpen:function(n){return n+'자리 OPEN';}, slotFull:'마감',
+    needSel:'먼저 기본 일러스트를 선택해 주세요 ✦', resetDone:'초기화되었어요 ✦', copyDone:'복사 완료! 작가님께 전달해 주세요 📋',
+    emptyPreview:'옵션을 선택하면\n여기에 신청서가 만들어져요 ✦'
+  },
+  en:{
+    heroBadge:'✦ Live2D Illustrator · Momukko',
+    heroSub:'Quality artwork at a fair price.<br>Feel free to reach out ✦',
+    ctaPrice:'💰 Price Calculator', ctaPort:'🖼 View Portfolio',
+    tSlots:'Slot Availability', bSlots:'Live',
+    tPort:'Portfolio', bPort:'Gallery',
+    tWork:'Work Process',
+    tPrice:'Price & Order Form', bPrice:'Easy',
+    tNotice:'Terms & Info',
+    lMsg:'✉ Message to the artist', hMsg:'Feel free to describe your character, special notes, etc.',
+    lApply:'✦ Application Form', lRef:'📎 Reference link (image URL, etc.)', lEmail:'📧 Email for file delivery',
+    lPreview:'Order Form Preview', lTotal:'Current Total', won:'KRW',
+    cnt:function(n){return '· '+n+' selected';}, copy:'📋 Copy Order Form', reset:'↺ Reset',
+    foot:'© Momukko · Live2D Illustration · BETA',
+    lbPrev:'‹ Prev', lbNext:'Next ›',
+    portLoad:'🔄 Loading artworks...', portEmpty:'No artworks yet ✦', portErr:'⚠ Failed to load artworks.',
+    slotOpen:function(n){return n+' slot'+(n>1?'s':'')+' open';}, slotFull:'Full',
+    needSel:'Please select a base illustration first ✦', resetDone:'Reset done ✦', copyDone:'Copied! Please send it to the artist 📋',
+    emptyPreview:'Select options and your\norder form appears here ✦'
+  }
+};
+
+/* ════════ work steps ════════ */
+var STEPS=[
+  {num:'STEP 01', ko:'신청', koSub:'(입금)', en:'Apply', enSub:'(payment)'},
+  {num:'STEP 02', ko:'러프', koSub:'(디자인)', en:'Rough', enSub:'(design)'},
+  {num:'STEP 03', ko:'수정 및 컨펌', en:'Revise & confirm'},
+  {num:'STEP 04', ko:'선화 및 배색', en:'Lineart & colors'},
+  {num:'STEP 05', ko:'2차 컨펌', en:'2nd confirm'},
+  {num:'STEP 06', ko:'채색 및 완성', en:'Coloring & done'},
+  {num:'STEP 07', ko:'컨펌 후', koSub:'추가파츠 제작', en:'After confirm', enSub:'extra parts'},
+  {num:'STEP 08', ko:'전달', koSub:'(완료)', en:'Delivery', enSub:'(complete)', last:true}
+];
+
+/* ════════ DATA (bilingual; ko name used in copied form for dashboard) ════════ */
+var DATA={
+  chips:[
+    {ko:'접수 <b>진행중</b>', en:'<b>Open</b> for requests', live:true, pk:true},
+    {ko:'답변율 <b>98%</b>', en:'<b>98%</b> reply rate'},
+    {ko:'Live2D <b>전문</b>', en:'Live2D <b>specialist</b>', pk:true},
+    {ko:'작업기간 <b>30일</b>', en:'<b>~30 day</b> turnaround'}
+  ],
+  slots:[
+    {ko:'4월', en:'April', filled:[true,true,false]},
+    {ko:'5월', en:'May', filled:[false,false,false]}
+  ],
+  sections:[
+    {id:'base', ko:'✦ 기본 일러스트', en:'✦ Base Illustration', koLabel:'기본 일러스트', tagKo:'필수', tagEn:'Required', tagCls:'req', type:'radio', items:[
+      {id:'b1', ko:'전신 · 협업용', en:'Full body · Collab', p:1050000, subKo:'🎉 20만원 할인', subEn:'🎉 ₩200,000 off'},
+      {id:'b2', ko:'전신', en:'Full body', p:1100000, subKo:'🎉 20만원 할인', subEn:'🎉 ₩200,000 off'},
+      {id:'b3', ko:'반신 (리깅X)', en:'Half body (no rigging)', p:850000},
+      {id:'b4', ko:'디자인, 전신, 알몸파츠(추후 신의상에 용의), 게임기, 저작권(리깅x)+기본표정파츠 전체', en:'Full package (design + full body + nude parts + game device + copyright, no rigging)', p:1950000}
+    ]},
+    {id:'rig', ko:'♥ 리깅 협업 세트', en:'♥ Rigging Collab Set', koLabel:'리깅 협업 세트', type:'radio',
+      noteKo:'💡 리깅은 협업 작가님께 별도 신청이 필요해요.', noteEn:'💡 Rigging must be requested separately from the collab rigger.', items:[
+      {id:'r1', ko:'하예나 님 리깅 + 전신 세트 (5만원 할인)', en:'Hayena rigging + full body set', p:800000, subKo:'5만원 할인', subEn:'₩50,000 off'},
+      {id:'r2', ko:'모몬 님 리깅 + 전신 세트 (표정 리깅 무료+5만원 할인)', en:'Momon rigging + full body set', p:900000, subKo:'표정리깅 전부 무료', subEn:'all expression rigging free'},
+      {id:'r3', ko:'피니 님 리깅 + 전신 세트 (5만원 할인)', en:'Pini rigging + full body set', p:1300000, subKo:'5만원 할인', subEn:'₩50,000 off'}
+    ]},
+    {id:'add', ko:'▸ 추가 옵션', en:'▸ Add-ons', koLabel:'추가 옵션', type:'pill',
+      hintKo:'⚠ 의상·헤어는 먼저 문의 후 선택해 주세요', hintEn:'⚠ Please inquire before choosing outfit/hair add-ons', items:[
+      {id:'a1', ko:'R18 파츠 추가', en:'R18 parts', p:100000},
+      {id:'a2', ko:'표정·얼굴 파츠 추가', en:'Expression / face parts', p:10000},
+      {id:'a3', ko:'의상 추가 (전신)', en:'Extra outfit (full body)', p:200000},
+      {id:'a4', ko:'악세서리·소품 파츠', en:'Accessory / prop parts', p:10000},
+      {id:'a5', ko:'게임기 파츠 및 맞춤 손·팔', en:'Game device + custom hands/arms', p:150000},
+      {id:'a6', ko:'헤어 추가', en:'Extra hairstyle', p:200000},
+      {id:'a7', ko:'센시티브 파츠', en:'Sensitive parts', p:10000},
+      {id:'a8', ko:'동물귀', en:'Animal ears', p:20000},
+      {id:'a9', ko:'꼬리', en:'Tail', p:10000},
+      {id:'a10', ko:'3면도 (단색채색)', en:'3-view sheet (flat color)', p:150000}
+    ]},
+    {id:'debut', ko:'🎊 데뷔축전', en:'🎊 Debut Celebration', koLabel:'데뷔축전', type:'radio', items:[
+      {id:'d1', ko:'데뷔축전 전신', en:'Debut art (full body)', p:250000},
+      {id:'d2', ko:'데뷔축전 (장패드·상업용)', en:'Debut art (mousepad · commercial)', p:450000}
+    ]},
+    {id:'etc', ko:'⚙ 기타', en:'⚙ Others', koLabel:'기타', type:'pill', items:[
+      {id:'e1', ko:'저작권 구매 (굿즈·모델양도·상업 사용)', en:'Copyright (goods · transfer · commercial)', p:400000},
+      {id:'e2', ko:'빠른 마감 7일', en:'Rush delivery (7 days)', p:300000},
+      {id:'e3', ko:'작품 비공개', en:'Private work', p:100000}
+    ]},
+    {id:'expr', ko:'💬 기본 제공 표정(기본 5개 무료)', en:'💬 Free Expressions', koLabel:'기본 제공 표정(기본 5개 무료)', tagKo:'무료', tagEn:'Free', tagCls:'free', type:'expr', items:[
+      {id:'x1', ko:'빠직', en:'Anger mark'},{id:'x2', ko:'정색 (얼굴 어두워짐)', en:'Deadpan'},{id:'x3', ko:'반짝이는 눈', en:'Sparkly eyes'},
+      {id:'x4', ko:'하트눈', en:'Heart eyes'},{id:'x5', ko:'눈물', en:'Tears'},{id:'x6', ko:'땀', en:'Sweat'},
+      {id:'x7', ko:'죽은눈', en:'Dead eyes'},{id:'x8', ko:'동공 작아짐', en:'Shrunk pupils'},{id:'x9', ko:'볼빵빵', en:'Puffed cheeks'}
+    ]}
+  ],
+  notice:[
+    {ico:'🎨', qKo:'작업 범위', qEn:'Scope of Work',
+      aKo:'본 작품은 리깅이 포함된 작품이 아닌 "일러스트" 및 "파츠분리" 작업입니다.\n업계 최고급의 퀄리티를 위해 노력하겠습니다.\n절대 고정틀로 작업하지 않으며, 작업마다 캐릭터 특징이 다르기에 나체의 파츠부터 전부 새로 작업합니다.',
+      aEn:'This is "illustration" + "parts separation" work, not rigging-included work.\nI strive for top-tier industry quality.\nI never use fixed templates — since each character differs, everything is drawn fresh from the nude base parts.'},
+    {ico:'©', qKo:'저작권 안내', qEn:'Copyright',
+      aKo:'작품의 저작권은 작가에게 있습니다.\n굿즈 제작 및 상업적 이용을 위해서는 사용권을 구매해주시길 바랍니다.\n스트리밍 및 유튜브 업로드를 위해서는 구매하실 필요 없습니다.',
+      aEn:'Copyright belongs to the artist.\nPlease purchase a usage license for merchandise or commercial use.\nNo purchase needed for streaming or YouTube uploads.'},
+    {ico:'📢', qKo:'공개 / 포트폴리오', qEn:'Disclosure / Portfolio',
+      aKo:'작품의 무단 수정을 금하며, 작업물은 SNS 및 아트머그의 포트폴리오로 사용될 수 있습니다.\n단 버튜버의 공개과정 특성상 업로드 및 공개일은 조정하실 수 있습니다.',
+      aEn:'Unauthorized modification is prohibited. Works may be used as portfolio on SNS and Artmug.\nDue to the nature of VTuber debuts, upload and reveal dates can be adjusted.'},
+    {ico:'💰', qKo:'디자인비 / 추가 파츠', qEn:'Design Fee / Extra Parts',
+      aKo:'캐릭터의 디자인비는 따로 받고있지 않습니다.\n장신구·패턴과 같이 복잡하거나 개수를 정하기 힘든 부분은 협의가 필요합니다.\n간단 파츠들도 협의 후 가능하면 무료로 작업해드립니다. 먼저 가격 추가하지 마시고 꼭 먼저 문의 부탁드립니다.',
+      aEn:'No separate design fee is charged.\nComplex items like accessories/patterns that are hard to count need discussion.\nSimple parts may be done free after discussion — please inquire first before adding to the price.'},
+    {ico:'📅', qKo:'작업 기한', qEn:'Turnaround',
+      aKo:'작업 기한은 입금일로부터 최소 14일 ~ 최대 30일로 잡고 있습니다.\n작업 기한은 작품의 난이도에 따라 늘어날 수 있습니다.\n바른 마감을 위해 연락처 및 디스코드 통을 요청드릴 수 있습니다.',
+      aEn:'Work takes minimum 14 to maximum 30 days from the payment date.\nThe timeline may extend based on difficulty.\nContact info and a Discord channel may be requested for proper delivery.'},
+    {ico:'🛠', qKo:'수정 / 표정', qEn:'Revisions / Expressions',
+      aKo:'파츠분리 관련 문제는 언제든 무상 수정 가능합니다.\n기본적으로 표정 5개를 제공해 드립니다.',
+      aEn:'Parts-separation issues can be fixed free anytime.\n5 expressions are provided by default.'}
+  ],
+  apply:[
+    {ko:'방송 및 유튜브의 주소 혹은 닉네임 (미정이시라면 공란가능)', en:'Your stream / YouTube URL or nickname (optional if undecided)'},
+    {ko:'캐릭터의 자세한 설정 (이미지가 있을 시 아트머그 문의에 첨부 부탁드립니다. :) )', en:'Detailed character settings (please attach references to your Artmug inquiry if available :) )'},
+    {ko:'원하시는 마감일 (빠른마감 여부 등)', en:'Preferred deadline (rush or not, etc.)'},
+    {ko:'요청사항 및 디테일', en:'Requests and details'},
+    {ko:'공개여부 (데뷔전 비공개 요청 가능. 데뷔 후 비공개는 포트폴리오 사용 불가 옵션 구매 부탁드립니다.)', en:'Disclosure preference (private before debut OK; for private after debut, please purchase the no-portfolio option)'}
+  ]
+};
+var GH={user:'Tmabe',repo:'momuuko',folder:'portfolio'};
+
+/* ════════ STATE ════════ */
+var lang='ko', sel={};
+function won(n){return n.toLocaleString('en-US');}
+
+function setLang(l){
+  lang=l; document.documentElement.lang=l;
+  document.getElementById('langKo').classList.toggle('on',l==='ko');
+  document.getElementById('langEn').classList.toggle('on',l==='en');
+  renderAll();
+}
+function renderAll(){renderUI();renderChips();renderSlots();renderWork();renderForm();renderApplyFill();renderNotice();rebuild();}
+
+function renderUI(){
+  var u=UI[lang];
+  var map={heroBadge:'heroBadge',heroSub:'heroSub'};
+  document.getElementById('heroBadge').textContent=DATA.hero?(lang==='ko'?DATA.hero.badgeKo:DATA.hero.badgeEn):u.heroBadge;
+  document.getElementById('heroSub').innerHTML=DATA.hero?(lang==='ko'?DATA.hero.subKo:DATA.hero.subEn):u.heroSub;
+  document.getElementById('ctaPrice').textContent=u.ctaPrice;
+  document.getElementById('ctaPort').textContent=u.ctaPort;
+  set('t-slots',u.tSlots);set('b-slots',u.bSlots);set('t-port',u.tPort);set('b-port',u.bPort);
+  set('t-work',u.tWork);set('t-price',u.tPrice);set('b-price',u.bPrice);set('t-notice',u.tNotice);
+  set('l-msg',u.lMsg);set('h-msg',u.hMsg);set('l-apply',u.lApply);set('l-ref',u.lRef);set('l-email',u.lEmail);
+  set('l-preview',u.lPreview);set('l-total',u.lTotal);set('t-won',u.won);
+  set('btnCopy',u.copy);set('btnReset',u.reset);set('foot',u.foot);
+  set('lbPrev',u.lbPrev);set('lbNext',u.lbNext);
+  document.getElementById('formMsg').placeholder=lang==='ko'?'캐릭터 설명, 특이사항 등...':'Character description, special notes, etc...';
+  document.getElementById('portLoading').textContent=u.portLoad;
+}
+function set(id,t){var e=document.getElementById(id);if(e)e.textContent=t;}
+
+function renderChips(){
+  var h='';DATA.chips.forEach(function(c){h+='<span class="chip'+(c.pk?' pk':'')+'">'+(c.live?'<span class="dotlive"></span>':'')+c[lang]+'</span>';});
+  document.getElementById('chips').innerHTML=h;
+}
+function renderSlots(){
+  var u=UI[lang],h='';
+  DATA.slots.forEach(function(s){
+    var open=s.filled.filter(function(f){return !f;}).length,full=open===0;
+    h+='<div class="slot-row"><div class="slot-month">'+s[lang]+'</div><div class="slot-dots">';
+    s.filled.forEach(function(f){h+='<div class="dot '+(f?'filled':'open')+'">'+(f?'■':'□')+'</div>';});
+    h+='</div><span class="slot-tag '+(full?'full':'open')+'">'+(full?u.slotFull:u.slotOpen(open))+'</span></div>';
+  });
+  document.getElementById('slotCard').innerHTML=h;
+}
+function renderWork(){
+  var h='';
+  STEPS.forEach(function(s){
+    var name=lang==='ko'?s.ko:s.en, sub=lang==='ko'?s.koSub:s.enSub;
+    h+='<div class="wo-cell'+(s.last?' last':'')+'"><div class="wo-num">'+s.num+'</div><div class="wo-name">'+name+'</div>'+(sub?'<div class="wo-sub">'+sub+'</div>':'')+'</div>';
+  });
+  document.getElementById('woGrid').innerHTML=h;
+}
+function renderForm(){
+  var h='';
+  DATA.sections.forEach(function(sec){
+    h+='<div class="fgroup"><div class="fgroup-head"><span class="fgroup-title">'+sec[lang]+'</span>';
+    var tag=lang==='ko'?sec.tagKo:sec.tagEn; if(tag)h+='<span class="fgroup-tag '+sec.tagCls+'">'+tag+'</span>';
+    h+='</div>';
+    var note=lang==='ko'?sec.noteKo:sec.noteEn; if(note)h+='<div class="fgroup-note">'+note+'</div>';
+    if(sec.type==='radio'){
+      h+='<div class="opt-cards">';
+      sec.items.forEach(function(it){
+        var sub=lang==='ko'?it.subKo:it.subEn;
+        h+='<div class="opt-card'+(sel[sec.id]===it.id?' sel':'')+'" id="oc-'+it.id+'" onclick="pickRadio(\''+sec.id+'\',\''+it.id+'\')">'+
+           '<div class="n">'+it[lang]+'</div><div class="p">'+won(it.p)+' '+UI[lang].won+'</div>'+(sub?'<span class="sub">'+sub+'</span>':'')+'</div>';
+      });
+      h+='</div>';
+    } else { // pill & expr both selectable multi
+      h+='<div class="pills">';
+      sec.items.forEach(function(it){
+        var on=sel[sec.id]&&sel[sec.id][it.id];
+        var price=sec.type==='expr'?'':' <span class="pp">+'+won(it.p)+'</span>';
+        h+='<span class="pill'+(on?' sel':'')+'" id="pl-'+it.id+'" onclick="togglePill(\''+sec.id+'\',\''+it.id+'\')">'+it[lang]+price+'</span>';
+      });
+      h+='</div>';
+    }
+    var hint=lang==='ko'?sec.hintKo:sec.hintEn; if(hint)h+='<div class="fgroup-hint">'+hint+'</div>';
+    h+='</div>';
+  });
+  document.getElementById('formGroups').innerHTML=h;
+}
+function renderApplyFill(){
+  var h='';
+  DATA.apply.forEach(function(q,i){
+    var prev=document.getElementById('aq_'+i); var val=prev?prev.value:'';
+    h+='<div class="aq-fill"><div class="aq-fill-lbl"><span class="aq-fill-num">'+(i+1)+'</span>'+q[lang]+'</div>'+
+       '<textarea class="ta" id="aq_'+i+'" style="min-height:54px" oninput="rebuild()">'+val.replace(/</g,'&lt;')+'</textarea></div>';
+  });
+  document.getElementById('aqFill').innerHTML=h;
+}
+function renderNotice(){
+  var h='';
+  DATA.notice.forEach(function(n,i){
+    h+='<div class="nt" id="nt-'+i+'"><div class="nt-q" onclick="toggleNt('+i+')"><span class="nt-ico">'+n.ico+'</span>'+(lang==='ko'?n.qKo:n.qEn)+'<span class="nt-arr">▼</span></div>'+
+       '<div class="nt-a" id="nta-'+i+'"><div class="nt-a-inner">'+(lang==='ko'?n.aKo:n.aEn)+'</div></div></div>';
+  });
+  document.getElementById('noticeList').innerHTML=h;
+}
+
+/* ════════ portfolio ════════ */
+var imgs=[],lbIdx=0;
+function loadPortfolio(){
+  fetch('https://api.github.com/repos/'+GH.user+'/'+GH.repo+'/contents/'+GH.folder)
+    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
+    .then(function(data){
+      imgs=[];
+      (data||[]).forEach(function(f){if(f.type==='file'&&/\.(png|jpe?g|gif|webp)$/i.test(f.name)){imgs.push({src:'https://'+GH.user+'.github.io/'+GH.repo+'/'+GH.folder+'/'+encodeURIComponent(f.name),cap:f.name.replace(/\.[^.]+$/,'')});}});
+      if(DATA.portfolioOrder&&DATA.portfolioOrder.length){
+        imgs.sort(function(a,b){var ia=DATA.portfolioOrder.indexOf(a.cap+'.png');
+          // match by filename stem against order entries (strip extension in order list too)
+          function idx(im){for(var k=0;k<DATA.portfolioOrder.length;k++){if(DATA.portfolioOrder[k].replace(/\.[^.]+$/,'')===im.cap)return k;}return 999;}
+          return idx(a)-idx(b);});
+      }
+      document.getElementById('portLoading').style.display='none';
+      if(!imgs.length){var e=document.getElementById('portEmpty');e.style.display='block';e.textContent=UI[lang].portEmpty;return;}
+      var g='';imgs.forEach(function(im,i){g+='<div class="port-item" onclick="openLb('+i+')"><img loading="lazy" src="'+im.src+'" alt="'+im.cap+'"><div class="cap">'+im.cap+'</div></div>';});
+      document.getElementById('portGrid').innerHTML=g;document.getElementById('portWrap').style.display='block';
+    })
+    .catch(function(){document.getElementById('portLoading').style.display='none';var e=document.getElementById('portEmpty');e.style.display='block';e.textContent=UI[lang].portErr;});
+}
+function openLb(i){lbIdx=i;var im=imgs[i];document.getElementById('lbImg').src=im.src;document.getElementById('lbCap').textContent=im.cap;document.getElementById('lb').classList.add('open');}
+function closeLb(){document.getElementById('lb').classList.remove('open');}
+function lbNav(d){lbIdx=(lbIdx+d+imgs.length)%imgs.length;openLb(lbIdx);}
+document.getElementById('lb').addEventListener('click',function(e){if(e.target===this)closeLb();});
+
+/* ════════ selection ════════ */
+function findItem(secId,itId){var s=DATA.sections.find(function(x){return x.id===secId;});return s.items.find(function(i){return i.id===itId;});}
+function pickRadio(secId,itId){
+  var sec=DATA.sections.find(function(s){return s.id===secId;});
+  sec.items.forEach(function(it){var el=document.getElementById('oc-'+it.id);if(el)el.classList.remove('sel');});
+  if(sel[secId]===itId){sel[secId]=null;}else{sel[secId]=itId;document.getElementById('oc-'+itId).classList.add('sel');}
+  rebuild();
+}
+function togglePill(secId,itId){
+  if(!sel[secId])sel[secId]={};
+  var el=document.getElementById('pl-'+itId);
+  if(sel[secId][itId]){delete sel[secId][itId];el.classList.remove('sel');}else{sel[secId][itId]=true;el.classList.add('sel');}
+  rebuild();
+}
+function resetForm(){
+  sel={};
+  document.querySelectorAll('.opt-card.sel,.pill.sel').forEach(function(e){e.classList.remove('sel');});
+  document.getElementById('formMsg').value='';
+  document.getElementById('fixedRef').value='';
+  document.getElementById('fixedEmail').value='';
+  DATA.apply.forEach(function(q,i){var e=document.getElementById('aq_'+i);if(e)e.value='';});
+  rebuild();toast(UI[lang].resetDone);
+}
+
+/* ════════ build form text (DASHBOARD-COMPATIBLE, always Korean structure) ════════ */
+function cleanLabel(s){return s.replace(/^[^\wㄱ-힣]+\s*/,'');}
+function buildFormText(){
+  var lines=['모무꼬 작가 · Live2D 의뢰 양식','━━━━━━━━━━━━━━━━━━━━━━━━━━━━',''];
+  var total=0, any=false;
+  DATA.sections.forEach(function(sec){
+    if(sec.type==='radio'){
+      if(!sel[sec.id])return; var it=findItem(sec.id,sel[sec.id]); if(!it)return;
+      any=true;
+      lines.push('▸ '+sec.koLabel); lines.push('  · '+it.ko); lines.push('    → '+won(it.p)+'원'); lines.push('');
+      total+=it.p;
+    } else if(sec.type==='pill'){
+      if(!sel[sec.id])return; var ids=Object.keys(sel[sec.id]); if(!ids.length)return;
+      any=true; lines.push('▸ '+sec.koLabel);
+      ids.forEach(function(id){var it=findItem(sec.id,id);lines.push('  · '+it.ko);lines.push('    → '+won(it.p)+'원');total+=it.p;});
+      lines.push('');
+    } else if(sec.type==='expr'){
+      if(!sel[sec.id])return; var ids=Object.keys(sel[sec.id]); if(!ids.length)return;
+      var names=ids.map(function(id){return findItem(sec.id,id).ko;});
+      lines.push('▸ '+sec.koLabel+' (무료)'); lines.push('  · '+names.join(', ')); lines.push('');
+    }
+  });
+  lines.push('─────────────────────────────');
+  lines.push('  합계 금액 : '+won(total)+'원');
+  lines.push('─────────────────────────────');
+  var msg=(document.getElementById('formMsg')||{}).value||'';
+  if(msg.trim()){lines.push('');lines.push('✉ 작가님께 전할 말');lines.push('  '+msg.trim());}
+  lines.push('');lines.push('[ 신청양식 ]');
+  DATA.apply.forEach(function(q,i){
+    var el=document.getElementById('aq_'+i); var v=el?el.value.trim():'';
+    lines.push('▸ '+q.ko); lines.push('  '+(v||'(미입력)')); lines.push('');
+  });
+  var ref=(document.getElementById('fixedRef')||{}).value||'';
+  var email=(document.getElementById('fixedEmail')||{}).value||'';
+  if(ref.trim()||email.trim()){
+    lines.push('[ 추가 정보 ]');
+    if(ref.trim()){lines.push('▸ 레퍼런스 링크');lines.push('  레퍼런스: '+ref.trim());lines.push('');}
+    if(email.trim()){lines.push('▸ 파일 수령 이메일');lines.push('  이메일: '+email.trim());lines.push('');}
+  }
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('양식이 완성되면 복사해서 작가님께 전달해주세요 :)');
+  return {text:lines.join('\n'), total:total, any:any};
+}
+function countSel(){
+  var c=0;
+  DATA.sections.forEach(function(sec){
+    if(sec.type==='radio'&&sel[sec.id])c++;
+    else if(sel[sec.id])c+=Object.keys(sel[sec.id]).length;
+  });
+  return c;
+}
+function rebuild(){
+  var r=buildFormText();
+  document.getElementById('totalAmt').textContent=won(r.total);
+  var c=countSel();
+  document.getElementById('totalCnt').textContent=c?UI[lang].cnt(c):'';
+  var body=document.getElementById('previewBody');
+  if(!r.any){body.textContent=UI[lang].emptyPreview;body.style.color='var(--ink3)';}
+  else{body.textContent=r.text;body.style.color='var(--ink)';}
+}
+function copyForm(){
+  var r=buildFormText();
+  if(!r.any){toast(UI[lang].needSel);return;}
+  navigator.clipboard.writeText(r.text).then(function(){toast(UI[lang].copyDone);}).catch(function(){
+    var ta=document.createElement('textarea');ta.value=r.text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast(UI[lang].copyDone);
+  });
+}
+
+/* ════════ notice accordion ════════ */
+function toggleNt(i){
+  var nt=document.getElementById('nt-'+i),a=document.getElementById('nta-'+i);
+  if(nt.classList.contains('open')){nt.classList.remove('open');a.style.maxHeight=0;}
+  else{nt.classList.add('open');a.style.maxHeight=a.scrollHeight+40+'px';}
+}
+
+/* ════════ toast ════════ */
+var toastT;
+function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove('show');},2200);}
+
+/* ════════ init ════════ */
+/* 데이터는 data/commission.json 에서 불러옴 (스튜디오 편집탭에서 수정).
+   불러오기 실패 시 위에 하드코딩된 DATA를 그대로 사용(fallback). */
+function applyData(j){
+  if(!j)return;
+  if(j.hero)DATA.hero=j.hero;
+  if(j.steps&&j.steps.length)STEPS=j.steps;
+  if(j.chips)DATA.chips=j.chips;
+  if(j.slots)DATA.slots=j.slots;
+  if(j.sections)DATA.sections=j.sections;
+  if(j.notice)DATA.notice=j.notice;
+  if(j.apply)DATA.apply=j.apply;
+  if(j.portfolioOrder)DATA.portfolioOrder=j.portfolioOrder;
+}
+function init(){
+  fetch('data/commission.json?t='+Date.now())
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(j){applyData(j);})
+    .catch(function(){})
+    .then(function(){ setLang('ko'); loadPortfolio(); });
+}
+init();
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLb();});
+</script>
+</body>
+</html>
