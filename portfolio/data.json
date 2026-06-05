@@ -1,21 +1,88 @@
 {
   "categories": [
-    { "id": "live2d", "name": "LIVE2D WORKS", "sub": "Live2D 일러스트 · 파츠 분리", "num": "02" },
-    { "id": "character", "name": "CHARACTER ILLUST", "sub": "캐릭터 일러스트 · 개인작", "num": "03" },
-    { "id": "design", "name": "DESIGN WORKS", "sub": "캐릭터 디자인 · 시트", "num": "04" }
+    {
+      "id": "live2d",
+      "name": "LIVE2D WORKS",
+      "sub": "Live2D 일러스트 · 파츠 분리",
+      "num": "02"
+    },
+    {
+      "id": "character",
+      "name": "CHARACTER ILLUST",
+      "sub": "캐릭터 일러스트 · 개인작",
+      "num": "03"
+    },
+    {
+      "id": "design",
+      "name": "DESIGN WORKS",
+      "sub": "캐릭터 디자인 · 시트",
+      "num": "04"
+    }
   ],
   "live2d": [
-    { "file": "감라빛.png", "title": "감라빛", "title_en": "", "tag": "Live2D" },
-    { "file": "난지.png", "title": "난지", "title_en": "", "tag": "Live2D" },
-    { "file": "달자기.png", "title": "달자기", "title_en": "", "tag": "Live2D" },
-    { "file": "백곰형.png", "title": "백곰형", "title_en": "", "tag": "Live2D" },
-    { "file": "새콤달곰.png", "title": "새콤달곰", "title_en": "", "tag": "Live2D" },
-    { "file": "엠쓔.png", "title": "엠쓔", "title_en": "", "tag": "Live2D" },
-    { "file": "유피.png", "title": "유피", "title_en": "", "tag": "Live2D" }
+    {
+      "file": "감라빛.png",
+      "title": "감라빛",
+      "title_en": "",
+      "tag": "Live2D"
+    },
+    {
+      "file": "난지.png",
+      "title": "난지",
+      "title_en": "",
+      "tag": "Live2D"
+    },
+    {
+      "file": "달자기.png",
+      "title": "달자기",
+      "title_en": "",
+      "tag": "Live2D"
+    },
+    {
+      "file": "백곰형.png",
+      "title": "백곰형",
+      "title_en": "",
+      "tag": "Live2D"
+    },
+    {
+      "file": "새콤달곰.png",
+      "title": "새콤달곰",
+      "title_en": "",
+      "tag": "Live2D"
+    },
+    {
+      "file": "엠쓔.png",
+      "title": "엠쓔",
+      "title_en": "",
+      "tag": "Live2D"
+    },
+    {
+      "file": "유피.png",
+      "title": "유피",
+      "title_en": "",
+      "tag": "Live2D"
+    }
   ],
-  "character": [],
+  "character": [
+    {
+      "file": "해잉피_일러스트_업로드.png",
+      "title": "(축전)해잉피",
+      "title_en": "",
+      "tag": "vtuber"
+    }
+  ],
   "design": [
-    { "file": "character sheet 엠쓔 삼면도.png", "title": "엠쓔 삼면도", "title_en": "", "tag": "Character Sheet" },
-    { "file": "character sheet 오르렛 삼면도.png", "title": "오르렛 삼면도", "title_en": "", "tag": "Character Sheet" }
+    {
+      "file": "character sheet 엠쓔 삼면도.png",
+      "title": "엠쓔 삼면도",
+      "title_en": "",
+      "tag": "Character Sheet"
+    },
+    {
+      "file": "character sheet 오르렛 삼면도.png",
+      "title": "오르렛 삼면도",
+      "title_en": "",
+      "tag": "Character Sheet"
+    }
   ]
 }
