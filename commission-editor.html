@@ -202,19 +202,14 @@ textarea.f{resize:vertical;min-height:60px;line-height:1.6}
     </div>
   </div>
 
-  <!-- 포트폴리오 -->
+  <!-- 포트폴리오: 전용 탭으로 이동 -->
   <div class="ed" id="ed-port">
-    <div class="ed-head" onclick="toggleEd('port')">
+    <div class="ed-head" style="cursor:default">
       <span class="ed-ico">🖼</span><span class="ed-title">포트폴리오 이미지</span>
-      <span class="ed-meta" id="meta-port"></span><span class="ed-arr">▼</span>
+      <span class="ed-meta">→ 전용 탭</span>
     </div>
-    <div class="ed-body">
-      <div id="portBox" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px"></div>
-      <div class="row" style="margin-top:11px;gap:7px">
-        <label class="mini mini-add" style="text-align:center;cursor:pointer;display:inline-block">＋ 이미지 업로드<input type="file" accept="image/*" multiple style="display:none" onchange="uploadPort(this)"></label>
-        <button class="mini mini-up" onclick="loadPort()">↻ 새로고침</button>
-      </div>
-      <div class="hint">업로드/삭제는 즉시 GitHub에 반영 · 순서는 ↑↓ 변경 후 "💾 저장(배포)"로 확정</div>
+    <div class="ed-body" style="display:block">
+      <div class="hint">포트폴리오 업로드·삭제·순서변경은 스튜디오 상단의 <b>「포트폴리오」 탭</b>에서 드래그앤드롭으로 관리하세요.</div>
     </div>
   </div>
 
@@ -276,7 +271,7 @@ function reloadData(){
     .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
     .then(function(j){
       D={hero:j.hero||{},steps:j.steps||[],chips:j.chips||[],slots:j.slots||[],sections:j.sections||[],notice:j.notice||[],apply:j.apply||[],portfolioOrder:j.portfolioOrder||[]};
-      renderAll();loadPort();status('불러옴 ✓','ok');
+      renderAll();status('불러옴 ✓','ok');
     })
     .catch(function(e){status('불러오기 실패 — 기본값 사용','err');renderAll();});
 }
@@ -378,7 +373,7 @@ function renderPrice(){
     h+='<div class="sec-block-head">';
     h+='<input class="f" value="'+esc(sec.ko)+'" oninput="D.sections['+si+'].ko=this.value" placeholder="섹션 제목" style="flex:1">';
     h+='<select class="f" style="width:96px" onchange="D.sections['+si+'].type=this.value;renderPrice()">';
-    ['radio','pill','expr'].forEach(function(t){h+='<option value="'+t+'"'+(sec.type===t?' selected':'')+'>'+(t==='radio'?'단일선택':t==='pill'?'다중선택':'표정(무료)')+'</option>';});
+    [['radio','단일선택'],['pill','다중선택'],['qty','수량선택'],['expr','표정(무료)']].forEach(function(t){h+='<option value="'+t[0]+'"'+(sec.type===t[0]?' selected':'')+'>'+t[1]+'</option>';});
     h+='</select>';
     h+='<button class="mini mini-up" onclick="moveSec('+si+',-1)">↑</button><button class="mini mini-up" onclick="moveSec('+si+',1)">↓</button>';
     h+='<button class="mini mini-del" onclick="rmSec('+si+')">섹션삭제</button></div>';

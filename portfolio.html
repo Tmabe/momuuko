@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>모무꼬 · 포트폴리오 관리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;scrollbar-width:thin;scrollbar-color:#3a3a46 transparent}
+*::-webkit-scrollbar{width:7px;height:7px}*::-webkit-scrollbar-thumb{background:#3a3a46;border-radius:4px}
+:root{--Y:#3D8EF0;--pink:#ff6fae;--green:#34d399;--red:#f87171;--bg:#1A1A22;--bg2:#22222c;--bg3:#2a2a36;--border:rgba(255,255,255,.12);--text:#F0EEE8;--text2:#B8B4AC;--text3:#7A7870;--display:'Bebas Neue',sans-serif;--cond:'Barlow Condensed',sans-serif;--mono:'DM Mono',monospace;--kr:'Noto Sans KR',sans-serif}
+body{font-family:var(--kr);background:var(--bg);color:var(--text);line-height:1.5;padding:0 0 60px}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:13px 20px;background:rgba(26,26,34,.97);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+.tb-title{font-family:var(--display);font-size:20px;letter-spacing:1.5px;color:var(--Y)}
+.tb-sub{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.5px}
+.tb-spacer{flex:1}
+.tb-status{font-family:var(--mono);font-size:11px;color:var(--text3)}
+.tb-status.ok{color:var(--green)}.tb-status.err{color:var(--red)}.tb-status.load{color:var(--Y)}
+.btn{border:none;border-radius:9px;font-family:var(--cond);font-weight:700;font-size:14px;letter-spacing:.4px;padding:9px 17px;cursor:pointer;transition:all .15s}
+.btn-save{background:linear-gradient(135deg,var(--Y),#2c6fc4);color:#fff;box-shadow:0 4px 14px rgba(61,142,240,.3)}
+.btn-save:hover{transform:translateY(-1px)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--Y)}
+.wrap{max-width:880px;margin:0 auto;padding:20px}
+
+/* drop zone */
+.drop{border:2px dashed var(--border);border-radius:16px;padding:34px 20px;text-align:center;cursor:pointer;transition:all .18s;background:var(--bg2);margin-bottom:20px}
+.drop:hover{border-color:var(--Y);background:rgba(61,142,240,.05)}
+.drop.over{border-color:var(--Y);background:rgba(61,142,240,.14);transform:scale(1.01)}
+.drop-ico{font-size:38px;margin-bottom:10px}
+.drop-t{font-family:var(--cond);font-size:18px;font-weight:900;letter-spacing:.4px;color:var(--text)}
+.drop-s{font-size:12px;color:var(--text3);margin-top:5px}
+
+/* grid */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.pcard{position:relative;border:1px solid var(--border);border-radius:11px;overflow:hidden;background:var(--bg2);cursor:grab}
+.pcard.dragging{opacity:.4}
+.pcard.dragover{outline:2px solid var(--Y);outline-offset:-2px}
+.pcard img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;pointer-events:none}
+.pcard-num{position:absolute;top:5px;left:6px;font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.5);border-radius:5px;padding:1px 6px}
+.pcard-ctrl{position:absolute;top:5px;right:5px;display:flex;gap:3px;opacity:0;transition:opacity .15s}
+.pcard:hover .pcard-ctrl{opacity:1}
+.pcard-ctrl button{width:24px;height:24px;border:none;border-radius:6px;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff}
+.ctrl-mv{background:rgba(61,142,240,.85)}
+.ctrl-del{background:rgba(248,113,113,.85)}
+.pcard-name{position:absolute;left:0;right:0;bottom:0;padding:12px 8px 6px;font-size:10.5px;font-weight:600;color:#fff;background:linear-gradient(to top,rgba(0,0,0,.8),transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{text-align:center;padding:40px;color:var(--text3);font-size:13px}
+.hint{font-size:11.5px;color:var(--text3);margin:14px 2px 0;line-height:1.6;font-family:var(--kr)}
+.hint b{color:var(--Y)}
+.prog{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:14px;display:none}
+.prog.show{display:block}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--Y),var(--pink));width:0%;transition:width .3s}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9000;background:#000;border:1px solid var(--border);color:#fff;padding:12px 22px;border-radius:10px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s;font-family:var(--kr)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--green)}.toast.err{border-color:var(--red)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="tb-title">PORTFOLIO</div><div class="tb-sub">포트폴리오 관리</div>
+  <div class="tb-spacer"></div>
+  <div class="tb-status" id="status"></div>
+  <button class="btn btn-ghost" onclick="loadAll()">↻ 새로고침</button>
+  <button class="btn btn-save" onclick="saveOrder()">💾 순서 저장</button>
+</div>
+<div class="wrap">
+  <div class="drop" id="drop" onclick="document.getElementById('fileInput').click()">
+    <div class="drop-ico">📂</div>
+    <div class="drop-t">이미지를 여기에 끌어다 놓으세요</div>
+    <div class="drop-s">또는 클릭해서 선택 · PNG / JPG / WEBP · 여러 장 가능</div>
+    <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files)">
+  </div>
+  <div class="prog" id="prog"><div class="prog-fill" id="progFill"></div></div>
+  <div class="pgrid" id="grid"></div>
+  <div class="hint">· 카드를 <b>드래그</b>하거나 <b>↑↓</b>로 순서 변경 → <b>💾 순서 저장</b><br>· 업로드/삭제는 즉시 GitHub에 반영됩니다 · 공개 페이지에 이 순서대로 표시돼요</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var GH={user:'Tmabe',repo:'momuuko',folder:'portfolio'};
+var files=[]; // {name, sha}
+var order=[]; // filenames in display order
+var commJson=null, commSha=null;
+
+function ghCfg(){return {user:localStorage.getItem('gh_user')||GH.user,repo:localStorage.getItem('gh_repo')||GH.repo,token:localStorage.getItem('gh_token')||'',folder:GH.folder};}
+function status(m,c){var e=document.getElementById('status');e.textContent=m;e.className='tb-status '+(c||'');}
+function toast(m,c){var e=document.getElementById('toast');e.textContent=m;e.className='toast show '+(c||'');clearTimeout(e._t);e._t=setTimeout(function(){e.className='toast';},2600);}
+function b64(s){return btoa(unescape(encodeURIComponent(s)));}
+
+function loadAll(){
+  status('불러오는 중...','load');
+  var c=ghCfg();
+  // 1) commission.json (순서)
+  fetch('data/commission.json?t='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(j){
+    commJson=j||{}; order=(j&&j.portfolioOrder)?j.portfolioOrder.slice():[];
+    // 2) portfolio dir
+    return fetch('https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/'+c.folder+'?t='+Date.now());
+  }).then(function(r){return r.ok?r.json():[];}).then(function(data){
+    files=(data||[]).filter(function(f){return f.type==='file'&&/\.(png|jpe?g|gif|webp)$/i.test(f.name);}).map(function(f){return {name:f.name,sha:f.sha};});
+    // apply order
+    files.sort(function(a,b){var ia=order.indexOf(a.name),ib=order.indexOf(b.name);return (ia<0?999:ia)-(ib<0?999:ib);});
+    render();status('불러옴 ✓','ok');
+  }).catch(function(){status('불러오기 실패','err');render();});
+}
+function render(){
+  var c=ghCfg();var base='https://'+c.user+'.github.io/'+c.repo+'/'+c.folder+'/';
+  var g=document.getElementById('grid');
+  if(!files.length){g.innerHTML='<div class="empty" style="grid-column:1/-1">이미지가 없어요. 위에 끌어다 놓아 업로드하세요 📂</div>';return;}
+  var h='';
+  files.forEach(function(f,i){
+    h+='<div class="pcard" draggable="true" data-i="'+i+'">'+
+       '<img src="'+base+encodeURIComponent(f.name)+'" loading="lazy" alt="'+f.name+'">'+
+       '<div class="pcard-num">'+(i+1)+'</div>'+
+       '<div class="pcard-ctrl"><button class="ctrl-mv" onclick="mv('+i+',-1)">↑</button><button class="ctrl-mv" onclick="mv('+i+',1)">↓</button><button class="ctrl-del" onclick="del('+i+')">×</button></div>'+
+       '<div class="pcard-name">'+f.name+'</div></div>';
+  });
+  g.innerHTML=h;
+  bindDrag();
+}
+function mv(i,d){var j=i+d;if(j<0||j>=files.length)return;var t=files[i];files[i]=files[j];files[j]=t;render();}
+
+/* drag reorder */
+var dragI=null;
+function bindDrag(){
+  document.querySelectorAll('.pcard').forEach(function(card){
+    card.addEventListener('dragstart',function(){dragI=parseInt(card.dataset.i);card.classList.add('dragging');});
+    card.addEventListener('dragend',function(){card.classList.remove('dragging');document.querySelectorAll('.pcard').forEach(function(c){c.classList.remove('dragover');});});
+    card.addEventListener('dragover',function(e){e.preventDefault();card.classList.add('dragover');});
+    card.addEventListener('dragleave',function(){card.classList.remove('dragover');});
+    card.addEventListener('drop',function(e){e.preventDefault();var to=parseInt(card.dataset.i);if(dragI===null||dragI===to)return;var m=files.splice(dragI,1)[0];files.splice(to,0,m);dragI=null;render();});
+  });
+}
+
+/* file drop upload */
+var drop=document.getElementById('drop');
+['dragenter','dragover'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();e.stopPropagation();drop.classList.add('over');});});
+['dragleave','drop'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();e.stopPropagation();drop.classList.remove('over');});});
+drop.addEventListener('drop',function(e){var f=e.dataTransfer.files;if(f&&f.length)handleFiles(f);});
+
+function handleFiles(fileList){
+  var c=ghCfg();if(!c.token){toast('GitHub 토큰이 필요해요 (대시보드/편집기에서 먼저 설정)','err');return;}
+  var imgs=Array.prototype.slice.call(fileList).filter(function(f){return /^image\//.test(f.type);});
+  if(!imgs.length)return;
+  var prog=document.getElementById('prog'),fill=document.getElementById('progFill');
+  prog.classList.add('show');fill.style.width='0%';
+  status('업로드 중... ('+imgs.length+'장)','load');
+  var done=0,fail=0;
+  imgs.forEach(function(file){
+    var rd=new FileReader();
+    rd.onload=function(){
+      var content=rd.result.split(',')[1];
+      var name=file.name.replace(/[^\w.\-가-힣]/g,'_');
+      fetch('https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/'+c.folder+'/'+encodeURIComponent(name),{
+        method:'PUT',headers:{'Authorization':'token '+c.token,'Content-Type':'application/json'},
+        body:JSON.stringify({message:'📷 포트폴리오 추가 '+name,content:content})
+      }).then(function(r){if(!r.ok)fail++;}).catch(function(){fail++;}).then(function(){
+        done++;fill.style.width=Math.round(done/imgs.length*100)+'%';
+        if(done===imgs.length){
+          status(fail?(fail+'장 실패'):'업로드 완료 ✓',fail?'err':'ok');
+          toast(fail?(fail+'장 실패'):(imgs.length+'장 업로드 완료 ✓'),fail?'err':'ok');
+          setTimeout(function(){prog.classList.remove('show');loadAll();},1400);
+        }
+      });
+    };
+    rd.readAsDataURL(file);
+  });
+}
+function del(i){
+  var c=ghCfg();if(!c.token){toast('토큰이 필요해요','err');return;}
+  var f=files[i];if(!confirm('"'+f.name+'" 삭제할까요?'))return;
+  status('삭제 중...','load');
+  fetch('https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/'+c.folder+'/'+encodeURIComponent(f.name),{
+    method:'DELETE',headers:{'Authorization':'token '+c.token,'Content-Type':'application/json'},
+    body:JSON.stringify({message:'🗑 포트폴리오 삭제 '+f.name,sha:f.sha})
+  }).then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});}).then(function(res){
+    if(res.ok){files.splice(i,1);render();status('삭제됨 ✓','ok');toast('삭제 완료 ✓','ok');}
+    else{status('실패','err');toast('삭제 실패: '+(res.j.message||''),'err');}
+  });
+}
+function saveOrder(){
+  var c=ghCfg();if(!c.token){toast('토큰이 필요해요','err');return;}
+  status('순서 저장 중...','load');
+  // 최신 commission.json 다시 받아 portfolioOrder만 갱신
+  var url='https://api.github.com/repos/'+c.user+'/'+c.repo+'/contents/data/commission.json';
+  fetch(url+'?t='+Date.now(),{headers:{'Authorization':'token '+c.token}})
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(meta){
+      var cur=meta?JSON.parse(decodeURIComponent(escape(atob(meta.content)))):(commJson||{});
+      cur.portfolioOrder=files.map(function(f){return f.name;});
+      cur.updated=new Date().toISOString();
+      return fetch(url,{method:'PUT',headers:{'Authorization':'token '+c.token,'Content-Type':'application/json'},
+        body:JSON.stringify({message:'🖼 포트폴리오 순서 변경',content:b64(JSON.stringify(cur,null,2)),sha:meta?meta.sha:undefined})});
+    })
+    .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+    .then(function(res){if(res.ok){status('순서 저장됨 ✓','ok');toast('순서 저장 완료! 공개 페이지에 반영돼요 🎉','ok');}else{status('실패','err');toast('저장 실패: '+(res.j.message||''),'err');}})
+    .catch(function(e){status('오류','err');toast('오류: '+e.message,'err');});
+}
+loadAll();
+</script>
+</body>
+</html>

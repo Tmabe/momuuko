@@ -128,6 +128,17 @@ body{
 .pill:hover{border-color:var(--sky-l);color:var(--sky-d)}
 .pill.sel{background:var(--sky-pl);border-color:var(--sky);color:var(--sky-dd)}
 .pill .pp{font-weight:900;color:var(--sky-d)}
+/* qty (수량 선택) */
+.qty-list{display:flex;flex-direction:column;gap:7px}
+.qty-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px;border:1.5px solid var(--line);border-radius:var(--r-sm);background:#fff;transition:all .14s}
+.qty-item.on{border-color:var(--sky);background:var(--sky-pl)}
+.qty-i-n{font-size:13px;font-weight:700;color:var(--ink)}
+.qty-i-p{font-size:12px;font-weight:800;color:var(--sky-d);margin-top:2px}
+.qty-ctrl{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:var(--r-sm);overflow:hidden;flex-shrink:0;background:#fff}
+.qc-btn{width:32px;height:32px;border:none;background:var(--sky-bg);font-size:17px;font-weight:800;cursor:pointer;color:var(--sky-d);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+.qc-btn:hover{background:var(--sky-pl)}
+.qc-btn.minus{color:var(--accent-d)}
+.qc-num{width:34px;text-align:center;font-size:15px;font-weight:800;color:var(--ink);border-left:1.5px solid var(--line);border-right:1.5px solid var(--line);height:32px;display:flex;align-items:center;justify-content:center;user-select:none}
 
 /* sub card (message / apply) */
 .subcard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-top:16px}
@@ -525,6 +536,18 @@ function renderForm(){
            '<div class="n">'+it[lang]+'</div><div class="p">'+won(it.p)+' '+UI[lang].won+'</div>'+(sub?'<span class="sub">'+sub+'</span>':'')+'</div>';
       });
       h+='</div>';
+    } else if(sec.type==='qty'){ // 수량 선택 (개수 지정)
+      h+='<div class="qty-list">';
+      sec.items.forEach(function(it){
+        var q=(sel[sec.id]&&sel[sec.id][it.id])||0;
+        h+='<div class="qty-item'+(q>0?' on':'')+'" id="qi-'+it.id+'">'+
+           '<div><div class="qty-i-n">'+it[lang]+'</div>'+
+           '<div class="qty-i-p" id="qp-'+it.id+'">'+won(it.p)+' '+UI[lang].won+(q>1?' × '+q+' = '+won(it.p*q):'')+'</div></div>'+
+           '<div class="qty-ctrl"><button class="qc-btn minus" onclick="setQty(\''+sec.id+'\',\''+it.id+'\',-1)">−</button>'+
+           '<span class="qc-num" id="qn-'+it.id+'">'+q+'</span>'+
+           '<button class="qc-btn" onclick="setQty(\''+sec.id+'\',\''+it.id+'\',1)">＋</button></div></div>';
+      });
+      h+='</div>';
     } else { // pill & expr both selectable multi
       h+='<div class="pills">';
       sec.items.forEach(function(it){
@@ -597,9 +620,19 @@ function togglePill(secId,itId){
   if(sel[secId][itId]){delete sel[secId][itId];el.classList.remove('sel');}else{sel[secId][itId]=true;el.classList.add('sel');}
   rebuild();
 }
+function setQty(secId,itId,d){
+  if(!sel[secId])sel[secId]={};
+  var cur=(sel[secId][itId]||0)+d; if(cur<0)cur=0;
+  if(cur===0)delete sel[secId][itId]; else sel[secId][itId]=cur;
+  var it=findItem(secId,itId);
+  var qn=document.getElementById('qn-'+itId); if(qn)qn.textContent=cur;
+  var qi=document.getElementById('qi-'+itId); if(qi)qi.classList.toggle('on',cur>0);
+  var qp=document.getElementById('qp-'+itId); if(qp)qp.textContent=won(it.p)+' '+UI[lang].won+(cur>1?' × '+cur+' = '+won(it.p*cur):'');
+  rebuild();
+}
 function resetForm(){
   sel={};
-  document.querySelectorAll('.opt-card.sel,.pill.sel').forEach(function(e){e.classList.remove('sel');});
+  renderForm(); // 라디오/필/수량 전부 초기 상태로 다시 그림
   document.getElementById('formMsg').value='';
   document.getElementById('fixedRef').value='';
   document.getElementById('fixedEmail').value='';
@@ -622,6 +655,11 @@ function buildFormText(){
       if(!sel[sec.id])return; var ids=Object.keys(sel[sec.id]); if(!ids.length)return;
       any=true; lines.push('▸ '+sec.koLabel);
       ids.forEach(function(id){var it=findItem(sec.id,id);lines.push('  · '+it.ko);lines.push('    → '+won(it.p)+'원');total+=it.p;});
+      lines.push('');
+    } else if(sec.type==='qty'){
+      if(!sel[sec.id])return; var ids=Object.keys(sel[sec.id]); if(!ids.length)return;
+      any=true; lines.push('▸ '+sec.koLabel);
+      ids.forEach(function(id){var it=findItem(sec.id,id);var q=sel[sec.id][id];lines.push('  · '+it.ko+' × '+q+'개');lines.push('    → '+won(it.p*q)+'원');total+=it.p*q;});
       lines.push('');
     } else if(sec.type==='expr'){
       if(!sel[sec.id])return; var ids=Object.keys(sel[sec.id]); if(!ids.length)return;
