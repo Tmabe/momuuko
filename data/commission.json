@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-05T18:10:45.470Z",
+  "updated": "2026-06-05T18:36:05.634Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -245,7 +245,7 @@
       "ko": "▸ 추가 옵션",
       "en": "▸ Add-ons",
       "koLabel": "추가 옵션",
-      "type": "pill",
+      "type": "qty",
       "hintKo": "⚠ 의상·헤어는 먼저 문의 후 선택해 주세요",
       "hintEn": "⚠ Please inquire before choosing outfit/hair add-ons",
       "items": [
