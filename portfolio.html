@@ -913,40 +913,8 @@ footer::before{
 <!-- PORTFOLIO -->
 <section id="portfolio">
 
-  <!-- LIVE2D -->
-  <div class="pf-sec">
-    <div class="pf-cat-label reveal">
-      <div class="pf-cat-tag">02</div>
-      <div class="pf-cat-name">LIVE2D <span style="color:var(--Y)">WORKS</span></div>
-      <div class="pf-cat-en" data-t="pf_l2d_sub">Live2D 일러스트 · 파츠 분리</div>
-    </div>
-    <div class="pf-grid-l2d reveal" id="l2dGrid">
-      <div class="pf-empty">
-        <span class="pf-empty-num">L2D</span>
-        <div>portfolio/live2d/ 폴더에 이미지를 올려주세요</div>
-        <div style="font-size:9px;margin-top:4px;opacity:.5">Add images · Update data.json</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 구분선 -->
-  <div class="pf-sep"><div class="pf-sep-line"></div></div>
-
-  <!-- CHARACTER -->
-  <div class="pf-sec" style="padding-top:0">
-    <div class="pf-cat-label reveal">
-      <div class="pf-cat-tag">03</div>
-      <div class="pf-cat-name">CHARACTER <span style="color:var(--Y)">ILLUST</span></div>
-      <div class="pf-cat-en" data-t="pf_char_sub">캐릭터 일러스트 · 개인작</div>
-    </div>
-    <div class="pf-grid-char reveal" id="charGrid">
-      <div class="pf-empty">
-        <span class="pf-empty-num">CHR</span>
-        <div>portfolio/character/ 폴더에 이미지를 올려주세요</div>
-        <div style="font-size:9px;margin-top:4px;opacity:.5">Add images · Update data.json</div>
-      </div>
-    </div>
-  </div>
+  <!-- 카테고리(폴더)별 섹션 동적 생성 -->
+  <div id="pfSections"></div>
 
 </section>
 
@@ -1172,27 +1140,52 @@ var io=new IntersectionObserver(function(entries){
 },{threshold:0.07});
 document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 
-/* 포트폴리오 로드 */
+/* 포트폴리오 로드 — data.json의 categories를 폴더(대주제)별로 동적 생성 */
+var DEFAULT_CATS=[
+  {id:'live2d',name:'LIVE2D <span style="color:var(--Y)">WORKS</span>',sub:'Live2D 일러스트 · 파츠 분리',num:'02'},
+  {id:'character',name:'CHARACTER <span style="color:var(--Y)">ILLUST</span>',sub:'캐릭터 일러스트 · 개인작',num:'03'},
+  {id:'design',name:'DESIGN <span style="color:var(--Y)">WORKS</span>',sub:'캐릭터 디자인 · 시트',num:'04'}
+];
+function esc(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function loadPortfolio(){
-  fetch(BASE+'data.json')
+  fetch(BASE+'data.json?t='+Date.now())
     .then(function(r){ if(!r.ok) throw 0; return r.json(); })
-    .then(function(d){ renderGrid('l2dGrid','live2d',d.live2d||[]); renderGrid('charGrid','character',d.character||[]); })
+    .then(function(d){
+      var cats=d.categories;
+      if(!cats||!cats.length){
+        cats=[]; var keys=Object.keys(d).filter(function(k){return k!=='categories'&&Array.isArray(d[k]);});
+        if(!keys.length)keys=DEFAULT_CATS.map(function(c){return c.id;});
+        keys.forEach(function(k){var def=DEFAULT_CATS.find(function(c){return c.id===k;});cats.push(def||{id:k,name:k.toUpperCase(),sub:'',num:''});});
+      }
+      var wrap=document.getElementById('pfSections'); wrap.innerHTML='';
+      cats.forEach(function(cat,ci){
+        var items=(d[cat.id]||[]);
+        if(!items.length) return; // 비어있는 폴더는 표시 안 함
+        if(ci>0){ var sep=document.createElement('div'); sep.className='pf-sep'; sep.innerHTML='<div class="pf-sep-line"></div>'; wrap.appendChild(sep); }
+        var sec=document.createElement('div'); sec.className='pf-sec'; if(ci>0)sec.style.paddingTop='0';
+        sec.innerHTML='<div class="pf-cat-label reveal"><div class="pf-cat-tag">'+(esc(cat.num)||('0'+(ci+2)).slice(-2))+'</div>'
+          +'<div class="pf-cat-name">'+(/[<]/.test(cat.name)?cat.name:esc(cat.name))+'</div>'
+          +'<div class="pf-cat-en">'+esc(cat.sub||'')+'</div></div>'
+          +'<div class="pf-grid-char reveal"></div>';
+        wrap.appendChild(sec);
+        var grid=sec.querySelector('.pf-grid-char');
+        io.observe(sec.querySelector('.pf-cat-label'));
+        renderGrid(grid,cat.id,items);
+      });
+    })
     .catch(function(){ /* 빈 상태 유지 */ });
 }
-function renderGrid(id,folder,items){
-  var g=document.getElementById(id);
-  if(!items.length) return;
-  g.innerHTML='';
+function renderGrid(g,folder,items){
   items.forEach(function(item,i){
-    var src=BASE+folder+'/'+item.file;
+    var src=BASE+folder+'/'+encodeURIComponent(item.file);
     var el=document.createElement('div');
     el.className='pf-item reveal';
     el.style.transitionDelay=(i*0.05)+'s';
-    el.innerHTML='<img src="'+src+'" alt="'+item.title+'" loading="lazy">'
-      +'<div class="pf-tag">'+(item.tag||'')+'</div>'
+    el.innerHTML='<img src="'+src+'" alt="'+esc(item.title)+'" loading="lazy">'
+      +'<div class="pf-tag">'+esc(item.tag||'')+'</div>'
       +'<div class="pf-overlay">'
-        +'<div class="pf-overlay-title">'+item.title+'</div>'
-        +'<div class="pf-overlay-en">'+(item.title_en||'')+'</div>'
+        +'<div class="pf-overlay-title">'+esc(item.title)+'</div>'
+        +'<div class="pf-overlay-en">'+esc(item.title_en||'')+'</div>'
       +'</div>'
       +'<div class="pf-corner tl"></div>'
       +'<div class="pf-corner br"></div>';

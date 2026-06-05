@@ -1,30 +1,21 @@
 {
-  "live2d": [
-    {
-      "file": "sample1.jpg",
-      "title": "Live2D 샘플 작품 1",
-      "title_en": "Live2D Sample Work 1",
-      "tag": "Full Model"
-    },
-    {
-      "file": "sample2.jpg",
-      "title": "Live2D 샘플 작품 2",
-      "title_en": "Live2D Sample Work 2",
-      "tag": "Character Sheet"
-    }
+  "categories": [
+    { "id": "live2d", "name": "LIVE2D WORKS", "sub": "Live2D 일러스트 · 파츠 분리", "num": "02" },
+    { "id": "character", "name": "CHARACTER ILLUST", "sub": "캐릭터 일러스트 · 개인작", "num": "03" },
+    { "id": "design", "name": "DESIGN WORKS", "sub": "캐릭터 디자인 · 시트", "num": "04" }
   ],
-  "character": [
-    {
-      "file": "sample1.jpg",
-      "title": "캐릭터 일러스트 1",
-      "title_en": "Character Illustration 1",
-      "tag": "Original"
-    },
-    {
-      "file": "sample2.jpg",
-      "title": "캐릭터 일러스트 2",
-      "title_en": "Character Illustration 2",
-      "tag": "Fan Art"
-    }
+  "live2d": [
+    { "file": "감라빛.png", "title": "감라빛", "title_en": "", "tag": "Live2D" },
+    { "file": "난지.png", "title": "난지", "title_en": "", "tag": "Live2D" },
+    { "file": "달자기.png", "title": "달자기", "title_en": "", "tag": "Live2D" },
+    { "file": "백곰형.png", "title": "백곰형", "title_en": "", "tag": "Live2D" },
+    { "file": "새콤달곰.png", "title": "새콤달곰", "title_en": "", "tag": "Live2D" },
+    { "file": "엠쓔.png", "title": "엠쓔", "title_en": "", "tag": "Live2D" },
+    { "file": "유피.png", "title": "유피", "title_en": "", "tag": "Live2D" }
+  ],
+  "character": [],
+  "design": [
+    { "file": "character sheet 엠쓔 삼면도.png", "title": "엠쓔 삼면도", "title_en": "", "tag": "Character Sheet" },
+    { "file": "character sheet 오르렛 삼면도.png", "title": "오르렛 삼면도", "title_en": "", "tag": "Character Sheet" }
   ]
 }
