@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-05T13:41:19.905Z",
+  "updated": "2026-06-05T18:10:45.470Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -308,12 +308,6 @@
           "ko": "3면도 (단색채색)",
           "en": "3-view sheet (flat color)",
           "p": 150000
-        },
-        {
-          "id": "add_mq0z28z5",
-          "ko": "새 항목",
-          "en": "",
-          "p": 0
         }
       ]
     },
