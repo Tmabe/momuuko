@@ -76,6 +76,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
   <nav class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('dashboard')">대시보드</button>
     <button class="tab-btn" onclick="switchTab('deadline')">마감캘린더</button>
+    <button class="tab-btn" onclick="switchTab('planner')">플래너</button>
     <button class="tab-btn" onclick="switchTab('practice')">연습트래커</button>
     <button class="tab-btn" onclick="switchTab('editor')">커미션편집</button>
     <button class="tab-btn" onclick="switchTab('portfolio')">포트폴리오</button>
@@ -91,6 +92,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
 
 <iframe id="panel-dashboard" class="panel active" src="d_i75EXu4XuLRneN3r.html"></iframe>
 <iframe id="panel-deadline"  class="panel"        src="deadline.html"></iframe>
+<iframe id="panel-planner"   class="panel"        src="planner.html"></iframe>
 <iframe id="panel-practice"  class="panel"        src="practice.html"></iframe>
 <iframe id="panel-editor"    class="panel"        src="commission-editor.html"></iframe>
 <iframe id="panel-portfolio" class="panel"        src="portfolio-manager.html"></iframe>
@@ -99,7 +101,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
 
 <script>
 function switchTab(id) {
-  var ids = ['dashboard', 'deadline', 'practice', 'editor', 'portfolio', 'stats', 'quote'];
+  var ids = ['dashboard', 'deadline', 'planner', 'practice', 'editor', 'portfolio', 'stats', 'quote'];
   document.querySelectorAll('.tab-btn').forEach(function(b, i) {
     b.classList.toggle('active', ids[i] === id);
   });
