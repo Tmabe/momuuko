@@ -608,7 +608,7 @@ function renderGrid(){
       cc.innerHTML='<span class="dot"></span><span class="ctxt" title="'+esc(label)+'">'+esc(t.text)+'</span><span class="cdel" title="삭제">✕</span>';
       cc.addEventListener('dragstart',function(e){
         e.dataTransfer.setData('text/plain', JSON.stringify({kind:'move', placeId:p.id}));
-        e.dataTransfer.effectAllowed='move';
+        e.dataTransfer.effectAllowed='copyMove'; // dropEffect('copy')와 호환 → 이동 drop이 막히지 않게
         cc.classList.add('dragging'); cc._dragged=true;
       });
       cc.addEventListener('dragend',function(){ cc.classList.remove('dragging'); });
