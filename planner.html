@@ -187,6 +187,22 @@ body{display:flex;flex-direction:column;}
 .ai-item input{width:auto;accent-color:var(--Y);transform:scale(1.2);cursor:pointer;}
 .ai-item .adate{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--yellow);flex-shrink:0;}
 
+/* 인벤토리 (신청 내역) */
+.inv-group{margin-top:16px;}
+.inv-group .ghead{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.inv-group .ghead .gt{font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.5px;}
+.inv-group .ghead .gc{font-family:var(--mono);font-size:12px;color:var(--text3);}
+.inv-group .ghead .addinv{margin-left:auto;height:28px;padding:0 11px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text2);cursor:pointer;font-family:var(--cond);font-weight:700;font-size:12px;letter-spacing:.5px;transition:.15s;}
+.inv-group .ghead .addinv:hover{border-color:var(--Y);color:var(--Y);}
+.inv-list{display:flex;flex-direction:column;gap:5px;}
+.inv-list .empty2{color:var(--text3);font-size:12.5px;padding:8px 2px;}
+.inv-row{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:8px;border:1px solid var(--border2);background:var(--panel2);font-size:14px;cursor:pointer;}
+.inv-row input{width:auto;accent-color:var(--green);transform:scale(1.25);cursor:pointer;flex-shrink:0;}
+.inv-row .iname{flex:1;}
+.inv-row.idone .iname{text-decoration:line-through;color:var(--text3);}
+.inv-row .idel{color:var(--text3);font-size:16px;line-height:1;flex-shrink:0;padding:0 4px;border-radius:5px;}
+.inv-row .idel:hover{color:var(--red);background:rgba(248,113,113,.15);}
+
 /* 토스트 */
 #toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
@@ -231,6 +247,7 @@ body{display:flex;flex-direction:column;}
       <div class="row">
         <select id="selClient"><option value="">신청자 선택…</option></select>
         <button class="addcli" id="addCli" title="신청자 직접 추가">＋</button>
+        <button class="addcli" id="invBtn" title="신청 내역(표정·파츠) 정리" style="font-size:17px;">📋</button>
       </div>
       <div class="row">
         <input class="txt" id="todoText" placeholder="할 일 입력 후 Enter" autocomplete="off">
@@ -277,6 +294,27 @@ body{display:flex;flex-direction:column;}
       <button class="mbtn" id="aiClose">닫기</button>
       <button class="mbtn ai" id="aiRun">추출하기</button>
       <button class="mbtn primary" id="aiAdd" style="display:none;">선택 항목 태그 추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 신청 내역(인벤토리) 모달 ═══ -->
+<div class="modal-bg" id="invModal">
+  <div class="modal">
+    <h2>📋 신청 내역</h2>
+    <div class="desc">신청 들어온 표정·파츠 체크리스트입니다. 태그(작업 묶음)와 별개로, 빠뜨리면 안 되는 디테일을 관리해요. 작업하면서 체크하세요.</div>
+    <label>신청자</label>
+    <select id="invClient"></select>
+    <div class="inv-group">
+      <div class="ghead"><span class="gt">🎭 추가 표정</span><span class="gc" id="invExpC">0</span><button class="addinv" data-cat="expressions">＋ 추가</button></div>
+      <div class="inv-list" id="invExpList"></div>
+    </div>
+    <div class="inv-group">
+      <div class="ghead"><span class="gt">🧩 추가 파츠</span><span class="gc" id="invPartC">0</span><button class="addinv" data-cat="parts">＋ 추가</button></div>
+      <div class="inv-list" id="invPartList"></div>
+    </div>
+    <div class="btnrow">
+      <button class="mbtn primary" id="invClose">닫기</button>
     </div>
   </div>
 </div>
@@ -335,8 +373,8 @@ var viewY, viewM; // 캘린더가 보는 연·월
 function load(){
   try{
     var s=JSON.parse(localStorage.getItem(PKEY)||'{}');
-    return {todos:s.todos||[], placements:s.placements||[], clients:s.clients||[]};
-  }catch(e){ return {todos:[],placements:[],clients:[]}; }
+    return {todos:s.todos||[], placements:s.placements||[], clients:s.clients||[], inventory:s.inventory||{}};
+  }catch(e){ return {todos:[],placements:[],clients:[],inventory:{}}; }
 }
 function save(){ try{ localStorage.setItem(PKEY, JSON.stringify(state)); }catch(e){} }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
@@ -574,9 +612,74 @@ function toast(msg){
 /* ════════ 모달 공통 ════════ */
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-['aiModal','syncModal','setModal'].forEach(function(id){
+['aiModal','syncModal','setModal','invModal'].forEach(function(id){
   document.getElementById(id).addEventListener('click',function(e){ if(e.target===this) closeModal(id); });
 });
+
+/* ════════ 신청 내역(인벤토리) ════════ */
+function invFor(client){
+  if(!client) return {expressions:[],parts:[]};
+  if(!state.inventory[client]) state.inventory[client]={expressions:[],parts:[]};
+  var inv=state.inventory[client];
+  inv.expressions=inv.expressions||[]; inv.parts=inv.parts||[];
+  return inv;
+}
+function renderInv(){
+  var client=document.getElementById('invClient').value;
+  var inv=invFor(client);
+  [['expressions','invExpList','invExpC'],['parts','invPartList','invPartC']].forEach(function(g){
+    var arr=inv[g[0]], box=document.getElementById(g[1]);
+    document.getElementById(g[2]).textContent=arr.length;
+    box.innerHTML='';
+    if(!arr.length){ box.innerHTML='<div class="empty2">아직 없어요. ＋추가 또는 🤖AI 추출로 채워보세요.</div>'; return; }
+    arr.forEach(function(it){
+      var row=document.createElement('div');
+      row.className='inv-row'+(it.done?' idone':'');
+      row.innerHTML='<input type="checkbox"'+(it.done?' checked':'')+'><span class="iname">'+esc(it.name)+'</span><span class="idel" title="삭제">✕</span>';
+      row.addEventListener('click',function(e){
+        if(e.target.classList.contains('idel')){
+          inv[g[0]]=arr.filter(function(x){return x.id!==it.id;});
+          save(); renderInv(); return;
+        }
+        it.done=!it.done; save(); renderInv();
+      });
+      box.appendChild(row);
+    });
+  });
+}
+function openInv(client){
+  var sel=document.getElementById('invClient');
+  sel.innerHTML='<option value="">(신청자 없음)</option>';
+  allClients().forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
+  if(client && client!=='__none__') sel.value=client;
+  renderInv(); openModal('invModal');
+}
+document.getElementById('invBtn').addEventListener('click',function(){
+  openInv(document.getElementById('selClient').value);
+});
+document.getElementById('invClient').addEventListener('change', renderInv);
+document.getElementById('invClose').addEventListener('click',function(){ closeModal('invModal'); });
+document.querySelectorAll('#invModal .addinv').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var client=document.getElementById('invClient').value;
+    var name=prompt(btn.dataset.cat==='expressions'?'추가할 표정 이름:':'추가할 파츠 이름:');
+    if(name===null) return; name=name.trim(); if(!name) return;
+    invFor(client)[btn.dataset.cat].push({id:uid(), name:name, done:false});
+    save(); renderInv();
+  });
+});
+/* AI/외부에서 인벤토리 병합 (중복 이름은 건너뜀) */
+function mergeInventory(client, expressions, parts){
+  var inv=invFor(client), added=0;
+  [['expressions',expressions],['parts',parts]].forEach(function(g){
+    (g[1]||[]).forEach(function(nm){
+      nm=String(nm||'').trim(); if(!nm) return;
+      if(inv[g[0]].some(function(x){return x.name===nm;})) return;
+      inv[g[0]].push({id:uid(), name:nm, done:false}); added++;
+    });
+  });
+  return added;
+}
 
 /* ════════ 설정 (Claude 키·모델 + GitHub) ════════ */
 function ghCfg(){ return {user:localStorage.getItem('gh_user')||'',repo:localStorage.getItem('gh_repo')||'',token:localStorage.getItem('gh_token')||''}; }
@@ -658,14 +761,14 @@ document.getElementById('syncRestore').addEventListener('click',async function()
     if(!f){ syncStatus('err','❌ 백업 파일이 아직 없어요. 먼저 백업해주세요.'); return; }
     var json=decodeURIComponent(escape(atob(f.content.replace(/\n/g,''))));
     var s=JSON.parse(json);
-    state={todos:s.todos||[], placements:s.placements||[], clients:s.clients||[]};
+    state={todos:s.todos||[], placements:s.placements||[], clients:s.clients||[], inventory:s.inventory||{}};
     save(); renderTags(); renderGrid(); renderSelect();
     syncStatus('ok','✅ 복원 완료! 할일 '+state.todos.length+'개 · 배치 '+state.placements.length+'개');
   }catch(e){ syncStatus('err','❌ 실패: '+e.message); }
 });
 
 /* ════════ AI 할일 추출 (Claude API) ════════ */
-var _aiResult=[];
+var _aiResult=[], _aiInventory={expressions:[],parts:[]};
 function aiStatus(cls,msg){ var el=document.getElementById('aiStatus'); el.className='mstatus show '+cls; el.textContent=msg; }
 document.getElementById('btnAi').addEventListener('click',function(){
   if(!localStorage.getItem('mm_claude_key')){
@@ -705,12 +808,16 @@ document.getElementById('aiRun').addEventListener('click',async function(){
       body:JSON.stringify({
         model:model,
         max_tokens:2048,
-        system:'당신은 일러스트 커미션 작가의 비서입니다. 작가와 신청자(의뢰인)의 대화에서 "작가가 해야 할 일"만 추출하세요.\n'
-          +'규칙:\n'
-          +'- 작가의 작업·확인·연락 등 실행 항목만. 신청자가 할 일이나 잡담은 제외.\n'
-          +'- 각 할일은 8자 내외로 간결하게 (예: "러프 전달", "입금 확인", "배경 시안 2종").\n'
-          +'- 날짜가 언급되면 YYYY-MM-DD로 변환해 date에 넣고, 없으면 빈 문자열. 오늘은 '+todayStr()+' 입니다.\n'
-          +'- "15일쯤 러프" 같은 표현은 그 날짜의 할일로. "25일까지 완성"은 마감일로 해석해 그 날짜에.\n'
+        system:'당신은 일러스트 커미션 작가의 비서입니다. 작가와 신청자(의뢰인)의 대화/신청양식에서 두 가지를 추출하세요: (1) 작가의 할일 (2) 신청 들어온 표정·파츠 인벤토리.\n'
+          +'[todos = 작가가 할 일정성 작업]\n'
+          +'- 작가의 작업·확인·연락 등 일정에 걸 만한 실행 항목만. 신청자가 할 일·잡담·가격계산은 제외.\n'
+          +'- 8자 내외로 간결하게 (예: "러프 전달", "입금 확인").\n'
+          +'- 날짜 언급 시 YYYY-MM-DD로 date에, 없으면 빈 문자열. 오늘은 '+todayStr()+'. "15일쯤 러프"→그날 할일, "25일까지 완성"→그날.\n'
+          +'- 개별 표정 하나하나, 안경·소품 같은 자잘한 파츠는 todos에 넣지 마세요(아래 inventory로).\n'
+          +'[inventory = 빠뜨리면 안 되는 체크리스트]\n'
+          +'- expressions: 신청 들어온 표정 이름들 (예: 빠직, 정색, 하트눈, 눈물, 볼빵빵). 기본 제공 표정도 포함.\n'
+          +'- parts: 신청 들어온 추가 파츠·소품·옵션 이름들 (예: 게임기 손, 겉옷 on/off, 안경, 삼면도, 동물귀, 꼬리, 헤어추가, 의상추가).\n'
+          +'- 색상·위치·재질 같은 디자인 디테일은 제외하고, 물리적 파츠/옵션 명칭만. 이름은 짧게.\n'
           +'- 중복·유사 항목은 하나로 합치세요.',
         messages:[{role:'user', content:text}],
         output_config:{format:{type:'json_schema', schema:{
@@ -723,9 +830,13 @@ document.getElementById('aiRun').addEventListener('click',async function(){
                 date:{type:'string', description:'YYYY-MM-DD 형식 날짜. 날짜 언급이 없으면 빈 문자열'}
               },
               required:['text','date'], additionalProperties:false
-            }}
+            }},
+            inventory:{type:'object', properties:{
+              expressions:{type:'array', items:{type:'string'}, description:'신청 들어온 표정 이름 목록'},
+              parts:{type:'array', items:{type:'string'}, description:'신청 들어온 추가 파츠·소품·옵션 이름 목록'}
+            }, required:['expressions','parts'], additionalProperties:false}
           },
-          required:['todos'], additionalProperties:false
+          required:['todos','inventory'], additionalProperties:false
         }}}
       })
     });
@@ -739,8 +850,11 @@ document.getElementById('aiRun').addEventListener('click',async function(){
     var data=await res.json();
     var textBlock=(data.content||[]).filter(function(b){return b.type==='text';})[0];
     if(!textBlock) throw new Error('응답이 비어있어요');
-    _aiResult=(JSON.parse(textBlock.text).todos||[]).filter(function(t){return t.text&&t.text.trim();});
-    if(!_aiResult.length){ aiStatus('err','추출된 할일이 없어요. 대화 내용을 확인해주세요.'); btn.disabled=false; return; }
+    var parsed=JSON.parse(textBlock.text);
+    _aiResult=(parsed.todos||[]).filter(function(t){return t.text&&t.text.trim();});
+    _aiInventory=parsed.inventory||{expressions:[],parts:[]};
+    var invN=(_aiInventory.expressions||[]).length+(_aiInventory.parts||[]).length;
+    if(!_aiResult.length && !invN){ aiStatus('err','추출된 내용이 없어요. 대화/신청양식을 확인해주세요.'); btn.disabled=false; return; }
     // 미리보기 렌더
     var pv=document.getElementById('aiPreview');
     pv.innerHTML='';
@@ -751,9 +865,17 @@ document.getElementById('aiRun').addEventListener('click',async function(){
         +(t.date?'<span class="adate">📅 '+esc(t.date)+'</span>':'');
       pv.appendChild(row);
     });
+    if(invN){
+      var inv=document.createElement('div');
+      inv.style.cssText='margin-top:6px;padding:9px 11px;border-radius:8px;border:1px dashed var(--border);background:var(--panel2);font-size:12.5px;color:var(--text2);line-height:1.6;';
+      inv.innerHTML='<b style="color:var(--text);">📋 신청 내역도 추출됨</b> (추가 시 함께 저장)<br>'
+        +'🎭 '+( (_aiInventory.expressions||[]).map(esc).join(', ')||'-' )+'<br>'
+        +'🧩 '+( (_aiInventory.parts||[]).map(esc).join(', ')||'-' );
+      pv.appendChild(inv);
+    }
     pv.className='ai-preview show';
     document.getElementById('aiAdd').style.display='';
-    aiStatus('ok','✅ '+_aiResult.length+'개 추출! 추가할 항목을 선택하세요.');
+    aiStatus('ok','✅ 할일 '+_aiResult.length+'개'+(invN?' · 신청내역 '+invN+'개':'')+' 추출! 추가할 할일을 선택하세요.');
   }catch(e){
     aiStatus('err','❌ '+e.message);
   }
@@ -774,11 +896,16 @@ document.getElementById('aiAdd').addEventListener('click',function(){
       placed++;
     }
   });
-  if(added){
+  // 인벤토리 병합 (표정·파츠)
+  var invAdded=mergeInventory(client, _aiInventory.expressions, _aiInventory.parts);
+  if(added || invAdded){
     save(); renderTags(); renderGrid();
-    toast('🤖 할일 '+added+'개 추가'+(placed?' · '+placed+'개 캘린더 배치':'')+'!');
+    var parts=[];
+    if(added) parts.push('할일 '+added+'개'+(placed?'('+placed+' 배치)':''));
+    if(invAdded) parts.push('신청내역 '+invAdded+'개');
+    toast('🤖 '+parts.join(' · ')+' 추가!');
     closeModal('aiModal');
-  } else toast('선택된 항목이 없어요');
+  } else toast('추가할 항목이 없어요');
 });
 
 /* ════════ 초기 렌더 ════════ */
