@@ -203,6 +203,15 @@ body{display:flex;flex-direction:column;}
 .inv-row .idel{color:var(--text3);font-size:16px;line-height:1;flex-shrink:0;padding:0 4px;border-radius:5px;}
 .inv-row .idel:hover{color:var(--red);background:rgba(248,113,113,.15);}
 
+/* 단계 생성 옵션 */
+.stageopt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;border:1px solid var(--border2);background:var(--panel2);font-size:14px;cursor:pointer;}
+.stageopt input[type=checkbox]{width:auto;transform:scale(1.25);accent-color:var(--Y);cursor:pointer;}
+.stageopt small{color:var(--text3);font-size:11.5px;}
+.stageopt input[type=number]{font-family:var(--mono);background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:6px 9px;font-size:14px;width:64px;margin-left:auto;}
+.stage-base{font-family:var(--mono);font-size:12.5px;color:var(--text3);padding:6px 2px 2px;}
+.stage-prev{font-size:13px;color:var(--text2);margin-top:12px;line-height:1.7;padding:10px 12px;border-radius:9px;border:1px dashed var(--border);background:var(--panel2);}
+.stage-prev b{color:var(--Y);}
+
 /* 토스트 */
 #toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
@@ -254,7 +263,7 @@ body{display:flex;flex-direction:column;}
         <button class="mk" id="mkBtn">생성</button>
       </div>
       <div class="row">
-        <button class="mk" id="stageBtn" style="flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text2);" title="선택한 신청자의 작업 단계 할일(러프~전달)을 한 번에 생성">⚡ 단계 할일 일괄 생성</button>
+        <button class="mk" id="stageBtn" style="flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text2);" title="러프~완성 단계 + 풀옵션/축전/삼면도/추가파츠 옵션으로 작업 태그 생성">⚡ 단계 태그 생성</button>
       </div>
     </div>
   </div>
@@ -294,6 +303,28 @@ body{display:flex;flex-direction:column;}
       <button class="mbtn" id="aiClose">닫기</button>
       <button class="mbtn ai" id="aiRun">추출하기</button>
       <button class="mbtn primary" id="aiAdd" style="display:none;">선택 항목 태그 추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 단계 생성 모달 ═══ -->
+<div class="modal-bg" id="stageModal">
+  <div class="modal">
+    <h2>⚡ 단계 태그 생성</h2>
+    <div class="desc">기본 단계에 옵션을 더해 작업 태그를 한 번에 만듭니다. 이미 있는 태그는 건너뜁니다.</div>
+    <label>신청자</label>
+    <select id="stageClient"></select>
+    <div class="stage-base">기본: 러프1 · 러프2 · 선화 · 채색 · 완성</div>
+    <div style="display:flex;flex-direction:column;gap:7px;margin-top:4px;">
+      <label class="stageopt"><input type="checkbox" id="stFull"><span>풀옵션 <small>(+ 러프3)</small></span></label>
+      <label class="stageopt"><input type="checkbox" id="stChuk"><span>축전 <small>(+ 러프4(축전) · 축전 태그)</small></span></label>
+      <label class="stageopt"><input type="checkbox" id="stSam"><span>삼면도 <small>(+ 삼면도 태그)</small></span></label>
+      <label class="stageopt"><span>추가파츠 태그</span><small style="color:var(--text3);">게임기·인체·의상·헤어추가 2개당 1개</small><input type="number" id="stExtra" min="0" max="20" value="0"></label>
+    </div>
+    <div class="stage-prev" id="stagePrev"></div>
+    <div class="btnrow">
+      <button class="mbtn" id="stageClose">닫기</button>
+      <button class="mbtn primary" id="stageGen">생성</button>
     </div>
   </div>
 </div>
@@ -612,7 +643,7 @@ function toast(msg){
 /* ════════ 모달 공통 ════════ */
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-['aiModal','syncModal','setModal','invModal'].forEach(function(id){
+['aiModal','syncModal','setModal','invModal','stageModal'].forEach(function(id){
   document.getElementById(id).addEventListener('click',function(e){ if(e.target===this) closeModal(id); });
 });
 
@@ -702,18 +733,59 @@ document.getElementById('setSave').addEventListener('click',function(){
   closeModal('setModal'); toast('✅ 설정 저장 완료');
 });
 
-/* ════════ C. 단계 할일 일괄 생성 ════════ */
-var WORK_STAGES=['러프','선화','채색','완성','전달'];
-document.getElementById('stageBtn').addEventListener('click',function(){
-  var client=document.getElementById('selClient').value;
-  if(!client || client==='__none__'){ toast('⚠️ 신청자를 먼저 선택해주세요'); return; }
+/* ════════ C. 단계 태그 생성 (옵션 기반) ════════ */
+function stageTags(o){
+  var t=['러프1','러프2'];
+  if(o.full) t.push('러프3');
+  if(o.chuk) t.push('러프4(축전)');
+  t.push('선화','채색','완성');
+  for(var i=1;i<=o.extra;i++) t.push('추가파츠'+i);
+  if(o.chuk) t.push('축전');
+  if(o.sam) t.push('삼면도');
+  return t;
+}
+function readStageOpts(){
+  return {
+    full:document.getElementById('stFull').checked,
+    chuk:document.getElementById('stChuk').checked,
+    sam:document.getElementById('stSam').checked,
+    extra:Math.max(0,Math.min(20, parseInt(document.getElementById('stExtra').value,10)||0))
+  };
+}
+function renderStagePrev(){
+  document.getElementById('stagePrev').innerHTML='생성될 태그 → <b>'+stageTags(readStageOpts()).join(' · ')+'</b>';
+}
+function genStageTags(client, opts){
   var added=0;
-  WORK_STAGES.forEach(function(st){
-    var dup=state.todos.some(function(t){ return t.client===client && t.text===st; });
-    if(!dup){ state.todos.push({id:uid(), client:client, text:st}); added++; }
+  stageTags(opts).forEach(function(tx){
+    var dup=state.todos.some(function(t){ return t.client===(client||'') && t.text===tx; });
+    if(!dup){ state.todos.push({id:uid(), client:client||'', text:tx}); added++; }
   });
-  if(added){ save(); renderTags(); toast('⚡ '+client+'님 단계 할일 '+added+'개 생성!'); }
-  else toast('이미 모든 단계 할일이 있어요');
+  if(added){ save(); renderTags(); }
+  return added;
+}
+document.getElementById('stageBtn').addEventListener('click',function(){
+  var sel=document.getElementById('stageClient');
+  sel.innerHTML='<option value="">(신청자 없음)</option>';
+  allClients().forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
+  var cur=document.getElementById('selClient').value;
+  if(cur && cur!=='__none__') sel.value=cur;
+  document.getElementById('stFull').checked=false;
+  document.getElementById('stChuk').checked=false;
+  document.getElementById('stSam').checked=false;
+  document.getElementById('stExtra').value='0';
+  renderStagePrev();
+  openModal('stageModal');
+});
+['stFull','stChuk','stSam','stExtra'].forEach(function(id){
+  document.getElementById(id).addEventListener('input', renderStagePrev);
+});
+document.getElementById('stageClose').addEventListener('click',function(){ closeModal('stageModal'); });
+document.getElementById('stageGen').addEventListener('click',function(){
+  var client=document.getElementById('stageClient').value;
+  var added=genStageTags(client, readStageOpts());
+  if(added){ toast('⚡ 단계 태그 '+added+'개 생성!'); closeModal('stageModal'); }
+  else toast('이미 모든 태그가 있어요');
 });
 
 /* ════════ F. GitHub 동기화 ════════ */
@@ -768,7 +840,7 @@ document.getElementById('syncRestore').addEventListener('click',async function()
 });
 
 /* ════════ AI 할일 추출 (Claude API) ════════ */
-var _aiResult=[], _aiInventory={expressions:[],parts:[]};
+var _aiResult=[], _aiInventory={expressions:[],parts:[]}, _aiOrder=null;
 function aiStatus(cls,msg){ var el=document.getElementById('aiStatus'); el.className='mstatus show '+cls; el.textContent=msg; }
 document.getElementById('btnAi').addEventListener('click',function(){
   if(!localStorage.getItem('mm_claude_key')){
@@ -815,10 +887,13 @@ document.getElementById('aiRun').addEventListener('click',async function(){
           +'- 날짜 언급 시 YYYY-MM-DD로 date에, 없으면 빈 문자열. 오늘은 '+todayStr()+'. "15일쯤 러프"→그날 할일, "25일까지 완성"→그날.\n'
           +'- 개별 표정 하나하나, 안경·소품 같은 자잘한 파츠는 todos에 넣지 마세요(아래 inventory로).\n'
           +'[inventory = 빠뜨리면 안 되는 체크리스트]\n'
-          +'- expressions: 신청 들어온 표정 이름들 (예: 빠직, 정색, 하트눈, 눈물, 볼빵빵). 기본 제공 표정도 포함.\n'
-          +'- parts: 신청 들어온 추가 파츠·소품·옵션 이름들 (예: 게임기 손, 겉옷 on/off, 안경, 삼면도, 동물귀, 꼬리, 헤어추가, 의상추가).\n'
-          +'- 색상·위치·재질 같은 디자인 디테일은 제외하고, 물리적 파츠/옵션 명칭만. 이름은 짧게.\n'
-          +'- 중복·유사 항목은 하나로 합치세요.',
+          +'- expressions: 신청 들어온 표정 이름들 (예: 빠직, 정색, 하트눈, 눈물, 볼빵빵, 슬라임 표정). 기본 제공 표정도 포함.\n'
+          +'- parts: 그려야 할 모든 파츠·소품·옵션 이름 (예: 베레모 on/off, 망토 on/off, 슬라임, 안경, 게임기, 인체 풀파츠, 헤어추가). 기본 구성요소든 선택 추가든 다 넣음.\n'
+          +'- 색상·위치·재질 같은 디자인 디테일은 제외, 물리적 파츠/옵션 명칭만 짧게. 중복·유사는 합침.\n'
+          +'[order_summary = ⚡단계 추천]\n'
+          +'- full_option: 풀옵션 신청 여부.  chukjeon: 데뷔축전 포함 여부.  samyeon: 삼면도(3면도) 포함 여부.\n'
+          +'- extra_parts: "기본 디자인 밖 선택 추가파츠"(게임기 파츠·인체 풀파츠·의상추가·헤어추가)의 개수를 2로 나눠 올림한 정수.\n'
+          +'  → 모자·베레모·망토·슬라임·안경·동물귀·꼬리·표정 등 그 캐릭터에 그려지는 기본 구성요소는 on/off여도 세지 않음.',
         messages:[{role:'user', content:text}],
         output_config:{format:{type:'json_schema', schema:{
           type:'object',
@@ -833,10 +908,16 @@ document.getElementById('aiRun').addEventListener('click',async function(){
             }},
             inventory:{type:'object', properties:{
               expressions:{type:'array', items:{type:'string'}, description:'신청 들어온 표정 이름 목록'},
-              parts:{type:'array', items:{type:'string'}, description:'신청 들어온 추가 파츠·소품·옵션 이름 목록'}
-            }, required:['expressions','parts'], additionalProperties:false}
+              parts:{type:'array', items:{type:'string'}, description:'그려야 할 파츠·소품·옵션 이름 목록'}
+            }, required:['expressions','parts'], additionalProperties:false},
+            order_summary:{type:'object', properties:{
+              full_option:{type:'boolean', description:'풀옵션 신청 여부'},
+              chukjeon:{type:'boolean', description:'데뷔축전 포함 여부'},
+              samyeon:{type:'boolean', description:'삼면도(3면도) 포함 여부'},
+              extra_parts:{type:'integer', description:'추가파츠 태그 수 = 기본 디자인 밖 선택 추가파츠 개수 ÷ 2 올림'}
+            }, required:['full_option','chukjeon','samyeon','extra_parts'], additionalProperties:false}
           },
-          required:['todos','inventory'], additionalProperties:false
+          required:['todos','inventory','order_summary'], additionalProperties:false
         }}}
       })
     });
@@ -853,6 +934,7 @@ document.getElementById('aiRun').addEventListener('click',async function(){
     var parsed=JSON.parse(textBlock.text);
     _aiResult=(parsed.todos||[]).filter(function(t){return t.text&&t.text.trim();});
     _aiInventory=parsed.inventory||{expressions:[],parts:[]};
+    _aiOrder=parsed.order_summary||null;
     var invN=(_aiInventory.expressions||[]).length+(_aiInventory.parts||[]).length;
     if(!_aiResult.length && !invN){ aiStatus('err','추출된 내용이 없어요. 대화/신청양식을 확인해주세요.'); btn.disabled=false; return; }
     // 미리보기 렌더
@@ -872,6 +954,25 @@ document.getElementById('aiRun').addEventListener('click',async function(){
         +'🎭 '+( (_aiInventory.expressions||[]).map(esc).join(', ')||'-' )+'<br>'
         +'🧩 '+( (_aiInventory.parts||[]).map(esc).join(', ')||'-' );
       pv.appendChild(inv);
+    }
+    if(_aiOrder){
+      var o=_aiOrder, prevTags=stageTags({full:!!o.full_option,chuk:!!o.chukjeon,sam:!!o.samyeon,extra:Math.max(0,o.extra_parts|0)});
+      var box=document.createElement('div');
+      box.style.cssText='margin-top:6px;padding:9px 11px;border-radius:8px;border:1px dashed rgba(61,142,240,.4);background:rgba(61,142,240,.07);font-size:12.5px;color:var(--text2);line-height:1.7;';
+      box.innerHTML='<b style="color:var(--Y);">⚡ 단계 추천</b> '
+        +'풀옵션 '+(o.full_option?'✓':'✗')+' · 축전 '+(o.chukjeon?'✓':'✗')+' · 삼면도 '+(o.samyeon?'✓':'✗')+' · 추가파츠 '+(o.extra_parts|0)+'개<br>'
+        +'<span style="color:var(--text3);">→ '+prevTags.join(' · ')+'</span>';
+      var gbtn=document.createElement('button');
+      gbtn.textContent='⚡ 이대로 단계 태그 생성';
+      gbtn.style.cssText='margin-top:8px;width:100%;padding:8px;border-radius:8px;border:1px solid var(--Y);background:transparent;color:var(--Y);font-family:var(--cond);font-weight:700;font-size:13px;letter-spacing:.5px;cursor:pointer;';
+      gbtn.addEventListener('click',function(){
+        var client=document.getElementById('aiClient').value;
+        var added=genStageTags(client,{full:!!o.full_option,chuk:!!o.chukjeon,sam:!!o.samyeon,extra:Math.max(0,o.extra_parts|0)});
+        toast(added?('⚡ 단계 태그 '+added+'개 생성!'):'이미 모든 단계 태그가 있어요');
+        gbtn.disabled=true; gbtn.style.opacity='.5'; gbtn.textContent='✓ 생성됨';
+      });
+      box.appendChild(gbtn);
+      pv.appendChild(box);
     }
     pv.className='ai-preview show';
     document.getElementById('aiAdd').style.display='';
