@@ -275,6 +275,9 @@ body{display:flex;flex-direction:column;}
       <button class="navbtn" id="nextM">›</button>
       <div class="ym" id="ymLabel"></div>
       <button class="todaybtn" id="todayBtn">오늘</button>
+      <span style="font-family:var(--cond);font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;margin-left:4px;">전체</span>
+      <button class="todaybtn" id="shiftBack" title="배치된 모든 일정을 하루 앞으로 당김">−1일</button>
+      <button class="todaybtn" id="shiftFwd" title="배치된 모든 일정을 하루 뒤로 미룸">+1일</button>
       <div class="cal-legend">
         <span><i class="lg-dl"></i>의뢰 마감일</span>
       </div>
@@ -559,12 +562,13 @@ function renderGrid(){
       cc.addEventListener('dragstart',function(e){
         e.dataTransfer.setData('text/plain', JSON.stringify({kind:'move', placeId:p.id}));
         e.dataTransfer.effectAllowed='move';
-        cc.classList.add('dragging');
+        cc.classList.add('dragging'); cc._dragged=true;
       });
       cc.addEventListener('dragend',function(){ cc.classList.remove('dragging'); });
-      // 클릭 = 완료 토글
+      // 클릭 = 완료 토글 (드래그 직후의 잔여 클릭은 무시)
       cc.addEventListener('click',function(ev){
         if(ev.target.classList.contains('cdel')) return;
+        if(cc._dragged){ cc._dragged=false; return; }
         p.done=!p.done; save(); renderGrid();
       });
       // ✕ = 배치 삭제
@@ -628,6 +632,23 @@ document.getElementById('addCli').addEventListener('click', function(){
 document.getElementById('prevM').addEventListener('click', function(){ viewM--; if(viewM<0){viewM=11;viewY--;} renderGrid(); });
 document.getElementById('nextM').addEventListener('click', function(){ viewM++; if(viewM>11){viewM=0;viewY++;} renderGrid(); });
 document.getElementById('todayBtn').addEventListener('click', function(){ var t=new Date(); viewY=t.getFullYear(); viewM=t.getMonth(); renderGrid(); });
+
+/* 전체 일정 ±1일 이동 (배치된 칩 전부, 마감일은 유지) */
+function shiftAll(delta){
+  if(!state.placements.length){ toast('옮길 일정이 없어요'); return; }
+  if(!confirm('배치된 모든 일정 '+state.placements.length+'개를 '+(delta>0?'하루씩 미룰까요? (뒤로)':'하루씩 당길까요? (앞으로)'))) return;
+  state.placements.forEach(function(p){
+    var a=(p.date||'').split('-');
+    if(a.length!==3) return;
+    var d=new Date(+a[0], +a[1]-1, +a[2]);
+    d.setDate(d.getDate()+delta);
+    p.date=ymd(d);
+  });
+  save(); renderGrid();
+  toast('🗓 전체 일정 '+(delta>0?'+1일 미룸':'−1일 당김'));
+}
+document.getElementById('shiftBack').addEventListener('click', function(){ shiftAll(-1); });
+document.getElementById('shiftFwd').addEventListener('click', function(){ shiftAll(1); });
 
 // 대시보드/다른 탭에서 변경 시 반영
 window.addEventListener('storage', function(e){
