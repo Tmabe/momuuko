@@ -278,6 +278,7 @@ body{display:flex;flex-direction:column;}
       <span style="font-family:var(--cond);font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;margin-left:4px;">전체</span>
       <button class="todaybtn" id="shiftBack" title="배치된 모든 일정을 하루 앞으로 당김">−1일</button>
       <button class="todaybtn" id="shiftFwd" title="배치된 모든 일정을 하루 뒤로 미룸">+1일</button>
+      <button class="todaybtn" id="focusBtn" title="오늘·다가오는 일정 모아보기" style="border-color:rgba(61,142,240,.4);color:var(--Y);">📌 오늘 <b id="focusCount" style="color:var(--Y);">0</b></button>
       <div class="cal-legend">
         <span><i class="lg-dl"></i>의뢰 마감일</span>
       </div>
@@ -311,6 +312,16 @@ body{display:flex;flex-direction:column;}
   </div>
 </div>
 
+<!-- ═══ 오늘·이번주 포커스 모달 ═══ -->
+<div class="modal-bg" id="focusModal">
+  <div class="modal">
+    <h2>📌 오늘 · 다가오는 일정</h2>
+    <div class="desc">날짜에 배치된 할 일과 의뢰 마감을 모아 봅니다. 칩을 누르면 완료 토글(대시보드 단계도 자동 반영).</div>
+    <div id="focusBody"></div>
+    <div class="btnrow"><button class="mbtn primary" id="focusClose">닫기</button></div>
+  </div>
+</div>
+
 <!-- ═══ 단계 생성 모달 ═══ -->
 <div class="modal-bg" id="stageModal">
   <div class="modal">
@@ -324,6 +335,8 @@ body{display:flex;flex-direction:column;}
       <label class="stageopt"><input type="checkbox" id="stChuk"><span>축전 <small>(+ 러프4(축전) · 축전 태그)</small></span></label>
       <label class="stageopt"><input type="checkbox" id="stSam"><span>삼면도 <small>(+ 삼면도 태그)</small></span></label>
       <label class="stageopt"><span>추가파츠 태그</span><small style="color:var(--text3);">게임기·인체·의상·헤어추가 2개당 1개</small><input type="number" id="stExtra" min="0" max="20" value="0"></label>
+      <label class="stageopt"><input type="checkbox" id="stPlace"><span>📅 마감일에서 역산해 캘린더 배치 <small id="stDeadline"></small></span></label>
+      <label class="stageopt" id="stGapRow" style="display:none;"><span>단계 간격</span><small style="color:var(--text3);">마감에서 거꾸로 N일씩</small><input type="number" id="stGap" min="1" max="14" value="2"></label>
     </div>
     <div class="stage-prev" id="stagePrev"></div>
     <div class="btnrow">
@@ -389,6 +402,7 @@ body{display:flex;flex-direction:column;}
     <input id="setGhRepo" placeholder="momuuko">
     <label>GitHub 토큰</label>
     <input id="setGhToken" type="password" placeholder="ghp_...">
+    <label class="stageopt" style="margin-top:14px;"><input type="checkbox" id="setSyncStage" checked><span>단계 완료 → 대시보드 진행단계 자동 반영 <small>(러프·선화·채색·완성 체크 시)</small></span></label>
     <div class="btnrow">
       <button class="mbtn" id="setClose">닫기</button>
       <button class="mbtn primary" id="setSave">저장</button>
@@ -424,6 +438,39 @@ function dashCommissions(){
   }catch(e){ return []; }
 }
 function isActive(c){ return (typeof c.stage==='number'?c.stage<DONE_STAGE:c.stage!=='전달완료') && !c.hidden; }
+
+/* 신청자의 의뢰 마감일 (mm_dash_v1) */
+function clientDeadline(client){
+  client=(client||'').trim(); if(!client) return '';
+  var c=dashCommissions().filter(function(x){return (x.client||'').trim()===client;})[0];
+  return c && c.deadline ? c.deadline : '';
+}
+/* 플래너 단계 태그 → 대시보드 STAGES 인덱스 (러프=2,선화=4,채색=5,완성=6 / 그 외 -1) */
+function plannerStageIndex(text){
+  if(/^러프/.test(text)) return 2;
+  if(text==='선화') return 4;
+  if(text==='채색') return 5;
+  if(text==='완성') return 6;
+  return -1;
+}
+/* 완료된 단계 태그 기준으로 대시보드 의뢰 진행단계 올림 (낮추진 않음) */
+function syncDashStage(client){
+  if(localStorage.getItem('mm_sync_stage')==='0') return;
+  client=(client||'').trim(); if(!client || client==='__none__') return;
+  var maxIdx=-1;
+  state.placements.forEach(function(p){
+    if(!p.done) return;
+    var t=todoById(p.todoId); if(!t || (t.client||'').trim()!==client) return;
+    var idx=plannerStageIndex(t.text); if(idx>maxIdx) maxIdx=idx;
+  });
+  if(maxIdx<0) return;
+  var arr; try{ var raw=JSON.parse(localStorage.getItem(DKEY)||'[]'); arr=Array.isArray(raw)?raw:(raw.commissions||[]); }catch(e){ return; }
+  var c=arr.filter(function(x){return (x.client||'').trim()===client;})[0];
+  if(!c) return;
+  var cur=typeof c.stage==='number'?c.stage:0;
+  if(maxIdx>cur){ c.stage=maxIdx; localStorage.setItem(DKEY, JSON.stringify(arr)); return c.client+' → '+['접수','입금확인','러프','러프컨펌','선화','채색','완성','전달완료'][maxIdx]; }
+  return '';
+}
 
 /* 신청자 목록 = 대시보드 의뢰인(중복제거) + 수동추가 */
 function allClients(){
@@ -569,7 +616,10 @@ function renderGrid(){
       cc.addEventListener('click',function(ev){
         if(ev.target.classList.contains('cdel')) return;
         if(cc._dragged){ cc._dragged=false; return; }
-        p.done=!p.done; save(); renderGrid();
+        p.done=!p.done; save();
+        var msg=p.done?syncDashStage(t.client):'';
+        renderGrid();
+        if(msg) toast('📊 대시보드 단계 갱신: '+msg);
       });
       // ✕ = 배치 삭제
       cc.querySelector('.cdel').addEventListener('click',function(ev){
@@ -600,6 +650,8 @@ function renderGrid(){
 
     grid.appendChild(cell);
   }
+  updateFocusCount();
+  if(document.getElementById('focusModal').classList.contains('open')) renderFocusBody();
 }
 function todoById(id){ return state.todos.filter(function(t){return t.id===id;})[0]; }
 
@@ -667,9 +719,55 @@ function toast(msg){
 /* ════════ 모달 공통 ════════ */
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-['aiModal','syncModal','setModal','invModal','stageModal'].forEach(function(id){
+['aiModal','syncModal','setModal','invModal','stageModal','focusModal'].forEach(function(id){
   document.getElementById(id).addEventListener('click',function(e){ if(e.target===this) closeModal(id); });
 });
+
+/* ════════ 오늘·이번주 포커스 ════════ */
+function plusDays(str,n){ var a=str.split('-'); var d=new Date(+a[0],+a[1]-1,+a[2]); d.setDate(d.getDate()+n); return ymd(d); }
+function fmtKDate(str){ var a=str.split('-'); var d=new Date(+a[0],+a[1]-1,+a[2]); return (+a[1])+'/'+(+a[2])+' ('+['일','월','화','수','목','금','토'][d.getDay()]+')'; }
+function updateFocusCount(){
+  var tStr=todayStr();
+  var n=state.placements.filter(function(p){return p.date===tStr;}).length;
+  var el=document.getElementById('focusCount'); if(el) el.textContent=n;
+}
+function focusChip(p){
+  var t=todoById(p.todoId); if(!t) return null;
+  var el=document.createElement('div');
+  el.className='cchip'+(p.done?' done':''); el.style.cssText=colorVars(t.client)+';cursor:pointer;';
+  var label=(t.client && t.client!=='__none__'?t.client+' · ':'')+t.text;
+  el.innerHTML='<span class="dot"></span><span class="ctxt">'+esc(label)+'</span>';
+  el.addEventListener('click',function(){
+    p.done=!p.done; save();
+    var m=p.done?syncDashStage(t.client):'';
+    renderGrid(); renderFocusBody();
+    if(m) toast('📊 대시보드 단계 갱신: '+m);
+  });
+  return el;
+}
+function renderFocusBody(){
+  var tStr=todayStr();
+  var byDate={}; state.placements.forEach(function(p){ (byDate[p.date]=byDate[p.date]||[]).push(p); });
+  var dlMap={}; dashCommissions().forEach(function(c){ if(c.deadline&&isActive(c)) (dlMap[c.deadline]=dlMap[c.deadline]||[]).push(c.client||'의뢰'); });
+  var box=document.getElementById('focusBody'); box.innerHTML='';
+  function section(title, ds, accent){
+    var pls=byDate[ds]||[], dls=dlMap[ds]||[];
+    var wrap=document.createElement('div'); wrap.style.cssText='margin-top:12px;';
+    var h=document.createElement('div'); h.style.cssText='font-family:var(--cond);font-weight:700;font-size:14px;letter-spacing:.5px;margin-bottom:6px;color:'+(accent||'var(--text2)')+';';
+    h.textContent=title; wrap.appendChild(h);
+    if(dls.length){ var dd=document.createElement('div'); dd.style.cssText='font-size:12px;color:#e89;margin-bottom:6px;'; dd.textContent='📌 마감: '+dls.join(', '); wrap.appendChild(dd); }
+    if(!pls.length && !dls.length){ var e=document.createElement('div'); e.style.cssText='font-size:12.5px;color:var(--text3);'; e.textContent='— 없음'; wrap.appendChild(e); }
+    var list=document.createElement('div'); list.style.cssText='display:flex;flex-direction:column;gap:5px;';
+    pls.forEach(function(p){ var c=focusChip(p); if(c) list.appendChild(c); });
+    wrap.appendChild(list); return wrap;
+  }
+  box.appendChild(section('🔥 오늘 — '+fmtKDate(tStr), tStr, 'var(--Y)'));
+  var wt=document.createElement('div'); wt.style.cssText='font-family:var(--cond);font-weight:700;font-size:12px;color:var(--text3);letter-spacing:.5px;margin-top:16px;border-top:1px solid var(--border);padding-top:10px;';
+  wt.textContent='📅 다가오는 6일'; box.appendChild(wt);
+  for(var i=1;i<=6;i++){ var ds=plusDays(tStr,i); box.appendChild(section(fmtKDate(ds), ds)); }
+}
+document.getElementById('focusBtn').addEventListener('click',function(){ renderFocusBody(); openModal('focusModal'); });
+document.getElementById('focusClose').addEventListener('click',function(){ closeModal('focusModal'); });
 
 /* ════════ 신청 내역(인벤토리) ════════ */
 function invFor(client){
@@ -788,6 +886,7 @@ document.getElementById('btnSettings').addEventListener('click',function(){
   document.getElementById('setGhUser').value=g.user||'Tmabe';
   document.getElementById('setGhRepo').value=g.repo||'momuuko';
   document.getElementById('setGhToken').value=g.token||'';
+  document.getElementById('setSyncStage').checked=localStorage.getItem('mm_sync_stage')!=='0';
   openModal('setModal');
 });
 document.getElementById('setClose').addEventListener('click',function(){ closeModal('setModal'); });
@@ -797,6 +896,7 @@ document.getElementById('setSave').addEventListener('click',function(){
   localStorage.setItem('gh_user', document.getElementById('setGhUser').value.trim());
   localStorage.setItem('gh_repo', document.getElementById('setGhRepo').value.trim());
   localStorage.setItem('gh_token', document.getElementById('setGhToken').value.trim());
+  localStorage.setItem('mm_sync_stage', document.getElementById('setSyncStage').checked?'1':'0');
   closeModal('setModal'); toast('✅ 설정 저장 완료');
 });
 
@@ -822,14 +922,35 @@ function readStageOpts(){
 function renderStagePrev(){
   document.getElementById('stagePrev').innerHTML='생성될 태그 → <b>'+stageTags(readStageOpts()).join(' · ')+'</b>';
 }
-function genStageTags(client, opts){
-  var added=0;
+/* 태그 생성(+선택적 마감 역산 배치). place={deadline,gap} 주면 미배치 태그를 마감에서 역산해 캘린더에 깖 */
+function genStageTags(client, opts, place){
+  var objs=[], added=0;
   stageTags(opts).forEach(function(tx){
-    var dup=state.todos.some(function(t){ return t.client===(client||'') && t.text===tx; });
-    if(!dup){ state.todos.push({id:uid(), client:client||'', text:tx}); added++; }
+    var ex=state.todos.filter(function(t){ return t.client===(client||'') && t.text===tx; })[0];
+    if(!ex){ ex={id:uid(), client:client||'', text:tx}; state.todos.push(ex); added++; }
+    objs.push(ex);
   });
-  if(added){ save(); renderTags(); }
-  return added;
+  var placed=0;
+  if(place && place.deadline && /^\d{4}-\d{2}-\d{2}$/.test(place.deadline)){
+    var a=place.deadline.split('-'), base=new Date(+a[0],+a[1]-1,+a[2]);
+    var gap=Math.max(1, place.gap||2), n=objs.length;
+    objs.forEach(function(t,i){
+      if(state.placements.some(function(p){return p.todoId===t.id;})) return; // 이미 배치된 건 보존
+      var d=new Date(base); d.setDate(base.getDate()-(n-1-i)*gap);
+      state.placements.push({id:uid(), todoId:t.id, date:ymd(d), done:false}); placed++;
+    });
+  }
+  if(added||placed){ save(); renderTags(); renderGrid(); }
+  return {added:added, placed:placed};
+}
+function updateStageDeadlineUI(){
+  var client=document.getElementById('stageClient').value;
+  var dl=clientDeadline(client);
+  var cb=document.getElementById('stPlace'), lbl=document.getElementById('stDeadline');
+  if(dl){ cb.disabled=false; lbl.textContent='(마감 '+dl+')'; lbl.style.color='var(--yellow)'; }
+  else { cb.disabled=true; cb.checked=false; lbl.textContent='(마감일 없음 — 대시보드에서 설정)'; lbl.style.color='var(--text3)'; }
+  document.getElementById('stGapRow').style.display=cb.checked?'flex':'none';
+  renderStagePrev();
 }
 document.getElementById('stageBtn').addEventListener('click',function(){
   var sel=document.getElementById('stageClient');
@@ -841,18 +962,31 @@ document.getElementById('stageBtn').addEventListener('click',function(){
   document.getElementById('stChuk').checked=false;
   document.getElementById('stSam').checked=false;
   document.getElementById('stExtra').value='0';
-  renderStagePrev();
+  document.getElementById('stPlace').checked=false;
+  document.getElementById('stGap').value='2';
+  updateStageDeadlineUI();
   openModal('stageModal');
 });
-['stFull','stChuk','stSam','stExtra'].forEach(function(id){
+['stFull','stChuk','stSam','stExtra','stGap'].forEach(function(id){
   document.getElementById(id).addEventListener('input', renderStagePrev);
+});
+document.getElementById('stageClient').addEventListener('change', updateStageDeadlineUI);
+document.getElementById('stPlace').addEventListener('change', function(){
+  document.getElementById('stGapRow').style.display=this.checked?'flex':'none';
 });
 document.getElementById('stageClose').addEventListener('click',function(){ closeModal('stageModal'); });
 document.getElementById('stageGen').addEventListener('click',function(){
   var client=document.getElementById('stageClient').value;
-  var added=genStageTags(client, readStageOpts());
-  if(added){ toast('⚡ 단계 태그 '+added+'개 생성!'); closeModal('stageModal'); }
-  else toast('이미 모든 태그가 있어요');
+  var place=null;
+  if(document.getElementById('stPlace').checked){
+    var dl=clientDeadline(client);
+    if(dl) place={deadline:dl, gap:Math.max(1,Math.min(14, parseInt(document.getElementById('stGap').value,10)||2))};
+  }
+  var r=genStageTags(client, readStageOpts(), place);
+  if(r.added || r.placed){
+    toast('⚡ 단계 태그 '+r.added+'개 생성'+(r.placed?' · '+r.placed+'개 마감 역산 배치':'')+'!');
+    closeModal('stageModal');
+  } else toast('이미 모든 태그가 있어요');
 });
 
 /* ════════ F. GitHub 동기화 ════════ */
