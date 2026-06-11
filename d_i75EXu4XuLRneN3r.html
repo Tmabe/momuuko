@@ -1382,6 +1382,13 @@ if(window.__DASH_BAKED__&&window.__DASH_BAKED__.commissions){
   saveData();
 }
 if(sessionStorage.getItem('dash_auth')==='1'){ applyNotice(); renderAll(); }
+
+/* 다른 탭/플래너에서 mm_dash_v1 변경 시 자동 반영 (storage 이벤트는 변경한 문서엔 안 옴 → 루프 없음) */
+window.addEventListener('storage', function(e){
+  if(e.key===STORAGE_KEY && sessionStorage.getItem('dash_auth')==='1'){
+    loadData(); renderAll();
+  }
+});
 </script>
 </body>
 </html>

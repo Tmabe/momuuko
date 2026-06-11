@@ -299,6 +299,7 @@ body{display:flex;flex-direction:column;}
 나: 가능합니다. 입금 확인되면 시작할게요~"></textarea>
     <div class="mstatus" id="aiStatus"></div>
     <div class="ai-preview" id="aiPreview"></div>
+    <label class="stageopt" style="margin-top:12px;"><input type="checkbox" id="aiToDash" checked><span>대시보드 의뢰에도 등록 <small>(이름·파츠만 / 가격은 직접 입력)</small></span></label>
     <div class="btnrow">
       <button class="mbtn" id="aiClose">닫기</button>
       <button class="mbtn ai" id="aiRun">추출하기</button>
@@ -344,8 +345,10 @@ body{display:flex;flex-direction:column;}
       <div class="ghead"><span class="gt">🧩 추가 파츠</span><span class="gc" id="invPartC">0</span><button class="addinv" data-cat="parts">＋ 추가</button></div>
       <div class="inv-list" id="invPartList"></div>
     </div>
+    <div class="mstatus" id="invDashStatus"></div>
     <div class="btnrow">
-      <button class="mbtn primary" id="invClose">닫기</button>
+      <button class="mbtn" id="invClose">닫기</button>
+      <button class="mbtn primary" id="invToDash">📤 대시보드에 반영</button>
     </div>
   </div>
 </div>
@@ -688,8 +691,18 @@ function openInv(client){
 document.getElementById('invBtn').addEventListener('click',function(){
   openInv(document.getElementById('selClient').value);
 });
-document.getElementById('invClient').addEventListener('change', renderInv);
+document.getElementById('invClient').addEventListener('change', function(){ document.getElementById('invDashStatus').className='mstatus'; renderInv(); });
 document.getElementById('invClose').addEventListener('click',function(){ closeModal('invModal'); });
+document.getElementById('invToDash').addEventListener('click',function(){
+  var client=document.getElementById('invClient').value;
+  var st=document.getElementById('invDashStatus');
+  if(!client || client==='__none__'){ st.className='mstatus show err'; st.textContent='신청자를 선택해주세요'; return; }
+  var txt=inventoryText(client);
+  if(!txt){ st.className='mstatus show err'; st.textContent='반영할 표정·파츠가 없어요'; return; }
+  var r=upsertDashboard(client, txt);
+  st.className='mstatus show ok';
+  st.textContent=r.created?('✅ 대시보드에 "'+client+'" 의뢰 카드 생성 (가격은 대시보드에서 입력)'):('✅ 대시보드 "'+client+'" 파츠 갱신');
+});
 document.querySelectorAll('#invModal .addinv').forEach(function(btn){
   btn.addEventListener('click',function(){
     var client=document.getElementById('invClient').value;
@@ -699,6 +712,39 @@ document.querySelectorAll('#invModal .addinv').forEach(function(btn){
     save(); renderInv();
   });
 });
+/* 인벤토리 → 메모 텍스트 (대시보드용) */
+function inventoryText(client){
+  var inv=state.inventory[client]; if(!inv) return '';
+  var lines=[];
+  if(inv.parts&&inv.parts.length) lines.push('🧩 '+inv.parts.map(function(p){return p.name;}).join(', '));
+  if(inv.expressions&&inv.expressions.length) lines.push('🎭 '+inv.expressions.map(function(e){return e.name;}).join(', '));
+  return lines.join('\n');
+}
+/* 대시보드(mm_dash_v1)에 이름·파츠 반영 (가격·단계 등 기존값은 안 건드림, 신규는 가격 빈칸) */
+var DASH_MARK='【신청 파츠】';
+function upsertDashboard(client, memoText){
+  client=(client||'').trim();
+  if(!client || client==='__none__') return {skipped:true};
+  var arr;
+  try{ var raw=JSON.parse(localStorage.getItem(DKEY)||'[]'); arr=Array.isArray(raw)?raw:(raw.commissions||[]); }
+  catch(e){ arr=[]; }
+  var block=DASH_MARK+(memoText?'\n'+memoText:'');
+  var found=null;
+  for(var i=0;i<arr.length;i++){ if((arr[i].client||'').trim()===client){ found=arr[i]; break; } }
+  if(found){
+    // 기존 memo에서 파츠 블록만 교체, 나머지 텍스트·다른 필드 전부 보존
+    var prev=found.memo||'';
+    var cleaned=prev.replace(new RegExp(DASH_MARK.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[\\s\\S]*$'),'').trim();
+    found.memo=(cleaned?cleaned+'\n':'')+block;
+    localStorage.setItem(DKEY, JSON.stringify(arr));
+    return {created:false, client:client};
+  }
+  arr.push({client:client, type:'', amount:'', deadline:'', startDate:'', email:'', note:'',
+            memo:block, tag:'', platform:'', contact:'', stage:0});
+  localStorage.setItem(DKEY, JSON.stringify(arr));
+  return {created:true, client:client};
+}
+
 /* AI/외부에서 인벤토리 병합 (중복 이름은 건너뜀) */
 function mergeInventory(client, expressions, parts){
   var inv=invFor(client), added=0;
@@ -999,12 +1045,18 @@ document.getElementById('aiAdd').addEventListener('click',function(){
   });
   // 인벤토리 병합 (표정·파츠)
   var invAdded=mergeInventory(client, _aiInventory.expressions, _aiInventory.parts);
-  if(added || invAdded){
+  // 대시보드 등록 (체크 시, 신청자명 있을 때)
+  var dashMsg='';
+  if(document.getElementById('aiToDash').checked && client && client!=='__none__'){
+    var r=upsertDashboard(client, inventoryText(client));
+    if(r && !r.skipped) dashMsg=r.created?' · 대시보드 카드 생성':' · 대시보드 갱신';
+  }
+  if(added || invAdded || dashMsg){
     save(); renderTags(); renderGrid();
     var parts=[];
     if(added) parts.push('할일 '+added+'개'+(placed?'('+placed+' 배치)':''));
     if(invAdded) parts.push('신청내역 '+invAdded+'개');
-    toast('🤖 '+parts.join(' · ')+' 추가!');
+    toast('🤖 '+(parts.join(' · ')||'추가')+dashMsg+'!');
     closeModal('aiModal');
   } else toast('추가할 항목이 없어요');
 });
