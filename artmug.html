@@ -783,6 +783,23 @@ function init(){
 }
 init();
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLb();});
+
+/* ── iframe 자동 높이: 부모(artmug.kr)에 내 높이 전달 ── */
+(function(){
+  var _lastH=0;
+  function postH(){
+    try{
+      var h=Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+      if(Math.abs(h-_lastH)<8) return; _lastH=h;
+      parent.postMessage({src:'momuuko-artmug', mmHeight:h}, '*');
+    }catch(e){}
+  }
+  window.addEventListener('load', postH);
+  window.addEventListener('resize', postH);
+  try{ new MutationObserver(postH).observe(document.body, {childList:true,subtree:true,attributes:true,characterData:true}); }catch(e){}
+  setInterval(postH, 1000);
+  postH();
+})();
 </script>
 </body>
 </html>
