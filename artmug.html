@@ -740,10 +740,18 @@ function countSel(){
   });
   return c;
 }
+function mmPostMeta(total){
+  try{
+    if(window.self===window.top) return;
+    var secs=[]; document.querySelectorAll('.section').forEach(function(s){var t=s.querySelector('.sec-title');var lab=t?t.textContent.trim():'';if(lab)secs.push({label:lab, y:s.getBoundingClientRect().top+(window.pageYOffset||document.documentElement.scrollTop||0)});});
+    parent.postMessage({src:'momuuko-artmug', sections:secs, total:(total||0)}, '*');
+  }catch(e){}
+}
 function rebuild(){
   var r=buildFormText();
   document.getElementById('totalAmt').textContent=won(r.total);
   var sm=document.getElementById('smTotal'); if(sm)sm.textContent=won(r.total)+' '+UI[lang].won;
+  mmPostMeta(r.total);
   var c=countSel();
   document.getElementById('totalCnt').textContent=c?UI[lang].cnt(c):'';
   var body=document.getElementById('previewBody');
@@ -803,11 +811,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLb();})
       parent.postMessage({src:'momuuko-artmug', mmHeight:h}, '*');
     }catch(e){}
   }
-  window.addEventListener('load', postH);
-  window.addEventListener('resize', postH);
+  function tick(){ postH(); try{ if(window.mmPostMeta){ var el=document.getElementById('totalAmt'); var t=el?parseInt((el.textContent||'0').replace(/[^\d]/g,''),10)||0:0; mmPostMeta(t); } }catch(e){} }
+  window.addEventListener('load', tick);
+  window.addEventListener('resize', tick);
   try{ new MutationObserver(postH).observe(document.body, {childList:true,subtree:true,attributes:true,characterData:true}); }catch(e){}
-  setInterval(postH, 1000);
-  postH();
+  setInterval(tick, 1000);
+  tick();
 })();
 
 /* ── 떠있는 사이드바 (합계 + 섹션 이동) ── */
