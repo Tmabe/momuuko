@@ -68,7 +68,7 @@ textarea.f{resize:vertical;min-height:60px;line-height:1.6}
 .sdot-add,.sdot-rm{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text3);cursor:pointer;font-size:13px}
 
 /* item rows */
-.item-row{display:grid;grid-template-columns:1fr 1fr 110px 34px;gap:7px;align-items:center;margin-bottom:7px}
+.item-row{display:grid;grid-template-columns:1fr 1fr 110px 116px 34px;gap:7px;align-items:center;margin-bottom:7px}
 .item-row input{font-size:12.5px;padding:8px 10px}
 .price-in{text-align:right;font-family:var(--mono)}
 .sec-block{background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:13px;margin-bottom:11px}
@@ -76,7 +76,7 @@ textarea.f{resize:vertical;min-height:60px;line-height:1.6}
 .sec-block-head input{font-size:13px}
 .tag-pill{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:5px;background:var(--bg3);color:var(--text3)}
 .hint{font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--kr)}
-.col-head{display:grid;grid-template-columns:1fr 1fr 110px 34px;gap:7px;font-family:var(--cond);font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding:0 2px}
+.col-head{display:grid;grid-template-columns:1fr 1fr 110px 116px 34px;gap:7px;font-family:var(--cond);font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding:0 2px}
 
 /* gh settings */
 .gh-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
@@ -90,7 +90,7 @@ textarea.f{resize:vertical;min-height:60px;line-height:1.6}
 .toast.ok{border-color:var(--green)}.toast.err{border-color:var(--red)}
 
 @media(max-width:560px){
-  .item-row,.col-head{grid-template-columns:1fr 80px 30px}
+  .item-row,.col-head{grid-template-columns:1fr 80px 92px 30px}
   .item-row .en-in,.col-head .en-col{display:none}
   .gh-grid{grid-template-columns:1fr}
 }
@@ -382,7 +382,7 @@ function renderPrice(){
     h+='<input class="f" value="'+esc(sec.en||'')+'" oninput="D.sections['+si+'].en=this.value" placeholder="English 제목" style="font-size:12px">';
     h+='<input class="f" value="'+esc(sec.koLabel||'')+'" oninput="D.sections['+si+'].koLabel=this.value" placeholder="주문서용 라벨 (예: 기본 일러스트)" style="font-size:12px">';
     h+='</div>';
-    h+='<div class="col-head"><span>한국어 항목명</span><span class="en-col">English</span><span style="text-align:right">가격</span><span></span></div>';
+    h+='<div class="col-head"><span>한국어 항목명</span><span class="en-col">English</span><span style="text-align:right">가격</span><span>플래너 분류</span><span></span></div>';
     (sec.items||[]).forEach(function(it,ii){
       var isExpr=sec.type==='expr';
       h+='<div class="item-row">';
@@ -390,6 +390,12 @@ function renderPrice(){
       h+='<input class="f en-in" value="'+esc(it.en||'')+'" oninput="D.sections['+si+'].items['+ii+'].en=this.value" placeholder="English">';
       if(isExpr){h+='<input class="f price-in" value="무료" disabled style="opacity:.5">';}
       else{h+='<input class="f price-in" type="number" value="'+(it.p||0)+'" oninput="D.sections['+si+'].items['+ii+'].p=parseInt(this.value)||0" placeholder="0">';}
+      if(isExpr){h+='<span class="cat-in" style="font-size:11.5px;color:var(--text3);text-align:center">표정</span>';}
+      else{
+        h+='<select class="f cat-in" onchange="D.sections['+si+'].items['+ii+'].cat=this.value" style="font-size:11.5px;padding:7px 6px">';
+        [['','기본'],['part','추가파츠'],['fullopt','풀옵션'],['chukjeon','축전'],['samyeon','삼면도'],['ignore','무관']].forEach(function(o){h+='<option value="'+o[0]+'"'+((it.cat||'')===o[0]?' selected':'')+'>'+o[1]+'</option>';});
+        h+='</select>';
+      }
       h+='<button class="mini mini-del" onclick="rmItem('+si+','+ii+')">×</button></div>';
     });
     h+='<button class="mini mini-add" onclick="addItem('+si+')">＋ 항목</button>';
