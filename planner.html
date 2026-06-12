@@ -771,6 +771,23 @@ async function loadCatalog(){
   return _catalog;
 }
 function catOf(sec,it){ return sec.type==='expr'?'expr':(it.cat||''); }
+/* AI 추출용: 카탈로그 옵션·분류·가격 참조 문자열 */
+function buildCatalogRef(){
+  if(!_catalog||!_catalog.sections) return '';
+  var lines=[];
+  _catalog.sections.forEach(function(sec){
+    (sec.items||[]).forEach(function(it){
+      if(!it.ko) return;
+      var c=catOf(sec,it), lab=CATLBL[c]||'기본구성요소';
+      var price=(sec.type!=='expr'&&it.p)?(' '+(it.p/10000)+'만원'):'';
+      lines.push('· '+it.ko+' ['+lab+price+']');
+    });
+  });
+  if(!lines.length) return '';
+  return '\n[카탈로그 — 작가가 정의한 옵션·분류. 대화에 이 옵션이 나오면 이 분류를 그대로 따르세요(자유 추측보다 우선)]\n'
+    +lines.join('\n')
+    +'\n→ extra_parts는 위 분류가 "추가파츠"인 항목이 대화에서 최종 확정된 개수만 세서 2로 나눠 올림. "표정"은 expressions로, 그 외 파츠는 parts로 분류.';
+}
 function isItemOn(sec,it){ var s=_ordSel[sec.id]; return sec.type==='radio'?(s===it.id):!!(s&&s[it.id]); }
 function itemQty(sec,it){ var s=_ordSel[sec.id]; return (sec.type==='qty'&&s&&s[it.id])?s[it.id]:1; }
 function toggleItem(sec,it){
@@ -1240,6 +1257,8 @@ document.getElementById('aiRun').addEventListener('click',async function(){
   var btn=this; btn.disabled=true;
   aiStatus('load','🤖 Claude가 대화를 읽는 중...');
   try{
+    await loadCatalog();
+    var catRef=buildCatalogRef();
     var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{
@@ -1264,7 +1283,8 @@ document.getElementById('aiRun').addEventListener('click',async function(){
           +'[order_summary = ⚡단계 추천]\n'
           +'- full_option: 풀옵션 신청 여부.  chukjeon: 데뷔축전 포함 여부.  samyeon: 삼면도(3면도) 포함 여부.\n'
           +'- extra_parts: "기본 디자인 밖 선택 추가파츠"(게임기 파츠·인체 풀파츠·의상추가·헤어추가)의 개수를 2로 나눠 올림한 정수.\n'
-          +'  → 모자·베레모·망토·슬라임·안경·동물귀·꼬리·표정 등 그 캐릭터에 그려지는 기본 구성요소는 on/off여도 세지 않음.',
+          +'  → 모자·베레모·망토·슬라임·안경·동물귀·꼬리·표정 등 그 캐릭터에 그려지는 기본 구성요소는 on/off여도 세지 않음.'
+          +catRef,
         messages:[{role:'user', content:text}],
         output_config:{format:{type:'json_schema', schema:{
           type:'object',
