@@ -562,15 +562,16 @@ function renderForm(){
            '<div class="n">'+it[lang]+'</div><div class="p">'+won(it.p)+' '+UI[lang].won+'</div>'+(sub?'<span class="sub">'+sub+'</span>':'')+'</div>';
       });
       h+='</div>';
-    } else if(sec.type==='qty'){ // 수량 선택 (옵션마다 개수 드롭다운)
+    } else if(sec.type==='qty'){ // 수량 선택 (− [N] + 스테퍼)
       h+='<div class="qty-list">';
       sec.items.forEach(function(it){
         var q=(sel[sec.id]&&sel[sec.id][it.id])||0;
-        var opts='';for(var n=0;n<=9;n++){var lb=n===0?(lang==='ko'?'없음':'0'):(n+(lang==='ko'?'개':''));opts+='<option value="'+n+'"'+(n===q?' selected':'')+'>'+lb+'</option>';}
         h+='<div class="qty-item'+(q>0?' on':'')+'" id="qi-'+it.id+'">'+
            '<div><div class="qty-i-n">'+it[lang]+'</div>'+
            '<div class="qty-i-p" id="qp-'+it.id+'">'+won(it.p)+' '+UI[lang].won+(q>1?' × '+q+' = '+won(it.p*q):'')+'</div></div>'+
-           '<select class="qc-sel" onchange="setQtyVal(\''+sec.id+'\',\''+it.id+'\',this.value)">'+opts+'</select></div>';
+           '<div class="qty-ctrl"><button class="qc-btn minus" onclick="setQty(\''+sec.id+'\',\''+it.id+'\',-1)">−</button>'+
+           '<span class="qc-num" id="qn-'+it.id+'">'+q+'</span>'+
+           '<button class="qc-btn" onclick="setQty(\''+sec.id+'\',\''+it.id+'\',1)">＋</button></div></div>';
       });
       h+='</div>';
     } else { // pill & expr both selectable multi
@@ -670,6 +671,7 @@ function setQtyVal(secId,itId,val){
   val=parseInt(val,10)||0; if(val<0)val=0;
   if(val===0)delete sel[secId][itId]; else sel[secId][itId]=val;
   var it=findItem(secId,itId);
+  var qn=document.getElementById('qn-'+itId); if(qn)qn.textContent=val;
   var qi=document.getElementById('qi-'+itId); if(qi)qi.classList.toggle('on',val>0);
   var qp=document.getElementById('qp-'+itId); if(qp)qp.textContent=won(it.p)+' '+UI[lang].won+(val>1?' × '+val+' = '+won(it.p*val):'');
   rebuild();
