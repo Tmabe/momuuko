@@ -562,7 +562,7 @@ function renderForm(){
            '<div class="n">'+it[lang]+'</div><div class="p">'+won(it.p)+' '+UI[lang].won+'</div>'+(sub?'<span class="sub">'+sub+'</span>':'')+'</div>';
       });
       h+='</div>';
-    } else if(sec.type==='qty'){ // 수량 선택 (− [N] + 스테퍼)
+    } else if(sec.type==='qty'||sec.type==='pill'){ // 수량·다중선택: 박스 + [ − N + ] 스테퍼 (통일)
       h+='<div class="qty-list">';
       sec.items.forEach(function(it){
         var q=(sel[sec.id]&&sel[sec.id][it.id])||0;
@@ -574,7 +574,7 @@ function renderForm(){
            '<button class="qc-btn" onclick="setQty(\''+sec.id+'\',\''+it.id+'\',1)">＋</button></div></div>';
       });
       h+='</div>';
-    } else { // pill & expr both selectable multi
+    } else { // expr (기본 제공 표정) — 토글 pill
       h+='<div class="pills">';
       sec.items.forEach(function(it){
         var on=sel[sec.id]&&sel[sec.id][it.id];
@@ -697,15 +697,10 @@ function buildFormText(){
       any=true;
       lines.push('▸ '+sec.koLabel); lines.push('  · '+it.ko); lines.push('    → '+won(it.p)+'원'); lines.push('');
       total+=it.p;
-    } else if(sec.type==='pill'){
+    } else if(sec.type==='pill'||sec.type==='qty'){
       if(!sel[sec.id])return; var ids=Object.keys(sel[sec.id]); if(!ids.length)return;
       any=true; lines.push('▸ '+sec.koLabel);
-      ids.forEach(function(id){var it=findItem(sec.id,id);lines.push('  · '+it.ko);lines.push('    → '+won(it.p)+'원');total+=it.p;});
-      lines.push('');
-    } else if(sec.type==='qty'){
-      if(!sel[sec.id])return; var ids=Object.keys(sel[sec.id]); if(!ids.length)return;
-      any=true; lines.push('▸ '+sec.koLabel);
-      ids.forEach(function(id){var it=findItem(sec.id,id);var q=sel[sec.id][id];lines.push('  · '+it.ko+' × '+q+'개');lines.push('    → '+won(it.p*q)+'원');total+=it.p*q;});
+      ids.forEach(function(id){var it=findItem(sec.id,id);var q=sel[sec.id][id]||1;lines.push('  · '+it.ko+(q>1?' × '+q+'개':''));lines.push('    → '+won(it.p*q)+'원');total+=it.p*q;});
       lines.push('');
     } else if(sec.type==='expr'){
       if(!sel[sec.id])return; var ids=Object.keys(sel[sec.id]); if(!ids.length)return;
