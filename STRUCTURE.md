@@ -25,7 +25,7 @@
 | 탭 | 파일 | 용도 |
 |----|------|------|
 | 대시보드 | `d_i75EXu4XuLRneN3r.html` | 의뢰 관리 (비공개 난수 주소) |
-| 마감캘린더 | `deadline.html` | 마감일 캘린더 |
+| 오늘 | `today.html` | ADHD 오늘 모드 — 가장 급한 칩 1개 + 포커스 타이머 + 미완료 이월 + 작업 스트릭 |
 | 플래너 | `planner.html` | 할일 태그·캘린더 DnD·AI 추출·인벤토리·대시보드 연동 |
 | 연습트래커 | `practice.html` | 연습 타이머·기록 |
 | 커미션편집 | `commission-editor.html` | 가격/메뉴/약관 편집 → `data/commission.json` |
@@ -56,6 +56,7 @@
 | `home-BETA.html` | `home.html`의 구 베타본 |
 | `momukko-namecard-BETA.html` | 명함 구 베타본 |
 | `index133.html` | 옛 index 백업 (200KB) |
+| `deadline.html` | 마감캘린더 — 플래너 캘린더와 중복되어 "오늘" 탭으로 대체(2026-06-12) |
 
 ---
 
