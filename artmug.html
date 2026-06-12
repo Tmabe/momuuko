@@ -95,6 +95,15 @@ body{
 .port-item img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
 .port-item .cap{position:absolute;left:0;right:0;bottom:0;padding:14px 10px 7px;font-size:11px;font-weight:700;color:#fff;background:linear-gradient(to top,rgba(20,45,70,.8),transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .port-loading,.port-empty{text-align:center;padding:34px;color:var(--ink3);font-size:13px;font-weight:600}
+.port-viewer{display:none;position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh-md);padding:16px;margin-bottom:16px;text-align:center}
+.port-viewer.open{display:block;animation:fade .2s}
+.port-viewer img{max-width:100%;max-height:74vh;border-radius:var(--r-sm);display:block;margin:0 auto}
+.port-viewer .pv-x{position:absolute;top:10px;right:10px;width:38px;height:38px;border:1px solid var(--line);background:#fff;border-radius:var(--r-sm);font-size:16px;font-weight:800;color:var(--ink2);cursor:pointer;z-index:2}
+.port-viewer .pv-x:hover{border-color:var(--accent-l);color:var(--accent-d)}
+.port-viewer .pv-bar{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:12px}
+.port-viewer .pv-nav{width:44px;height:44px;border:1px solid var(--line);background:#fff;border-radius:var(--r-sm);font-size:22px;font-weight:800;color:var(--sky-d);cursor:pointer;line-height:1}
+.port-viewer .pv-nav:hover{background:var(--sky-pl);border-color:var(--sky-l)}
+.port-viewer .pv-cap{font-size:13px;font-weight:700;color:var(--ink2);min-width:90px}
 .lb{display:none;position:fixed;inset:0;z-index:6000;background:rgba(15,40,65,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;flex-direction:column;gap:14px}
 .lb.open{display:flex;animation:fade .2s}
 @keyframes fade{from{opacity:0}to{opacity:1}}
@@ -138,6 +147,8 @@ body{
 .qc-btn{width:32px;height:32px;border:none;background:var(--sky-bg);font-size:17px;font-weight:800;cursor:pointer;color:var(--sky-d);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
 .qc-btn:hover{background:var(--sky-pl)}
 .qc-btn.minus{color:var(--accent-d)}
+.qc-sel{flex-shrink:0;padding:8px 11px;border:1.5px solid var(--line);border-radius:var(--r-sm);font-family:inherit;font-size:13px;font-weight:700;color:var(--ink);background:#fff;cursor:pointer}
+.qc-sel:hover{border-color:var(--sky-l)}
 .qc-num{width:34px;text-align:center;font-size:15px;font-weight:800;color:var(--ink);border-left:1.5px solid var(--line);border-right:1.5px solid var(--line);height:32px;display:flex;align-items:center;justify-content:center;user-select:none}
 
 /* sub card (message / apply) */
@@ -251,7 +262,14 @@ body{
     </div>
     <div class="port-loading" id="portLoading"></div>
     <div class="port-empty" id="portEmpty" style="display:none"></div>
-    <div class="port-wrap" id="portWrap"><div class="port-grid" id="portGrid"></div></div>
+    <div class="port-wrap" id="portWrap">
+      <div class="port-viewer" id="portViewer">
+        <button class="pv-x" onclick="closeLb()" aria-label="닫기">✕</button>
+        <img id="pvImg" alt="">
+        <div class="pv-bar"><button class="pv-nav" onclick="lbNav(-1)">‹</button><span class="pv-cap" id="pvCap"></span><button class="pv-nav" onclick="lbNav(1)">›</button></div>
+      </div>
+      <div class="port-grid" id="portGrid"></div>
+    </div>
   </section>
 
   <!-- WORK ORDER -->
@@ -335,7 +353,7 @@ var UI={
   ko:{
     heroBadge:'✦ Live2D Illustrator · 모무꼬',
     heroSub:'퀄리티 높고 가성비 있는 그림을 지향합니다.<br>편하게 문의주세요 ✦',
-    ctaPrice:'💰 가격 계산하기', ctaPort:'🖼 포트폴리오 보기',
+    ctaPrice:'가격 계산하기', ctaPort:'포트폴리오 보기',
     tSlots:'작업 슬롯 현황', bSlots:'실시간',
     tPort:'포트폴리오', bPort:'갤러리',
     tWork:'작업 순서',
@@ -355,7 +373,7 @@ var UI={
   en:{
     heroBadge:'✦ Live2D Illustrator · Momukko',
     heroSub:'Quality artwork at a fair price.<br>Feel free to reach out ✦',
-    ctaPrice:'💰 Price Calculator', ctaPort:'🖼 View Portfolio',
+    ctaPrice:'Price Calculator', ctaPort:'View Portfolio',
     tSlots:'Slot Availability', bSlots:'Live',
     tPort:'Portfolio', bPort:'Gallery',
     tWork:'Work Process',
@@ -536,16 +554,15 @@ function renderForm(){
            '<div class="n">'+it[lang]+'</div><div class="p">'+won(it.p)+' '+UI[lang].won+'</div>'+(sub?'<span class="sub">'+sub+'</span>':'')+'</div>';
       });
       h+='</div>';
-    } else if(sec.type==='qty'){ // 수량 선택 (개수 지정)
+    } else if(sec.type==='qty'){ // 수량 선택 (옵션마다 개수 드롭다운)
       h+='<div class="qty-list">';
       sec.items.forEach(function(it){
         var q=(sel[sec.id]&&sel[sec.id][it.id])||0;
+        var opts='';for(var n=0;n<=9;n++){var lb=n===0?(lang==='ko'?'없음':'0'):(n+(lang==='ko'?'개':''));opts+='<option value="'+n+'"'+(n===q?' selected':'')+'>'+lb+'</option>';}
         h+='<div class="qty-item'+(q>0?' on':'')+'" id="qi-'+it.id+'">'+
            '<div><div class="qty-i-n">'+it[lang]+'</div>'+
            '<div class="qty-i-p" id="qp-'+it.id+'">'+won(it.p)+' '+UI[lang].won+(q>1?' × '+q+' = '+won(it.p*q):'')+'</div></div>'+
-           '<div class="qty-ctrl"><button class="qc-btn minus" onclick="setQty(\''+sec.id+'\',\''+it.id+'\',-1)">−</button>'+
-           '<span class="qc-num" id="qn-'+it.id+'">'+q+'</span>'+
-           '<button class="qc-btn" onclick="setQty(\''+sec.id+'\',\''+it.id+'\',1)">＋</button></div></div>';
+           '<select class="qc-sel" onchange="setQtyVal(\''+sec.id+'\',\''+it.id+'\',this.value)">'+opts+'</select></div>';
       });
       h+='</div>';
     } else { // pill & expr both selectable multi
@@ -601,10 +618,17 @@ function loadPortfolio(){
     })
     .catch(function(){document.getElementById('portLoading').style.display='none';var e=document.getElementById('portEmpty');e.style.display='block';e.textContent=UI[lang].portErr;});
 }
-function openLb(i){lbIdx=i;var im=imgs[i];document.getElementById('lbImg').src=im.src;document.getElementById('lbCap').textContent=im.cap;document.getElementById('lb').classList.add('open');}
-function closeLb(){document.getElementById('lb').classList.remove('open');}
-function lbNav(d){lbIdx=(lbIdx+d+imgs.length)%imgs.length;openLb(lbIdx);}
-document.getElementById('lb').addEventListener('click',function(e){if(e.target===this)closeLb();});
+/* iframe 임베드에서도 동작하는 인라인 뷰어 (position:fixed 미사용) */
+function openLb(i){
+  if(!imgs.length)return; lbIdx=(i+imgs.length)%imgs.length; var im=imgs[lbIdx];
+  document.getElementById('pvImg').src=im.src;
+  document.getElementById('pvImg').alt=im.cap;
+  document.getElementById('pvCap').textContent=(lbIdx+1)+' / '+imgs.length;
+  var v=document.getElementById('portViewer'); v.classList.add('open');
+  try{ v.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){ v.scrollIntoView(); }
+}
+function closeLb(){document.getElementById('portViewer').classList.remove('open');}
+function lbNav(d){openLb(lbIdx+d);}
 
 /* ════════ selection ════════ */
 function findItem(secId,itId){var s=DATA.sections.find(function(x){return x.id===secId;});return s.items.find(function(i){return i.id===itId;});}
@@ -617,17 +641,29 @@ function pickRadio(secId,itId){
 function togglePill(secId,itId){
   if(!sel[secId])sel[secId]={};
   var el=document.getElementById('pl-'+itId);
-  if(sel[secId][itId]){delete sel[secId][itId];el.classList.remove('sel');}else{sel[secId][itId]=true;el.classList.add('sel');}
+  if(sel[secId][itId]){delete sel[secId][itId];el.classList.remove('sel');}
+  else{
+    var sec=DATA.sections.find(function(s){return s.id===secId;});
+    if(sec&&sec.type==='expr'){
+      var max=sec.maxFree||5;
+      if(Object.keys(sel[secId]).length>=max){ toast(lang==='ko'?('기본 제공 표정은 '+max+'개까지 무료예요'):('Up to '+max+' free expressions')); return; }
+    }
+    sel[secId][itId]=true;el.classList.add('sel');
+  }
   rebuild();
 }
 function setQty(secId,itId,d){
   if(!sel[secId])sel[secId]={};
   var cur=(sel[secId][itId]||0)+d; if(cur<0)cur=0;
-  if(cur===0)delete sel[secId][itId]; else sel[secId][itId]=cur;
+  setQtyVal(secId,itId,cur);
+}
+function setQtyVal(secId,itId,val){
+  if(!sel[secId])sel[secId]={};
+  val=parseInt(val,10)||0; if(val<0)val=0;
+  if(val===0)delete sel[secId][itId]; else sel[secId][itId]=val;
   var it=findItem(secId,itId);
-  var qn=document.getElementById('qn-'+itId); if(qn)qn.textContent=cur;
-  var qi=document.getElementById('qi-'+itId); if(qi)qi.classList.toggle('on',cur>0);
-  var qp=document.getElementById('qp-'+itId); if(qp)qp.textContent=won(it.p)+' '+UI[lang].won+(cur>1?' × '+cur+' = '+won(it.p*cur):'');
+  var qi=document.getElementById('qi-'+itId); if(qi)qi.classList.toggle('on',val>0);
+  var qp=document.getElementById('qp-'+itId); if(qp)qp.textContent=won(it.p)+' '+UI[lang].won+(val>1?' × '+val+' = '+won(it.p*val):'');
   rebuild();
 }
 function resetForm(){
