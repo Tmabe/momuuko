@@ -212,6 +212,21 @@ body{display:flex;flex-direction:column;}
 .stage-prev{font-size:13px;color:var(--text2);margin-top:12px;line-height:1.7;padding:10px 12px;border-radius:9px;border:1px dashed var(--border);background:var(--panel2);}
 .stage-prev b{color:var(--Y);}
 
+/* 주문 확정기 */
+.ord-sec{margin-top:14px;}
+.ord-sec .sh{font-family:var(--cond);font-weight:700;font-size:14px;color:var(--text2);letter-spacing:.5px;margin-bottom:7px;}
+.ord-items{display:flex;flex-wrap:wrap;gap:7px;}
+.ord-it{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border-radius:9px;border:1px solid var(--border);background:var(--panel2);cursor:pointer;font-size:14px;user-select:none;transition:.12s;}
+.ord-it.on{border-color:var(--Y);background:rgba(61,142,240,.14);}
+.ord-it .op{font-family:var(--mono);font-size:11px;color:var(--text3);}
+.ord-it.on .op{color:var(--Y);}
+.ord-it .catb{font-size:10px;padding:1px 6px;border-radius:5px;background:var(--bg);color:var(--text3);}
+.ord-it .qty{width:46px;font-family:var(--mono);font-size:12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:3px 6px;}
+.ord-total{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:12px 15px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);}
+.ord-total .lbl{font-family:var(--cond);font-weight:700;font-size:15px;color:var(--text2);letter-spacing:.5px;}
+.ord-total .amt{font-family:var(--mono);font-size:21px;font-weight:500;color:var(--Y);}
+.ord-derive{font-size:12.5px;color:var(--text3);margin-top:9px;line-height:1.7;}
+
 /* 토스트 */
 #toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
@@ -239,6 +254,7 @@ body{display:flex;flex-direction:column;}
   <span class="sub">할일 일정보드</span>
   <span class="spacer"></span>
   <span class="hint">칩을 날짜로 드래그 · 칩 클릭=완료 · ✕=삭제</span>
+  <button class="topbtn" id="btnOrder">🧾 주문 확정</button>
   <button class="topbtn ai" id="btnAi">🤖 AI 추출</button>
   <button class="topbtn" id="btnSync">☁ 동기화</button>
   <button class="topbtn" id="btnSettings" title="설정">⚙</button>
@@ -319,6 +335,29 @@ body{display:flex;flex-direction:column;}
     <div class="desc">날짜에 배치된 할 일과 의뢰 마감을 모아 봅니다. 칩을 누르면 완료 토글(대시보드 단계도 자동 반영).</div>
     <div id="focusBody"></div>
     <div class="btnrow"><button class="mbtn primary" id="focusClose">닫기</button></div>
+  </div>
+</div>
+
+<!-- ═══ 주문 확정기 모달 ═══ -->
+<div class="modal-bg" id="orderModal">
+  <div class="modal" style="max-width:640px;">
+    <h2>🧾 주문 확정기</h2>
+    <div class="desc">커미션편집 카탈로그를 기준으로 최종 옵션을 확정합니다. 대화로 미리 선택 → 확인·수정 → 확정하면 <b>단계·추가파츠 태그 + 인벤토리 + 대시보드 금액</b>이 한 번에 생성돼요.</div>
+    <label>신청자</label>
+    <select id="ordClient"></select>
+    <details style="margin-top:10px;">
+      <summary style="cursor:pointer;font-size:13.5px;color:var(--text2);">🤖 대화로 미리 선택 (선택)</summary>
+      <textarea id="ordAiText" placeholder="신청양식/대화 전체를 붙여넣으면 최종 확정 옵션을 골라줘요..." style="margin-top:8px;min-height:110px;"></textarea>
+      <button class="mbtn ai" id="ordAiBtn" style="margin-top:8px;">대화로 옵션 채우기</button>
+      <div class="mstatus" id="ordAiStatus"></div>
+    </details>
+    <div id="ordCatalog"></div>
+    <div class="ord-total"><span class="lbl">합계 금액</span><span class="amt" id="ordTotal">0원</span></div>
+    <div class="ord-derive" id="ordDerive"></div>
+    <div class="btnrow">
+      <button class="mbtn" id="ordClose">닫기</button>
+      <button class="mbtn primary" id="ordConfirm">✓ 확정 — 태그·인벤토리·대시보드 생성</button>
+    </div>
   </div>
 </div>
 
@@ -719,8 +758,136 @@ function toast(msg){
 /* ════════ 모달 공통 ════════ */
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-['aiModal','syncModal','setModal','invModal','stageModal','focusModal'].forEach(function(id){
+['aiModal','syncModal','setModal','invModal','stageModal','focusModal','orderModal'].forEach(function(id){
   document.getElementById(id).addEventListener('click',function(e){ if(e.target===this) closeModal(id); });
+});
+
+/* ════════ 주문 확정기 (자동화 P2+P3) ════════ */
+var _catalog=null, _ordSel={};
+var CATLBL={part:'추가파츠',expr:'표정',fullopt:'풀옵션',chukjeon:'축전',samyeon:'삼면도',ignore:'무관'};
+async function loadCatalog(){
+  try{ var r=await fetch('data/commission.json?t='+Date.now()); if(!r.ok) throw 0; _catalog=await r.json(); }
+  catch(e){ _catalog=null; }
+  return _catalog;
+}
+function catOf(sec,it){ return sec.type==='expr'?'expr':(it.cat||''); }
+function isItemOn(sec,it){ var s=_ordSel[sec.id]; return sec.type==='radio'?(s===it.id):!!(s&&s[it.id]); }
+function itemQty(sec,it){ var s=_ordSel[sec.id]; return (sec.type==='qty'&&s&&s[it.id])?s[it.id]:1; }
+function toggleItem(sec,it){
+  if(sec.type==='radio'){ _ordSel[sec.id]=(_ordSel[sec.id]===it.id)?'':it.id; }
+  else { var s=_ordSel[sec.id]||(_ordSel[sec.id]={}); if(s[it.id]) delete s[it.id]; else s[it.id]=(sec.type==='qty'?1:true); }
+  renderCatalog();
+}
+function deriveOrder(){
+  var parts=[],exprs=[],partCount=0,full=false,chuk=false,sam=false,amount=0,type='';
+  (_catalog&&_catalog.sections?_catalog.sections:[]).forEach(function(sec){
+    (sec.items||[]).forEach(function(it){
+      if(!isItemOn(sec,it)) return;
+      var q=itemQty(sec,it);
+      if(sec.type!=='expr') amount+=(it.p||0)*(sec.type==='qty'?q:1);
+      var c=catOf(sec,it);
+      if(c==='expr'){ exprs.push(it.ko); return; }
+      if(c==='part'){ partCount++; parts.push(it.ko); }
+      else if(c==='fullopt') full=true;
+      else if(c==='chukjeon') chuk=true;
+      else if(c==='samyeon') sam=true;
+      else if(c==='ignore'){}
+      else if(sec.type==='radio'){ if(!type) type=it.ko; } // 기본 일러스트 종류 → 의뢰 type (인벤토리 아님)
+      else parts.push(it.ko); // 그 외 기본 구성요소 → 인벤토리 파츠
+    });
+  });
+  return {parts:parts,exprs:exprs,extra:Math.ceil(partCount/2),full:full,chuk:chuk,sam:sam,amount:amount,type:type};
+}
+function updateOrdTotal(){
+  var d=deriveOrder();
+  document.getElementById('ordTotal').textContent=d.amount.toLocaleString()+'원';
+  var st=['러프1','러프2'].concat(d.full?['러프3']:[]).concat(d.chuk?['러프4(축전)']:[]).concat(['선화','채색','완성']);
+  if(d.extra) for(var i=1;i<=d.extra;i++) st.push('추가파츠'+i);
+  if(d.chuk) st.push('축전'); if(d.sam) st.push('삼면도');
+  document.getElementById('ordDerive').innerHTML='→ <b style="color:var(--text2)">'+st.join(' · ')+'</b><br>인벤토리 🧩'+d.parts.length+'개 · 🎭'+d.exprs.length+'개';
+}
+function renderCatalog(){
+  var box=document.getElementById('ordCatalog');
+  if(!_catalog||!_catalog.sections){ box.innerHTML='<div class="mstatus show err" style="margin-top:12px">카탈로그(data/commission.json)를 못 불러왔어요. 커미션편집에서 한 번 저장했는지 확인해주세요.</div>'; document.getElementById('ordTotal').textContent='—'; document.getElementById('ordDerive').textContent=''; return; }
+  var h='';
+  _catalog.sections.forEach(function(sec){
+    if(!sec.items||!sec.items.length) return;
+    h+='<div class="ord-sec"><div class="sh">'+esc(sec.koLabel||sec.ko||'')+'</div><div class="ord-items">';
+    sec.items.forEach(function(it){
+      var on=isItemOn(sec,it), c=catOf(sec,it);
+      h+='<span class="ord-it'+(on?' on':'')+'" data-sec="'+esc(sec.id)+'" data-it="'+esc(it.id)+'">'+esc(it.ko)
+        +(sec.type!=='expr'&&it.p?'<span class="op">'+(it.p/10000)+'만</span>':'')
+        +(c?'<span class="catb">'+(CATLBL[c]||c)+'</span>':'')
+        +(on&&sec.type==='qty'?'<input class="qty" type="number" min="1" value="'+itemQty(sec,it)+'" data-sec="'+esc(sec.id)+'" data-it="'+esc(it.id)+'">':'')
+        +'</span>';
+    });
+    h+='</div></div>';
+  });
+  box.innerHTML=h;
+  box.querySelectorAll('.ord-it').forEach(function(el){
+    el.addEventListener('click',function(e){
+      if(e.target.classList.contains('qty')) return;
+      var sec=_catalog.sections.filter(function(s){return s.id===el.dataset.sec;})[0];
+      var it=sec&&(sec.items||[]).filter(function(x){return x.id===el.dataset.it;})[0];
+      if(sec&&it) toggleItem(sec,it);
+    });
+  });
+  box.querySelectorAll('.qty').forEach(function(inp){
+    inp.addEventListener('click',function(e){e.stopPropagation();});
+    inp.addEventListener('input',function(){ var v=Math.max(1,parseInt(inp.value,10)||1); (_ordSel[inp.dataset.sec]=_ordSel[inp.dataset.sec]||{})[inp.dataset.it]=v; updateOrdTotal(); });
+  });
+  updateOrdTotal();
+}
+document.getElementById('btnOrder').addEventListener('click', async function(){
+  var sel=document.getElementById('ordClient');
+  sel.innerHTML='<option value="">(신청자 없음)</option>';
+  allClients().forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
+  var cur=document.getElementById('selClient').value; if(cur&&cur!=='__none__') sel.value=cur;
+  _ordSel={};
+  document.getElementById('ordAiStatus').className='mstatus';
+  document.getElementById('ordAiText').value='';
+  document.getElementById('ordCatalog').innerHTML='<div class="mstatus show load" style="margin-top:12px">카탈로그 불러오는 중…</div>';
+  openModal('orderModal');
+  await loadCatalog(); renderCatalog();
+});
+document.getElementById('ordClose').addEventListener('click',function(){ closeModal('orderModal'); });
+document.getElementById('ordAiBtn').addEventListener('click', async function(){
+  var key=localStorage.getItem('mm_claude_key');
+  if(!key){ toast('⚙️ 설정에서 Claude API 키 먼저'); document.getElementById('btnSettings').click(); return; }
+  var st=document.getElementById('ordAiStatus');
+  if(!_catalog){ st.className='mstatus show err'; st.textContent='카탈로그가 없어요'; return; }
+  var text=document.getElementById('ordAiText').value.trim();
+  if(!text){ st.className='mstatus show err'; st.textContent='대화를 붙여넣어주세요'; return; }
+  var names=[]; _catalog.sections.forEach(function(sec){ (sec.items||[]).forEach(function(it){ names.push(it.ko); }); });
+  var btn=this; btn.disabled=true; st.className='mstatus show load'; st.textContent='🤖 최종 확정 옵션 분석 중…';
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:localStorage.getItem('mm_claude_model')||'claude-opus-4-8',max_tokens:1024,
+        system:'커미션 작가의 비서. 작가와 신청자의 대화 전체를 읽고, 아래 옵션 목록 중 최종적으로 확정된 것만 고르세요. 협상으로 교체·취소·추가된 경우 최종 상태를 반영(예: 안경→헤드셋이면 헤드셋만, 게임기 빼기면 제외). 목록에 있는 정확한 이름만 고르세요.\n옵션 목록: '+names.join(', '),
+        messages:[{role:'user',content:text}],
+        output_config:{format:{type:'json_schema',schema:{type:'object',properties:{selected:{type:'array',items:{type:'string'},description:'최종 확정 옵션 이름들(목록의 정확한 이름)'}},required:['selected'],additionalProperties:false}}}})});
+    if(!res.ok){ var e=await res.json().catch(function(){return{};}); var m=(e.error&&e.error.message)||('HTTP '+res.status); if(res.status===401)m='API 키가 올바르지 않아요'; throw new Error(m); }
+    var data=await res.json(); var tb=(data.content||[]).filter(function(b){return b.type==='text';})[0];
+    var picked=(JSON.parse(tb.text).selected||[]).map(function(s){return s.trim();});
+    _ordSel={}; var hit=0;
+    _catalog.sections.forEach(function(sec){ (sec.items||[]).forEach(function(it){
+      if(picked.indexOf(it.ko.trim())>=0){ if(sec.type==='radio') _ordSel[sec.id]=it.id; else (_ordSel[sec.id]=_ordSel[sec.id]||{})[it.id]=(sec.type==='qty'?1:true); hit++; }
+    }); });
+    renderCatalog();
+    st.className='mstatus show ok'; st.textContent='✅ '+hit+'개 선택됨 — 확인·수정 후 확정하세요';
+  }catch(e){ st.className='mstatus show err'; st.textContent='❌ '+e.message; }
+  btn.disabled=false;
+});
+document.getElementById('ordConfirm').addEventListener('click', function(){
+  var client=document.getElementById('ordClient').value;
+  if(!client||client==='__none__'){ toast('신청자를 선택해주세요'); return; }
+  var d=deriveOrder();
+  var r=genStageTags(client, {full:d.full,chuk:d.chuk,sam:d.sam,extra:d.extra});
+  var invAdded=mergeInventory(client, d.exprs, d.parts);
+  upsertDashboard(client, inventoryText(client), d.amount, d.type);
+  save(); renderTags(); renderGrid();
+  toast('🧾 확정! 단계태그 '+r.added+'개 · 인벤토리 '+invAdded+'개 · 금액 '+d.amount.toLocaleString()+'원 → 대시보드 반영');
+  closeModal('orderModal');
 });
 
 /* ════════ 오늘·이번주 포커스 ════════ */
@@ -841,13 +1008,14 @@ function inventoryText(client){
 }
 /* 대시보드(mm_dash_v1)에 이름·파츠 반영 (가격·단계 등 기존값은 안 건드림, 신규는 가격 빈칸) */
 var DASH_MARK='【신청 파츠】';
-function upsertDashboard(client, memoText){
+function upsertDashboard(client, memoText, amount, type){
   client=(client||'').trim();
   if(!client || client==='__none__') return {skipped:true};
   var arr;
   try{ var raw=JSON.parse(localStorage.getItem(DKEY)||'[]'); arr=Array.isArray(raw)?raw:(raw.commissions||[]); }
   catch(e){ arr=[]; }
   var block=DASH_MARK+(memoText?'\n'+memoText:'');
+  var amt=(amount!=null && amount!=='' && +amount>0)?String(+amount):null;
   var found=null;
   for(var i=0;i<arr.length;i++){ if((arr[i].client||'').trim()===client){ found=arr[i]; break; } }
   if(found){
@@ -855,10 +1023,12 @@ function upsertDashboard(client, memoText){
     var prev=found.memo||'';
     var cleaned=prev.replace(new RegExp(DASH_MARK.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[\\s\\S]*$'),'').trim();
     found.memo=(cleaned?cleaned+'\n':'')+block;
+    if(amt) found.amount=amt;             // 확정기 계산 총액(있을 때만)
+    if(type) found.type=type;             // 확정기 의뢰 종류(있을 때만)
     localStorage.setItem(DKEY, JSON.stringify(arr));
     return {created:false, client:client};
   }
-  arr.push({client:client, type:'', amount:'', deadline:'', startDate:'', email:'', note:'',
+  arr.push({client:client, type:(type||''), amount:(amt||''), deadline:'', startDate:'', email:'', note:'',
             memo:block, tag:'', platform:'', contact:'', stage:0});
   localStorage.setItem(DKEY, JSON.stringify(arr));
   return {created:true, client:client};
