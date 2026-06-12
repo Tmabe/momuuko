@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-11T18:32:48.858Z",
+  "updated": "2026-06-12T00:54:00.660Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -250,12 +250,6 @@
       "hintEn": "⚠ Please inquire before choosing outfit/hair add-ons",
       "items": [
         {
-          "id": "a1",
-          "ko": "R18 파츠 추가",
-          "en": "R18 parts",
-          "p": 100000
-        },
-        {
           "id": "a2",
           "ko": "표정·얼굴 파츠 추가",
           "en": "Expression / face parts",
@@ -286,12 +280,6 @@
           "p": 200000
         },
         {
-          "id": "a7",
-          "ko": "센시티브 파츠",
-          "en": "Sensitive parts",
-          "p": 10000
-        },
-        {
           "id": "a8",
           "ko": "동물귀",
           "en": "Animal ears",
@@ -307,7 +295,13 @@
           "id": "a10",
           "ko": "3면도 (단색채색)",
           "en": "3-view sheet (flat color)",
-          "p": 150000
+          "p": 200000
+        },
+        {
+          "id": "add_mqa7prr6",
+          "ko": "r18 파츠 추가",
+          "en": "r18 parts",
+          "p": 0
         }
       ]
     },
@@ -329,6 +323,12 @@
           "ko": "데뷔축전 ( 상업용·장패드등의 굿즈)",
           "en": "Debut art ( commercial · ex)mousepad )",
           "p": 550000
+        },
+        {
+          "id": "debut_mqa7n7il",
+          "ko": "메모리얼용 파츠분리 추가",
+          "en": "Adding Parts Separation for Memorials",
+          "p": 250000
         }
       ]
     },
