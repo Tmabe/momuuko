@@ -41,10 +41,18 @@ body{
 /* section heading */
 .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .sec-titles{display:flex;flex-direction:column;gap:1px}
-.sec-jp{font-family:'Shippori Mincho',serif;font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--sky-d);opacity:.75}
+.sec-jp{display:none}
+#sideMini{display:none;position:fixed;top:84px;right:14px;z-index:500;width:150px;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);box-shadow:var(--sh-md);padding:12px 13px}
+#sideMini.show{display:block}
+.sm-tl{font-size:10px;font-weight:800;color:var(--ink3);letter-spacing:.05em}
+.sm-amt{font-size:16px;font-weight:900;color:var(--sky-d);margin:2px 0 9px;font-variant-numeric:tabular-nums}
+.sm-nav{display:flex;flex-direction:column;gap:1px;border-top:1px solid var(--line2);padding-top:7px}
+.sm-link{font-size:11.5px;font-weight:700;color:var(--ink2);padding:5px 7px;border-radius:6px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sm-link:hover{background:var(--sky-pl);color:var(--sky-d)}
+@media(max-width:780px){#sideMini{display:none!important}}
 .sec-title{font-size:18px;font-weight:900;letter-spacing:-.01em;color:var(--ink)}
 .sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--sky-l),transparent)}
-.sec-badge{font-size:10px;font-weight:900;letter-spacing:.06em;padding:3px 10px;border-radius:var(--r-xs);background:var(--sky-pl);color:var(--sky-d);border:1px solid var(--sky-l)}
+.sec-badge{display:none}
 
 /* HERO */
 .hero{padding:64px 22px 26px;max-width:980px;margin:0 auto}
@@ -497,7 +505,7 @@ function setLang(l){
   document.getElementById('langEn').classList.toggle('on',l==='en');
   renderAll();
 }
-function renderAll(){renderUI();renderChips();renderSlots();renderWork();renderForm();renderApplyFill();renderNotice();rebuild();}
+function renderAll(){renderUI();renderChips();renderSlots();renderWork();renderForm();renderApplyFill();renderNotice();rebuild();if(typeof buildSideNav==='function')buildSideNav();}
 
 function renderUI(){
   var u=UI[lang];
@@ -735,6 +743,7 @@ function countSel(){
 function rebuild(){
   var r=buildFormText();
   document.getElementById('totalAmt').textContent=won(r.total);
+  var sm=document.getElementById('smTotal'); if(sm)sm.textContent=won(r.total)+' '+UI[lang].won;
   var c=countSel();
   document.getElementById('totalCnt').textContent=c?UI[lang].cnt(c):'';
   var body=document.getElementById('previewBody');
@@ -800,6 +809,42 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLb();})
   setInterval(postH, 1000);
   postH();
 })();
+
+/* ── 떠있는 사이드바 (합계 + 섹션 이동) ── */
+(function(){
+  var EMB = window.self!==window.top;
+  function navTo(sec){
+    if(!sec) return;
+    if(!EMB){ try{ sec.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){ sec.scrollIntoView(); } }
+    else { try{ var y=sec.getBoundingClientRect().top+(window.pageYOffset||document.documentElement.scrollTop||0); parent.postMessage({src:'momuuko-artmug', scrollToY:y}, '*'); }catch(e){} }
+  }
+  function buildSideNav(){
+    var nav=document.getElementById('smNav'); if(!nav) return;
+    var secs=document.querySelectorAll('.section'); var h='';
+    secs.forEach(function(s,i){ var t=s.querySelector('.sec-title'); var lab=t?t.textContent.trim():''; if(lab) h+='<div class="sm-link" data-i="'+i+'">'+lab+'</div>'; });
+    nav.innerHTML=h;
+    nav.querySelectorAll('.sm-link').forEach(function(a){ a.addEventListener('click',function(){ navTo(secs[+a.dataset.i]); }); });
+  }
+  function initSide(){
+    window.buildSideNav=buildSideNav;
+    buildSideNav();
+    var sm=document.getElementById('sideMini');
+    if(typeof rebuild==='function') rebuild();              // 합계 동기화
+    if(!EMB){ if(sm) sm.classList.add('show'); }            // 단독 페이지: 고정 표시
+    else {                                                  // 임베드: 부모 스크롤 동기화 시 표시
+      window.addEventListener('message', function(e){
+        var d=e.data; if(!d||d.src!=='momuuko-parent'||typeof d.vTop!=='number') return;
+        if(!sm) return; sm.style.position='absolute'; sm.style.top=(d.vTop+16)+'px'; sm.classList.add('show');
+      });
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', initSide); else initSide();
+})();
 </script>
+<div id="sideMini">
+  <div class="sm-tl">현재 합계</div>
+  <div class="sm-amt" id="smTotal">0 원</div>
+  <div class="sm-nav" id="smNav"></div>
+</div>
 </body>
 </html>
