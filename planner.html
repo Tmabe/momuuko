@@ -804,6 +804,7 @@ function deriveOrder(){
       var q=itemQty(sec,it);
       var nm=it.ko+(q>1?' ×'+q:'');
       if(sec.type!=='expr') amount+=(it.p||0)*(isQtyType(sec)?q:1);
+      if(sec.type==='radio' && !type) type=it.ko; // 라디오 = 의뢰 종류 (분류와 무관하게 항상)
       var c=catOf(sec,it);
       if(c==='expr'){ exprs.push(nm); return; }
       if(c==='part'){ partCount+=(isQtyType(sec)?q:1); parts.push(nm); }
@@ -811,8 +812,7 @@ function deriveOrder(){
       else if(c==='chukjeon') chuk=true;
       else if(c==='samyeon') sam=true;
       else if(c==='ignore'){}
-      else if(sec.type==='radio'){ if(!type) type=it.ko; } // 기본 일러스트 종류 → 의뢰 type (인벤토리 아님)
-      else parts.push(nm); // 그 외 기본 구성요소 → 인벤토리 파츠
+      else if(sec.type!=='radio') parts.push(nm); // 기본 구성요소(라디오 외)만 인벤토리
     });
   });
   return {parts:parts,exprs:exprs,extra:Math.ceil(partCount/2),full:full,chuk:chuk,sam:sam,amount:amount,type:type};
