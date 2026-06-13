@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-13T05:35:28.060Z",
+  "updated": "2026-06-13T11:07:42.432Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -144,7 +144,8 @@
           "id": "b4",
           "ko": "풀옵션[디자인, 전신, 알몸파츠(추후 신의상에 용의), 게임기, 저작권(리깅x)+기본표정파츠 전체]",
           "en": "Full package (design + full body + nude parts + game device + copyright, no rigging)",
-          "p": 1950000
+          "p": 1950000,
+          "cat": "fullopt"
         }
       ]
     },
