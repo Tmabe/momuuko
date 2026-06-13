@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-12T17:23:44.479Z",
+  "updated": "2026-06-13T03:35:07.814Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -301,7 +301,13 @@
           "id": "add_mqa7prr6",
           "ko": "r18 파츠 추가",
           "en": "r18 parts",
-          "p": 0
+          "p": 100000
+        },
+        {
+          "id": "add_mqbswruz",
+          "ko": "겉옷 on/off",
+          "en": "Outerwear on/off",
+          "p": 40000
         }
       ]
     },
