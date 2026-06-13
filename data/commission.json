@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-13T05:31:10.988Z",
+  "updated": "2026-06-13T05:35:28.060Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -307,7 +307,7 @@
           "id": "add_mqbswruz",
           "ko": "겉옷 on/off",
           "en": "Outerwear on/off",
-          "p": 40000
+          "p": 50000
         }
       ]
     },
