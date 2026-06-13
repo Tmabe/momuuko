@@ -789,10 +789,11 @@ function buildCatalogRef(){
     +'\n→ extra_parts는 위 분류가 "추가파츠"인 항목이 대화에서 최종 확정된 개수만 세서 2로 나눠 올림. "표정"은 expressions로, 그 외 파츠는 parts로 분류.';
 }
 function isItemOn(sec,it){ var s=_ordSel[sec.id]; return sec.type==='radio'?(s===it.id):!!(s&&s[it.id]); }
-function itemQty(sec,it){ var s=_ordSel[sec.id]; return (sec.type==='qty'&&s&&s[it.id])?s[it.id]:1; }
+function isQtyType(sec){ return sec.type==='qty'||sec.type==='pill'; } // 수량 입력 가능 타입
+function itemQty(sec,it){ var s=_ordSel[sec.id]; return (isQtyType(sec)&&s&&s[it.id])?s[it.id]:1; }
 function toggleItem(sec,it){
   if(sec.type==='radio'){ _ordSel[sec.id]=(_ordSel[sec.id]===it.id)?'':it.id; }
-  else { var s=_ordSel[sec.id]||(_ordSel[sec.id]={}); if(s[it.id]) delete s[it.id]; else s[it.id]=(sec.type==='qty'?1:true); }
+  else { var s=_ordSel[sec.id]||(_ordSel[sec.id]={}); if(s[it.id]) delete s[it.id]; else s[it.id]=(isQtyType(sec)?1:true); }
   renderCatalog();
 }
 function deriveOrder(){
@@ -801,16 +802,17 @@ function deriveOrder(){
     (sec.items||[]).forEach(function(it){
       if(!isItemOn(sec,it)) return;
       var q=itemQty(sec,it);
-      if(sec.type!=='expr') amount+=(it.p||0)*(sec.type==='qty'?q:1);
+      var nm=it.ko+(q>1?' ×'+q:'');
+      if(sec.type!=='expr') amount+=(it.p||0)*(isQtyType(sec)?q:1);
       var c=catOf(sec,it);
-      if(c==='expr'){ exprs.push(it.ko); return; }
-      if(c==='part'){ partCount++; parts.push(it.ko); }
+      if(c==='expr'){ exprs.push(nm); return; }
+      if(c==='part'){ partCount+=(isQtyType(sec)?q:1); parts.push(nm); }
       else if(c==='fullopt') full=true;
       else if(c==='chukjeon') chuk=true;
       else if(c==='samyeon') sam=true;
       else if(c==='ignore'){}
       else if(sec.type==='radio'){ if(!type) type=it.ko; } // 기본 일러스트 종류 → 의뢰 type (인벤토리 아님)
-      else parts.push(it.ko); // 그 외 기본 구성요소 → 인벤토리 파츠
+      else parts.push(nm); // 그 외 기본 구성요소 → 인벤토리 파츠
     });
   });
   return {parts:parts,exprs:exprs,extra:Math.ceil(partCount/2),full:full,chuk:chuk,sam:sam,amount:amount,type:type};
@@ -835,7 +837,7 @@ function renderCatalog(){
       h+='<span class="ord-it'+(on?' on':'')+'" data-sec="'+esc(sec.id)+'" data-it="'+esc(it.id)+'">'+esc(it.ko)
         +(sec.type!=='expr'&&it.p?'<span class="op">'+(it.p/10000)+'만</span>':'')
         +(c?'<span class="catb">'+(CATLBL[c]||c)+'</span>':'')
-        +(on&&sec.type==='qty'?'<input class="qty" type="number" min="1" value="'+itemQty(sec,it)+'" data-sec="'+esc(sec.id)+'" data-it="'+esc(it.id)+'">':'')
+        +(on&&isQtyType(sec)?'<input class="qty" type="number" min="1" value="'+itemQty(sec,it)+'" data-sec="'+esc(sec.id)+'" data-it="'+esc(it.id)+'">':'')
         +'</span>';
     });
     h+='</div></div>';
@@ -880,15 +882,16 @@ document.getElementById('ordAiBtn').addEventListener('click', async function(){
   try{
     var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({model:localStorage.getItem('mm_claude_model')||'claude-opus-4-8',max_tokens:1024,
-        system:'커미션 작가의 비서. 작가와 신청자의 대화 전체를 읽고, 아래 옵션 목록 중 최종적으로 확정된 것만 고르세요. 협상으로 교체·취소·추가된 경우 최종 상태를 반영(예: 안경→헤드셋이면 헤드셋만, 게임기 빼기면 제외). 목록에 있는 정확한 이름만 고르세요.\n옵션 목록: '+names.join(', '),
+        system:'커미션 작가의 비서. 작가와 신청자의 대화/주문서 전체를 읽고, 아래 옵션 목록 중 최종 확정된 것을 개수와 함께 고르세요. "× N개"처럼 수량 표기가 있으면 qty에 그 수를, 없으면 1. 협상으로 교체·취소·추가된 경우 최종 상태를 반영(예: 안경→헤드셋이면 헤드셋만, 게임기 빼기면 제외). 목록에 있는 정확한 이름만 고르세요.\n옵션 목록: '+names.join(', '),
         messages:[{role:'user',content:text}],
-        output_config:{format:{type:'json_schema',schema:{type:'object',properties:{selected:{type:'array',items:{type:'string'},description:'최종 확정 옵션 이름들(목록의 정확한 이름)'}},required:['selected'],additionalProperties:false}}}})});
+        output_config:{format:{type:'json_schema',schema:{type:'object',properties:{selected:{type:'array',items:{type:'object',properties:{name:{type:'string',description:'옵션 이름(목록의 정확한 이름)'},qty:{type:'integer',description:'개수. "× N개" 있으면 N, 없으면 1'}},required:['name','qty'],additionalProperties:false}}},required:['selected'],additionalProperties:false}}}})});
     if(!res.ok){ var e=await res.json().catch(function(){return{};}); var m=(e.error&&e.error.message)||('HTTP '+res.status); if(res.status===401)m='API 키가 올바르지 않아요'; throw new Error(m); }
     var data=await res.json(); var tb=(data.content||[]).filter(function(b){return b.type==='text';})[0];
-    var picked=(JSON.parse(tb.text).selected||[]).map(function(s){return s.trim();});
+    var picked=(JSON.parse(tb.text).selected||[]).map(function(s){return {name:(s.name||'').trim(), qty:Math.max(1,parseInt(s.qty,10)||1)};});
     _ordSel={}; var hit=0;
     _catalog.sections.forEach(function(sec){ (sec.items||[]).forEach(function(it){
-      if(picked.indexOf(it.ko.trim())>=0){ if(sec.type==='radio') _ordSel[sec.id]=it.id; else (_ordSel[sec.id]=_ordSel[sec.id]||{})[it.id]=(sec.type==='qty'?1:true); hit++; }
+      var m=picked.filter(function(p){return p.name===it.ko.trim();})[0];
+      if(m){ if(sec.type==='radio') _ordSel[sec.id]=it.id; else (_ordSel[sec.id]=_ordSel[sec.id]||{})[it.id]=(isQtyType(sec)?m.qty:true); hit++; }
     }); });
     renderCatalog();
     st.className='mstatus show ok'; st.textContent='✅ '+hit+'개 선택됨 — 확인·수정 후 확정하세요';
