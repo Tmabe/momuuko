@@ -801,14 +801,26 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLb();})
 /* ── iframe 자동 높이: 부모(artmug.kr)에 내 높이 전달 ── */
 (function(){
   var _lastH=0;
+  /* 실제 콘텐츠 바닥 높이 — body min-height 스트레치/position:fixed·absolute 요소에 영향 안 받음 → 무한루프 차단 */
+  function contentHeight(){
+    var max=0, kids=document.body.children;
+    for(var i=0;i<kids.length;i++){
+      var el=kids[i], pos='';
+      try{ pos=getComputedStyle(el).position; }catch(e){}
+      if(pos==='fixed'||pos==='absolute') continue;
+      var b=el.getBoundingClientRect().bottom + (window.pageYOffset||document.documentElement.scrollTop||0);
+      if(b>max) max=b;
+    }
+    return Math.ceil(max)||document.body.scrollHeight;
+  }
   function postH(){
     try{
-      var h=Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
-      if(Math.abs(h-_lastH)<8) return; _lastH=h;
+      var h=contentHeight();
+      if(Math.abs(h-_lastH)<4) return; _lastH=h;
       parent.postMessage({src:'momuuko-artmug', mmHeight:h}, '*');
     }catch(e){}
   }
-  if(window.self!==window.top){ try{ document.body.style.minHeight='0'; document.documentElement.style.minHeight='0'; }catch(e){} } // 임베드 무한높이 루프 방지
+  if(window.self!==window.top){ try{ document.body.style.minHeight='0'; document.documentElement.style.minHeight='0'; }catch(e){} } // 보조: 스트레치 제거
   function tick(){ postH(); try{ if(window.mmPostMeta){ var el=document.getElementById('totalAmt'); var t=el?parseInt((el.textContent||'0').replace(/[^\d]/g,''),10)||0:0; mmPostMeta(t); } }catch(e){} }
   window.addEventListener('load', tick);
   window.addEventListener('resize', tick);
