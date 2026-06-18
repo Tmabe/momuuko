@@ -43,7 +43,8 @@ canvas{width:100%;height:auto;border-radius:12px;box-shadow:0 12px 40px rgba(0,0
   <div class="tb-title">QUOTE</div><div class="tb-sub">견적서 생성</div>
   <div class="tb-spacer"></div>
   <button class="btn btn-ghost" onclick="render()">↻ 미리보기</button>
-  <button class="btn btn-dl" onclick="download()">⬇ 이미지 저장</button>
+  <select id="qFmt" class="btn btn-ghost" style="padding:9px 12px;cursor:pointer;"><option value="png">PNG</option><option value="pdf">PDF</option></select>
+  <button class="btn btn-dl" onclick="download()">⬇ 저장</button>
 </div>
 <div class="wrap">
   <div>
@@ -66,10 +67,11 @@ canvas{width:100%;height:auto;border-radius:12px;box-shadow:0 12px 40px rgba(0,0
   </div>
   <div class="preview-wrap">
     <canvas id="cv" width="720" height="1000"></canvas>
-    <div class="qhint" style="text-align:center">⬆ 미리보기 · "이미지 저장"으로 PNG 다운로드</div>
+    <div class="qhint" style="text-align:center">⬆ 미리보기 · PNG/PDF 선택 후 "저장"</div>
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 var STAGES=['접수','입금확인','러프','러프컨펌','선화','채색','완성','전달완료'];
 var lis=[{n:'전신 일러스트',p:1100000}];
@@ -176,9 +178,19 @@ function render(){
 function download(){
   render();
   var cv=document.getElementById('cv');
+  var name='모무꼬_견적서_'+(document.getElementById('qClient').value||'견적');
+  var fmt=(document.getElementById('qFmt')||{}).value||'png';
+  if(fmt==='pdf'){
+    if(!window.jspdf||!window.jspdf.jsPDF){ alert('PDF 모듈 로딩 중이에요. 잠시 후 다시 시도해주세요.'); return; }
+    var img=cv.toDataURL('image/png');
+    var pdf=new window.jspdf.jsPDF({orientation:'portrait',unit:'px',format:[cv.width,cv.height]});
+    pdf.addImage(img,'PNG',0,0,cv.width,cv.height);
+    pdf.save(name+'.pdf');
+    return;
+  }
   cv.toBlob(function(b){
     var a=document.createElement('a');a.href=URL.createObjectURL(b);
-    a.download='모무꼬_견적서_'+(document.getElementById('qClient').value||'견적')+'.png';
+    a.download=name+'.png';
     a.click();setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
   });
 }
