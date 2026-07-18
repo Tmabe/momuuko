@@ -1,387 +1,82 @@
 {
   "todos": [
     {
-      "id": "mq7wja20c1hq",
+      "id": "mr47xi6yqjwv",
       "client": "문뱀",
-      "text": "디자인 1"
+      "text": "삼면도1"
     },
     {
-      "id": "mq7wjcnebyrt",
+      "id": "mr47xk3y0vwp",
       "client": "문뱀",
-      "text": "디자인완성"
+      "text": "삼면도2"
     },
     {
-      "id": "mq7wjgp2lm6p",
-      "client": "문뱀",
-      "text": "완성1"
-    },
-    {
-      "id": "mq7wjjqkbxla",
-      "client": "문뱀",
-      "text": "완성2"
-    },
-    {
-      "id": "mq7wjkus1sbo",
-      "client": "문뱀",
-      "text": "완성3"
-    },
-    {
-      "id": "mq7wjxzz6ldj",
-      "client": "코메코",
-      "text": "삼면도"
-    },
-    {
-      "id": "mq7wk0bprga1",
-      "client": "코메코",
-      "text": "일러스트"
-    },
-    {
-      "id": "mq7wkz0bbah4",
+      "id": "mr47xup9yawv",
       "client": "순진",
-      "text": "디자인 러프"
+      "text": "축전"
     },
     {
-      "id": "mq7wl1zm74qq",
-      "client": "순진",
-      "text": "선화"
+      "id": "mr47z4zw2dum",
+      "client": "청이리",
+      "text": "축전"
     },
     {
-      "id": "mq7wlzzvvdyf",
-      "client": "순진",
-      "text": "완성(망토,베레모, 머리에 슬라임on, off)"
-    },
-    {
-      "id": "mq7wmfdio0dw",
-      "client": "순진",
-      "text": "완성 게임기"
-    },
-    {
-      "id": "mq7woy4r8k2i",
-      "client": "하이루냥(아트머그)",
-      "text": "완성 및 게임기, 머리 흑발 안은손"
-    },
-    {
-      "id": "mq7wp2esybsu",
+      "id": "mr4807jqtez9",
       "client": "하이루냥(아트머그)",
       "text": "삼면도"
     },
     {
-      "id": "mq7wsyol86fs",
-      "client": "순진",
-      "text": "축전"
-    },
-    {
-      "id": "mq7wtxbggtzu",
-      "client": "순진",
+      "id": "mriok1sxrk39",
+      "client": "코메코",
       "text": "삼면도"
     },
     {
-      "id": "mq7wv0wvfoxd",
-      "client": "이미정",
-      "text": "러프"
-    },
-    {
-      "id": "mq7wvb7f1alu",
-      "client": "이미정",
-      "text": "러프2"
-    },
-    {
-      "id": "mq7wvc6h83ue",
-      "client": "이미정",
-      "text": "선화"
-    },
-    {
-      "id": "mq7wvg4qxa7g",
-      "client": "이미정",
-      "text": "완성"
-    },
-    {
-      "id": "mq7wwguxmpyd",
-      "client": "이미정",
+      "id": "mriok31yoqs2",
+      "client": "코메코",
       "text": "축전"
-    },
-    {
-      "id": "mq7wx6evtr57",
-      "client": "이미정",
-      "text": "완성(RT이벤트 디자인)"
-    },
-    {
-      "id": "mq7x0b5sjb8l",
-      "client": "청이리",
-      "text": "러프"
-    },
-    {
-      "id": "mq7x0e5ucayx",
-      "client": "청이리",
-      "text": "러프(의상추가"
-    },
-    {
-      "id": "mq7x0kn7k1ur",
-      "client": "청이리",
-      "text": "선화"
-    },
-    {
-      "id": "mq7x0n7lpt0i",
-      "client": "청이리",
-      "text": "완성"
-    },
-    {
-      "id": "mq7x0pya45o0",
-      "client": "청이리",
-      "text": "게임기"
-    },
-    {
-      "id": "mq7x0qgjeuaw",
-      "client": "청이리",
-      "text": "축전"
-    },
-    {
-      "id": "mq7xe83phzii",
-      "client": "문뱀",
-      "text": "삼면도"
-    },
-    {
-      "id": "mq7xg18j2deh",
-      "client": "김쵸크",
-      "text": "러프"
-    },
-    {
-      "id": "mq7xg4ou099r",
-      "client": "김쵸크",
-      "text": "선화"
-    },
-    {
-      "id": "mq7xg61nwndi",
-      "client": "김쵸크",
-      "text": "완성"
-    },
-    {
-      "id": "mq7xi0vh9x6s",
-      "client": "김쵸크",
-      "text": "게임기"
     }
   ],
   "placements": [
     {
-      "id": "mq7wjop5cas4",
-      "todoId": "mq7wja20c1hq",
-      "date": "2026-06-11",
+      "id": "mriol8cyqstv",
+      "todoId": "mriok1sxrk39",
+      "date": "2026-07-25",
       "done": false
     },
     {
-      "id": "mq7wjr2d02o0",
-      "todoId": "mq7wjcnebyrt",
-      "date": "2026-06-13",
+      "id": "mriol8ze8flj",
+      "todoId": "mriok31yoqs2",
+      "date": "2026-07-26",
       "done": false
     },
     {
-      "id": "mq7wjsnc1rly",
-      "todoId": "mq7wjgp2lm6p",
-      "date": "2026-06-15",
+      "id": "mriolapkinkk",
+      "todoId": "mr4807jqtez9",
+      "date": "2026-07-18",
       "done": false
     },
     {
-      "id": "mq7wjtc2y6zr",
-      "todoId": "mq7wjjqkbxla",
-      "date": "2026-06-16",
-      "done": false
-    },
-    {
-      "id": "mq7wju8k8w6u",
-      "todoId": "mq7wjkus1sbo",
-      "date": "2026-06-17",
-      "done": false
-    },
-    {
-      "id": "mq7wmkxa3f5n",
-      "todoId": "mq7wkz0bbah4",
-      "date": "2026-06-10",
-      "done": false
-    },
-    {
-      "id": "mq7wmx83d5ox",
-      "todoId": "mq7wl1zm74qq",
-      "date": "2026-06-14",
-      "done": false
-    },
-    {
-      "id": "mq7wnfwmzc1h",
-      "todoId": "mq7wlzzvvdyf",
-      "date": "2026-06-18",
-      "done": false
-    },
-    {
-      "id": "mq7wnm4pc552",
-      "todoId": "mq7wjxzz6ldj",
-      "date": "2026-06-20",
-      "done": false
-    },
-    {
-      "id": "mq7wnn91qsih",
-      "todoId": "mq7wk0bprga1",
-      "date": "2026-06-21",
-      "done": false
-    },
-    {
-      "id": "mq7wozeibifc",
-      "todoId": "mq7woy4r8k2i",
-      "date": "2026-06-12",
-      "done": false
-    },
-    {
-      "id": "mq7wp81rygf0",
-      "todoId": "mq7wp2esybsu",
-      "date": "2026-06-24",
-      "done": false
-    },
-    {
-      "id": "mq7wt1bapwz3",
-      "todoId": "mq7wsyol86fs",
-      "date": "2026-06-23",
-      "done": false
-    },
-    {
-      "id": "mq7wvxe3fmnw",
-      "todoId": "mq7wtxbggtzu",
-      "date": "2026-06-25",
-      "done": false
-    },
-    {
-      "id": "mq7wvzbvgtyv",
-      "todoId": "mq7wvb7f1alu",
-      "date": "2026-06-26",
-      "done": false
-    },
-    {
-      "id": "mq7ww39t22e1",
-      "todoId": "mq7wvc6h83ue",
-      "date": "2026-06-27",
-      "done": false
-    },
-    {
-      "id": "mq7ww449orxw",
-      "todoId": "mq7wvg4qxa7g",
-      "date": "2026-06-28",
-      "done": false
-    },
-    {
-      "id": "mq7wwmxnzb8p",
-      "todoId": "mq7wwguxmpyd",
-      "date": "2026-07-01",
-      "done": false
-    },
-    {
-      "id": "mq7wx8k0tmu3",
-      "todoId": "mq7wx6evtr57",
-      "date": "2026-06-29",
-      "done": false
-    },
-    {
-      "id": "mq7x0t8fpee3",
-      "todoId": "mq7x0b5sjb8l",
-      "date": "2026-06-30",
-      "done": false
-    },
-    {
-      "id": "mq7x0vlwtv4r",
-      "todoId": "mq7x0e5ucayx",
-      "date": "2026-07-02",
-      "done": false
-    },
-    {
-      "id": "mq7x0wzmumvq",
-      "todoId": "mq7x0kn7k1ur",
-      "date": "2026-07-03",
-      "done": false
-    },
-    {
-      "id": "mq7x0yqx87ht",
-      "todoId": "mq7x0n7lpt0i",
-      "date": "2026-07-04",
-      "done": false
-    },
-    {
-      "id": "mq7x11gdkvrd",
-      "todoId": "mq7x0pya45o0",
-      "date": "2026-07-05",
-      "done": false
-    },
-    {
-      "id": "mq7x12cbr2fr",
-      "todoId": "mq7x0qgjeuaw",
-      "date": "2026-07-06",
-      "done": false
-    },
-    {
-      "id": "mq7x7mewnbs9",
-      "todoId": "mq7wv0wvfoxd",
-      "date": "2026-06-20",
-      "done": false
-    },
-    {
-      "id": "mq7xc8vemlf7",
-      "todoId": "mq7wlzzvvdyf",
-      "date": "2026-06-19",
-      "done": false
-    },
-    {
-      "id": "mq7xc9t1ua8j",
-      "todoId": "mq7wmfdio0dw",
-      "date": "2026-06-22",
-      "done": false
-    },
-    {
-      "id": "mq7xfd9u44ae",
-      "todoId": "mq7xe83phzii",
-      "date": "2026-06-26",
-      "done": false
-    },
-    {
-      "id": "mq7xgdujng7c",
-      "todoId": "mq7xg18j2deh",
-      "date": "2026-07-21",
-      "done": false
-    },
-    {
-      "id": "mq7xgg43nqmf",
-      "todoId": "mq7xg18j2deh",
-      "date": "2026-07-22",
-      "done": false
-    },
-    {
-      "id": "mq7xghab8hb8",
-      "todoId": "mq7xg4ou099r",
+      "id": "mriolbk5j6y5",
+      "todoId": "mr47z4zw2dum",
       "date": "2026-07-23",
       "done": false
     },
     {
-      "id": "mq7xgjof2u2s",
-      "todoId": "mq7xg61nwndi",
-      "date": "2026-07-24",
+      "id": "mrioledkz9n2",
+      "todoId": "mr47xup9yawv",
+      "date": "2026-07-16",
       "done": false
     },
     {
-      "id": "mq7xgkrt9q41",
-      "todoId": "mq7xg61nwndi",
-      "date": "2026-07-25",
+      "id": "mriolfk0lp9q",
+      "todoId": "mr47xk3y0vwp",
+      "date": "2026-07-19",
       "done": false
     },
     {
-      "id": "mq7xglnex3dr",
-      "todoId": "mq7xg61nwndi",
-      "date": "2026-07-26",
-      "done": false
-    },
-    {
-      "id": "mq7xi3snpnv2",
-      "todoId": "mq7xi0vh9x6s",
-      "date": "2026-07-26",
-      "done": false
-    },
-    {
-      "id": "mq7xi6basar1",
-      "todoId": "mq7xi0vh9x6s",
-      "date": "2026-07-25",
+      "id": "mriolgcvmjcg",
+      "todoId": "mr47xi6yqjwv",
+      "date": "2026-07-20",
       "done": false
     }
   ],
@@ -391,6 +86,9 @@
     "김쵸크",
     "이미정",
     "코메코",
-    "문뱀"
-  ]
+    "문뱀",
+    "미딱부",
+    "차몽차"
+  ],
+  "inventory": {}
 }
