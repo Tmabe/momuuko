@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-01T06:47:20.355Z",
+  "updated": "2026-08-01T06:48:37.725Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -261,19 +261,22 @@
           "id": "a2",
           "ko": "표정·얼굴 파츠 추가",
           "en": "Expression / face parts",
-          "p": 10000
+          "p": 10000,
+          "cat": "expr"
         },
         {
           "id": "a3",
           "ko": "의상 추가 (전신)",
           "en": "Extra outfit (full body)",
-          "p": 200000
+          "p": 200000,
+          "cat": "part"
         },
         {
           "id": "a4",
           "ko": "악세서리·소품 파츠",
           "en": "Accessory / prop parts",
-          "p": 10000
+          "p": 10000,
+          "cat": "part"
         },
         {
           "id": "a5",
@@ -285,31 +288,36 @@
           "id": "a6",
           "ko": "헤어 추가",
           "en": "Extra hairstyle",
-          "p": 200000
+          "p": 200000,
+          "cat": "part"
         },
         {
           "id": "a8",
           "ko": "동물귀",
           "en": "Animal ears",
-          "p": 20000
+          "p": 20000,
+          "cat": "part"
         },
         {
           "id": "a9",
           "ko": "꼬리",
           "en": "Tail",
-          "p": 10000
+          "p": 10000,
+          "cat": "part"
         },
         {
           "id": "a10",
           "ko": "3면도 (단색채색)",
           "en": "3-view sheet (flat color)",
-          "p": 200000
+          "p": 200000,
+          "cat": "samyeon"
         },
         {
           "id": "add_mqa7prr6",
           "ko": "r18 파츠 추가",
           "en": "r18 parts",
-          "p": 100000
+          "p": 100000,
+          "cat": "part"
         },
         {
           "id": "add_mqbswruz",
