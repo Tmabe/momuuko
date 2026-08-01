@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-16T10:11:10.751Z",
+  "updated": "2026-08-01T06:47:20.355Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -88,16 +88,6 @@
   ],
   "slots": [
     {
-      "ko": "6,7월",
-      "en": "July",
-      "filled": [
-        true,
-        true,
-        true,
-        true
-      ]
-    },
-    {
       "ko": "8월",
       "en": "August",
       "filled": [
@@ -110,6 +100,15 @@
       "ko": "9월",
       "en": "September",
       "filled": [
+        false,
+        false
+      ]
+    },
+    {
+      "ko": "10월",
+      "en": "October",
+      "filled": [
+        false,
         false,
         false
       ]
