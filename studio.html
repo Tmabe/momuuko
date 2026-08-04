@@ -82,6 +82,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
     <button class="tab-btn" onclick="switchTab('portfolio')">포트폴리오</button>
     <button class="tab-btn" onclick="switchTab('stats')">통계</button>
     <button class="tab-btn" onclick="switchTab('quote')">견적서</button>
+    <button class="tab-btn" onclick="switchTab('sheet')">시트생성</button>
   </nav>
   <div class="shell-stats">
     <span class="shell-stat">진행 <b id="stat-wip">-</b>건</span>
@@ -98,10 +99,11 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
 <iframe id="panel-portfolio" class="panel"        src="portfolio-manager.html"></iframe>
 <iframe id="panel-stats"     class="panel"        src="stats.html"></iframe>
 <iframe id="panel-quote"     class="panel"        src="quote.html"></iframe>
+<iframe id="panel-sheet"     class="panel"        src="sheet-maker.html"></iframe>
 
 <script>
 function switchTab(id) {
-  var ids = ['dashboard', 'today', 'planner', 'practice', 'editor', 'portfolio', 'stats', 'quote'];
+  var ids = ['dashboard', 'today', 'planner', 'practice', 'editor', 'portfolio', 'stats', 'quote', 'sheet'];
   document.querySelectorAll('.tab-btn').forEach(function(b, i) {
     b.classList.toggle('active', ids[i] === id);
   });
