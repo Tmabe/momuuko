@@ -999,7 +999,7 @@ async function loadPreset(name){
 $('#btnExport').addEventListener('click',async()=>{
   if(!IMG.base){ toast('기본 일러스트를 먼저 업로드하세요'); return; }
   toast('렌더링 중…');
-  await document.fonts.ready;
+  await loadFonts();
   const k=EXPORT_W/DW;
   const c=document.createElement('canvas');
   c.width=EXPORT_W; c.height=Math.round(DH*k);
@@ -1025,12 +1025,22 @@ $('#btnReset').addEventListener('click',async()=>{
 
 /* ─── 시작 ─── */
 window.addEventListener('resize',()=>{ fitPreview(); draw(); });
+async function loadFonts(){
+  // 캔버스 전용 폰트는 DOM에서 안 쓰이면 로드가 안 되므로 명시적으로 로드
+  try{
+    await Promise.all([
+      document.fonts.load('800 80px "Baloo 2"'),
+      document.fonts.load('700 30px "Baloo 2"'),
+      document.fonts.load('30px "Jua"'),
+    ]);
+  }catch(e){}
+}
 (async function init(){
   await idb.open();
   await restore();
   await refreshPresets();
   fitPreview();
-  await document.fonts.ready;
+  await loadFonts();
   draw();
 })();
 // 테스트/디버그용 훅
