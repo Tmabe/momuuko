@@ -20,7 +20,7 @@
 
 ## 🛠 스튜디오 (작업 관리 — 비공개 도구)
 
-`studio.html` = 통합 작업실 셸. 아래 8개를 iframe 탭으로 묶음:
+`studio.html` = 통합 작업실 셸. 아래 9개를 iframe 탭으로 묶음:
 
 | 탭 | 파일 | 용도 |
 |----|------|------|
@@ -32,6 +32,7 @@
 | 포트폴리오 | `portfolio-manager.html` | 포트폴리오 관리 → `portfolio/data.json` |
 | 통계 | `stats.html` | 통계 |
 | 견적서 | `quote.html` | 견적서(PNG) |
+| 시트생성 | `sheet-maker.html` | 캐릭터 시트 자동 생성 — 투명PNG 업로드→색추출·자동배치→고해상도 PNG (2026-08-04) |
 
 | 파일 | 용도 |
 |------|------|
