@@ -270,7 +270,8 @@ button.bt.pri:hover{filter:brightness(1.1);}
       <div class="row"><label>소속</label><textarea id="inRibbon" rows="2" placeholder="포스터A 리본 / 포스터B 세로 스펙"></textarea></div>
       <div class="row"><label>설명</label><textarea id="inDesc" rows="2" placeholder="포스터A 하단 소개문"></textarea></div>
       <div class="row"><label>SNS</label><textarea id="inSocial" rows="2" placeholder="핸들 한 줄에 하나&#10;momukko&#10;kinamono8481"></textarea></div>
-      <div class="row"><label>배지</label><input type="text" id="inBadge" placeholder="CHANGE"></div>
+      <div class="row"><label>배지</label><input type="text" id="inBadge" placeholder="태그 칩 문구 (비우면 숨김)"></div>
+      <div class="row"><label>칩 라벨</label><textarea id="inLabels" rows="2" placeholder="정보 칩 라벨 2줄 (비워도 됨)&#10;NAME&#10;ART"></textarea></div>
       <div class="row"><label>날짜</label><input type="text" id="inDate" placeholder="비우면 오늘 날짜"></div>
       <div class="row"><label>폰트</label>
         <select id="selFont">
@@ -465,7 +466,7 @@ button.bt.pri:hover{filter:brightness(1.1);}
       <label class="chk"><input type="checkbox" data-deco="cross"> ＋ 마크 산포</label>
       <label class="chk"><input type="checkbox" data-deco="ticks"> 측정 눈금 (좌·상단)</label>
       <label class="chk"><input type="checkbox" data-deco="chips"> 컬러칩 사각 (좌하단)</label>
-      <label class="chk"><input type="checkbox" data-deco="uiLabel"> UI 라벨 박스 (CHARACTER / ILLUSTRATOR)</label>
+      <label class="chk"><input type="checkbox" data-deco="uiLabel"> 정보 칩 (좌하단)</label>
       <label class="chk"><input type="checkbox" data-deco="vband"> 우측 세로 밴드</label>
       <label class="chk"><input type="checkbox" data-deco="barcode"> 바코드 (하단 우측)</label>
       <label class="chk"><input type="checkbox" data-deco="watermark"> 대형 워터마크 타이포 (뒤)</label>
@@ -473,10 +474,10 @@ button.bt.pri:hover{filter:brightness(1.1);}
       <label class="chk"><input type="checkbox" data-deco="glitch"> 글리치 슬라이스</label>
       <label class="chk"><input type="checkbox" data-deco="ghost"> 대각 컬러블록 + 고스트 실루엣 (뒤)</label>
       <label class="chk"><input type="checkbox" data-deco="paper"> 종이 스택 (뒤)</label>
-      <label class="chk"><input type="checkbox" data-deco="hpbar"> 픽셀 하트 HP 바</label>
+      <label class="chk"><input type="checkbox" data-deco="hpbar"> 세그먼트 게이지</label>
       <label class="chk"><input type="checkbox" data-deco="social"> SNS 핸들 행 (우상단)</label>
       <label class="chk"><input type="checkbox" data-deco="subtitle"> 하단 대사 바 (인용문 사용)</label>
-      <label class="chk"><input type="checkbox" data-deco="badge"> 원형 배지</label>
+      <label class="chk"><input type="checkbox" data-deco="badge"> 태그 칩</label>
       <label class="chk"><input type="checkbox" data-deco="datestamp"> 날짜 스탬프</label>
       <label class="chk"><input type="checkbox" data-deco="signature"> 손글씨 서명</label>
     </div>
@@ -631,7 +632,7 @@ const defaultSettings = () => ({
          chips:false, vband:false, watermark:false, glitch:false, arch:false,
          ghost:false, hpbar:false, social:false, subtitle:false, badge:false,
          datestamp:false, signature:false, paper:false },
-  social:'', badge:'CHANGE', datetext:'',
+  social:'', badge:'', datetext:'', labels:'',
   gd:{ mode:'none', a:'#ffffff', b:'#7ab8f0', amt:0.35, blend:'overlay' },
   cfx:{ aberr:0, poster:0, glitter:0, glitterHue:0, bloom:0, water:0, sat:0 },
   adj:{ global:defaultAdj(), base:defaultAdj(), vari:defaultAdj() },
@@ -1279,7 +1280,7 @@ function drawBgPattern(ctx,k,W,H){
       }
       break;
     }
-    case 'halfblock': { // 도트 하프톤이 채워진 블록 (우상단) — Aemeath 레퍼런스
+    case 'halfblock': { // 도트 하프톤이 채워진 블록 (우상단)
       ctx.save();
       ctx.beginPath(); ctx.rect(W*0.42,0,W*0.58,H*0.42); ctx.clip();
       const step=15*k*sc;
@@ -1404,15 +1405,6 @@ function drawDecoBack(ctx,k,W,H){
     g.addColorStop(1,withAlpha('#ffffff',0.25));
     ctx.fillStyle=g; ctx.fill();
     ctx.strokeStyle=withAlpha(S.accent,0.55); ctx.lineWidth=2.5*k; ctx.stroke();
-    // 상단 방사 눈금
-    ctx.strokeStyle=withAlpha(S.accent,0.4); ctx.lineWidth=1.6*k;
-    for(let i=0;i<7;i++){
-      const a=Math.PI+ (i+1)/8*Math.PI;
-      ctx.beginPath();
-      ctx.moveTo(cx+Math.cos(a)*w*0.30, top+w/2+Math.sin(a)*w*0.30);
-      ctx.lineTo(cx+Math.cos(a)*w*0.44, top+w/2+Math.sin(a)*w*0.44);
-      ctx.stroke();
-    }
     ctx.restore();
   }
   if(D.paper){ // 종이 스택 — 캐릭터를 가리지 않게 가장자리(좌상/우하)에만
@@ -1511,32 +1503,36 @@ function drawDecoFront(ctx,k,W,H){
       ctx.fillRect(bx+col*(s+gap), by+row*(s+gap), s, s);
     }
   }
-  if(D.uiLabel){ // UI 라벨 박스 (우상단)
-    const bw=252*k, bh=40*k, bx=W-bw-34*k;
-    const rows=[['CHARACTER', (S.nameEn||'').toUpperCase()],
-                ['ILLUSTRATOR', '@'+(S.credit||'')]];
-    rows.forEach(([tag,val],i)=>{
-      const by=34*k+i*(bh*2+14*k);
-      ctx.fillStyle=withAlpha(ink,0.9);
-      ctx.fillRect(bx,by,bw*0.62,bh*0.62);
-      ctx.fillStyle='#fff';
-      ctx.font=`700 ${15*k}px "DM Mono",monospace`;
-      ctx.textAlign='left'; ctx.textBaseline='middle';
-      ctx.fillText(tag, bx+10*k, by+bh*0.31);
-      ctx.fillStyle=withAlpha('#ffffff',0.85);
-      ctx.fillRect(bx,by+bh*0.68,bw,bh);
-      ctx.strokeStyle=withAlpha(S.accent,0.8); ctx.lineWidth=2*k;
-      ctx.strokeRect(bx,by+bh*0.68,bw,bh);
-      ctx.fillStyle=ink;
-      ctx.font=`700 ${22*k}px "DM Mono",monospace`;
-      ctx.fillText(val, bx+12*k, by+bh*0.68+bh/2);
-      // 우측 미니 사각 3개
-      for(let j=0;j<3;j++){
-        ctx.fillStyle=withAlpha(S.accent,0.55);
-        ctx.fillRect(bx+bw-(3-j)*11*k, by+bh*0.16, 7*k, 7*k);
+  if(D.uiLabel){ // 정보 칩 — 좌하단 가로 배치, 좌측 컬러바 + 라벨↑값↓ 2단
+    const labels=(S.labels||'').split('\n');
+    const vals=[(S.nameEn||'').toUpperCase(), (S.credit||'')];
+    const bw=270*k, bh=58*k, bx=44*k;
+    vals.forEach((val,i)=>{
+      if(!val) return;
+      const by=H-44*k-(vals.length-i)*(bh+12*k);
+      // 몸통 (우측 끝 대각 슬래시로 마감)
+      const cut=20*k;
+      ctx.beginPath();
+      ctx.moveTo(bx,by); ctx.lineTo(bx+bw,by);
+      ctx.lineTo(bx+bw-cut,by+bh); ctx.lineTo(bx,by+bh);
+      ctx.closePath();
+      ctx.fillStyle=withAlpha('#ffffff',0.88); ctx.fill();
+      ctx.strokeStyle=withAlpha(ink,0.25); ctx.lineWidth=1.6*k; ctx.stroke();
+      // 좌측 세로 컬러바
+      ctx.fillStyle=S.accent;
+      ctx.fillRect(bx,by,6*k,bh);
+      ctx.textAlign='left';
+      const lab=(labels[i]||'').toUpperCase();
+      if(lab){
+        ctx.fillStyle=withAlpha(ink,0.55);
+        ctx.font=`700 ${13*k}px "DM Mono",monospace`;
+        ctx.fillText(lab, bx+18*k, by+21*k);
       }
+      ctx.fillStyle=ink;
+      ctx.font=`700 ${lab?21:24}px "DM Mono",monospace`;
+      ctx.font=`700 ${(lab?21:24)*k}px "DM Mono",monospace`;
+      ctx.fillText(val, bx+18*k, by+(lab?45:38)*k);
     });
-    ctx.textBaseline='alphabetic';
   }
   if(D.vband){ // 우측 세로 밴드
     const bw=44*k;
@@ -1567,27 +1563,23 @@ function drawDecoFront(ctx,k,W,H){
     let nums=''; for(let i=0;i<14;i++) nums+=(seed.charCodeAt(i%seed.length)+i)%10+' ';
     ctx.fillText(nums, bx, by+68*k);
   }
-  if(D.hpbar){ // 픽셀 하트 HP 바 (레트로 게임 UI)
-    const hx=44*k, hy=H*0.63, cell=30*k, gap=5*k, n=8, filled=6.5;
-    const px=cell/8; // 하트 1칸을 8×7 픽셀 그리드로
-    const HEART=[
-      [0,1,1,0,0,1,1,0],
-      [1,1,1,1,1,1,1,1],
-      [1,1,1,1,1,1,1,1],
-      [1,1,1,1,1,1,1,1],
-      [0,1,1,1,1,1,1,0],
-      [0,0,1,1,1,1,0,0],
-      [0,0,0,1,1,0,0,0],
-    ];
+  if(D.hpbar){ // 세그먼트 게이지 — 기울어진 평행사변형 칸
+    const bx=44*k, by=H*0.655, w=40*k, h=17*k, gap=7*k, n=10, filled=7;
+    const sk=h*0.42;
+    // 상단 얇은 눈금
+    ctx.strokeStyle=withAlpha(ink,0.4); ctx.lineWidth=1.6*k;
+    for(let i=0;i<=n;i+=2){
+      const gx=bx+i*(w+gap);
+      ctx.beginPath(); ctx.moveTo(gx,by-9*k); ctx.lineTo(gx,by-3*k); ctx.stroke();
+    }
     for(let i=0;i<n;i++){
-      const ox=hx+i*(cell+gap);
-      const amt = Math.max(0, Math.min(1, filled-i));
-      for(let r2=0;r2<7;r2++)for(let c2=0;c2<8;c2++){
-        if(!HEART[r2][c2]) continue;
-        const on = (c2/8) < amt;
-        ctx.fillStyle = on ? S.accent : withAlpha('#ffffff',0.55);
-        ctx.fillRect(ox+c2*px, hy+r2*px, px+0.6, px+0.6);
-      }
+      const x=bx+i*(w+gap);
+      ctx.beginPath();
+      ctx.moveTo(x+sk,by); ctx.lineTo(x+w,by);
+      ctx.lineTo(x+w-sk,by+h); ctx.lineTo(x,by+h);
+      ctx.closePath();
+      if(i<filled){ ctx.fillStyle=S.accent; ctx.fill(); }
+      else { ctx.strokeStyle=withAlpha(ink,0.45); ctx.lineWidth=2*k; ctx.stroke(); }
     }
   }
   if(D.social){ // SNS 핸들 행 (우상단)
@@ -1611,35 +1603,60 @@ function drawDecoFront(ctx,k,W,H){
     });
     ctx.textAlign='left'; ctx.textBaseline='alphabetic';
   }
-  if(D.subtitle && S.quote){ // 하단 대사 바 (자막)
+  if(D.subtitle && S.quote){ // 대사 바 — 좌하단, 우상단 모서리 깎임 + 하단 밑줄
     const txt=S.quote.split('\n')[0];
-    // 포스터A는 하단 설명 박스가 있으므로 그 위로, 없으면 하단 크레딧 위로
-    const bh=52*k;
-    const by=(S.tpl==='poster' && S.desc) ? (PB.descY-72)*k : H-bh-108*k;
+    const bh=54*k;
+    const by=(S.tpl==='poster' && S.desc) ? (PB.descY-76)*k : H-bh-112*k;
     ctx.font=`700 ${24*k}px "Noto Sans KR",sans-serif`;
     const tw=ctx.measureText(txt).width;
-    const bw=tw+56*k;
-    const bx=W-bw-40*k;
-    ctx.fillStyle=ink; ctx.fillRect(bx,by,bw,bh);
-    ctx.fillStyle=S.accent; ctx.fillRect(bx,by,7*k,bh);
-    ctx.fillStyle='#fff';
-    ctx.textBaseline='middle';
-    ctx.fillText(txt, bx+26*k, by+bh/2);
-    ctx.textBaseline='alphabetic';
-  }
-  if(D.badge){ // 원형 배지 (◀ CHANGE ▶)
-    const r=88*k, cx=W*0.20, cy=H*0.86;
+    const bw=tw+72*k;
+    const bx=44*k;
+    const cut=20*k;
+    ctx.beginPath();
+    ctx.moveTo(bx,by); ctx.lineTo(bx+bw-cut,by); ctx.lineTo(bx+bw,by+cut);
+    ctx.lineTo(bx+bw,by+bh); ctx.lineTo(bx,by+bh);
+    ctx.closePath();
+    ctx.fillStyle=ink; ctx.fill();
+    // 하단 포인트 밑줄
+    ctx.fillStyle=S.accent;
+    ctx.fillRect(bx,by+bh-5*k,bw,5*k);
+    // 마름모 마커
     ctx.save();
-    ctx.shadowColor=withAlpha(S.accent,0.35); ctx.shadowBlur=18*k;
-    ctx.beginPath(); ctx.arc(cx,cy,r,0,7);
-    ctx.fillStyle=S.accent; ctx.fill();
+    ctx.translate(bx+28*k, by+bh/2); ctx.rotate(Math.PI/4);
+    ctx.fillStyle=S.accent; ctx.fillRect(-6*k,-6*k,12*k,12*k);
     ctx.restore();
     ctx.fillStyle='#fff';
-    ctx.font=`700 ${22*k}px "DM Mono",monospace`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    const t=(S.badge||'CHANGE').toUpperCase();
-    ctx.fillText('◀  '+t+'  ▶', cx, cy);
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText(txt, bx+48*k, by+bh/2);
+    ctx.textBaseline='alphabetic';
+  }
+  if(D.badge && (S.badge||'').trim()){ // 태그 칩 — 모서리 깎인 육각, 기울임, 좌측정렬
+    const t=(S.badge||'').toUpperCase();
+    ctx.save();
+    ctx.translate(W*0.30, H*0.845);
+    ctx.rotate(-9*Math.PI/180);
+    ctx.font=`700 ${21*k}px "DM Mono",monospace`;
+    const tw=ctx.measureText(t).width;
+    const pw=tw+108*k, ph=56*k, cut=17*k;
+    ctx.beginPath();
+    ctx.moveTo(-pw/2+cut,-ph/2); ctx.lineTo(pw/2,-ph/2);
+    ctx.lineTo(pw/2-cut,ph/2); ctx.lineTo(-pw/2,ph/2);
+    ctx.closePath();
+    ctx.fillStyle=S.accent; ctx.fill();
+    // 좌측 세로 포인트 바
+    ctx.fillStyle=withAlpha('#ffffff',0.92);
+    ctx.fillRect(-pw/2+cut+12*k, -ph/2+12*k, 4*k, ph-24*k);
+    // 인디케이터 점 2개 (우측)
+    for(let i=0;i<2;i++){
+      ctx.beginPath();
+      ctx.arc(pw/2-cut-14*k-i*13*k, 0, 3.2*k, 0, 7);
+      ctx.fillStyle=withAlpha('#ffffff',0.8); ctx.fill();
+    }
+    ctx.fillStyle='#fff';
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText(t, -pw/2+cut+28*k, 0);
     ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.restore();
   }
   if(D.datestamp){ // 날짜 스탬프 (좌하단)
     const d=new Date();
@@ -2823,7 +2840,7 @@ const STYLE_PRESETS = [
     S.gd.mode='top'; S.gd.a='#ffffff'; S.gd.amt=0.4; S.gd.blend='screen';
     S.fx.light='sparkle'; S.fx.density=90; S.deco.chips=true;
   }},
-  {n:'Kithera풍', f(){
+  {n:'파스텔 UI', f(){
     S.font='modern'; S.fx.frame='tilt'; S.fx.bg='wash';
     S.bp.mode='dots'; S.bp.amt=0.3; S.bp.color=S.accent;
     S.gd.mode='top'; S.gd.a='#ffffff'; S.gd.amt=0.35; S.gd.blend='screen';
@@ -2874,26 +2891,26 @@ const STYLE_PRESETS = [
     S.fx.light='petals'; S.fx.density=140; S.fx.behind=true;
     S.gd.mode='spot'; S.gd.a='#ffffff'; S.gd.amt=0.35; S.gd.blend='screen';
   }},
-  {n:'스트리머 배너', f(){ // KANATATOKKU 레퍼런스
+  {n:'방송 배너', f(){
     S.font='modern'; S.fx.frame='tilt'; S.fx.bg='flat';
     S.deco.ghost=true; S.deco.social=true; S.deco.hpbar=true; S.deco.subtitle=true;
     S.deco.bracket=true; S.deco.cross=true;
     S.bp.mode='dots'; S.bp.amt=0.3;
     applyScheme('accentOnly', true);
   }},
-  {n:'청춘 콜라주', f(){ // 青春なんていらない 레퍼런스
+  {n:'종이 콜라주', f(){
     S.font='dohyeon'; S.fx.frame='polaroid'; S.fx.bg='flat';
     S.deco.paper=true; S.deco.signature=true; S.deco.datestamp=true; S.deco.watermark=true;
     S.bp.mode='none'; S.fx.grain=0.35;
     applyScheme('iso', true);
   }},
-  {n:'체인지 포스터', f(){ // ICHINOSE URUHA 레퍼런스
+  {n:'블록 포스터', f(){
     S.font='bebas'; S.fx.frame='square'; S.fx.bg='flat';
     S.deco.ghost=true; S.deco.badge=true; S.deco.watermark=true;
     S.bp.mode='dots'; S.bp.amt=0.35;
     applyScheme('accentOnly', true);
   }},
-  {n:'하프톤 팬아트', f(){ // Aemeath 레퍼런스
+  {n:'하프톤 팬아트', f(){
     S.font='round'; S.fx.frame='round'; S.fx.bg='flat';
     S.bp.mode='halfblock'; S.bp.amt=0.55;
     S.deco.signature=true; S.deco.datestamp=true;
@@ -2973,7 +2990,7 @@ $$('#tplRow .tplBtn').forEach(b=>{
 function bindText(sel,key){ $(sel).addEventListener('input',e=>{ S[key]=e.target.value; draw(); saveSoon(); }); }
 bindText('#inName','nameEn'); bindText('#inSub','sub'); bindText('#inCredit','credit');
 bindText('#inQuote','quote'); bindText('#inRibbon','ribbon'); bindText('#inDesc','desc');
-bindText('#inSocial','social'); bindText('#inBadge','badge'); bindText('#inDate','datetext');
+bindText('#inSocial','social'); bindText('#inBadge','badge'); bindText('#inDate','datetext'); bindText('#inLabels','labels');
 $('#selFont').addEventListener('change',e=>{ S.font=e.target.value; loadFonts().then(draw); saveSoon(); });
 
 function buildPalGrid(){
@@ -3265,7 +3282,7 @@ document.addEventListener('keydown',e=>{
 function syncUIFromState(){
   $('#inName').value=S.nameEn; $('#inSub').value=S.sub; $('#inCredit').value=S.credit;
   $('#inQuote').value=S.quote; $('#inRibbon').value=S.ribbon; $('#inDesc').value=S.desc;
-  $('#inSocial').value=S.social||''; $('#inBadge').value=S.badge||''; $('#inDate').value=S.datetext||'';
+  $('#inSocial').value=S.social||''; $('#inBadge').value=S.badge||''; $('#inDate').value=S.datetext||''; $('#inLabels').value=S.labels||'';
   $('#selFont').value=S.font;
   $('#selCropSrc').value=S.cropSrc; $('#selFaceSrc').value=S.faceSrc;
   $('#chkLogo').checked=S.showLogo; $('#chkPanel').checked=S.showPanel;
