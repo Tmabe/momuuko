@@ -167,6 +167,28 @@ button.bt.pri:hover{filter:brightness(1.1);}
   font-family:var(--mono);font-size:11px;color:var(--text3);
 }
 #topbar b{color:var(--Y);font-family:var(--cond);font-size:14px;letter-spacing:1px;}
+.tbBtn{
+  width:28px;height:24px;border-radius:6px;border:1px solid var(--border);
+  background:rgba(255,255,255,.05);color:var(--text2);cursor:pointer;font-size:14px;
+  line-height:1;padding:0;
+}
+.tbBtn:hover:not(:disabled){border-color:var(--Y);color:var(--text);}
+.tbBtn:disabled{cursor:default;}
+/* 스타일 프리셋 */
+#styleGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px;}
+.styBtn{
+  padding:7px 3px;border-radius:7px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text2);font-size:11px;
+  font-family:var(--kr);cursor:pointer;transition:.15s;line-height:1.3;
+}
+.styBtn:hover{border-color:var(--Y);color:var(--text);background:rgba(61,142,240,.1);}
+.drop .wand{
+  position:absolute;top:4px;right:28px;width:18px;height:18px;line-height:16px;
+  border-radius:50%;background:rgba(0,0,0,.5);color:#ccc;font-size:11px;
+  display:none;text-align:center;
+}
+.drop.has .wand{display:block;}
+.drop .wand:hover{background:var(--Y);color:#fff;}
 #stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:14px;position:relative;}
 #pv{box-shadow:0 8px 40px rgba(0,0,0,.5);border-radius:6px;cursor:grab;max-width:100%;max-height:100%;}
 #pv.dragging{cursor:grabbing;}
@@ -204,16 +226,26 @@ button.bt.pri:hover{filter:brightness(1.1);}
     <div class="sec">
       <h3>이미지</h3>
       <div class="drop" id="dropBase">
-        <span class="lbl">기본 일러스트<br><small>클릭 or 드래그 (투명 PNG)</small></span>
+        <span class="lbl">기본 일러스트<br><small>클릭 · 드래그 · Ctrl+V</small></span>
+        <span class="wand" data-wand="base" title="흰 배경 자동 제거">🪄</span>
         <span class="x" data-slot="base">✕</span>
       </div>
       <div class="drop" id="dropVari">
         <span class="lbl">바리에이션 (선택)<br><small>시트 템플릿의 확대컷에 사용</small></span>
+        <span class="wand" data-wand="vari" title="흰 배경 자동 제거">🪄</span>
         <span class="x" data-slot="vari">✕</span>
       </div>
-      <input type="file" id="fileBase" accept="image/png,image/webp">
-      <input type="file" id="fileVari" accept="image/png,image/webp">
+      <input type="file" id="fileBase" accept="image/png,image/webp,image/jpeg">
+      <input type="file" id="fileVari" accept="image/png,image/webp,image/jpeg">
       <button class="bt" id="btnAutoPlace">🧲 현재 템플릿 자동 배치 리셋</button>
+      <div class="hint">🪄 = 가장자리부터 흰 배경만 지웁니다 (안쪽 흰색은 보존).</div>
+    </div>
+
+    <div class="sec">
+      <h3>스타일 프리셋</h3>
+      <div id="styleGrid"></div>
+      <button class="bt" id="btnRandomStyle">🎲 랜덤 스타일</button>
+      <div class="hint">무늬·라이팅·데코·폰트를 한 번에 적용합니다. 색은 유지돼요.</div>
     </div>
 
     <div class="sec">
@@ -428,8 +460,13 @@ button.bt.pri:hover{filter:brightness(1.1);}
           <option value="vari">확대컷: 바리에이션</option>
         </select>
       </div>
-      <label class="chk"><input type="checkbox" id="chkLogo" checked> 로고 표시 (우하단 Z)</label>
+      <label class="chk"><input type="checkbox" id="chkLogo" checked> 로고 표시 (우하단)</label>
       <label class="chk"><input type="checkbox" id="chkPanel" checked> 흰 패널 배경</label>
+      <div class="drop" id="dropLogo" style="min-height:44px;">
+        <span class="lbl">로고 이미지 (선택)<br><small>없으면 크레딧 첫 글자 뱃지</small></span>
+        <span class="x" data-slot="logo">✕</span>
+      </div>
+      <input type="file" id="fileLogo" accept="image/png,image/webp,image/svg+xml">
     </div>
 
     <div class="sec">
@@ -439,7 +476,26 @@ button.bt.pri:hover{filter:brightness(1.1);}
     </div>
 
     <div class="sec">
-      <button class="bt pri" id="btnExport">⬇ PNG 다운로드 (고해상도)</button>
+      <h3>내보내기</h3>
+      <div class="row"><label>가로폭</label>
+        <select id="outW">
+          <option value="1000">1000px (미리보기용)</option>
+          <option value="1500">1500px</option>
+          <option value="2000">2000px</option>
+          <option value="3000">3000px (기본·인쇄)</option>
+          <option value="4000">4000px (최대)</option>
+        </select>
+      </div>
+      <div class="row"><label>포맷</label>
+        <select id="outFmt">
+          <option value="png">PNG (무손실·투명)</option>
+          <option value="jpg">JPG (용량 작음)</option>
+          <option value="webp">WebP (권장·가벼움)</option>
+        </select>
+      </div>
+      <label class="chk"><input type="checkbox" id="outTrans"> 배경 투명하게 (PNG·WebP만)</label>
+      <button class="bt pri" id="btnExport">⬇ 현재 템플릿 다운로드</button>
+      <button class="bt" id="btnExportAll">📦 전 템플릿 일괄 다운로드</button>
       <button class="bt" id="btnReset">전체 초기화</button>
     </div>
   </div>
@@ -447,6 +503,8 @@ button.bt.pri:hover{filter:brightness(1.1);}
   <div id="main">
     <div id="topbar">
       <b>SHEET MAKER</b>
+      <button class="tbBtn" id="btnUndo" title="되돌리기 (Ctrl+Z)">↶</button>
+      <button class="tbBtn" id="btnRedo" title="다시 실행 (Ctrl+Y)">↷</button>
       <span id="tbSize"></span>
       <span id="tbInfo"></span>
     </div>
@@ -513,9 +571,11 @@ const defaultSettings = () => ({
   filters:['shadow','none','sparkle','blush'],
   showLogo:true, showPanel:true,
   autoColor:true,
+  out:{ w:3000, fmt:'png', transparent:false },
 });
+let TRANSPARENT=false; // 내보내기 시 배경 생략 플래그
 let S = defaultSettings();
-let IMG = {base:null, vari:null, thumb0:null, thumb1:null, thumb2:null, thumb3:null};
+let IMG = {base:null, vari:null, thumb0:null, thumb1:null, thumb2:null, thumb3:null, logo:null};
 let META = {base:null, vari:null};
 let adjTarget = 'global';
 
@@ -793,6 +853,7 @@ function drawBlurBg(ctx,k,W,H){
   ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 }
 function drawBgByMode(ctx,k,W,H){
+  if(TRANSPARENT) return;
   if(S.fx.bg==='blurimg') drawBlurBg(ctx,k,W,H);
   else if(S.fx.bg==='flat'){ ctx.fillStyle=S.bg; ctx.fillRect(0,0,W,H); }
   else {
@@ -1545,6 +1606,30 @@ function drawFullBody(ctx,k,p){
   drawLayer(ctx,k,IMG.base, p.full.x*k, p.full.y*k,
     IMG.base.width*p.full.s*k, IMG.base.height*p.full.s*k, 'base');
 }
+/* 로고: 업로드 이미지가 있으면 그것을, 없으면 기본 사각 뱃지 */
+function drawLogo(ctx,k,gx,gy,size){
+  const G={x:gx,y:gy,size:size,r:L.logo.r};
+  if(IMG.logo){
+    const im=IMG.logo;
+    const s=Math.min(G.size/im.width, G.size/im.height);
+    const w=im.width*s, h=im.height*s;
+    ctx.save();
+    ctx.shadowColor='rgba(0,0,0,0.18)'; ctx.shadowBlur=7*k; ctx.shadowOffsetY=2*k;
+    ctx.drawImage(im,(G.x+(G.size-w)/2)*k,(G.y+(G.size-h)/2)*k,w*k,h*k);
+    ctx.restore();
+    return;
+  }
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,0.2)'; ctx.shadowBlur=8*k; ctx.shadowOffsetY=3*k;
+  rr(ctx,G.x*k,G.y*k,G.size*k,G.size*k,G.r*k);
+  ctx.fillStyle='#252B38'; ctx.fill();
+  ctx.restore();
+  ctx.fillStyle='#fff';
+  ctx.font=`800 ${G.size*0.62*k}px "Baloo 2",sans-serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText((S.credit||'Z')[0].toUpperCase(), (G.x+G.size/2)*k, (G.y+G.size/2+3)*k);
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}
 function drawPlaceholder(ctx,k,W,H){
   ctx.fillStyle='rgba(0,0,0,0.25)';
   ctx.font=`700 ${26*k}px "Noto Sans KR",sans-serif`; ctx.textAlign='center';
@@ -1608,19 +1693,7 @@ function renderSheet(ctx,k){
   ctx.fillText(S.credit||'', (P.x+2)*k, (L.creditY+34)*k);
   const T=L.thumbs;
   for(let i=0;i<3;i++) drawFramedThumb(ctx,k,i, T.x+T.size/2, T.y+i*(T.size+T.gap)+T.size/2, T.size);
-  if(S.showLogo){
-    const G=L.logo;
-    ctx.save();
-    ctx.shadowColor='rgba(0,0,0,0.2)'; ctx.shadowBlur=8*k; ctx.shadowOffsetY=3*k;
-    rr(ctx,G.x*k,G.y*k,G.size*k,G.size*k,G.r*k);
-    ctx.fillStyle='#252B38'; ctx.fill();
-    ctx.restore();
-    ctx.fillStyle='#fff';
-    ctx.font=`800 ${G.size*0.62*k}px "Baloo 2",sans-serif`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('Z', (G.x+G.size/2)*k, (G.y+G.size/2+3)*k);
-    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-  }
+  if(S.showLogo) drawLogo(ctx,k,L.logo.x,L.logo.y,L.logo.size);
   drawDecoFront(ctx,k,W,H);
 }
 
@@ -1708,7 +1781,7 @@ function renderGraphic(ctx,k){
   const W=DW*k, H=TPL.graphic.dh*k;
   const p=pl();
   const paper = mix(S.palette[0]||'#f2f2f4','#ffffff',0.55);
-  ctx.fillStyle=paper; ctx.fillRect(0,0,W,H);
+  if(!TRANSPARENT){ ctx.fillStyle=paper; ctx.fillRect(0,0,W,H); }
   drawBgPattern(ctx,k,W,H);
   drawDecoBack(ctx,k,W,H);
   const ac = S.accent;
@@ -1799,16 +1872,20 @@ function renderGraphic(ctx,k){
   ctx.fillStyle='#2a2a32';
   let nums=''; for(let i=0;i<16;i++) nums+= (seedStr.charCodeAt(i%seedStr.length)+i)%10 + ' ';
   ctx.fillText(nums, bx, by+78*k);
-  ctx.save();
-  ctx.translate(70*k,(TPL.graphic.dh-78)*k); ctx.rotate(Math.PI/4);
-  ctx.fillStyle=withAlpha(ac,0.85);
-  rr(ctx,-19*k,-19*k,38*k,38*k,8*k); ctx.fill();
-  ctx.restore();
-  ctx.fillStyle='#fff';
-  ctx.font=`800 ${26*k}px "Baloo 2",sans-serif`;
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText((S.credit||'m')[0].toUpperCase(), 70*k, (TPL.graphic.dh-78)*k);
-  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  if(IMG.logo){
+    drawLogo(ctx,k,70-26,(TPL.graphic.dh-78)-26,52);
+  }else{
+    ctx.save();
+    ctx.translate(70*k,(TPL.graphic.dh-78)*k); ctx.rotate(Math.PI/4);
+    ctx.fillStyle=withAlpha(ac,0.85);
+    rr(ctx,-19*k,-19*k,38*k,38*k,8*k); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle='#fff';
+    ctx.font=`800 ${26*k}px "Baloo 2",sans-serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText((S.credit||'m')[0].toUpperCase(), 70*k, (TPL.graphic.dh-78)*k);
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
   drawDecoFront(ctx,k,W,H);
 }
 
@@ -2014,7 +2091,8 @@ async function clearSlot(slot){
   updateDropUI(); draw(); saveSoon();
 }
 function updateDropUI(){
-  const cfg=[['#dropBase','base','기본 일러스트'],['#dropVari','vari','바리에이션 (선택)']];
+  const cfg=[['#dropBase','base','기본 일러스트'],['#dropVari','vari','바리에이션 (선택)'],
+             ['#dropLogo','logo','로고 이미지']];
   for(const [sel,slot,label] of cfg){
     const el=$(sel);
     el.classList.toggle('has',!!IMG[slot]);
@@ -2027,7 +2105,9 @@ function updateDropUI(){
       lbl.style.display='flex'; lbl.style.alignItems='center'; lbl.style.gap='8px'; lbl.style.justifyContent='center';
     }else{
       lbl.innerHTML = slot==='base'
-        ? '기본 일러스트<br><small>클릭 or 드래그 (투명 PNG)</small>'
+        ? '기본 일러스트<br><small>클릭 · 드래그 · Ctrl+V</small>'
+        : slot==='logo'
+        ? '로고 이미지 (선택)<br><small>없으면 크레딧 첫 글자 뱃지</small>'
         : '바리에이션 (선택)<br><small>시트 템플릿의 확대컷에 사용</small>';
     }
   }
@@ -2048,12 +2128,111 @@ function wireDrop(dropSel, fileSel, slot){
 }
 wireDrop('#dropBase','#fileBase','base');
 wireDrop('#dropVari','#fileVari','vari');
+wireDrop('#dropLogo','#fileLogo','logo');
+$$('.drop .wand').forEach(w=>{
+  w.addEventListener('click',e=>{ e.stopPropagation(); removeBgSlot(w.dataset.wand); });
+});
+$('#btnUndo').addEventListener('click',undo);
+$('#btnRedo').addEventListener('click',redo);
+$('#outW').addEventListener('change',e=>{ S.out.w=+e.target.value; saveSoon(); });
+$('#outFmt').addEventListener('change',e=>{
+  S.out.fmt=e.target.value;
+  if(e.target.value==='jpg' && S.out.transparent){
+    S.out.transparent=false; $('#outTrans').checked=false;
+    toast('JPG는 투명 배경을 지원하지 않습니다');
+  }
+  saveSoon();
+});
+$('#outTrans').addEventListener('change',e=>{
+  if(e.target.checked && S.out.fmt==='jpg'){
+    e.target.checked=false;
+    toast('JPG는 투명 배경 불가 — PNG/WebP를 선택하세요');
+    return;
+  }
+  S.out.transparent=e.target.checked; saveSoon();
+});
 document.addEventListener('dragover',e=>e.preventDefault());
 document.addEventListener('drop',e=>{
   e.preventDefault();
   const f=[...e.dataTransfer.files].find(f=>f.type.startsWith('image/'));
   if(f && !e.target.closest('.drop') && !e.target.closest('.thumbWrap')) setSlot(IMG.base?'vari':'base',f);
 });
+/* ─── 클립보드 붙여넣기 (Ctrl+V) ─── */
+document.addEventListener('paste', async e=>{
+  const items=[...((e.clipboardData&&e.clipboardData.items)||[])];
+  const it=items.find(i=>i.type&&i.type.startsWith('image/'));
+  if(!it) return;
+  e.preventDefault();
+  const blob=it.getAsFile();
+  if(!blob) return;
+  const slot = !IMG.base ? 'base' : 'vari';
+  await setSlot(slot, blob);
+  toast(slot==='base' ? '기본 일러스트로 붙여넣음' : '바리에이션으로 붙여넣음');
+});
+
+/* ─── 흰 배경 자동 제거 (가장자리 flood fill — 안쪽 흰색은 보존) ─── */
+function removeBgCanvas(img, tol){
+  tol = tol==null? 26 : tol;
+  const w=img.width, h=img.height;
+  const c=document.createElement('canvas'); c.width=w; c.height=h;
+  const x=c.getContext('2d',{willReadFrequently:true});
+  x.drawImage(img,0,0);
+  const id=x.getImageData(0,0,w,h), d=id.data;
+  // 가장자리 픽셀 평균색을 배경색으로 추정
+  let sr=0,sg=0,sb=0,n=0;
+  const sample=(px,py)=>{ const i=(py*w+px)*4; if(d[i+3]>200){ sr+=d[i];sg+=d[i+1];sb+=d[i+2];n++; } };
+  for(let px=0;px<w;px+=Math.max(1,(w/120)|0)){ sample(px,0); sample(px,h-1); }
+  for(let py=0;py<h;py+=Math.max(1,(h/120)|0)){ sample(0,py); sample(w-1,py); }
+  if(!n) return c;
+  const br=sr/n, bg=sg/n, bb=sb/n;
+  const near=i=>{
+    if(d[i+3]<8) return true;
+    const dr=d[i]-br, dg=d[i+1]-bg, db=d[i+2]-bb;
+    return Math.sqrt(dr*dr+dg*dg+db*db) <= tol;
+  };
+  // BFS flood fill (스택 기반)
+  const seen=new Uint8Array(w*h);
+  const stack=[];
+  const push=(px,py)=>{
+    if(px<0||py<0||px>=w||py>=h) return;
+    const p=py*w+px;
+    if(seen[p]) return;
+    seen[p]=1;
+    if(near(p*4)) stack.push(p);
+  };
+  for(let px=0;px<w;px++){ push(px,0); push(px,h-1); }
+  for(let py=0;py<h;py++){ push(0,py); push(w-1,py); }
+  while(stack.length){
+    const p=stack.pop();
+    const py=(p/w)|0, px=p-py*w;
+    d[p*4+3]=0;
+    push(px+1,py); push(px-1,py); push(px,py+1); push(px,py-1);
+  }
+  // 경계 부드럽게: 투명 이웃이 있는 반투명 픽셀 알파 감쇠
+  const out=new Uint8ClampedArray(d);
+  for(let py=1;py<h-1;py++)for(let px=1;px<w-1;px++){
+    const p=py*w+px;
+    if(d[p*4+3]===0) continue;
+    let clear=0;
+    if(d[(p-1)*4+3]===0)clear++; if(d[(p+1)*4+3]===0)clear++;
+    if(d[(p-w)*4+3]===0)clear++; if(d[(p+w)*4+3]===0)clear++;
+    if(clear) out[p*4+3]=d[p*4+3]*(1-clear*0.18);
+  }
+  id.data.set(out);
+  x.putImageData(id,0,0);
+  return c;
+}
+async function removeBgSlot(slot){
+  if(!IMG[slot]){ toast('이미지가 없습니다'); return; }
+  toast('배경 제거 중…');
+  await new Promise(r=>setTimeout(r,30));
+  try{
+    const c=removeBgCanvas(IMG[slot]);
+    const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+    await setSlot(slot, blob);
+    toast('배경 제거 완료');
+  }catch(e){ toast('배경 제거 실패: '+e.message); }
+}
 
 /* ─── 표정 슬롯 UI ─── */
 function buildThumbList(){
@@ -2110,6 +2289,130 @@ function openThumbFile(i){
   fi.onchange=()=>{ if(fi.files[0]) setSlot('thumb'+i,fi.files[0]); fi.value=''; };
   fi.click();
 }
+
+/* ═══════════ 스타일 프리셋 (원클릭) ═══════════ */
+function clearStyle(){
+  Object.keys(S.deco).forEach(k=>S.deco[k]=false);
+  S.bp={mode:'none',color:S.accent,color2:S.second,amt:0.5,scale:100,angle:0};
+  S.gd={mode:'none',a:'#ffffff',b:S.second||'#7ab8f0',amt:0.35,blend:'overlay'};
+  S.fx.light='none'; S.fx.density=100; S.fx.behind=false;
+  S.fx.grain=0; S.fx.scan=0; S.fx.half=0;
+  S.fx.bg='wash'; S.fx.frame='round'; S.fx.glow=0.35;
+  S.font='round';
+}
+const STYLE_PRESETS = [
+  {n:'클린', f(){ /* 기본값 그대로 */ }},
+  {n:'파스텔 팝', f(){
+    S.font='round'; S.fx.frame='round'; S.fx.bg='wash';
+    S.bp.mode='dots'; S.bp.amt=0.28; S.bp.color=S.accent;
+    S.gd.mode='top'; S.gd.a='#ffffff'; S.gd.amt=0.4; S.gd.blend='screen';
+    S.fx.light='sparkle'; S.fx.density=90; S.deco.chips=true;
+  }},
+  {n:'Kithera풍', f(){
+    S.font='modern'; S.fx.frame='tilt'; S.fx.bg='wash';
+    S.bp.mode='dots'; S.bp.amt=0.3; S.bp.color=S.accent;
+    S.gd.mode='top'; S.gd.a='#ffffff'; S.gd.amt=0.35; S.gd.blend='screen';
+    S.deco.uiLabel=true; S.deco.watermark=true; S.deco.chips=true; S.deco.cross=true;
+  }},
+  {n:'고딕 대각', f(){
+    S.font='impact'; S.fx.frame='bracket'; S.fx.bg='wash';
+    S.bp.mode='diagsplit'; S.bp.amt=0.5; S.bp.color=S.accent;
+    S.deco.vband=true; S.deco.bracket=true;
+  }},
+  {n:'도큐먼트', f(){
+    S.font='dohyeon'; S.fx.frame='square'; S.fx.bg='flat';
+    S.bp.mode='grid'; S.bp.amt=0.26; S.bp.color=S.accent;
+    S.deco.ticks=true; S.deco.barcode=true; S.deco.watermark=true; S.deco.cross=true;
+  }},
+  {n:'아이돌 프로필', f(){
+    S.font='dohyeon'; S.fx.frame='square'; S.fx.bg='flat';
+    S.bp.mode='poly'; S.bp.amt=0.22; S.bp.color=mix(S.accent,'#ffffff',0.45); S.bp.color2='#eef5fb';
+    S.deco.arch=true; S.deco.ticks=true;
+    S.gd.mode='bottom'; S.gd.a='#ffffff'; S.gd.amt=0.4; S.gd.blend='screen';
+  }},
+  {n:'사이버 글리치', f(){
+    S.font='bebas'; S.fx.frame='bracket'; S.fx.bg='flat';
+    S.bp.mode='diagband'; S.bp.amt=0.32; S.bp.color=S.accent; S.bp.color2=S.second;
+    S.deco.glitch=true; S.deco.vband=true; S.deco.bracket=true; S.deco.barcode=true;
+    S.fx.scan=0.25;
+  }},
+  {n:'노을 필름', f(){
+    S.font='modern'; S.fx.frame='film'; S.fx.bg='blurimg';
+    S.gd.mode='sunset'; S.gd.a=S.accent; S.gd.b=S.second; S.gd.amt=0.5; S.gd.blend='overlay';
+    S.fx.grain=0.55; S.fx.light='bokeh'; S.fx.density=80; S.fx.behind=true;
+  }},
+  {n:'홀로그램', f(){
+    S.font='modern'; S.fx.frame='hex'; S.fx.bg='wash';
+    S.bp.mode='hexgrid'; S.bp.amt=0.22; S.bp.color=S.accent;
+    S.gd.mode='holo'; S.gd.amt=0.45; S.gd.blend='soft-light';
+    S.fx.light='stars'; S.fx.density=80; S.fx.behind=true; S.deco.bracket=true;
+  }},
+  {n:'모노 그리드', f(){
+    S.font='bebas'; S.fx.frame='square'; S.fx.bg='flat';
+    S.bp.mode='grid'; S.bp.amt=0.3; S.bp.color='#9a9aa4';
+    S.gd.mode='vignette'; S.gd.a='#2a2a33'; S.gd.amt=0.4; S.gd.blend='multiply';
+    S.deco.ticks=true; S.deco.bracket=true; S.deco.barcode=true; S.fx.half=0.2;
+  }},
+  {n:'벚꽃', f(){
+    S.font='round'; S.fx.frame='circle'; S.fx.bg='wash';
+    S.bp.mode='blob'; S.bp.amt=0.4; S.bp.color=mix(S.accent,'#ffc0d8',0.6);
+    S.fx.light='petals'; S.fx.density=140; S.fx.behind=true;
+    S.gd.mode='spot'; S.gd.a='#ffffff'; S.gd.amt=0.35; S.gd.blend='screen';
+  }},
+  {n:'스포트라이트', f(){
+    S.font='impact'; S.fx.frame='circle'; S.fx.bg='flat';
+    S.bp.mode='sunburst'; S.bp.amt=0.18; S.bp.color=S.accent;
+    S.gd.mode='vignette'; S.gd.a=mix(S.accent,'#000000',0.7); S.gd.amt=0.55; S.gd.blend='multiply';
+    S.fx.glow=0.6; S.fx.light='rays'; S.fx.behind=true;
+  }},
+];
+function applyStylePreset(i){
+  clearStyle();
+  const p=STYLE_PRESETS[i];
+  if(!p) return;
+  p.f();
+  syncUIFromState(); draw(); saveSoon();
+  toast('스타일: '+p.n);
+}
+function randomStyle(){
+  clearStyle();
+  const pick=a=>a[(Math.random()*a.length)|0];
+  S.font=pick(['round','impact','dohyeon','bebas','modern']);
+  S.fx.frame=pick(['round','circle','square','tilt','bracket','diamond','hex','film','polaroid']);
+  S.fx.bg=pick(['wash','wash','blurimg','flat']);
+  S.bp.mode=pick(['none','diagsplit','diagband','corner','grid','dots','check','hexgrid','vlines','sunburst','circles','halftone','wave','poly','blob']);
+  S.bp.amt=0.18+Math.random()*0.35;
+  S.bp.angle=pick([0,0,0,15,-15,45,-45]);
+  S.bp.scale=60+Math.random()*140;
+  S.bp.color=pick([S.accent,S.second,mix(S.accent,'#ffffff',0.4),S.palette[3]||S.accent]);
+  S.bp.color2=pick([S.second,S.accent,S.palette[1]||S.second]);
+  S.gd.mode=pick(['none','top','bottom','left','right','diag','duotone','sunset','holo','vignette','spot']);
+  S.gd.a=pick(['#ffffff',S.accent,S.second]);
+  S.gd.b=pick([S.second,S.accent,'#ffffff']);
+  S.gd.amt=0.2+Math.random()*0.4;
+  S.gd.blend=pick(['overlay','screen','soft-light','multiply','lighter']);
+  S.fx.light=pick(['none','rays','bokeh','hearts','sparkle','petals','snow','bubbles','stars','confetti']);
+  S.fx.density=60+Math.random()*140;
+  S.fx.behind=Math.random()<0.5;
+  S.fx.seed=(Math.random()*1e9)|0;
+  S.fx.grain=Math.random()<0.35? Math.random()*0.5 : 0;
+  S.fx.scan=Math.random()<0.2? Math.random()*0.35 : 0;
+  Object.keys(S.deco).forEach(k=>{ S.deco[k]=Math.random()<0.28; });
+  syncUIFromState(); draw(); saveSoon();
+  toast('랜덤 스타일 🎲');
+}
+
+/* 스타일 프리셋 UI (STYLE_PRESETS 정의 이후에 생성해야 함) */
+(function buildStyleGrid(){
+  const g=$('#styleGrid');
+  STYLE_PRESETS.forEach((p,i)=>{
+    const b=document.createElement('button');
+    b.className='styBtn'; b.textContent=p.n;
+    b.addEventListener('click',()=>applyStylePreset(i));
+    g.appendChild(b);
+  });
+})();
+$('#btnRandomStyle').addEventListener('click',randomStyle);
 
 /* ─── UI 바인딩 ─── */
 $$('#tplRow .tplBtn').forEach(b=>{
@@ -2283,7 +2586,51 @@ $('#chkPanel').addEventListener('change',e=>{ S.showPanel=e.target.checked; draw
 let saveTo=null;
 function saveSoon(){ clearTimeout(saveTo); saveTo=setTimeout(()=>{
   try{ localStorage.setItem('mm_sheet_v1', JSON.stringify(S)); }catch(e){}
+  pushHist();
 },400); }
+
+/* ─── Undo / Redo (설정 스냅샷 기반, 이미지는 IDB라 가벼움) ─── */
+const HIST_MAX=60;
+let histStack=[], histIdx=-1, histLock=false;
+function pushHist(){
+  if(histLock) return;
+  const snap=JSON.stringify(S);
+  if(histStack[histIdx]===snap) return;
+  histStack=histStack.slice(0,histIdx+1);
+  histStack.push(snap);
+  if(histStack.length>HIST_MAX) histStack.shift();
+  histIdx=histStack.length-1;
+  updateHistBtns();
+}
+function applyHist(i){
+  if(i<0||i>=histStack.length||i===histIdx) return false;
+  histIdx=i;
+  histLock=true;
+  try{ S=migrate(JSON.parse(histStack[i])); }catch(e){ histLock=false; return false; }
+  syncUIFromState(); updateDropUI(); fitPreview(); draw();
+  try{ localStorage.setItem('mm_sheet_v1', JSON.stringify(S)); }catch(e){}
+  histLock=false;
+  updateHistBtns();
+  return true;
+}
+function undo(){ if(applyHist(histIdx-1)) toast('되돌리기'); else toast('더 되돌릴 수 없음'); }
+function redo(){ if(applyHist(histIdx+1)) toast('다시 실행'); else toast('더 실행할 수 없음'); }
+function updateHistBtns(){
+  const u=$('#btnUndo'), r=$('#btnRedo');
+  if(!u||!r) return;
+  u.disabled = histIdx<=0;
+  r.disabled = histIdx>=histStack.length-1;
+  u.style.opacity = u.disabled?0.35:1;
+  r.style.opacity = r.disabled?0.35:1;
+}
+document.addEventListener('keydown',e=>{
+  const t=e.target;
+  if(t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+  if(!(e.ctrlKey||e.metaKey)) return;
+  const k=e.key.toLowerCase();
+  if(k==='z' && !e.shiftKey){ e.preventDefault(); undo(); }
+  else if((k==='z' && e.shiftKey) || k==='y'){ e.preventDefault(); redo(); }
+});
 function syncUIFromState(){
   $('#inName').value=S.nameEn; $('#inSub').value=S.sub; $('#inCredit').value=S.credit;
   $('#inQuote').value=S.quote; $('#inRibbon').value=S.ribbon; $('#inDesc').value=S.desc;
@@ -2302,6 +2649,7 @@ function syncUIFromState(){
   $('#bpScale').value=S.bp.scale; $('#vBpScale').textContent=S.bp.scale+'%';
   $('#bpAngle').value=S.bp.angle; $('#vBpAngle').textContent=S.bp.angle+'°';
   $$('input[data-deco]').forEach(cb=>{ cb.checked=!!S.deco[cb.dataset.deco]; });
+  $('#outW').value=S.out.w; $('#outFmt').value=S.out.fmt; $('#outTrans').checked=!!S.out.transparent;
   for(const [sel,lb,key] of [['#txGrain','#vGrain','grain'],['#txScan','#vScan','scan'],['#txHalf','#vHalf','half']]){
     $(sel).value=Math.round(S.fx[key]*100); $(lb).textContent=Math.round(S.fx[key]*100)+'%';
   }
@@ -2316,6 +2664,7 @@ function migrate(raw){
   s.gd=Object.assign(D.gd, raw.gd||{});
   s.bp=Object.assign(D.bp, raw.bp||{});
   s.deco=Object.assign(D.deco, raw.deco||{});
+  s.out=Object.assign(D.out, raw.out||{});
   s.pl=Object.assign({sheet:null,poster:null,graphic:null}, raw.pl||{});
   s.adj={
     global:Object.assign(defaultAdj(), (raw.adj&&raw.adj.global)||{}),
@@ -2333,7 +2682,7 @@ async function restore(){
     const raw=localStorage.getItem('mm_sheet_v1');
     if(raw) S=migrate(JSON.parse(raw));
   }catch(e){}
-  for(const slot of ['base','vari','thumb0','thumb1','thumb2','thumb3']){
+  for(const slot of ['base','vari','thumb0','thumb1','thumb2','thumb3','logo']){
     try{
       const blob=await idb.get('imgs',slot);
       if(blob){
@@ -2362,7 +2711,7 @@ $('#btnSavePreset').addEventListener('click',async()=>{
   const name=prompt('프리셋 이름 (캐릭터명 추천)', S.nameEn||'');
   if(!name) return;
   const imgs={};
-  for(const slot of ['base','vari','thumb0','thumb1','thumb2','thumb3']){
+  for(const slot of ['base','vari','thumb0','thumb1','thumb2','thumb3','logo']){
     const blob=await idb.get('imgs',slot);
     if(blob) imgs[slot]=blob;
   }
@@ -2373,9 +2722,9 @@ async function loadPreset(name){
   const p=await idb.get('presets',name);
   if(!p) return;
   S=migrate(p.settings);
-  IMG={base:null,vari:null,thumb0:null,thumb1:null,thumb2:null,thumb3:null};
+  IMG={base:null,vari:null,thumb0:null,thumb1:null,thumb2:null,thumb3:null,logo:null};
   META={base:null,vari:null};
-  for(const slot of ['base','vari','thumb0','thumb1','thumb2','thumb3']){
+  for(const slot of ['base','vari','thumb0','thumb1','thumb2','thumb3','logo']){
     if(p.imgs[slot]){
       await idb.put('imgs',slot,p.imgs[slot]);
       IMG[slot]=await loadImageBlob(p.imgs[slot]);
@@ -2387,28 +2736,52 @@ async function loadPreset(name){
 }
 
 /* ─── 내보내기 ─── */
+const MIME={png:'image/png', jpg:'image/jpeg', webp:'image/webp'};
+const EXT={png:'png', jpg:'jpg', webp:'webp'};
+async function exportOne(tpl){
+  const prev=S.tpl;
+  if(tpl) S.tpl=tpl;
+  const w=S.out.w, k=w/DW;
+  const fmt=S.out.fmt;
+  // 투명 배경은 PNG/WebP만 가능 (JPG는 알파 미지원)
+  TRANSPARENT = S.out.transparent && fmt!=='jpg';
+  const c=document.createElement('canvas');
+  c.width=w; c.height=Math.round(DH()*k);
+  render(c.getContext('2d'),k);
+  TRANSPARENT=false;
+  const blob=await new Promise(r=>c.toBlob(r, MIME[fmt], fmt==='png'?undefined:0.94));
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`${S.nameEn||'character'}_${S.tpl}.${EXT[fmt]}`;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+  S.tpl=prev;
+  return blob.size;
+}
 $('#btnExport').addEventListener('click',async()=>{
   if(!IMG.base){ toast('기본 일러스트를 먼저 업로드하세요'); return; }
   toast('렌더링 중…');
   await loadFonts();
-  const k=EXPORT_W/DW;
-  const c=document.createElement('canvas');
-  c.width=EXPORT_W; c.height=Math.round(DH()*k);
-  render(c.getContext('2d'),k);
-  c.toBlob(blob=>{
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download=(S.nameEn||'character')+'_'+S.tpl+'.png';
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href),5000);
-    toast('다운로드 완료!');
-  },'image/png');
+  const sz=await exportOne(null);
+  fitPreview(); draw();
+  toast(`다운로드 완료 (${(sz/1048576).toFixed(1)}MB)`);
+});
+$('#btnExportAll').addEventListener('click',async()=>{
+  if(!IMG.base){ toast('기본 일러스트를 먼저 업로드하세요'); return; }
+  toast('전 템플릿 렌더링 중…');
+  await loadFonts();
+  for(const t of Object.keys(TPL)){
+    await exportOne(t);
+    await new Promise(r=>setTimeout(r,450)); // 브라우저 연속 다운로드 차단 방지
+  }
+  fitPreview(); draw();
+  toast('전 템플릿 다운로드 완료');
 });
 $('#btnReset').addEventListener('click',async()=>{
   if(!confirm('이미지·설정을 모두 초기화할까요? (프리셋은 유지)')) return;
   S=defaultSettings();
-  for(const slot of ['base','vari','thumb0','thumb1','thumb2','thumb3']) await idb.del('imgs',slot);
-  IMG={base:null,vari:null,thumb0:null,thumb1:null,thumb2:null,thumb3:null};
+  for(const slot of ['base','vari','thumb0','thumb1','thumb2','thumb3','logo']) await idb.del('imgs',slot);
+  IMG={base:null,vari:null,thumb0:null,thumb1:null,thumb2:null,thumb3:null,logo:null};
   META={base:null,vari:null};
   localStorage.removeItem('mm_sheet_v1');
   syncUIFromState(); updateDropUI(); fitPreview(); draw();
@@ -2437,8 +2810,12 @@ async function loadFonts(){
   fitPreview();
   await loadFonts();
   draw();
+  pushHist(); // 초기 상태를 히스토리 기준점으로
 })();
-window.SM = { setSlot, get S(){return S;}, get IMG(){return IMG;}, draw, render, fitPreview, extractColors };
+window.SM = { setSlot, get S(){return S;}, get IMG(){return IMG;}, draw, render, fitPreview,
+  extractColors, removeBgCanvas, exportOne, undo, redo, applyStylePreset, randomStyle,
+  get hist(){return {idx:histIdx,len:histStack.length};},
+  setTransparent(v){ TRANSPARENT=!!v; } };
 </script>
 </body>
 </html>
