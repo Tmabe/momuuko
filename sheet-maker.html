@@ -432,6 +432,16 @@ button.bt.pri:hover{filter:brightness(1.1);}
       <div class="row"><label>밀도</label><input type="range" id="fxDensity" min="10" max="250"><span class="val" id="vDensity"></span></div>
       <label class="chk"><input type="checkbox" id="fxBehind"> 파티클을 캐릭터 <b>뒤</b>에 배치</label>
 
+      <div class="subhead">▸ 색감 필터 (화면 전체 후처리)</div>
+      <div class="row"><label>수분감</label><input type="range" id="cfBloom" min="0" max="100"><span class="val" id="vBloom"></span></div>
+      <div class="row"><label>채도 리프트</label><input type="range" id="cfSat" min="0" max="100"><span class="val" id="vSat2"></span></div>
+      <div class="row"><label>글리터</label><input type="range" id="cfGlitter" min="0" max="100"><span class="val" id="vGlitter"></span></div>
+      <div class="row"><label>글리터색</label><input type="range" id="cfGlitterHue" min="0" max="360"><span class="val" id="vGlitterHue"></span></div>
+      <div class="row"><label>색수차</label><input type="range" id="cfAberr" min="0" max="100"><span class="val" id="vAberr"></span></div>
+      <div class="row"><label>계조화</label><input type="range" id="cfPoster" min="0" max="16"><span class="val" id="vPoster"></span></div>
+      <div class="row"><label>수채</label><input type="range" id="cfWater" min="0" max="100"><span class="val" id="vWater"></span></div>
+      <div class="hint">수분감=밝은 부분이 촉촉하게 번짐 · 색수차=RGB 어긋남(투명 배경 출력 시 자동 해제) · 계조화=0이면 끔</div>
+
       <div class="subhead">▸ 질감</div>
       <div class="row"><label>그레인</label><input type="range" id="txGrain" min="0" max="100"><span class="val" id="vGrain"></span></div>
       <div class="row"><label>스캔라인</label><input type="range" id="txScan" min="0" max="100"><span class="val" id="vScan"></span></div>
@@ -472,7 +482,17 @@ button.bt.pri:hover{filter:brightness(1.1);}
     </div>
 
     <div class="sec">
-      <h3>표정 (시트 3 · 포스터A 4)</h3>
+      <h3>표정 프레임</h3>
+      <label class="chk"><input type="checkbox" id="chkFaces" checked> <b>표정 표시</b></label>
+      <div class="row"><label>배치</label>
+        <select id="faceMode"></select>
+      </div>
+      <div class="row"><label>개수</label><input type="range" id="faceCount" min="1" max="6"><span class="val" id="vFaceCount"></span></div>
+      <div class="row"><label>크기</label><input type="range" id="faceSize" min="50" max="460"><span class="val" id="vFaceSize"></span></div>
+      <div class="row"><label>간격</label><input type="range" id="faceGap" min="-40" max="120"><span class="val" id="vFaceGap"></span></div>
+      <div class="row"><label>기울기</label><input type="range" id="faceAngle" min="-30" max="30"><span class="val" id="vFaceAngle"></span></div>
+      <button class="bt" id="btnFaceReset">↺ 이 템플릿 표정 배치 초기화</button>
+      <div class="hint">미리보기에서 표정을 <b>드래그하면 전체가 이동</b>, <b>휠로 크기</b> 조절됩니다.</div>
       <div class="selRow">
         <select id="selFaceSrc">
           <option value="base">얼굴 소스: 기본</option>
@@ -571,6 +591,18 @@ const PB = { titleX:42, titleY:170, subY:236, ribbonY:470,
 const FILTERS = [
   ['none','기본'],['shadow','그늘 (어둡게)'],['sparkle','반짝임'],['blush','홍조'],['gloom','섬뜩 (보라그늘)'],
 ];
+/* 표정 배치 기본값 (템플릿별) — 기존 디자인과 동일하게 보이도록 맞춤 */
+const FACE_DEFAULT = {
+  sheet:  {mode:'colL', count:3, size:176, gap:16, x:20,  y:844, angle:0},
+  poster: {mode:'colL', count:4, size:184, gap:42, x:16,  y:568, angle:0},
+  graphic:{mode:'colR', count:3, size:150, gap:14, x:820, y:640, angle:0},
+};
+const FACE_MODES=[
+  ['colL','좌측 세로 열'],['colR','우측 세로 열'],
+  ['rowT','상단 가로 행'],['rowB','하단 가로 행'],
+  ['stair','대각 계단 ↗'],['stairD','대각 계단 ↘'],
+  ['grid2','2열 그리드'],['scatter','흩어짐'],
+];
 
 /* ─── 보정 기본값 ─── */
 const defaultAdj = () => ({
@@ -601,9 +633,12 @@ const defaultSettings = () => ({
          datestamp:false, signature:false, paper:false },
   social:'', badge:'CHANGE', datetext:'',
   gd:{ mode:'none', a:'#ffffff', b:'#7ab8f0', amt:0.35, blend:'overlay' },
+  cfx:{ aberr:0, poster:0, glitter:0, glitterHue:0, bloom:0, water:0, sat:0 },
   adj:{ global:defaultAdj(), base:defaultAdj(), vari:defaultAdj() },
   pl:{ sheet:null, poster:null, graphic:null },
   face:{x:0,y:0,s:1},
+  showFaces:true,
+  faceL:{ sheet:null, poster:null, graphic:null },   // 템플릿별 표정 배치
   cropSrc:'auto', faceSrc:'base',
   filters:['shadow','none','sparkle','blush'],
   showLogo:true, showPanel:true,
@@ -854,6 +889,29 @@ const COLOR_SCHEMES=[
   {id:'mono', n:'단색조', hint:'한 색조로만 — 통일감 (기존 방식)',
    f:(L,C,H)=>({ accent:lch2hex(54,Math.max(48,C),H), second:lch2hex(70,Math.max(38,C*0.8),H),
                  stripe:lch2hex(88,20,H), bg:lch2hex(96,10,H) })},
+  /* ── 명도 대비 계열 ── */
+  {id:'hiContrast', n:'강대비', hint:'밝기를 극단으로 — 포스터처럼 강함',
+   f:(L,C,H)=>({ accent:lch2hex(22,Math.max(48,C*0.9),H), second:lch2hex(58,Math.max(60,C),H+180),
+                 stripe:lch2hex(74,30,H+180), bg:lch2hex(98,4,H) })},
+  {id:'warmCool', n:'난한 대비', hint:'따뜻한 색 vs 차가운 색 — 공간감',
+   f:(L,C,H)=>{ const warm = (H>20&&H<140); const wH=warm?H:H+180, cH=warm?H+180:H;
+     return { accent:lch2hex(50,Math.max(60,C),wH), second:lch2hex(64,Math.max(48,C*0.9),cH),
+              stripe:lch2hex(84,26,cH), bg:lch2hex(97,7,wH) }; }},
+  {id:'neon', n:'네온 다크', hint:'검은 배경 + 형광 포인트 — 사이버',
+   f:(L,C,H)=>({ accent:lch2hex(80,95,H), second:lch2hex(72,90,H+165),
+                 stripe:lch2hex(26,30,H+165), bg:lch2hex(12,12,H) })},
+  {id:'duotone2', n:'듀오톤 인쇄', hint:'두 잉크만 쓴 실크스크린 느낌',
+   f:(L,C,H)=>({ accent:lch2hex(46,72,H), second:lch2hex(60,68,H+150),
+                 stripe:lch2hex(80,44,H+150), bg:lch2hex(97,6,H+150) })},
+  {id:'hikey', n:'하이키', hint:'전체를 밝게 — 몽환적·저대비',
+   f:(L,C,H)=>({ accent:lch2hex(66,Math.min(50,Math.max(30,C*0.7)),H), second:lch2hex(80,26,H+45),
+                 stripe:lch2hex(93,14,H-30), bg:lch2hex(98,5,H+15) })},
+  {id:'lokey', n:'로우키', hint:'전체를 어둡게 — 무겁고 시네마틱',
+   f:(L,C,H)=>({ accent:lch2hex(66,Math.max(52,C),H), second:lch2hex(50,Math.max(40,C*0.8),H+150),
+                 stripe:lch2hex(24,14,H), bg:lch2hex(14,8,H+180) })},
+  {id:'sepia', n:'세피아', hint:'갈색 단색조 — 빈티지 인화',
+   f:(L,C,H)=>({ accent:lch2hex(38,26,70), second:lch2hex(58,24,62),
+                 stripe:lch2hex(82,16,72), bg:lch2hex(95,10,78) })},
 ];
 function schemeBaseHex(){ return S.schemeBase || S.accent || '#e8a13d'; }
 function schemeColors(id, hueShift){
@@ -898,6 +956,58 @@ function autoPlaceFace(){
   const T=L.thumbs.size;
   const s = T/(m.face.head*1.75);
   S.face = { s, x: T/2 - m.face.x*s, y: T*0.46 - m.face.y*s };
+}
+/* ── 표정 프레임 배치 ── */
+function faceL(){
+  if(!S.faceL[S.tpl]) S.faceL[S.tpl]=Object.assign({},FACE_DEFAULT[S.tpl]);
+  return S.faceL[S.tpl];
+}
+/* 각 표정의 중심좌표+크기 배열 (설계좌표계) */
+function facePositions(){
+  const F=faceL();
+  const n=Math.max(1,Math.min(6,F.count));
+  const sz=F.size, gap=F.gap;
+  const out=[];
+  const rnd=mulberry32(S.fx.seed+808);
+  for(let i=0;i<n;i++){
+    let cx, cy;
+    switch(F.mode){
+      case 'colR': cx=F.x+sz/2; cy=F.y+i*(sz+gap)+sz/2; break;
+      case 'rowT': case 'rowB':
+        cx=F.x+i*(sz+gap)+sz/2; cy=F.y+sz/2; break;
+      case 'stair':  // 좌하 → 우상
+        cx=F.x+i*(sz*0.62+gap)+sz/2; cy=F.y-i*(sz*0.42)+sz/2; break;
+      case 'stairD': // 좌상 → 우하
+        cx=F.x+i*(sz*0.62+gap)+sz/2; cy=F.y+i*(sz*0.42)+sz/2; break;
+      case 'grid2':{
+        const col=i%2, row=i>>1;
+        cx=F.x+col*(sz+gap)+sz/2; cy=F.y+row*(sz+gap)+sz/2; break; }
+      case 'scatter':{
+        cx=F.x+ (rnd()*1.6-0.3)*sz*2.0 + sz/2;
+        cy=F.y+ i*(sz*0.85) + (rnd()-0.5)*sz*0.5 + sz/2; break; }
+      default: // colL
+        cx=F.x+sz/2; cy=F.y+i*(sz+gap)+sz/2;
+    }
+    out.push({cx,cy,size:sz});
+  }
+  return out;
+}
+function drawFaces(ctx,k){
+  if(!S.showFaces) return;
+  const F=faceL();
+  const pos=facePositions();
+  pos.forEach((p,i)=>{
+    if(F.angle){
+      ctx.save();
+      ctx.translate(p.cx*k,p.cy*k);
+      ctx.rotate(F.angle*Math.PI/180);
+      ctx.translate(-p.cx*k,-p.cy*k);
+      drawFramedThumb(ctx,k,i,p.cx,p.cy,p.size);
+      ctx.restore();
+    }else{
+      drawFramedThumb(ctx,k,i,p.cx,p.cy,p.size);
+    }
+  });
 }
 
 /* ═══════════ 그리기 헬퍼 ═══════════ */
@@ -1978,8 +2088,7 @@ function renderSheet(ctx,k){
   ctx.fillStyle=withAlpha(S.accent,0.75);
   ctx.font=titleFont(31*k);
   ctx.fillText(S.credit||'', (P.x+2)*k, (L.creditY+34)*k);
-  const T=L.thumbs;
-  for(let i=0;i<3;i++) drawFramedThumb(ctx,k,i, T.x+T.size/2, T.y+i*(T.size+T.gap)+T.size/2, T.size);
+  drawFaces(ctx,k);
   if(S.showLogo) drawLogo(ctx,k,L.logo.x,L.logo.y,L.logo.size);
   drawDecoFront(ctx,k,W,H);
 }
@@ -2036,7 +2145,7 @@ function renderPoster(ctx,k){
     ctx.font=`700 ${24*k}px "Noto Sans KR",sans-serif`;
     lines.forEach((ln,i)=>ctx.fillText(ln, 30*k, (PB.ribbonY+38+i*34)*k));
   }
-  for(let i=0;i<4;i++) drawFramedThumb(ctx,k,i, PB.thumbCx, PB.thumbY0+i*PB.thumbGap, PB.thumbR*2);
+  drawFaces(ctx,k);
   if(S.desc){
     const lines=S.desc.split('\n');
     const dh2=(46+lines.length*40)*k;
@@ -2135,6 +2244,7 @@ function renderGraphic(ctx,k){
     }
     drawLayer(ctx,k,IMG.base, p.full.x*k, p.full.y*k, dw, dh2, 'base');
   }else drawPlaceholder(ctx,k,W,H);
+  drawFaces(ctx,k);
   lightFront(ctx,k,W,H);
   drawGradOverlay(ctx,k,W,H);
   if(S.ribbon){
@@ -2182,11 +2292,131 @@ function renderInner(ctx,k){
   else renderSheet(ctx,k);
   drawTexture(ctx,k,DW*k,DH()*k);
 }
+/* ═══════════ 색감 후처리 필터 ═══════════
+   합성이 끝난 화면 전체에 적용한다. 순서: 계조화 → 수채 → 색수차 → 수분감(블룸) → 글리터 */
+function snapCanvas(ctx,W,H){
+  const c=document.createElement('canvas');
+  c.width=Math.max(1,Math.round(W)); c.height=Math.max(1,Math.round(H));
+  c.getContext('2d').drawImage(ctx.canvas,0,0);
+  return c;
+}
+/* 계조화 — 색 단계를 줄여 밴딩/일러스트풍 */
+function posterizeCanvas(cv, levels){
+  const x=cv.getContext('2d',{willReadFrequently:true});
+  const id=x.getImageData(0,0,cv.width,cv.height), d=id.data;
+  const n=Math.max(2,levels), step=255/(n-1);
+  const lut=new Uint8ClampedArray(256);
+  for(let i=0;i<256;i++) lut[i]=Math.round(Math.round(i/step)*step);
+  for(let i=0;i<d.length;i+=4){ d[i]=lut[d[i]]; d[i+1]=lut[d[i+1]]; d[i+2]=lut[d[i+2]]; }
+  x.putImageData(id,0,0);
+  return cv;
+}
+/* 채널을 하나만 남긴 사본 (색수차용) */
+function channelCopy(src,W,H,color){
+  const c=document.createElement('canvas'); c.width=W; c.height=H;
+  const x=c.getContext('2d');
+  x.drawImage(src,0,0);
+  x.globalCompositeOperation='multiply';
+  x.fillStyle=color; x.fillRect(0,0,W,H);
+  // 원본 알파 유지
+  x.globalCompositeOperation='destination-in';
+  x.drawImage(src,0,0);
+  return c;
+}
+function drawGlitter(ctx,k,W,H,amt,hueBase){
+  const rnd=mulberry32(S.fx.seed+4242);
+  const n=Math.round(95*amt);
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  for(let i=0;i<n;i++){
+    const x=rnd()*W, y=rnd()*H;
+    const r=(4+rnd()*24)*k*(0.7+amt);
+    // 이리데센트: 색상환을 돌며 채도 높은 빛 알갱이
+    const hue=(hueBase + rnd()*360)%360;
+    const col=lch2hex(78, 60, hue);
+    const a=0.55+rnd()*0.45;
+    ctx.globalAlpha=Math.min(1,a*(0.5+amt));
+    // 코어
+    ctx.fillStyle=col;
+    ctx.beginPath(); sparklePath(ctx,x,y,r); ctx.fill();
+    // 헤일로
+    if(rnd()<0.45){
+      const g=ctx.createRadialGradient(x,y,0,x,y,r*3.2);
+      g.addColorStop(0,withAlpha(col,0.55));
+      g.addColorStop(1,withAlpha(col,0));
+      ctx.fillStyle=g;
+      ctx.beginPath(); ctx.arc(x,y,r*3.2,0,7); ctx.fill();
+    }
+  }
+  // 미세 반짝임(작은 점)
+  for(let i=0;i<n*2;i++){
+    const x=rnd()*W, y=rnd()*H, r=(0.8+rnd()*2.2)*k;
+    ctx.globalAlpha=(0.3+rnd()*0.6)*amt;
+    ctx.fillStyle=lch2hex(88,40,(hueBase+rnd()*360)%360);
+    ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+  }
+  ctx.restore();
+}
+function postFx(ctx,k,W,H){
+  const F=S.cfx;
+  if(!F) return;
+  const needPixel = F.poster>1 || F.water>0.005 || (F.aberr>0.005 && !TRANSPARENT) || F.bloom>0.005 || F.sat>0.005;
+  if(needPixel){
+    let src=snapCanvas(ctx,W,H);
+    // ① 계조화
+    if(F.poster>1) src=posterizeCanvas(src, Math.round(F.poster));
+    // ② 수채 — 번진 사본 위에 원본을 얹어 경계만 살림
+    if(F.water>0.005){
+      const w=document.createElement('canvas'); w.width=src.width; w.height=src.height;
+      const wx=w.getContext('2d');
+      wx.filter=`blur(${Math.max(1,7*k*F.water)}px) saturate(${1+0.35*F.water})`;
+      wx.drawImage(src,0,0);
+      wx.filter='none';
+      wx.globalAlpha=1-0.45*F.water;
+      wx.drawImage(src,0,0);
+      src=w;
+    }
+    ctx.clearRect(0,0,W,H);
+    // ③ 색수차 — R/G/B를 좌우로 어긋나게 겹침
+    if(F.aberr>0.005 && !TRANSPARENT){
+      const off=F.aberr*14*k;
+      const W2=Math.round(W), H2=Math.round(H);
+      ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+      ctx.globalCompositeOperation='lighter';
+      ctx.drawImage(channelCopy(src,W2,H2,'#ff0000'), -off, 0);
+      ctx.drawImage(channelCopy(src,W2,H2,'#00ff00'), 0, 0);
+      ctx.drawImage(channelCopy(src,W2,H2,'#0000ff'), off, 0);
+      ctx.globalCompositeOperation='source-over';
+    }else{
+      // ⑤ 채도 리프트 (수분감의 일부)
+      ctx.save();
+      if(F.sat>0.005) ctx.filter=`saturate(${1+F.sat*0.8})`;
+      ctx.drawImage(src,0,0);
+      ctx.restore();
+    }
+    // ④ 수분감 — 밝은 부분만 뽑아 번지게 한 뒤 screen (촉촉한 광택)
+    if(F.bloom>0.005){
+      const b=document.createElement('canvas'); b.width=src.width; b.height=src.height;
+      const bx=b.getContext('2d');
+      // 임계값을 높여 정말 밝은 부분만 번지게 (과하면 캐릭터가 날아감)
+      bx.filter=`brightness(1.25) contrast(3.0) saturate(${1.25+F.bloom*0.5}) blur(${Math.max(2,13*k*F.bloom)}px)`;
+      bx.drawImage(src,0,0);
+      ctx.save();
+      ctx.globalCompositeOperation='screen';
+      ctx.globalAlpha=Math.min(0.55,F.bloom*0.5);
+      ctx.drawImage(b,0,0);
+      ctx.restore();
+    }
+  }
+  // ⑥ 글리터 (파티클이라 마지막)
+  if(F.glitter>0.005) drawGlitter(ctx,k,W,H,F.glitter,F.glitterHue||0);
+}
+
 /* 최종 render: 전체 보정 적용 */
 function render(ctx,k){
   const g=S.adj.global;
   const W=DW*k, H=DH()*k;
-  if(isNeutral(g)){ renderInner(ctx,k); return; }
+  if(isNeutral(g)){ renderInner(ctx,k); postFx(ctx,k,W,H); return; }
   const oc=document.createElement('canvas');
   oc.width=Math.max(1,Math.round(W)); oc.height=Math.max(1,Math.round(H));
   renderInner(oc.getContext('2d'),k);
@@ -2203,6 +2433,7 @@ function render(ctx,k){
     ctx.fillStyle=g.tint; ctx.fillRect(0,0,W,H);
     ctx.restore();
   }
+  postFx(ctx,k,W,H);
 }
 
 /* ─── 미리보기 ─── */
@@ -2250,14 +2481,19 @@ function designPos(e){
   const r=pv.getBoundingClientRect();
   return { x:(e.clientX-r.left)/pvK, y:(e.clientY-r.top)/pvK };
 }
+function hitFace(pnt){
+  if(!S.showFaces) return -1;
+  const pos=facePositions();
+  for(let i=0;i<pos.length;i++){
+    const p=pos[i], h=p.size/2+6;
+    if(Math.abs(pnt.x-p.cx)<=h && Math.abs(pnt.y-p.cy)<=h) return i;
+  }
+  return -1;
+}
 function hitRegion(pnt){
   const p=pl();
+  if(hitFace(pnt)>=0) return 'face';
   if(S.tpl==='sheet'){
-    const T=L.thumbs;
-    for(let i=0;i<3;i++){
-      const by=T.y+i*(T.size+T.gap);
-      if(pnt.x>=T.x&&pnt.x<=T.x+T.size&&pnt.y>=by&&pnt.y<=by+T.size) return 'face';
-    }
     if(IMG.base&&META.base){
       const m=META.base;
       const bx=p.full.x+m.bbox.x*p.full.s, by=p.full.y+m.bbox.y*p.full.s,
@@ -2265,14 +2501,6 @@ function hitRegion(pnt){
       if(pnt.x>=bx&&pnt.x<=bx+bw&&pnt.y>=by&&pnt.y<=by+bh&&pnt.x<620) return 'full';
     }
     if(pnt.x>560&&IMG[cropSource()]) return 'crop';
-    return IMG.base? 'full' : null;
-  }
-  if(S.tpl==='poster'){
-    for(let i=0;i<4;i++){
-      const cy=PB.thumbY0+i*PB.thumbGap;
-      if(Math.hypot(pnt.x-PB.thumbCx,pnt.y-cy)<=PB.thumbR+8) return 'face';
-    }
-    return IMG.base? 'full' : null;
   }
   return IMG.base? 'full' : null;
 }
@@ -2303,9 +2531,12 @@ pv.addEventListener('pointermove',e=>{
   if(!drag) return;
   const dx=pnt.x-drag.px, dy=pnt.y-drag.py;
   drag.px=pnt.x; drag.py=pnt.y;
-  const p=pl();
-  const o = drag.rg==='full'?p.full : drag.rg==='crop'?p.crop : S.face;
-  o.x+=dx; o.y+=dy;
+  if(drag.rg==='face'){ const F=faceL(); F.x+=dx; F.y+=dy; syncFaceUI(); }
+  else{
+    const p=pl();
+    const o = drag.rg==='full'?p.full : p.crop;
+    o.x+=dx; o.y+=dy;
+  }
   draw(); saveSoon();
 });
 pv.addEventListener('pointerup',()=>{ drag=null; pv.classList.remove('dragging'); });
@@ -2314,25 +2545,18 @@ pv.addEventListener('wheel',e=>{
   const pnt=designPos(e);
   const rg=hitRegion(pnt);
   if(!rg) return;
-  const p=pl();
-  const o = rg==='full'?p.full : rg==='crop'?p.crop : S.face;
   const f = Math.pow(1.0018, -e.deltaY);
   if(rg==='face'){
-    if(S.tpl==='sheet'){
-      const T=L.thumbs;
-      const ly=(pnt.y-T.y)%(T.size+T.gap), lx=pnt.x-T.x;
-      o.x=lx-(lx-o.x)*f; o.y=ly-(ly-o.y)*f;
-    }else{
-      const idx=Math.round((pnt.y-PB.thumbY0)/PB.thumbGap);
-      const cy=PB.thumbY0+idx*PB.thumbGap;
-      const scale=L.thumbs.size/(PB.thumbR*2);
-      const lx=(pnt.x-(PB.thumbCx-PB.thumbR))*scale, ly=(pnt.y-(cy-PB.thumbR))*scale;
-      o.x=lx-(lx-o.x)*f; o.y=ly-(ly-o.y)*f;
-    }
+    // 표정 프레임 크기 조절 (그룹 전체)
+    const F=faceL();
+    F.size=Math.max(50,Math.min(460,F.size*f));
+    syncFaceUI();
   }else{
+    const p=pl();
+    const o = rg==='full'?p.full : p.crop;
     o.x=pnt.x-(pnt.x-o.x)*f; o.y=pnt.y-(pnt.y-o.y)*f;
+    o.s*=f;
   }
-  o.s*=f;
   draw(); saveSoon();
 },{passive:false});
 
@@ -2588,6 +2812,7 @@ function clearStyle(){
   S.fx.light='none'; S.fx.density=100; S.fx.behind=false;
   S.fx.grain=0; S.fx.scan=0; S.fx.half=0;
   S.fx.bg='wash'; S.fx.frame='round'; S.fx.glow=0.35;
+  S.cfx={aberr:0,poster:0,glitter:0,glitterHue:0,bloom:0,water:0,sat:0};
   S.font='round';
 }
 const STYLE_PRESETS = [
@@ -2714,6 +2939,13 @@ function randomStyle(){
   S.fx.grain=Math.random()<0.35? Math.random()*0.5 : 0;
   S.fx.scan=Math.random()<0.2? Math.random()*0.35 : 0;
   Object.keys(S.deco).forEach(k=>{ S.deco[k]=Math.random()<0.28; });
+  // 색감 필터도 가끔 섞기
+  if(Math.random()<0.45) S.cfx.bloom=0.2+Math.random()*0.5;
+  if(Math.random()<0.3)  S.cfx.glitter=0.2+Math.random()*0.5;
+  if(Math.random()<0.2)  S.cfx.aberr=0.1+Math.random()*0.4;
+  if(Math.random()<0.15) S.cfx.poster=3+Math.round(Math.random()*6);
+  if(Math.random()<0.2)  S.cfx.water=0.25+Math.random()*0.5;
+  S.cfx.glitterHue=Math.round(Math.random()*360);
   syncUIFromState(); draw(); saveSoon();
   toast('랜덤 스타일 🎲');
 }
@@ -2930,6 +3162,51 @@ $('#gdBlend').addEventListener('change',e=>{ S.gd.blend=e.target.value; draw(); 
 for(const [sel,lb,key] of [['#txGrain','#vGrain','grain'],['#txScan','#vScan','scan'],['#txHalf','#vHalf','half']]){
   $(sel).addEventListener('input',e=>{ S.fx[key]=e.target.value/100; $(lb).textContent=e.target.value+'%'; draw(); saveSoon(); });
 }
+/* 색감 필터 */
+for(const [sel,lb,key,div,unit] of [
+  ['#cfBloom','#vBloom','bloom',100,'%'],
+  ['#cfSat','#vSat2','sat',100,'%'],
+  ['#cfGlitter','#vGlitter','glitter',100,'%'],
+  ['#cfGlitterHue','#vGlitterHue','glitterHue',1,'°'],
+  ['#cfAberr','#vAberr','aberr',100,'%'],
+  ['#cfPoster','#vPoster','poster',1,'단계'],
+  ['#cfWater','#vWater','water',100,'%'],
+]){
+  $(sel).addEventListener('input',e=>{
+    S.cfx[key]=(+e.target.value)/div;
+    $(lb).textContent = (key==='poster' && +e.target.value<2) ? '끔' : e.target.value+unit;
+    draw(); saveSoon();
+  });
+}
+/* 표정 프레임 배치 */
+(function(){ const s=$('#faceMode'); s.innerHTML=FACE_MODES.map(([v,l])=>`<option value="${v}">${l}</option>`).join(''); })();
+function syncFaceUI(){
+  const F=faceL();
+  $('#chkFaces').checked=!!S.showFaces;
+  $('#faceMode').value=F.mode;
+  $('#faceCount').value=F.count; $('#vFaceCount').textContent=F.count+'개';
+  $('#faceSize').value=Math.round(F.size); $('#vFaceSize').textContent=Math.round(F.size);
+  $('#faceGap').value=Math.round(F.gap); $('#vFaceGap').textContent=Math.round(F.gap);
+  $('#faceAngle').value=F.angle||0; $('#vFaceAngle').textContent=(F.angle||0)+'°';
+}
+$('#chkFaces').addEventListener('change',e=>{ S.showFaces=e.target.checked; draw(); saveSoon(); });
+$('#faceMode').addEventListener('change',e=>{ faceL().mode=e.target.value; draw(); saveSoon(); });
+for(const [sel,lb,key,unit] of [
+  ['#faceCount','#vFaceCount','count','개'],
+  ['#faceSize','#vFaceSize','size',''],
+  ['#faceGap','#vFaceGap','gap',''],
+  ['#faceAngle','#vFaceAngle','angle','°'],
+]){
+  $(sel).addEventListener('input',e=>{
+    faceL()[key]=+e.target.value;
+    $(lb).textContent=e.target.value+unit;
+    draw(); saveSoon();
+  });
+}
+$('#btnFaceReset').addEventListener('click',()=>{
+  S.faceL[S.tpl]=Object.assign({},FACE_DEFAULT[S.tpl]);
+  syncFaceUI(); draw(); saveSoon(); toast('표정 배치 초기화');
+});
 $('#btnAutoPlace').addEventListener('click',()=>{ S.pl[S.tpl]=null; autoPlaceFace(); draw(); saveSoon(); toast('자동 배치로 리셋'); });
 $('#selCropSrc').addEventListener('change',e=>{ S.cropSrc=e.target.value; S.pl.sheet=null; draw(); saveSoon(); });
 $('#selFaceSrc').addEventListener('change',e=>{ S.faceSrc=e.target.value; autoPlaceFace(); draw(); saveSoon(); });
@@ -3005,6 +3282,17 @@ function syncUIFromState(){
   $('#bpAngle').value=S.bp.angle; $('#vBpAngle').textContent=S.bp.angle+'°';
   $$('input[data-deco]').forEach(cb=>{ cb.checked=!!S.deco[cb.dataset.deco]; });
   $('#outW').value=S.out.w; $('#outFmt').value=S.out.fmt; $('#outTrans').checked=!!S.out.transparent;
+  for(const [sel,lb,key,div,unit] of [
+    ['#cfBloom','#vBloom','bloom',100,'%'], ['#cfSat','#vSat2','sat',100,'%'],
+    ['#cfGlitter','#vGlitter','glitter',100,'%'], ['#cfGlitterHue','#vGlitterHue','glitterHue',1,'°'],
+    ['#cfAberr','#vAberr','aberr',100,'%'], ['#cfPoster','#vPoster','poster',1,'단계'],
+    ['#cfWater','#vWater','water',100,'%'],
+  ]){
+    const v=Math.round((S.cfx[key]||0)*div);
+    $(sel).value=v;
+    $(lb).textContent = (key==='poster' && v<2) ? '끔' : v+unit;
+  }
+  syncFaceUI();
   for(const [sel,lb,key] of [['#txGrain','#vGrain','grain'],['#txScan','#vScan','scan'],['#txHalf','#vHalf','half']]){
     $(sel).value=Math.round(S.fx[key]*100); $(lb).textContent=Math.round(S.fx[key]*100)+'%';
   }
@@ -3020,6 +3308,11 @@ function migrate(raw){
   s.bp=Object.assign(D.bp, raw.bp||{});
   s.deco=Object.assign(D.deco, raw.deco||{});
   s.out=Object.assign(D.out, raw.out||{});
+  s.cfx=Object.assign(D.cfx, raw.cfx||{});
+  s.faceL=Object.assign({sheet:null,poster:null,graphic:null}, raw.faceL||{});
+  for(const t of ['sheet','poster','graphic'])
+    if(s.faceL[t]) s.faceL[t]=Object.assign({},FACE_DEFAULT[t],s.faceL[t]);
+  if(s.showFaces===undefined) s.showFaces=true;
   s.pl=Object.assign({sheet:null,poster:null,graphic:null}, raw.pl||{});
   s.adj={
     global:Object.assign(defaultAdj(), (raw.adj&&raw.adj.global)||{}),
