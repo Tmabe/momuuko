@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>시트 생성기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Jua&family=Black+Han+Sans&family=Do+Hyeon&family=Montserrat:wght@800;900&family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Jua&family=Black+Han+Sans&family=Do+Hyeon&family=Montserrat:wght@800;900&family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@300;400&family=Caveat:wght@500;700&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -174,6 +174,19 @@ button.bt.pri:hover{filter:brightness(1.1);}
 }
 .tbBtn:hover:not(:disabled){border-color:var(--Y);color:var(--text);}
 .tbBtn:disabled{cursor:default;}
+/* 배색 카드 */
+#schemeList{display:flex;flex-direction:column;gap:4px;margin-bottom:7px;}
+.schCard{
+  display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:8px;
+  border:1px solid var(--border);background:rgba(255,255,255,.03);cursor:pointer;transition:.15s;
+}
+.schCard:hover{border-color:var(--Y);background:rgba(61,142,240,.08);}
+.schCard.active{border-color:var(--Y);background:rgba(61,142,240,.16);}
+.schCard .sw{display:flex;gap:0;border-radius:5px;overflow:hidden;flex-shrink:0;border:1px solid rgba(0,0,0,.3);}
+.schCard .sw i{width:16px;height:22px;display:block;}
+.schCard .nm{font-size:11.5px;color:var(--text2);font-weight:700;flex-shrink:0;width:62px;}
+.schCard.active .nm{color:var(--Y);}
+.schCard .ht{font-size:9.5px;color:var(--text3);line-height:1.25;overflow:hidden;}
 /* 스타일 프리셋 */
 #styleGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px;}
 .styBtn{
@@ -256,6 +269,9 @@ button.bt.pri:hover{filter:brightness(1.1);}
       <div class="row"><label>인용문</label><textarea id="inQuote" rows="2" placeholder="포스터A 우상단 대사"></textarea></div>
       <div class="row"><label>소속</label><textarea id="inRibbon" rows="2" placeholder="포스터A 리본 / 포스터B 세로 스펙"></textarea></div>
       <div class="row"><label>설명</label><textarea id="inDesc" rows="2" placeholder="포스터A 하단 소개문"></textarea></div>
+      <div class="row"><label>SNS</label><textarea id="inSocial" rows="2" placeholder="핸들 한 줄에 하나&#10;momukko&#10;kinamono8481"></textarea></div>
+      <div class="row"><label>배지</label><input type="text" id="inBadge" placeholder="CHANGE"></div>
+      <div class="row"><label>날짜</label><input type="text" id="inDate" placeholder="비우면 오늘 날짜"></div>
       <div class="row"><label>폰트</label>
         <select id="selFont">
           <option value="round">라운드 (Baloo 2 + Jua)</option>
@@ -268,7 +284,15 @@ button.bt.pri:hover{filter:brightness(1.1);}
     </div>
 
     <div class="sec">
-      <h3>색</h3>
+      <h3>배색 (프레임 색)</h3>
+      <div class="colorRow"><label>기준색</label><button class="dropBtn" data-pick="schemeBase">💧</button><div class="cw"><input type="color" id="cSchemeBase"></div></div>
+      <div class="row"><label>색조 회전</label><input type="range" id="hueShift" min="-180" max="180"><span class="val" id="vHueShift"></span></div>
+      <div id="schemeList"></div>
+      <div class="hint">캐릭터 대표색 하나에서 <b>Lab 색공간</b> 기준으로 배경·무늬·포인트색을 규칙대로 생성합니다. 카드를 눌러 적용하세요.</div>
+    </div>
+
+    <div class="sec">
+      <h3>색 세부 조정</h3>
       <div id="palGrid"></div>
       <div class="colorRow"><label>포인트색</label><button class="dropBtn" data-pick="accent">💧</button><div class="cw"><input type="color" id="cAccent"></div></div>
       <div class="colorRow"><label>배경색</label><button class="dropBtn" data-pick="bg">💧</button><div class="cw"><input type="color" id="cBg"></div></div>
@@ -346,6 +370,7 @@ button.bt.pri:hover{filter:brightness(1.1);}
           <option value="sunburst">방사형</option>
           <option value="circles">동심원</option>
           <option value="halftone">하프톤 그라데이션</option>
+          <option value="halfblock">도트 하프톤 블록</option>
           <option value="wave">물결</option>
           <option value="poly">저폴리 조각</option>
           <option value="blob">블롭 (번짐)</option>
@@ -436,6 +461,14 @@ button.bt.pri:hover{filter:brightness(1.1);}
       <label class="chk"><input type="checkbox" data-deco="watermark"> 대형 워터마크 타이포 (뒤)</label>
       <label class="chk"><input type="checkbox" data-deco="arch"> 아치 프레임 (뒤)</label>
       <label class="chk"><input type="checkbox" data-deco="glitch"> 글리치 슬라이스</label>
+      <label class="chk"><input type="checkbox" data-deco="ghost"> 대각 컬러블록 + 고스트 실루엣 (뒤)</label>
+      <label class="chk"><input type="checkbox" data-deco="paper"> 종이 스택 (뒤)</label>
+      <label class="chk"><input type="checkbox" data-deco="hpbar"> 픽셀 하트 HP 바</label>
+      <label class="chk"><input type="checkbox" data-deco="social"> SNS 핸들 행 (우상단)</label>
+      <label class="chk"><input type="checkbox" data-deco="subtitle"> 하단 대사 바 (인용문 사용)</label>
+      <label class="chk"><input type="checkbox" data-deco="badge"> 원형 배지</label>
+      <label class="chk"><input type="checkbox" data-deco="datestamp"> 날짜 스탬프</label>
+      <label class="chk"><input type="checkbox" data-deco="signature"> 손글씨 서명</label>
     </div>
 
     <div class="sec">
@@ -557,12 +590,16 @@ const defaultSettings = () => ({
   font:'round',
   palette:['#f3d9c2','#e8b06a','#f5efe2','#7ab8f0','#d9ae56','#4a90d9','#8a6f4d','#2b2b33'],
   accent:'#e8a13d', bg:'#faf3e4', stripe:'#f0dcae', second:'#ffd95e',
+  schemeBase:'#e8a13d', scheme:'analogous', hueShift:0,
   fx:{ bg:'wash', glow:0.35, glowColor:'#ffffff',
        light:'none', density:100, seed:7, behind:false, frame:'round',
        grain:0, scan:0, half:0 },
   bp:{ mode:'none', color:'#ffffff', color2:'#7ab8f0', amt:0.5, scale:100, angle:0 },
   deco:{ bracket:false, cross:false, ticks:false, barcode:false, uiLabel:false,
-         chips:false, vband:false, watermark:false, glitch:false, arch:false },
+         chips:false, vband:false, watermark:false, glitch:false, arch:false,
+         ghost:false, hpbar:false, social:false, subtitle:false, badge:false,
+         datestamp:false, signature:false, paper:false },
+  social:'', badge:'CHANGE', datetext:'',
   gd:{ mode:'none', a:'#ffffff', b:'#7ab8f0', amt:0.35, blend:'overlay' },
   adj:{ global:defaultAdj(), base:defaultAdj(), vari:defaultAdj() },
   pl:{ sheet:null, poster:null, graphic:null },
@@ -622,6 +659,56 @@ function hsv2rgb(h,s,v){ const c=v*s, x=c*(1-Math.abs((h/60)%2-1)), m=v-c;
 function mix(a,b,t){ const A=hex2rgb(a),B=hex2rgb(b); return rgb2hex(A[0]+(B[0]-A[0])*t, A[1]+(B[1]-A[1])*t, A[2]+(B[2]-A[2])*t); }
 function withAlpha(hex,a){ const [r,g,b]=hex2rgb(hex); return `rgba(${r},${g},${b},${a})`; }
 function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* ═══════════ Lab / LCh 색공간 (지각 균등 — 배색 계산용) ═══════════
+   HSV는 같은 V값이어도 색조마다 실제 밝기가 달라(노랑≫파랑) 배색이 깨진다.
+   Lab은 사람 눈 기준으로 균등해서 "동명도" 같은 개념이 그대로 성립한다. */
+const WP=[0.95047,1,1.08883];
+function srgb2lin(c){ c/=255; return c<=0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); }
+function lin2srgb(c){ return (c<=0.0031308 ? c*12.92 : 1.055*Math.pow(Math.max(c,0),1/2.4)-0.055)*255; }
+function rgb2xyz(r,g,b){
+  const R=srgb2lin(r),G=srgb2lin(g),B=srgb2lin(b);
+  return [R*0.4124564+G*0.3575761+B*0.1804375,
+          R*0.2126729+G*0.7151522+B*0.0721750,
+          R*0.0193339+G*0.1191920+B*0.9503041];
+}
+function xyz2rgb(x,y,z){
+  return [lin2srgb(x*3.2404542 + y*-1.5371385 + z*-0.4985314),
+          lin2srgb(x*-0.9692660 + y*1.8760108 + z*0.0415560),
+          lin2srgb(x*0.0556434 + y*-0.2040259 + z*1.0572252)];
+}
+const _f =t=> t>0.008856 ? Math.cbrt(t) : 7.787*t+16/116;
+const _fi=t=>{ const t3=t*t*t; return t3>0.008856 ? t3 : (t-16/116)/7.787; };
+function rgb2lab(r,g,b){
+  const [x,y,z]=rgb2xyz(r,g,b);
+  const fx=_f(x/WP[0]), fy=_f(y/WP[1]), fz=_f(z/WP[2]);
+  return [116*fy-16, 500*(fx-fy), 200*(fy-fz)];
+}
+function lab2rgb(L,a,b){
+  const fy=(L+16)/116, fx=fy+a/500, fz=fy-b/200;
+  return xyz2rgb(_fi(fx)*WP[0], _fi(fy)*WP[1], _fi(fz)*WP[2]);
+}
+function hex2lch(hex){
+  const [r,g,b]=hex2rgb(hex);
+  const [L,a,bb]=rgb2lab(r,g,b);
+  return [L, Math.hypot(a,bb), (Math.atan2(bb,a)*180/Math.PI+360)%360];
+}
+/* LCh → hex. sRGB 색역을 벗어나면 채도를 낮춰가며 안전한 값을 찾는다. */
+function lch2hex(L,C,H){
+  L=Math.max(0,Math.min(100,L));
+  const h=((H%360)+360)%360 * Math.PI/180;
+  for(let c=Math.max(0,C); c>=0; c-=1.5){
+    const [r,g,b]=lab2rgb(L, c*Math.cos(h), c*Math.sin(h));
+    if(r>=-0.6&&r<=255.6 && g>=-0.6&&g<=255.6 && b>=-0.6&&b<=255.6) return rgb2hex(r,g,b);
+  }
+  const [r,g,b]=lab2rgb(L,0,0);
+  return rgb2hex(r,g,b);
+}
+/* 두 색의 지각 거리 (ΔE76) — 배색이 너무 붙었는지 판정용 */
+function deltaE(h1,h2){
+  const a=rgb2lab(...hex2rgb(h1)), b=rgb2lab(...hex2rgb(h2));
+  return Math.hypot(a[0]-b[0], a[1]-b[1], a[2]-b[2]);
+}
 
 const FONTS = {
   round:  {w:'800', fam:'"Baloo 2","Jua",sans-serif'},
@@ -716,14 +803,78 @@ function extractColors(img){
   }
   while(pal.length<8) pal.push([230,230,230]);
   pal.sort((a,b)=>(b[0]*.299+b[1]*.587+b[2]*.114)-(a[0]*.299+a[1]*.587+a[2]*.114));
-  const [ah,as] = rgb2hsv(...accent);
+  // 프레임 색은 여기서 정하지 않는다 — 기준색만 넘기고 배색 엔진이 규칙대로 생성한다.
   return {
-    accent: rgb2hex(...accent),
-    bg: rgb2hex(...hsv2rgb(ah, Math.min(0.30,as*0.42), 0.975)),
-    stripe: rgb2hex(...hsv2rgb(ah, Math.min(0.42,as*0.6), 0.90)),
-    palette: pal.map(p=>rgb2hex(...p)),
-    second: second? rgb2hex(...second) : rgb2hex(...hsv2rgb((ah+40)%360, Math.min(0.5,as), 0.95)),
+    base: rgb2hex(...accent),                 // 캐릭터 대표색 (배색 기준)
+    palette: pal.map(p=>rgb2hex(...p)),       // 캐릭터 실제 색 8종 (시트 표기용, 배색 대상 아님)
+    second: second? rgb2hex(...second) : null,
   };
+}
+
+/* ═══════════ 배색(Harmony) 엔진 ═══════════
+   캐릭터에서 뽑은 기준색 하나(L,C,H)에서 프레임 색 4종을 색채학 규칙으로 생성한다.
+   · bg     = 배경 (아주 밝고 채도 낮게 — 캐릭터가 주인공)
+   · stripe = 무늬 (배경보다 한 단계 진함)
+   · accent = 포인트/텍스트 (가독성 위해 중명도·고채도)
+   · second = 글로우/고스트/2차색                                        */
+const COLOR_SCHEMES=[
+  {id:'analogous', n:'인접', hint:'가까운 색끼리 — 부드럽고 실패 없음',
+   f:(L,C,H)=>({ accent:lch2hex(54,Math.max(54,C),H), second:lch2hex(70,Math.max(44,C*0.9),H+34),
+                 stripe:lch2hex(87,22,H-30), bg:lch2hex(96,9,H-14) })},
+  {id:'complement', n:'보색', hint:'정반대 색 — 대비 최대, 시선 집중',
+   f:(L,C,H)=>({ accent:lch2hex(52,Math.max(58,C),H), second:lch2hex(66,Math.max(50,C*0.95),H+180),
+                 stripe:lch2hex(86,24,H+180), bg:lch2hex(96,7,H) })},
+  {id:'split', n:'분할 보색', hint:'보색을 둘로 나눔 — 대비 있고 덜 튐',
+   f:(L,C,H)=>({ accent:lch2hex(53,Math.max(56,C),H), second:lch2hex(68,Math.max(46,C*0.9),H+165),
+                 stripe:lch2hex(87,22,H+198), bg:lch2hex(96,8,H+8) })},
+  {id:'triadic', n:'삼각', hint:'120°씩 세 색 — 화사하고 팝',
+   f:(L,C,H)=>({ accent:lch2hex(54,Math.max(56,C),H), second:lch2hex(68,Math.max(48,C*0.9),H+120),
+                 stripe:lch2hex(87,24,H+240), bg:lch2hex(96,8,H+120) })},
+  {id:'iso', n:'동명도', hint:'명도를 고정하고 색조만 — 평평하고 세련됨',
+   f:(L,C,H)=>({ accent:lch2hex(64,Math.max(48,C*0.9),H), second:lch2hex(64,Math.max(44,C*0.85),H+150),
+                 stripe:lch2hex(84,26,H+60), bg:lch2hex(94,12,H+60) })},
+  {id:'value', n:'명도 대비', hint:'같은 색조, 밝기만 크게 벌림 — 차분·고급',
+   f:(L,C,H)=>({ accent:lch2hex(36,Math.max(44,C*0.85),H), second:lch2hex(62,Math.max(38,C*0.8),H),
+                 stripe:lch2hex(82,20,H), bg:lch2hex(97,6,H) })},
+  {id:'pastel', n:'파스텔', hint:'채도 낮추고 밝게 — 말랑한 인상',
+   f:(L,C,H)=>({ accent:lch2hex(62,Math.min(46,Math.max(34,C*0.7)),H), second:lch2hex(76,32,H+40),
+                 stripe:lch2hex(90,18,H-30), bg:lch2hex(97,7,H+20) })},
+  {id:'vivid', n:'비비드 팝', hint:'채도 최대 — 강렬한 홍보물용',
+   f:(L,C,H)=>({ accent:lch2hex(52,90,H), second:lch2hex(62,80,H+170),
+                 stripe:lch2hex(80,46,H+170), bg:lch2hex(97,5,H) })},
+  {id:'muted', n:'뮤트', hint:'탁하게 눌러 — 차분한 어스톤',
+   f:(L,C,H)=>({ accent:lch2hex(48,26,H+12), second:lch2hex(64,22,H+150),
+                 stripe:lch2hex(84,14,H+30), bg:lch2hex(95,7,H+20) })},
+  {id:'accentOnly', n:'무채 + 포인트', hint:'배경은 회색, 포인트색만 살림',
+   f:(L,C,H)=>({ accent:lch2hex(50,Math.max(62,C),H), second:lch2hex(68,Math.max(50,C*0.9),H),
+                 stripe:lch2hex(88,3,H), bg:lch2hex(96,2,H) })},
+  {id:'dark', n:'다크', hint:'어두운 배경 + 밝은 포인트 — 시네마틱',
+   f:(L,C,H)=>({ accent:lch2hex(74,Math.max(58,C),H), second:lch2hex(66,Math.max(50,C*0.9),H+165),
+                 stripe:lch2hex(30,18,H), bg:lch2hex(17,10,H) })},
+  {id:'mono', n:'단색조', hint:'한 색조로만 — 통일감 (기존 방식)',
+   f:(L,C,H)=>({ accent:lch2hex(54,Math.max(48,C),H), second:lch2hex(70,Math.max(38,C*0.8),H),
+                 stripe:lch2hex(88,20,H), bg:lch2hex(96,10,H) })},
+];
+function schemeBaseHex(){ return S.schemeBase || S.accent || '#e8a13d'; }
+function schemeColors(id, hueShift){
+  const [L,C,H0]=hex2lch(schemeBaseHex());
+  const sc=COLOR_SCHEMES.find(s=>s.id===id)||COLOR_SCHEMES[0];
+  // 캐릭터가 무채색에 가까우면(회/백발 등) 채도를 최소 보장해 배색이 죽지 않게
+  const C2 = C<12 ? 40 : C;
+  return sc.f(L, C2, H0 + (hueShift==null? (S.hueShift||0) : hueShift));
+}
+function applyScheme(id, silent){
+  const r=schemeColors(id);
+  S.accent=r.accent; S.bg=r.bg; S.stripe=r.stripe; S.second=r.second;
+  S.bp.color=r.stripe; S.bp.color2=r.second;
+  S.gd.b=r.second;
+  S.scheme=id;
+  S.autoColor=true;
+  syncColorUI(); buildSchemeCards(); draw(); saveSoon();
+  if(!silent){
+    const sc=COLOR_SCHEMES.find(s=>s.id===id);
+    toast('배색: '+(sc?sc.n:id));
+  }
 }
 
 /* ─── 배치 ─── */
@@ -1018,6 +1169,23 @@ function drawBgPattern(ctx,k,W,H){
       }
       break;
     }
+    case 'halfblock': { // 도트 하프톤이 채워진 블록 (우상단) — Aemeath 레퍼런스
+      ctx.save();
+      ctx.beginPath(); ctx.rect(W*0.42,0,W*0.58,H*0.42); ctx.clip();
+      const step=15*k*sc;
+      for(let y=0;y<H*0.42;y+=step){
+        const t=1-(y/(H*0.42));
+        for(let x=W*0.42;x<W;x+=step){
+          const tx=(x-W*0.42)/(W*0.58);
+          const r=step*0.46*Math.min(1,t*0.6+tx*0.8);
+          if(r<=0.3) continue;
+          ctx.fillStyle=A;
+          ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+        }
+      }
+      ctx.restore();
+      break;
+    }
     case 'corner': { // 모서리 삼각 블록 2개
       ctx.fillStyle=A;
       ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(W*0.46,0); ctx.lineTo(0,H*0.3); ctx.closePath(); ctx.fill();
@@ -1135,6 +1303,35 @@ function drawDecoBack(ctx,k,W,H){
       ctx.lineTo(cx+Math.cos(a)*w*0.44, top+w/2+Math.sin(a)*w*0.44);
       ctx.stroke();
     }
+    ctx.restore();
+  }
+  if(D.paper){ // 종이 스택 — 캐릭터를 가리지 않게 가장자리(좌상/우하)에만
+    const rnd=mulberry32(S.fx.seed+55);
+    const spots=[[0.17,0.22],[0.84,0.48],[0.20,0.76]];
+    spots.forEach(([fx,fy],i)=>{
+      const pw=W*(0.26+rnd()*0.08), ph=pw*1.24;
+      ctx.save();
+      ctx.translate(W*fx, H*fy); ctx.rotate((rnd()-0.5)*0.26);
+      ctx.shadowColor='rgba(0,0,0,0.15)'; ctx.shadowBlur=20*k; ctx.shadowOffsetY=7*k;
+      ctx.fillStyle=mix('#ffffff',S.bg,0.25);
+      ctx.fillRect(-pw/2,-ph/2,pw,ph);
+      ctx.restore();
+    });
+  }
+  if(D.ghost && IMG.base && META.base){ // 대각 컬러블록 + 캐릭터 고스트 실루엣
+    const m=META.base;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(0,0); ctx.lineTo(W*0.52,0); ctx.lineTo(W*0.30,H); ctx.lineTo(0,H);
+    ctx.closePath();
+    ctx.clip();
+    ctx.fillStyle=S.accent; ctx.fillRect(0,0,W,H);
+    // 얼굴이 블록 위쪽 1/3에 오도록 — 너무 크면 형태가 안 읽힘
+    const s=(H*0.78)/m.bbox.h;
+    const dx=W*0.15-m.face.x*s, dy=H*0.26-m.face.y*s;
+    ctx.globalCompositeOperation='screen';
+    ctx.globalAlpha=0.30;
+    ctx.drawImage(IMG.base, dx, dy, IMG.base.width*s, IMG.base.height*s);
     ctx.restore();
   }
   if(D.watermark){ // 대형 워터마크 타이포 (세로, 좌측)
@@ -1259,6 +1456,96 @@ function drawDecoFront(ctx,k,W,H){
     ctx.textAlign='left';
     let nums=''; for(let i=0;i<14;i++) nums+=(seed.charCodeAt(i%seed.length)+i)%10+' ';
     ctx.fillText(nums, bx, by+68*k);
+  }
+  if(D.hpbar){ // 픽셀 하트 HP 바 (레트로 게임 UI)
+    const hx=44*k, hy=H*0.63, cell=30*k, gap=5*k, n=8, filled=6.5;
+    const px=cell/8; // 하트 1칸을 8×7 픽셀 그리드로
+    const HEART=[
+      [0,1,1,0,0,1,1,0],
+      [1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1],
+      [0,1,1,1,1,1,1,0],
+      [0,0,1,1,1,1,0,0],
+      [0,0,0,1,1,0,0,0],
+    ];
+    for(let i=0;i<n;i++){
+      const ox=hx+i*(cell+gap);
+      const amt = Math.max(0, Math.min(1, filled-i));
+      for(let r2=0;r2<7;r2++)for(let c2=0;c2<8;c2++){
+        if(!HEART[r2][c2]) continue;
+        const on = (c2/8) < amt;
+        ctx.fillStyle = on ? S.accent : withAlpha('#ffffff',0.55);
+        ctx.fillRect(ox+c2*px, hy+r2*px, px+0.6, px+0.6);
+      }
+    }
+  }
+  if(D.social){ // SNS 핸들 행 (우상단)
+    const lines=(S.social||'').split('\n').filter(Boolean);
+    // 인용문(우상단)과 겹치지 않게 그 아래에서 시작
+    const bx=W-44*k, by=H*0.245, rowH=46*k, ic=32*k;
+    ctx.textAlign='right'; ctx.textBaseline='middle';
+    lines.slice(0,4).forEach((ln,i)=>{
+      const y=by+i*rowH;
+      ctx.fillStyle=ink;
+      ctx.font=`700 ${17*k}px "DM Mono",monospace`;
+      ctx.fillText(ln.toUpperCase().replace(/^@/,''), bx-ic-12*k, y);
+      // 아이콘 자리 (라운드 사각 + 첫 글자)
+      rr(ctx,bx-ic,y-ic/2,ic,ic,8*k);
+      ctx.fillStyle=ink; ctx.fill();
+      ctx.fillStyle='#fff';
+      ctx.font=`800 ${17*k}px "Baloo 2",sans-serif`;
+      ctx.textAlign='center';
+      ctx.fillText((ln.replace(/^@/,'')[0]||'@').toUpperCase(), bx-ic/2, y+1*k);
+      ctx.textAlign='right';
+    });
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  if(D.subtitle && S.quote){ // 하단 대사 바 (자막)
+    const txt=S.quote.split('\n')[0];
+    // 포스터A는 하단 설명 박스가 있으므로 그 위로, 없으면 하단 크레딧 위로
+    const bh=52*k;
+    const by=(S.tpl==='poster' && S.desc) ? (PB.descY-72)*k : H-bh-108*k;
+    ctx.font=`700 ${24*k}px "Noto Sans KR",sans-serif`;
+    const tw=ctx.measureText(txt).width;
+    const bw=tw+56*k;
+    const bx=W-bw-40*k;
+    ctx.fillStyle=ink; ctx.fillRect(bx,by,bw,bh);
+    ctx.fillStyle=S.accent; ctx.fillRect(bx,by,7*k,bh);
+    ctx.fillStyle='#fff';
+    ctx.textBaseline='middle';
+    ctx.fillText(txt, bx+26*k, by+bh/2);
+    ctx.textBaseline='alphabetic';
+  }
+  if(D.badge){ // 원형 배지 (◀ CHANGE ▶)
+    const r=88*k, cx=W*0.20, cy=H*0.86;
+    ctx.save();
+    ctx.shadowColor=withAlpha(S.accent,0.35); ctx.shadowBlur=18*k;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,7);
+    ctx.fillStyle=S.accent; ctx.fill();
+    ctx.restore();
+    ctx.fillStyle='#fff';
+    ctx.font=`700 ${22*k}px "DM Mono",monospace`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    const t=(S.badge||'CHANGE').toUpperCase();
+    ctx.fillText('◀  '+t+'  ▶', cx, cy);
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  if(D.datestamp){ // 날짜 스탬프 (좌하단)
+    const d=new Date();
+    const txt=S.datetext || `${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()}`;
+    ctx.fillStyle=withAlpha(ink,0.75);
+    ctx.font=`400 ${20*k}px "DM Mono",monospace`;
+    ctx.fillText(txt, 44*k, H-44*k);
+  }
+  if(D.signature){ // 손글씨 서명
+    ctx.save();
+    ctx.translate(W*0.72, H*0.10);
+    ctx.rotate(-0.06);
+    ctx.fillStyle=withAlpha(ink,0.9);
+    ctx.font=`400 ${56*k}px "Caveat","Nanum Pen Script",cursive`;
+    ctx.fillText(S.credit||S.nameEn||'', 0, 0);
+    ctx.restore();
   }
   if(D.glitch){ // 글리치 슬라이스 (가로 색 어긋남)
     const rnd=mulberry32(S.fx.seed+909);
@@ -2076,7 +2363,10 @@ async function setSlot(slot, blob){
       S.pl={sheet:null,poster:null,graphic:null};
       if(S.autoColor){
         const c=extractColors(img);
-        if(c){ S.accent=c.accent; S.bg=c.bg; S.stripe=c.stripe; S.palette=c.palette; S.second=c.second; syncColorUI(); }
+        if(c){
+          S.schemeBase=c.base; S.palette=c.palette; S.hueShift=0;
+          applyScheme(S.scheme||'analogous', true);
+        }
       }
     }else if(S.cropSrc!=='base') S.pl.sheet=null;
     autoPlaceFace();
@@ -2359,6 +2649,32 @@ const STYLE_PRESETS = [
     S.fx.light='petals'; S.fx.density=140; S.fx.behind=true;
     S.gd.mode='spot'; S.gd.a='#ffffff'; S.gd.amt=0.35; S.gd.blend='screen';
   }},
+  {n:'스트리머 배너', f(){ // KANATATOKKU 레퍼런스
+    S.font='modern'; S.fx.frame='tilt'; S.fx.bg='flat';
+    S.deco.ghost=true; S.deco.social=true; S.deco.hpbar=true; S.deco.subtitle=true;
+    S.deco.bracket=true; S.deco.cross=true;
+    S.bp.mode='dots'; S.bp.amt=0.3;
+    applyScheme('accentOnly', true);
+  }},
+  {n:'청춘 콜라주', f(){ // 青春なんていらない 레퍼런스
+    S.font='dohyeon'; S.fx.frame='polaroid'; S.fx.bg='flat';
+    S.deco.paper=true; S.deco.signature=true; S.deco.datestamp=true; S.deco.watermark=true;
+    S.bp.mode='none'; S.fx.grain=0.35;
+    applyScheme('iso', true);
+  }},
+  {n:'체인지 포스터', f(){ // ICHINOSE URUHA 레퍼런스
+    S.font='bebas'; S.fx.frame='square'; S.fx.bg='flat';
+    S.deco.ghost=true; S.deco.badge=true; S.deco.watermark=true;
+    S.bp.mode='dots'; S.bp.amt=0.35;
+    applyScheme('accentOnly', true);
+  }},
+  {n:'하프톤 팬아트', f(){ // Aemeath 레퍼런스
+    S.font='round'; S.fx.frame='round'; S.fx.bg='flat';
+    S.bp.mode='halfblock'; S.bp.amt=0.55;
+    S.deco.signature=true; S.deco.datestamp=true;
+    S.fx.light='sparkle'; S.fx.density=70; S.fx.behind=true;
+    applyScheme('pastel', true);
+  }},
   {n:'스포트라이트', f(){
     S.font='impact'; S.fx.frame='circle'; S.fx.bg='flat';
     S.bp.mode='sunburst'; S.bp.amt=0.18; S.bp.color=S.accent;
@@ -2425,6 +2741,7 @@ $$('#tplRow .tplBtn').forEach(b=>{
 function bindText(sel,key){ $(sel).addEventListener('input',e=>{ S[key]=e.target.value; draw(); saveSoon(); }); }
 bindText('#inName','nameEn'); bindText('#inSub','sub'); bindText('#inCredit','credit');
 bindText('#inQuote','quote'); bindText('#inRibbon','ribbon'); bindText('#inDesc','desc');
+bindText('#inSocial','social'); bindText('#inBadge','badge'); bindText('#inDate','datetext');
 $('#selFont').addEventListener('change',e=>{ S.font=e.target.value; loadFonts().then(draw); saveSoon(); });
 
 function buildPalGrid(){
@@ -2442,8 +2759,33 @@ function buildPalGrid(){
     b.append(inp,pd); g.appendChild(b);
   }
 }
+/* 배색 카드 목록 (기준색·색조회전이 바뀌면 미리보기도 갱신) */
+function buildSchemeCards(){
+  const host=$('#schemeList');
+  if(!host) return;
+  host.innerHTML='';
+  COLOR_SCHEMES.forEach(sc=>{
+    const r=schemeColors(sc.id);
+    const card=document.createElement('div');
+    card.className='schCard'+(S.scheme===sc.id?' active':'');
+    const sw=document.createElement('div'); sw.className='sw';
+    [r.bg,r.stripe,r.accent,r.second].forEach(col=>{
+      const i=document.createElement('i'); i.style.background=col; sw.appendChild(i);
+    });
+    const nm=document.createElement('span'); nm.className='nm'; nm.textContent=sc.n;
+    const ht=document.createElement('span'); ht.className='ht'; ht.textContent=sc.hint;
+    card.append(sw,nm,ht);
+    card.addEventListener('click',()=>applyScheme(sc.id));
+    host.appendChild(card);
+  });
+}
 function syncColorUI(){
   buildPalGrid();
+  const sb=$('#cSchemeBase');
+  if(sb){ sb.value=schemeBaseHex(); sb.parentElement.style.background=schemeBaseHex(); }
+  const hs=$('#hueShift');
+  if(hs){ hs.value=S.hueShift||0; $('#vHueShift').textContent=(S.hueShift||0)+'°'; }
+  buildSchemeCards();
   const set=(id,v)=>{ const el=$(id); el.value=v; el.parentElement.style.background=v; };
   set('#cAccent',S.accent); set('#cBg',S.bg); set('#cStripe',S.stripe); set('#cGlow',S.fx.glowColor);
   set('#gdA',S.gd.a); set('#gdB',S.gd.b);
@@ -2468,17 +2810,29 @@ $$('.dropBtn[data-pick]').forEach(b=>{
       else if(key==='gdB') S.gd.b=hex;
       else if(key==='bpA') S.bp.color=hex;
       else if(key==='bpB') S.bp.color2=hex;
+      else if(key==='schemeBase'){ S.schemeBase=hex; applyScheme(S.scheme||'analogous',true); return; }
       else S[key]=hex;
       S.autoColor=false; syncColorUI(); draw(); saveSoon();
     });
   });
 });
+$('#cSchemeBase').addEventListener('input',e=>{
+  S.schemeBase=e.target.value;
+  e.target.parentElement.style.background=e.target.value;
+  applyScheme(S.scheme||'analogous', true);
+});
+$('#hueShift').addEventListener('input',e=>{
+  S.hueShift=+e.target.value;
+  $('#vHueShift').textContent=e.target.value+'°';
+  applyScheme(S.scheme||'analogous', true);
+});
 $('#btnReExtract').addEventListener('click',()=>{
   if(!IMG.base){ toast('기본 일러스트를 먼저 업로드하세요'); return; }
   const c=extractColors(IMG.base);
   if(c){
-    S.accent=c.accent; S.bg=c.bg; S.stripe=c.stripe; S.palette=c.palette; S.second=c.second;
-    S.autoColor=true; syncColorUI(); draw(); saveSoon(); toast('색 재추출 완료');
+    S.schemeBase=c.base; S.palette=c.palette; S.hueShift=0;
+    applyScheme(S.scheme||'analogous', true);
+    toast('색 재추출 완료');
   }
 });
 
@@ -2634,6 +2988,7 @@ document.addEventListener('keydown',e=>{
 function syncUIFromState(){
   $('#inName').value=S.nameEn; $('#inSub').value=S.sub; $('#inCredit').value=S.credit;
   $('#inQuote').value=S.quote; $('#inRibbon').value=S.ribbon; $('#inDesc').value=S.desc;
+  $('#inSocial').value=S.social||''; $('#inBadge').value=S.badge||''; $('#inDate').value=S.datetext||'';
   $('#selFont').value=S.font;
   $('#selCropSrc').value=S.cropSrc; $('#selFaceSrc').value=S.faceSrc;
   $('#chkLogo').checked=S.showLogo; $('#chkPanel').checked=S.showPanel;
@@ -2800,6 +3155,8 @@ async function loadFonts(){
       document.fonts.load('900 80px "Montserrat"'),
       document.fonts.load('700 30px "Noto Sans KR"'),
       document.fonts.load('400 20px "DM Mono"'),
+      document.fonts.load('400 56px "Caveat"'),
+      document.fonts.load('400 40px "Nanum Pen Script"'),
     ]);
   }catch(e){}
 }
@@ -2814,6 +3171,7 @@ async function loadFonts(){
 })();
 window.SM = { setSlot, get S(){return S;}, get IMG(){return IMG;}, draw, render, fitPreview,
   extractColors, removeBgCanvas, exportOne, undo, redo, applyStylePreset, randomStyle,
+  applyScheme, schemeColors, hex2lch, lch2hex, deltaE, COLOR_SCHEMES,
   get hist(){return {idx:histIdx,len:histStack.length};},
   setTransparent(v){ TRANSPARENT=!!v; } };
 </script>
