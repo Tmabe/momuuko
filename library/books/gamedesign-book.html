@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>게임 기획 교과서</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root{
+  --bg:#0e0f1a; --bg2:#151729; --panel:#1b1e33; --panel2:#232741;
+  --ink:#e4e8ff; --dim:#8890c0; --line:#2c3155;
+  --p:#7aa2f7; --p2:#bb9af7; --g:#9ece6a; --o:#ff9e64; --r:#f7768e; --gold:#ffd866; --cy:#7dcfff;
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Pretendard","Segoe UI","Malgun Gothic",sans-serif;
+  line-height:1.85; font-size:15.5px;
+}
+
+/* ===== LAYOUT ===== */
+.shell{display:flex; min-height:100vh;}
+aside{
+  width:290px; flex:none; position:sticky; top:0; height:100vh;
+  overflow-y:auto; background:var(--bg2); border-right:1px solid var(--line);
+  padding:22px 0 60px;
+}
+aside::-webkit-scrollbar{width:8px;} aside::-webkit-scrollbar-thumb{background:#2c3155;border-radius:4px;}
+aside .brand{padding:0 22px 16px; border-bottom:1px solid var(--line); margin-bottom:14px;}
+aside .brand h1{font-size:20px; letter-spacing:-.5px; line-height:1.35;}
+aside .brand h1 span{color:var(--p2);}
+aside .brand p{font-size:11.5px; color:var(--dim); margin-top:4px;}
+.progwrap{padding:0 22px 14px;}
+.progbar{height:7px; background:var(--panel2); border-radius:5px; overflow:hidden;}
+.progbar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--g),var(--p)); transition:width .4s;}
+.progtxt{font-size:11px; color:var(--dim); margin-top:5px;}
+aside .part{font-size:11px; color:var(--p2); font-weight:800; letter-spacing:1.5px; padding:16px 22px 5px;}
+aside a{
+  display:flex; gap:8px; align-items:baseline;
+  padding:6px 22px; color:var(--dim); text-decoration:none; font-size:13.5px;
+  border-left:3px solid transparent;
+}
+aside a:hover{color:var(--ink); background:rgba(122,162,247,.07);}
+aside a.on{color:var(--p); border-left-color:var(--p); background:rgba(122,162,247,.1); font-weight:700;}
+aside a .num{font-size:11px; color:#565f89; font-variant-numeric:tabular-nums; min-width:16px;}
+aside a.read .num::after{content:" ✓"; color:var(--g);}
+
+main{flex:1; min-width:0; padding:0 0 100px;}
+.inner{max-width:800px; margin:0 auto; padding:0 34px;}
+
+/* ===== HERO ===== */
+.hero{padding:70px 0 44px; border-bottom:1px solid var(--line); margin-bottom:10px;}
+.hero .kicker{color:var(--p2); font-weight:800; font-size:12.5px; letter-spacing:2px;}
+.hero h1{font-size:46px; line-height:1.2; letter-spacing:-1.5px; margin:10px 0 14px;}
+.hero h1 em{font-style:normal; color:var(--p);}
+.hero p{color:var(--dim); font-size:16px;}
+.hero .meta{display:flex; gap:10px; flex-wrap:wrap; margin-top:22px;}
+.chip{background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:5px 14px; font-size:12.5px; color:var(--dim);}
+
+/* ===== SECTION ===== */
+section{padding:46px 0 10px; border-bottom:1px solid var(--line);}
+section:last-of-type{border-bottom:none;}
+.ch-head{display:flex; align-items:flex-start; gap:14px; margin-bottom:6px;}
+.ch-no{
+  flex:none; width:42px; height:42px; border-radius:12px; background:var(--panel2);
+  display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--p);
+  font-size:16px; margin-top:4px;
+}
+h2{font-size:28px; letter-spacing:-.8px; line-height:1.35;}
+.sub{color:var(--dim); font-size:14px; margin-bottom:6px;}
+h3{font-size:19px; margin:34px 0 8px; color:var(--cy);}
+h4{font-size:16px; margin:22px 0 4px; color:var(--p2);}
+p{margin:11px 0;}
+b{color:var(--o); font-weight:700;}
+strong{color:var(--ink); font-weight:800;}
+ul,ol{margin:11px 0 11px 22px;} li{margin:5px 0;}
+a.ext{color:var(--p);}
+hr{border:none; border-top:1px solid var(--line); margin:30px 0;}
+
+/* ===== BOXES ===== */
+.key{
+  background:linear-gradient(135deg,rgba(122,162,247,.13),rgba(187,154,247,.08));
+  border:1px solid #3b4a80; border-radius:14px; padding:16px 20px; margin:20px 0;
+}
+.key .lab{font-size:11px; font-weight:800; letter-spacing:1.5px; color:var(--p); margin-bottom:4px;}
+.key p{margin:4px 0; font-size:16px;}
+.warn{background:rgba(247,118,142,.09); border-left:4px solid var(--r); border-radius:8px; padding:12px 16px; margin:18px 0; font-size:14.5px;}
+.warn b{color:var(--r);}
+.tip{background:rgba(158,206,106,.09); border-left:4px solid var(--g); border-radius:8px; padding:12px 16px; margin:18px 0; font-size:14.5px;}
+.tip b{color:var(--g);}
+.quote{border-left:3px solid var(--p2); padding:6px 0 6px 16px; margin:18px 0; color:#c9d0f5; font-style:italic;}
+
+table{width:100%; border-collapse:collapse; margin:18px 0; font-size:14px;}
+th,td{border:1px solid var(--line); padding:9px 12px; text-align:left; vertical-align:top;}
+th{background:var(--panel2); font-weight:700; color:var(--p2);}
+td b{color:var(--o);}
+
+pre{background:#0a0b14; border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:16px 0; overflow-x:auto; font-size:13px; line-height:1.65;}
+code{font-family:Consolas,"D2Coding",monospace; color:#a9b1d6;}
+p code,li code,td code{background:#0a0b14; padding:1px 6px; border-radius:4px; font-size:13px;}
+
+/* ===== CASE CARD ===== */
+.case{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin:18px 0;}
+.case .top{display:flex; align-items:center; gap:10px; margin-bottom:2px;}
+.case .top .ico{font-size:24px;}
+.case .top h4{margin:0; font-size:18px; color:var(--ink);}
+.case .top .tag{margin-left:auto; font-size:11px; color:var(--dim); background:var(--panel2); padding:3px 10px; border-radius:12px;}
+.case .inv{color:var(--gold); font-weight:700; font-size:14px; margin:8px 0 2px;}
+.case dl{margin-top:10px; font-size:14px;}
+.case dt{color:var(--cy); font-weight:700; margin-top:8px; font-size:13px;}
+.case dd{margin-left:0; color:#cdd3f0;}
+
+/* ===== INTERACTIVE ===== */
+.lab{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; margin:22px 0;}
+.lab .cap{font-size:11px; font-weight:800; letter-spacing:1.5px; color:var(--gold); margin-bottom:10px;}
+.lab canvas{background:#07080f; border-radius:10px; display:block; width:100%;}
+.ctlrow{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-top:12px; font-size:13px; color:var(--dim);}
+.ctlrow label{display:flex; align-items:center; gap:7px;}
+input[type=range]{width:150px; accent-color:var(--p);}
+.btn{background:var(--p); color:#0e0f1a; border:none; border-radius:8px; padding:8px 15px; font-weight:800; font-size:13.5px; cursor:pointer; font-family:inherit;}
+.btn.alt{background:var(--panel2); color:var(--ink); border:1px solid var(--line);}
+.btn:hover{filter:brightness(1.1);}
+.readbtn{margin:26px 0 4px; display:flex; align-items:center; gap:12px;}
+.readbtn .done{color:var(--g); font-weight:700; font-size:14px; display:none;}
+.readbtn.is-done .btn{display:none;} .readbtn.is-done .done{display:block;}
+
+/* checklist */
+.check{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:6px 18px 16px; margin:18px 0;}
+.check .row{display:flex; gap:11px; align-items:flex-start; padding:9px 0; border-bottom:1px solid rgba(44,49,85,.6); font-size:14px;}
+.check .row:last-child{border-bottom:none;}
+.check input{margin-top:6px; accent-color:var(--g); width:16px; height:16px; flex:none;}
+.check .row.ok span{color:var(--dim); text-decoration:line-through;}
+.score{margin-top:14px; font-weight:800; color:var(--gold);}
+
+footer{max-width:800px; margin:0 auto; padding:50px 34px; color:var(--dim); font-size:12.5px; text-align:center;}
+.toast{position:fixed; left:50%; bottom:34px; transform:translate(-50%,20px); background:var(--gold); color:#3a2c00;
+  font-weight:800; padding:11px 22px; border-radius:26px; opacity:0; transition:.3s; z-index:99; pointer-events:none;}
+.toast.on{opacity:1; transform:translate(-50%,0);}
+
+@media(max-width:960px){
+  aside{display:none;}
+  .inner{padding:0 20px;} .hero h1{font-size:34px;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<aside>
+  <div class="brand">
+    <h1>게임 기획 <span>교과서</span></h1>
+    <p>재미를 설계하는 법 · 기초→심화→실무</p>
+  </div>
+  <div class="progwrap">
+    <div class="progbar"><i id="pfill"></i></div>
+    <div class="progtxt"><span id="pnum">0</span> / 18장 완독</div>
+  </div>
+  <nav id="nav"></nav>
+</aside>
+
+<main>
+<div class="inner">
+
+<div class="hero">
+  <div class="kicker">GAME DESIGN — FROM ZERO TO SHIPPING</div>
+  <h1>재미는 우연이 아니라<br><em>설계의 결과</em>다</h1>
+  <p>"왜 재밌는가"를 문장으로 쓸 수 있게 되는 것 — 그게 기획의 전부입니다.</p>
+  <div class="meta">
+    <span class="chip">📘 18장 · 5부 구성</span>
+    <span class="chip">🎮 성공작 12편 해부</span>
+    <span class="chip">🧪 인터랙티브 실험실 6종</span>
+    <span class="chip">🛠 2·3인 팀 파이프라인 포함</span>
+  </div>
+</div>
+
+<!-- ============ 0 ============ -->
+<section id="c0" data-title="이 책을 쓰는 법" data-part="시작">
+  <div class="ch-head"><div class="ch-no">0</div><div>
+    <h2>이 책을 쓰는 법</h2>
+    <div class="sub">읽는 책이 아니라, 당신 게임에 적용하는 책</div>
+  </div></div>
+
+  <p>게임 기획서를 100장 써도 재미없는 게임이 나옵니다. 반대로 A4 한 장으로 시작해 대박이 난 게임이 수두룩합니다. 차이는 분량이 아니라 <b>무엇을 먼저 확정했는가</b>입니다.</p>
+
+  <div class="key">
+    <div class="lab">이 책의 단 하나의 주장</div>
+    <p>기획이란 <strong>"플레이어가 무엇을 반복하고, 그 반복이 왜 즐거운가"</strong>를 결정하는 일이다.<br>나머지 전부 — 그래픽, 스토리, 시스템 — 는 그 결정을 뒷받침하는 수단이다.</p>
+  </div>
+
+  <h3>구성</h3>
+  <table>
+    <tr><th>부</th><th>다루는 것</th><th>끝나면 할 수 있는 것</th></tr>
+    <tr><td><b>1부 기초</b></td><td>재미의 정체, 코어 루프, 규칙·피드백</td><td>내 게임의 재미를 한 문장으로 정의</td></tr>
+    <tr><td><b>2부 설계</b></td><td>심리·난이도·레벨·밸런싱·게임필</td><td>수치와 곡선으로 재미를 조율</td></tr>
+    <tr><td><b>3부 심화</b></td><td>창발, 내러티브, 리텐션·경제</td><td>깊이와 수명이 있는 시스템 설계</td></tr>
+    <tr><td><b>4부 실무</b></td><td>프로토타입·Fun Gate·팀 파이프라인·기획서</td><td>기획을 실제 개발로 전환</td></tr>
+    <tr><td><b>5부 해부</b></td><td>성공작 12편 + 공통 법칙</td><td>성공의 구조를 복제</td></tr>
+  </table>
+
+  <div class="tip"><b>사용법 —</b> 각 장 끝의 <strong>「완독」 버튼</strong>을 누르면 진도가 저장됩니다. 그리고 각 장의 <strong>실습</strong>은 반드시 <em>당신이 만들 게임</em>에 대입해서 답해 보세요. 대입되지 않는 지식은 기획력이 되지 않습니다.</div>
+
+  <div class="readbtn" data-ch="0"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="c1" data-title="재미란 무엇인가" data-part="1부 · 기초">
+  <div class="ch-head"><div class="ch-no">1</div><div>
+    <h2>재미란 무엇인가</h2>
+    <div class="sub">막연한 감각을 설계 가능한 대상으로 바꾸기</div>
+  </div></div>
+
+  <p>"재밌게 만들자"는 목표가 아닙니다. "맛있게 만들자"와 같은 말이거든요. 기획자는 재미를 <b>분해</b>할 수 있어야 합니다.</p>
+
+  <h3>1. 재미 = 뇌가 패턴을 학습하는 쾌감</h3>
+  <p>게임 디자이너 <strong>라프 코스터</strong>는 재미의 정체를 이렇게 정의했습니다.</p>
+  <div class="quote">"재미란 학습의 쾌감이다. 우리 뇌는 새로운 패턴을 습득할 때 보상 물질을 낸다. 그리고 패턴을 완전히 익히는 순간, 그 게임은 지루해진다."</div>
+  <p>이 정의는 엄청나게 실용적입니다. 여기서 <strong>두 가지 설계 원칙</strong>이 바로 나오거든요.</p>
+  <ul>
+    <li><b>학습할 패턴이 없으면</b> → 지루하다 (너무 단순한 게임)</li>
+    <li><b>패턴을 못 읽으면</b> → 좌절한다 (불친절·불공정한 게임)</li>
+    <li>→ 게임의 수명 = <strong>새 패턴을 공급하는 능력</strong></li>
+  </ul>
+  <p>테트리스가 40년째 살아있는 이유도, 소울류가 어렵지만 사랑받는 이유도 이걸로 설명됩니다. 둘 다 <b>패턴이 계속 갱신</b>됩니다.</p>
+
+  <h3>2. 재미는 한 종류가 아니다 — 8가지 재미</h3>
+  <p>"재미"를 하나로 뭉뚱그리면 기획이 흔들립니다. 르블랑의 분류를 씁니다.</p>
+  <table>
+    <tr><th>종류</th><th>플레이어가 느끼는 것</th><th>대표작</th></tr>
+    <tr><td><b>감각</b> Sensation</td><td>보고 듣고 만지는 쾌감(타격감·비주얼)</td><td>DOOM, 드럼매니아</td></tr>
+    <tr><td><b>도전</b> Challenge</td><td>어려운 걸 극복함</td><td>다크소울, 셀레스트</td></tr>
+    <tr><td><b>판타지</b> Fantasy</td><td>다른 존재가 되어봄</td><td>스카이림, 심즈</td></tr>
+    <tr><td><b>서사</b> Narrative</td><td>이야기가 펼쳐짐</td><td>디트로이트, VN 전반</td></tr>
+    <tr><td><b>교제</b> Fellowship</td><td>같이 노는 즐거움</td><td>어몽어스, 리썰 컴퍼니</td></tr>
+    <tr><td><b>발견</b> Discovery</td><td>미지를 탐험함</td><td>서브노티카, 아우터 와일즈</td></tr>
+    <tr><td><b>표현</b> Expression</td><td>내 것을 만듦</td><td>마인크래프트, 동물의 숲</td></tr>
+    <tr><td><b>몰입/휴식</b> Submission</td><td>생각 없이 빠져듦</td><td>뱀파이어 서바이버즈, 방치형</td></tr>
+  </table>
+
+  <div class="warn"><b>흔한 실패 —</b> 8개를 다 넣으려는 기획. 소규모 팀에서 이건 <strong>확실한 미완성</strong> 루트입니다. <strong>주 1개 + 보조 1개</strong>로 못 박으세요. 리썰 컴퍼니는 <em>교제 + 도전</em>, 스타듀밸리는 <em>표현 + 몰입</em>입니다.</div>
+
+  <h3>3. 재미 가설 문장</h3>
+  <p>모든 기획의 출발점은 이 빈칸 채우기입니다. <strong>여기서 막히면 그 게임은 아직 기획된 게 아닙니다.</strong></p>
+  <pre><code>플레이어는 [        ] 할 때,
+             [        ] 때문에 재미를 느낀다.
+
+예) 플레이어는 [어두운 흉가에서 동료와 떨어져 물건을 옮길] 때,
+     [들킬 수 있다는 긴장과 무전기 너머 동료의 반응] 때문에 재미를 느낀다.</code></pre>
+
+  <div class="tip"><b>실습 —</b> 지금 당신 게임으로 위 문장을 채워 보세요. 두 번째 빈칸이 "그래픽이 예뻐서", "스토리가 좋아서"로 채워진다면 위험 신호입니다. 그건 <strong>플레이어의 행동</strong>이 아니라 <strong>당신이 만든 결과물</strong>이거든요.</div>
+
+  <div class="readbtn" data-ch="1"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="c2" data-title="MDA — 개발자와 플레이어는 반대로 본다" data-part="1부 · 기초">
+  <div class="ch-head"><div class="ch-no">2</div><div>
+    <h2>MDA — 개발자와 플레이어는<br>반대 방향으로 본다</h2>
+    <div class="sub">모든 기획 오해의 근원을 설명하는 프레임워크</div>
+  </div></div>
+
+  <p>게임 디자인에서 가장 많이 인용되는 프레임워크입니다. 게임을 세 층으로 나눕니다.</p>
+
+  <table>
+    <tr><th>층</th><th>정체</th><th>예 (마리오)</th></tr>
+    <tr><td><b>M</b>echanics<br>규칙</td><td>개발자가 코드로 적는 것. 숫자와 규칙.</td><td>점프 높이 4칸, 밟으면 적 처치, 낙사 시 사망</td></tr>
+    <tr><td><b>D</b>ynamics<br>동역학</td><td>규칙이 플레이 중 만들어내는 <em>행동</em></td><td>연속 밟기로 점수 폭증, 위험한 지름길 선택</td></tr>
+    <tr><td><b>A</b>esthetics<br>감정</td><td>플레이어가 실제로 <em>느끼는 것</em></td><td>"아슬아슬했다!" "내가 잘했다!"</td></tr>
+  </table>
+
+  <div class="key">
+    <div class="lab">핵심</div>
+    <p>개발자는 <strong>M → D → A</strong> 순으로 만들고,<br>플레이어는 <strong>A → D → M</strong> 순으로 경험한다.</p>
+  </div>
+
+  <p>그래서 이런 일이 벌어집니다. 플레이어는 <em>"뭔가 답답해요"</em>(A)라고 말합니다. 초보 기획자는 그 말을 그대로 받아 A를 고치려 합니다. 하지만 <b>A는 직접 고칠 수 없습니다.</b> 반드시 M(수치·규칙)을 바꿔서 D를 바꾸고, 그 결과로 A가 바뀝니다.</p>
+
+  <table>
+    <tr><th>플레이어의 말 (A)</th><th>진짜 원인 후보 (M)</th></tr>
+    <tr><td>"답답해요"</td><td>이동속도, 입력 선행입력(버퍼) 부재, 애니메이션 경직 프레임</td></tr>
+    <tr><td>"불공정해요"</td><td>적 공격 예고 모션 프레임 부족, 화면 밖 공격, 랜덤 편차 과다</td></tr>
+    <tr><td>"지루해요"</td><td>루프 1회 소요시간 과다, 새 요소 등장 간격 과다, 선택지 부재</td></tr>
+    <tr><td>"뭘 해야 할지 모르겠어요"</td><td>목표 UI 부재, 시선 유도 실패, 동사(가능한 행동) 과다</td></tr>
+  </table>
+
+  <div class="tip"><b>실무 규칙 —</b> 플레이테스트 피드백은 <strong>"증상"으로만 받고, "처방"으로는 받지 않습니다.</strong> 플레이어가 "점프를 더 높게 해주세요"라고 하면, 진짜 문제는 <em>점프가 아니라 발판 간격</em>일 확률이 높습니다. 증상을 M으로 번역하는 게 기획자의 일입니다.</div>
+
+  <div class="readbtn" data-ch="2"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="c3" data-title="코어 루프 — 게임의 심장" data-part="1부 · 기초">
+  <div class="ch-head"><div class="ch-no">3</div><div>
+    <h2>코어 루프 — 게임의 심장</h2>
+    <div class="sub">플레이어가 100번 반복할 그것</div>
+  </div></div>
+
+  <p>게임은 <b>루프의 중첩</b>입니다. 좋은 게임은 서로 다른 시간 스케일의 루프가 겹쳐 있습니다.</p>
+
+  <table>
+    <tr><th>층</th><th>주기</th><th>내용</th><th>예: 리썰 컴퍼니류</th></tr>
+    <tr><td>초 단위</td><td>1~5초</td><td>순간 조작·판단</td><td>소리 듣고 숨기 / 물건 집기</td></tr>
+    <tr><td>분 단위</td><td>5~20분</td><td>한 판(세션)</td><td>탐사 → 수집 → 탈출</td></tr>
+    <tr><td>시간 단위</td><td>수 시간</td><td>진행·성장</td><td>장비 구매, 새 행성 해금</td></tr>
+    <tr><td>일 단위</td><td>며칠~</td><td>복귀 동기</td><td>친구와 다시 하기, 신규 콘텐츠</td></tr>
+  </table>
+
+  <div class="warn"><b>가장 흔한 기획 실패 —</b> 시간·일 단위 루프(성장, 스토리, 수집요소)만 화려하게 설계하고 <strong>초 단위 루프가 재미없는 것.</strong> 플레이어는 초 단위를 수천 번 겪습니다. 여기가 재미없으면 나머지는 무의미합니다.</div>
+
+  <h3>좋은 코어 루프의 4박자</h3>
+  <div class="lab">
+    <div class="cap">🧪 실험실 1 — 코어 루프 다이어그램</div>
+    <canvas id="loopcv" height="260"></canvas>
+    <div class="ctlrow">
+      <button class="btn alt" id="loopToggle">피드백 끊어보기</button>
+      <span id="loopMsg">4박자가 모두 돌 때 루프가 살아 있습니다.</span>
+    </div>
+  </div>
+
+  <ol>
+    <li><b>행동(Action)</b> — 플레이어가 뭔가 한다</li>
+    <li><b>피드백(Feedback)</b> — <strong>즉시</strong> 반응이 온다 (0.1초 이내)</li>
+    <li><b>보상(Reward)</b> — 그 행동이 의미 있었음이 확인된다</li>
+    <li><b>다음 동기(Hook)</b> — 다음 행동을 하고 싶어진다</li>
+  </ol>
+  <p>넷 중 하나라도 끊기면 루프가 죽습니다. 특히 <b>2번(피드백)</b>이 늦으면 다른 게 아무리 좋아도 "조작감이 구리다"는 평을 받습니다. → 9장에서 자세히.</p>
+
+  <h3>루프를 한 문장으로 쓰는 연습</h3>
+  <pre><code>[탐험]해서 → [자원]을 얻고 → [강해져서] → 더 깊은 [탐험]을 한다   (로그라이크)
+[심고] → [기다리고] → [수확]해서 → 더 좋은 것을 [심는다]        (농사 시뮬)
+[관찰]해서 → [추리]하고 → [지목]하면 → 새 [정보]가 생긴다        (사회적 추리)</code></pre>
+
+  <div class="tip"><b>검증법 —</b> 종이에 당신 게임의 루프를 그리고, <strong>화살표가 시작점으로 돌아오는지</strong> 보세요. 안 돌아오면 그건 루프가 아니라 <em>일회성 체험</em>입니다. 그리고 <strong>한 바퀴에 걸리는 시간</strong>을 재세요. 그 시간이 너무 길면(초반 30분 이상) 대부분의 플레이어는 이탈합니다.</div>
+
+  <div class="readbtn" data-ch="3"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="c4" data-title="규칙 · 목표 · 피드백" data-part="1부 · 기초">
+  <div class="ch-head"><div class="ch-no">4</div><div>
+    <h2>규칙 · 목표 · 피드백</h2>
+    <div class="sub">이 셋이 있으면 게임, 하나라도 없으면 장난감</div>
+  </div></div>
+
+  <p>게임이 성립하는 최소 조건입니다. 하나씩 없애 보면 명확해집니다.</p>
+  <table>
+    <tr><th>빠진 것</th><th>결과</th><th>예</th></tr>
+    <tr><td>목표가 없으면</td><td><b>장난감</b> (나쁜 건 아님)</td><td>샌드박스, 물리 시뮬레이터</td></tr>
+    <tr><td>규칙(제약)이 없으면</td><td><b>지루함</b> — 무엇이든 되면 아무것도 의미 없음</td><td>치트 켠 게임</td></tr>
+    <tr><td>피드백이 없으면</td><td><b>불안·이탈</b> — 잘하는지 알 수 없음</td><td>점수·반응 없는 조작</td></tr>
+  </table>
+
+  <h3>제약이 곧 재미다</h3>
+  <div class="quote">"게임이란, 불필요한 장애물을 자발적으로 극복하려는 시도다." — 버나드 슈츠</div>
+  <p>골프의 재미는 공을 구멍에 넣는 게 아니라 <b>막대기로만 넣어야 한다는 제약</b>에서 나옵니다. 기획에서 기능을 추가할 때 항상 물어야 합니다 — <strong>"이건 제약을 늘리는가, 없애는가?"</strong> 제약을 없애는 편의 기능이 재미를 죽이는 경우는 아주 흔합니다.</p>
+  <div class="warn"><b>사례 —</b> 서바이벌 게임에 "아이템 자동 정렬 + 무한 인벤토리"를 넣으면 편해집니다. 그리고 <strong>무엇을 버릴지 고민하는 재미가 통째로 사라집니다.</strong> 리썰 컴퍼니의 핵심 긴장 중 하나는 "무거운 걸 들면 느려진다"는 제약입니다.</div>
+
+  <h3>피드백의 3층 구조</h3>
+  <table>
+    <tr><th>층</th><th>시간</th><th>역할</th><th>수단</th></tr>
+    <tr><td>즉각</td><td>0.05~0.3초</td><td>"입력이 통했다"</td><td>사운드, 이펙트, 화면 흔들림, 진동</td></tr>
+    <tr><td>단기</td><td>초~분</td><td>"이 판을 잘하고 있다"</td><td>점수, 콤보, 체력 게이지, 수집량</td></tr>
+    <tr><td>장기</td><td>시간~일</td><td>"내가 성장했다"</td><td>레벨, 해금, 도감, 기록 갱신</td></tr>
+  </table>
+  <div class="tip"><b>우선순위 —</b> 프로토타입 단계에서 <strong>즉각 피드백부터</strong> 넣으세요. 장기 피드백(레벨·도감)은 그럴듯해 보이지만, 즉각 피드백이 없으면 재미 판정 자체가 불가능합니다.</div>
+
+  <div class="readbtn" data-ch="4"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="c5" data-title="플레이어 심리와 동기" data-part="2부 · 설계">
+  <div class="ch-head"><div class="ch-no">5</div><div>
+    <h2>플레이어 심리와 동기</h2>
+    <div class="sub">왜 계속하게 되는가 — 그리고 어디까지가 윤리적인가</div>
+  </div></div>
+
+  <h3>1. 내적 동기 3요소 (자기결정이론)</h3>
+  <p>오래 사랑받는 게임은 예외 없이 이 셋을 충족합니다.</p>
+  <table>
+    <tr><th>요소</th><th>플레이어의 느낌</th><th>설계 수단</th></tr>
+    <tr><td><b>자율성</b></td><td>"내가 선택했다"</td><td>의미 있는 선택지, 여러 공략법, 빌드 자유도</td></tr>
+    <tr><td><b>유능감</b></td><td>"내가 늘고 있다"</td><td>점진적 난이도, 실력 가시화, 숙련 보상</td></tr>
+    <tr><td><b>관계성</b></td><td>"함께한다 / 인정받는다"</td><td>코옵, 랭킹, 커뮤니티, 공유 기능</td></tr>
+  </table>
+  <div class="tip"><b>자율성의 함정 —</b> 선택지가 많다고 자율성이 아닙니다. <strong>결과가 달라지는 선택</strong>만 자율성입니다. 5개 무기의 성능이 사실상 같다면 그건 선택지가 아니라 장식입니다.</div>
+
+  <h3>2. 보상 스케줄 — 언제 주는가가 무엇을 주는가보다 중요하다</h3>
+  <div class="lab">
+    <div class="cap">🧪 실험실 2 — 고정 보상 vs 변동 보상</div>
+    <canvas id="rewcv" height="200"></canvas>
+    <div class="ctlrow">
+      <button class="btn" id="rewRun">100번 시행 돌려보기</button>
+      <span id="rewMsg">두 방식 모두 기대값은 같습니다. 체감은 전혀 다릅니다.</span>
+    </div>
+  </div>
+  <table>
+    <tr><th>방식</th><th>내용</th><th>체감</th><th>쓰임</th></tr>
+    <tr><td>고정 비율</td><td>10마리 잡으면 항상 보상</td><td>예측 가능·안정. 지루해지기 쉬움</td><td>퀘스트, 일일 미션</td></tr>
+    <tr><td><b>변동 비율</b></td><td>평균 10마리마다 확률적 보상</td><td><strong>가장 강한 지속성</strong>. "다음엔 나올지도"</td><td>드랍템, 로그라이크, 가챠</td></tr>
+    <tr><td>고정 간격</td><td>매일 오전 9시</td><td>그 시각에만 몰림</td><td>출석 보상</td></tr>
+    <tr><td>변동 간격</td><td>언제 올지 모름</td><td>수시 확인 유발</td><td>알림, 이벤트</td></tr>
+  </table>
+  <div class="warn"><b>윤리 경계 —</b> 변동 비율은 도박과 같은 신경 기제를 씁니다. <strong>실력·선택과 결합되면 재미</strong>(로그라이크 드랍), <strong>지불과 직결되면 착취</strong>(확률형 유료 뽑기)에 가까워집니다. 이 선을 어디에 그을지는 기획자가 <em>의도적으로</em> 정해야 합니다. 다수 국가가 규제 중인 영역이기도 합니다.</div>
+
+  <h3>3. 손실 회피 — 잃는 게 2배 아프다</h3>
+  <p>사람은 <b>100을 얻는 기쁨보다 100을 잃는 고통을 약 2배</b>로 느낍니다. 이건 긴장을 만드는 가장 강력한 도구입니다.</p>
+  <ul>
+    <li>로그라이크: 죽으면 이번 런의 모든 성장 소멸 → 매 판이 긴장</li>
+    <li>탈출형 코옵 공포: 들고 나가야만 내 것 → "지금 나갈까, 하나 더 챙길까"</li>
+    <li>하드코어 모드: 캐릭터 영구 삭제 → 극단적 몰입</li>
+  </ul>
+  <div class="tip"><b>설계 팁 —</b> 손실 위협은 <strong>플레이어가 스스로 위험을 선택할 때</strong> 재미가 되고, <strong>일방적으로 당할 때</strong> 분노가 됩니다. "한 번 더 갈까?"를 <em>플레이어가 결정</em>하게 만드세요. 이게 푸시 유어 럭(Push Your Luck) 구조입니다.</div>
+
+  <div class="readbtn" data-ch="5"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="c6" data-title="난이도와 몰입" data-part="2부 · 설계">
+  <div class="ch-head"><div class="ch-no">6</div><div>
+    <h2>난이도와 몰입(Flow)</h2>
+    <div class="sub">어려움은 조절 대상이 아니라 설계 대상이다</div>
+  </div></div>
+
+  <h3>1. 몰입 채널</h3>
+  <p>칙센트미하이의 몰입 이론. <b>도전 수준</b>과 <b>플레이어 실력</b>이 균형을 이룰 때 몰입이 발생합니다.</p>
+  <div class="lab">
+    <div class="cap">🧪 실험실 3 — 몰입 채널 시뮬레이터</div>
+    <canvas id="flowcv" height="280"></canvas>
+    <div class="ctlrow">
+      <label>플레이어 실력 <input type="range" id="skill" min="5" max="95" value="50"></label>
+      <label>게임 난이도 <input type="range" id="diff" min="5" max="95" value="50"></label>
+      <span id="flowMsg"></span>
+    </div>
+  </div>
+  <p>중요한 건 <b>실력이 계속 늘어난다</b>는 점입니다. 난이도가 고정이면 플레이어는 자동으로 <em>지루함</em> 영역으로 떨어집니다. 그래서 난이도는 <strong>플레이어 성장 속도를 추적</strong>해야 합니다.</p>
+
+  <h3>2. 난이도 곡선은 직선이 아니다</h3>
+  <div class="lab">
+    <div class="cap">🧪 실험실 4 — 두 가지 난이도 곡선</div>
+    <canvas id="curvecv" height="240"></canvas>
+    <div class="ctlrow"><span>회색 = 흔한 실수(단조 상승) · 파랑 = 실제 좋은 게임의 톱니 곡선</span></div>
+  </div>
+  <p>좋은 곡선은 <b>톱니(sawtooth)</b>입니다. 긴장 뒤에 반드시 이완이 옵니다. 이완이 없으면 긴장은 <strong>피로</strong>가 됩니다.</p>
+  <ul>
+    <li><b>보스 직전</b>에 회복 구간·세이브 포인트 (다크소울의 화톳불)</li>
+    <li><b>어려운 구간 직후</b>에 무쌍 구간 — "내가 강해졌다"를 체감시키는 보상 (둠의 학살 구간)</li>
+    <li><b>새 능력 획득 직후</b>는 반드시 쉬운 시험장 — 그 능력이 통쾌하다는 걸 먼저 느끼게</li>
+  </ul>
+
+  <h3>3. 난이도는 하나의 축이 아니다</h3>
+  <table>
+    <tr><th>축</th><th>올리는 법</th><th>주의</th></tr>
+    <tr><td><b>실행 난이도</b></td><td>반응속도, 정밀 조작 요구</td><td>과하면 접근성 붕괴</td></tr>
+    <tr><td><b>인지 난이도</b></td><td>정보 은폐, 복잡한 규칙</td><td>불친절과 구분 필요</td></tr>
+    <tr><td><b>자원 압박</b></td><td>탄약·체력·시간 제한</td><td>가장 안전하고 조절이 쉬움</td></tr>
+    <tr><td><b>결과 위험</b></td><td>죽으면 잃는 것을 키움</td><td>손실 회피 자극 — 강력하지만 과하면 이탈</td></tr>
+  </table>
+  <div class="tip"><b>소규모 팀 팁 —</b> 적 AI를 똑똑하게 만드는 건 비쌉니다. 대신 <strong>자원 압박과 결과 위험</strong>으로 난이도를 만드세요. 코드 몇 줄이면 됩니다. 뱀파이어 서바이버즈는 적 AI가 "플레이어를 향해 직진"뿐입니다.</div>
+
+  <div class="readbtn" data-ch="6"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="c7" data-title="레벨 디자인 — 가르치지 않고 가르치기" data-part="2부 · 설계">
+  <div class="ch-head"><div class="ch-no">7</div><div>
+    <h2>레벨 디자인 —<br>가르치지 않고 가르치기</h2>
+    <div class="sub">튜토리얼 텍스트는 마지막 수단이다</div>
+  </div></div>
+
+  <h3>1. 마리오 1-1 해부 — 게임 역사상 가장 유명한 30초</h3>
+  <p>닌텐도는 설명서 없이 조작법을 가르쳤습니다. 순서가 전부입니다.</p>
+  <table>
+    <tr><th>단계</th><th>배치</th><th>가르치는 것</th></tr>
+    <tr><td>① 안전한 학습</td><td>빈 공간에 마리오만. 화면 왼쪽 끝에 배치</td><td>"오른쪽으로 갈 수 있다" (죽을 위험 0)</td></tr>
+    <tr><td>② 첫 위협</td><td>굼바가 천천히 접근</td><td>"닿으면 죽는다" — 실패해도 손실 최소</td></tr>
+    <tr><td>③ 도구 제시</td><td>물음표 블록을 굼바 <em>직전</em>에</td><td>"점프하면 블록이 반응한다"</td></tr>
+    <tr><td>④ 응용 시험</td><td>구덩이 + 굼바 조합</td><td>배운 둘을 합쳐야 통과</td></tr>
+  </table>
+  <div class="key">
+    <div class="lab">레벨 디자인 4박자</div>
+    <p><strong>제시 → 안전한 연습 → 시험 → 응용(조합)</strong><br>새 요소를 넣을 때마다 이 4단계를 반복하면, 텍스트 튜토리얼이 거의 필요 없어집니다.</p>
+  </div>
+
+  <h3>2. 시선 유도 (Guidance)</h3>
+  <ul>
+    <li><b>대비</b> — 어두운 배경의 밝은 점. 인간은 가장 밝은 곳을 본다</li>
+    <li><b>색 규칙</b> — "노란색 = 잡을 수 있는 것"을 게임 전체에 일관되게 (미러스 엣지의 빨강)</li>
+    <li><b>선</b> — 난간·기둥·조명이 자연스럽게 가야 할 방향을 가리키게</li>
+    <li><b>움직임</b> — 정지 화면에서 움직이는 것은 무조건 시선을 끈다 (펄럭이는 천, 흔들리는 등)</li>
+    <li><b>랜드마크</b> — 멀리서 보이는 거대 구조물 = 나침반 (BOTW의 성)</li>
+  </ul>
+
+  <h3>3. 리듬과 페이싱</h3>
+  <p>레벨은 <b>음악처럼</b> 설계합니다. 전투–탐험–휴식–전투. 같은 밀도가 10분 지속되면 그게 무엇이든 지루해집니다.</p>
+  <pre><code>나쁨:  ■■■■■■■■■■■■■■■■  (전투만 계속)
+좋음:  ■■□□■■■□□□■■■■□■  (■전투 □탐험·휴식)</code></pre>
+
+  <h3>4. 절차적 생성(랜덤)의 함정</h3>
+  <p>당신이 랜덤 시드 기반 게임을 만든다면 반드시 알아야 할 내용입니다.</p>
+  <div class="warn"><b>"무한하지만 다 똑같다" 문제 —</b> 완전 랜덤은 <strong>기억에 남는 순간</strong>을 만들지 못합니다. 플레이어는 "그 맵 기억나?"라고 말할 수 없습니다.</div>
+  <table>
+    <tr><th>기법</th><th>내용</th><th>사례</th></tr>
+    <tr><td><b>수작업 조각 + 랜덤 조립</b></td><td>방(room)은 사람이 디자인, 배치만 랜덤</td><td>스펠렁키, 아이작, 데드셀</td></tr>
+    <tr><td><b>제약 있는 랜덤</b></td><td>"보스방은 입구에서 최소 5방 이상" 같은 규칙</td><td>대부분의 로그라이크</td></tr>
+    <tr><td><b>랜덤은 배치, 곡선은 고정</b></td><td>난이도·페이싱은 랜덤에 맡기지 않음</td><td>슬레이 더 스파이어의 층 구조</td></tr>
+    <tr><td><b>시드 공유</b></td><td>같은 맵을 친구와 공유 가능하게</td><td>마인크래프트 시드 문화</td></tr>
+  </table>
+  <div class="tip"><b>핵심 —</b> 랜덤의 목적은 "매번 새로움"이 아니라 <strong>"매번 다른 판단을 강요하는 것"</strong>입니다. 배치가 달라도 판단이 같으면 그건 같은 판입니다.</div>
+
+  <div class="readbtn" data-ch="7"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="c8" data-title="밸런싱 — 숫자로 재미 만들기" data-part="2부 · 설계">
+  <div class="ch-head"><div class="ch-no">8</div><div>
+    <h2>밸런싱 — 숫자로 재미 만들기</h2>
+    <div class="sub">기획자의 실제 노동 시간 대부분이 여기에 쓰인다</div>
+  </div></div>
+
+  <h3>1. 지배 전략을 없애라</h3>
+  <p><b>지배 전략(Dominant Strategy)</b>이란 "어떤 상황에서도 이게 정답"인 선택지입니다. 하나라도 존재하면 <strong>다른 모든 선택지가 장식이 됩니다.</strong></p>
+  <table>
+    <tr><th>구조</th><th>설명</th></tr>
+    <tr><td><b>가위바위보형</b></td><td>A는 B에 강하고, B는 C에, C는 A에 강함. 가장 안전한 기본 구조</td></tr>
+    <tr><td><b>상황 의존형</b></td><td>"좁은 곳에선 산탄총, 먼 곳에선 저격총" — 맵이 밸런스를 만듦</td></tr>
+    <tr><td><b>비용 교환형</b></td><td>강한 대신 느리다 / 비싸다 / 리스크가 있다</td></tr>
+  </table>
+  <div class="tip"><b>진단법 —</b> 플레이테스터들이 <strong>모두 같은 무기·같은 빌드</strong>를 쓴다면 지배 전략이 있는 겁니다. 통계를 보세요 — 픽률이 50%를 넘는 선택지는 거의 확실히 문제입니다.</div>
+
+  <h3>2. 성장 곡선 — 어떤 함수를 쓸 것인가</h3>
+  <div class="lab">
+    <div class="cap">🧪 실험실 5 — 성장 곡선 비교기</div>
+    <canvas id="growcv" height="250"></canvas>
+    <div class="ctlrow">
+      <label>성장률 <input type="range" id="growRate" min="5" max="60" value="25"></label>
+      <span>파랑=선형 · 보라=지수 · 초록=로그</span>
+    </div>
+  </div>
+  <table>
+    <tr><th>곡선</th><th>느낌</th><th>어디에 쓰나</th></tr>
+    <tr><td><b>선형</b> (n)</td><td>예측 가능·안정</td><td>기본 능력치, 짧은 게임</td></tr>
+    <tr><td><b>지수</b> (n²·1.15ⁿ)</td><td>후반 폭발 — 통쾌하지만 <strong>붕괴 위험</strong></td><td>필요 경험치, 후반 성장감</td></tr>
+    <tr><td><b>로그</b> (√n)</td><td>초반 급성장, 후반 완만</td><td>수확체감이 필요한 스탯(방어력, 명중률)</td></tr>
+    <tr><td><b>S자</b></td><td>초반 느림→중반 급성장→후반 완만</td><td>장기 육성 RPG</td></tr>
+  </table>
+  <div class="warn"><b>가장 흔한 밸런스 붕괴 —</b> 공격력과 체력을 <strong>둘 다 지수로</strong> 올리는 것. 곱셈이 겹쳐 후반에 통제 불능이 됩니다. 하나가 지수면 <strong>다른 하나는 선형 이하</strong>로 두세요.</div>
+
+  <h3>3. 데이터 주도 설계 — 소규모 팀 최대의 레버리지</h3>
+  <p>수치를 <b>코드 안에 쓰지 마세요.</b> 외부 파일(CSV/JSON/ScriptableObject)로 빼면:</p>
+  <ul>
+    <li>기획자가 <strong>프로그래머 없이</strong> 밸런싱 — 병목 해소</li>
+    <li>빌드 없이 수치 변경 → 하루 20번 시험 가능</li>
+    <li>플레이 데이터와 대조해 자동 튜닝 가능</li>
+  </ul>
+  <div class="key">
+    <div class="lab">2~3인 팀에서의 의미</div>
+    <p>이건 단순한 편의가 아니라 <strong>팀 생산성의 구조적 레버리지</strong>입니다. 수치 하나 바꾸는 데 프로그래머를 거쳐야 하면, 밸런싱 반복 횟수가 <strong>10분의 1</strong>로 줄어듭니다. 그리고 밸런싱은 반복 횟수가 곧 품질입니다.</p>
+  </div>
+
+  <h3>4. 데이터 기반 밸런싱의 교본</h3>
+  <p><b>슬레이 더 스파이어</b>는 얼리 액세스 기간 내내 <strong>카드별 픽률·승률 통계</strong>를 수집해 밸런싱했습니다. 감이 아니라 숫자로 조정한 결과, 200장이 넘는 카드가 대부분 "쓸 만한" 상태에 도달했습니다.</p>
+  <p>소규모 팀도 할 수 있습니다. 필요한 건 <strong>계측 로그</strong>뿐입니다 — 어느 지점에서 죽었나, 무엇을 골랐나, 언제 껐나. (→ 14장 W4의 산출물)</p>
+
+  <div class="readbtn" data-ch="8"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="c9" data-title="게임 필과 주스" data-part="2부 · 설계">
+  <div class="ch-head"><div class="ch-no">9</div><div>
+    <h2>게임 필과 주스(Juice)</h2>
+    <div class="sub">같은 규칙, 전혀 다른 재미 — 직접 체험해 보세요</div>
+  </div></div>
+
+  <p><b>게임 필(Game Feel)</b>은 입력에서 반응까지의 <em>촉감</em>입니다. 기획서에 잘 안 적히지만, 플레이어가 "이 게임 잘 만들었다"고 느끼는 지점의 대부분이 여기입니다.</p>
+
+  <div class="lab">
+    <div class="cap">🧪 실험실 6 — 주스 ON/OFF (★직접 클릭해 보세요)</div>
+    <canvas id="juicecv" height="300"></canvas>
+    <div class="ctlrow">
+      <button class="btn" id="juiceToggle">주스: ON</button>
+      <span>과녁을 클릭하세요. 규칙(맞으면 +1점)은 완전히 동일합니다.</span>
+    </div>
+  </div>
+  <p>위 두 상태의 <strong>규칙은 한 글자도 다르지 않습니다.</strong> 그런데 체감은 완전히 다르죠. 이게 주스입니다.</p>
+
+  <h3>주스 도구 상자</h3>
+  <table>
+    <tr><th>도구</th><th>효과</th><th>비용</th></tr>
+    <tr><td><b>히트스톱</b> (0.05초 정지)</td><td>타격의 무게감 — 가장 효율 좋음</td><td>매우 낮음</td></tr>
+    <tr><td><b>화면 흔들림</b></td><td>충격량 전달. <strong>과하면 멀미</strong></td><td>매우 낮음</td></tr>
+    <tr><td><b>스쿼시 &amp; 스트레치</b></td><td>탄력·생동감 (착지 시 납작해지기)</td><td>낮음</td></tr>
+    <tr><td><b>파티클</b></td><td>"뭔가 일어났다"는 시각적 확증</td><td>낮음</td></tr>
+    <tr><td><b>사운드</b></td><td>체감 만족도의 <strong>최대 기여 요소</strong></td><td>중간(에셋 필요)</td></tr>
+    <tr><td><b>화면 플래시·색 반전</b></td><td>치명타·중요 이벤트 강조</td><td>매우 낮음</td></tr>
+    <tr><td><b>카메라 줌·기울기</b></td><td>긴장 고조</td><td>낮음</td></tr>
+    <tr><td><b>입력 관용</b> (선행입력·코요테 타임)</td><td>"내 탓이 아니라 게임 탓" 방지</td><td>낮음, <strong>효과 절대적</strong></td></tr>
+  </table>
+
+  <div class="key">
+    <div class="lab">입력 관용 — 가장 저평가된 기술</div>
+    <p><strong>코요테 타임</strong>: 발판에서 떨어진 뒤 0.1초까지 점프 허용<br>
+    <strong>선행 입력(버퍼)</strong>: 착지 0.15초 전에 누른 점프도 인정<br>
+    → 플레이어는 이걸 <em>인지하지 못하면서</em> "조작이 정확하다"고 느낍니다. 없으면 "판정이 구리다"고 느낍니다.</p>
+  </div>
+
+  <div class="warn"><b>언제 넣는가 —</b> 흔히 "폴리싱은 마지막에"라고 하지만, <strong>코어 액션 1개의 주스는 프로토타입 때 넣어야 합니다.</strong> 왜냐면 주스 없는 회색 빌드로는 <em>재미 판정 자체가 불가능</em>하기 때문입니다. 단, <strong>딱 하나의 액션에만</strong> 넣으세요.</div>
+
+  <div class="readbtn" data-ch="9"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="c10" data-title="시스템과 창발" data-part="3부 · 심화">
+  <div class="ch-head"><div class="ch-no">10</div><div>
+    <h2>시스템과 창발(Emergence)</h2>
+    <div class="sub">기획자가 만들지 않은 재미를 만드는 법</div>
+  </div></div>
+
+  <p><b>창발</b>이란 단순한 규칙들이 결합해 <strong>설계자가 의도하지 않은 재미</strong>가 생기는 현상입니다. 소규모 팀에게 이건 <em>생존 전략</em>입니다 — 콘텐츠를 일일이 만들 수 없으니까요.</p>
+
+  <div class="key">
+    <div class="lab">핵심 원리</div>
+    <p>콘텐츠를 <strong>더하지</strong> 말고, 규칙끼리 <strong>곱하라.</strong><br>
+    동사 5개를 나열하면 5가지 재미지만, 5개가 서로 상호작용하면 <strong>최대 25가지</strong>가 됩니다.</p>
+  </div>
+
+  <h3>젤다 BOTW의 화학 엔진</h3>
+  <p>규칙은 단순합니다: <em>불은 나무를 태운다 / 불은 위로 향하는 바람을 만든다 / 금속은 전기를 통한다 / 비는 불을 끈다.</em></p>
+  <p>이 4개 규칙이 곱해지며 <strong>수천 가지 해법</strong>이 나옵니다 — 풀에 불을 붙여 상승기류로 활공하기, 비 오는 날 금속 무기를 적에게 던지기. 이 중 어느 것도 개별 설계된 게 아닙니다.</p>
+
+  <h3>창발 설계 체크리스트</h3>
+  <table>
+    <tr><th>질문</th><th>왜 중요한가</th></tr>
+    <tr><td>규칙이 <b>예외 없이</b> 적용되는가?</td><td>"플레이어만 불에 안 탄다" 같은 예외가 창발을 죽인다</td></tr>
+    <tr><td>속성을 <b>오브젝트가 아니라 시스템</b>이 갖는가?</td><td>"이 나무는 탄다"가 아니라 "나무 재질은 탄다"</td></tr>
+    <tr><td>플레이어가 <b>규칙을 예측</b>할 수 있는가?</td><td>예측 불가능하면 창발이 아니라 버그로 느껴진다</td></tr>
+    <tr><td>의도치 않은 해법을 <b>허용</b>하는가?</td><td>"정답 루트"만 인정하면 창발이 처벌된다</td></tr>
+  </table>
+
+  <div class="tip"><b>소규모 팀 전략 —</b> 마인크래프트·뱀파이어 서바이버즈·리썰 컴퍼니는 모두 <strong>적은 요소 × 강한 상호작용</strong>으로 만들어졌습니다. 리썰 컴퍼니의 재미 대부분은 개발자가 만든 게 아니라 <em>근접 음성 채팅 + 어둠 + 손실 위험</em>이 곱해져 플레이어들 사이에서 생긴 것입니다.</div>
+
+  <div class="warn"><b>대가 —</b> 창발은 <strong>QA 비용을 폭증</strong>시킵니다. 조합이 많다는 건 예상 못한 버그가 많다는 뜻입니다. 창발형 게임은 "완벽하게 안 터지는 빌드"를 목표로 하면 출시할 수 없습니다. <em>치명적 버그만 잡고 나머지는 감수</em>하는 판단이 필요합니다.</div>
+
+  <div class="readbtn" data-ch="10"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="c11" data-title="내러티브 설계" data-part="3부 · 심화">
+  <div class="ch-head"><div class="ch-no">11</div><div>
+    <h2>내러티브 설계</h2>
+    <div class="sub">게임만이 할 수 있는 이야기</div>
+  </div></div>
+
+  <p>영화·소설이 더 잘하는 걸 게임에서 흉내내면 집니다. 게임의 고유 무기는 <b>"플레이어가 했다"</b>는 사실입니다.</p>
+
+  <h3>서사의 3가지 전달 방식</h3>
+  <table>
+    <tr><th>방식</th><th>내용</th><th>비용</th><th>주의</th></tr>
+    <tr><td><b>직접 서사</b></td><td>컷신, 대사, 텍스트</td><td>높음(연출·성우·작화)</td><td>플레이를 멈춘다 — 남발 금지</td></tr>
+    <tr><td><b>환경 서사</b></td><td>공간·소품·시체 배치로 암시</td><td><strong>낮음</strong></td><td>소규모 팀 최고의 가성비</td></tr>
+    <tr><td><b>기계적 서사</b></td><td>규칙 자체가 의미를 만듦</td><td>낮음</td><td>가장 게임다움</td></tr>
+  </table>
+  <p><b>기계적 서사</b>의 예: 자원이 부족한 게임에서 동료에게 식량을 나눠주는 규칙 → 개발자가 "우정"이라는 단어를 한 번도 안 써도 플레이어는 그걸 체험합니다.</p>
+
+  <h3>선택의 설계</h3>
+  <div class="warn"><b>가짜 선택 —</b> 결과가 같은 선택지는 <strong>발각되는 순간 신뢰를 잃습니다.</strong> 플레이어는 생각보다 빨리 알아챕니다. 분기를 감당할 수 없다면, <em>선택지를 줄이고 그 대신 진짜로 다르게</em> 만드세요.</div>
+  <table>
+    <tr><th>선택 유형</th><th>설명</th><th>제작 비용</th></tr>
+    <tr><td>결과 분기</td><td>엔딩·루트가 실제로 갈림</td><td>매우 높음(콘텐츠 배수)</td></tr>
+    <tr><td><b>상태 누적</b></td><td>선택이 수치로 쌓여 후반에 반영</td><td><strong>낮음 — 추천</strong></td></tr>
+    <tr><td>연출 분기</td><td>같은 사건, 다른 대사·연출</td><td>낮음</td></tr>
+    <tr><td>정보 분기</td><td>알게 되는 것이 달라짐</td><td>낮음</td></tr>
+  </table>
+  <div class="tip"><b>비주얼 노벨 설계 팁 —</b> 완전 분기 대신 <strong>플래그 누적 + 마지막 분기</strong>가 압도적으로 효율적입니다. 중간 대사 몇 줄만 바꾸고, 결정적 분기는 후반 1~2회에 집중하세요. 플레이어 체감은 거의 같지만 제작량은 <strong>수 배</strong> 차이가 납니다.</div>
+
+  <h3>감정 곡선</h3>
+  <p>난이도 곡선처럼 <b>감정에도 곡선</b>이 필요합니다. 공포 게임이 계속 무서우면 <strong>둔감해집니다.</strong></p>
+  <pre><code>공포 게임의 실제 구조:
+평온 ──▲긴장──▼해소── 평온 ──▲▲더 큰 긴장──▼해소──▲▲▲절정
+        (안전지대·유머·일상 구간이 반드시 필요)</code></pre>
+  <p>공포의 강도는 <em>공포 장면의 세기</em>가 아니라 <strong>직전 평온과의 낙차</strong>로 결정됩니다.</p>
+
+  <div class="readbtn" data-ch="11"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="c12" data-title="리텐션 · 메타게임 · 경제" data-part="3부 · 심화">
+  <div class="ch-head"><div class="ch-no">12</div><div>
+    <h2>리텐션 · 메타게임 · 경제</h2>
+    <div class="sub">한 판이 아니라 100판을 설계하기</div>
+  </div></div>
+
+  <h3>1. 왜 돌아오는가</h3>
+  <table>
+    <tr><th>지표</th><th>의미</th><th>낮을 때 의심할 것</th></tr>
+    <tr><td><b>D1</b> (다음날 복귀)</td><td>첫 경험이 좋았나</td><td>초반 30분, 튜토리얼, 첫 인상</td></tr>
+    <tr><td><b>D7</b></td><td>코어 루프가 견고한가</td><td>루프 자체의 반복 내성</td></tr>
+    <tr><td><b>D30</b></td><td>장기 목표가 있는가</td><td>메타 진행, 커뮤니티, 콘텐츠 양</td></tr>
+  </table>
+  <div class="tip"><b>인디에게 더 중요한 것 —</b> 리텐션보다 <strong>"환불률"과 "첫 2시간"</strong>입니다. 스팀 환불 기준이 2시간이라, 인디 게임은 <em>첫 2시간에 게임의 약속을 다 보여줘야</em> 합니다.</div>
+
+  <h3>2. 메타 진행 — "졌는데도 얻는다"</h3>
+  <p>로그라이크의 핵심 발명입니다. <b>런 내부 성장</b>(이번 판 한정)과 <b>메타 성장</b>(영구)을 분리합니다.</p>
+  <ul>
+    <li><b>런 성장</b> → 매 판의 다양성과 긴장</li>
+    <li><b>메타 성장</b> → 실패의 좌절을 진전으로 전환</li>
+  </ul>
+  <div class="warn"><b>균형 주의 —</b> 메타 성장이 너무 강하면 <strong>"실력이 아니라 시간이 이긴다"</strong>가 되어 도전의 의미가 사라집니다. 하데스는 이걸 <em>난이도 조절을 플레이어가 선택</em>하게 하는 방식(신의 서약)으로 해결했습니다.</div>
+
+  <h3>3. 게임 내 경제의 3원칙</h3>
+  <table>
+    <tr><th>원칙</th><th>내용</th></tr>
+    <tr><td><b>싱크(Sink)를 먼저 설계</b></td><td>돈이 들어오는 곳보다 <strong>빠져나가는 곳</strong>을 먼저. 없으면 인플레이션으로 경제가 죽는다</td></tr>
+    <tr><td><b>희소성이 가치</b></td><td>모두가 가진 것은 가치가 없다. 무한 공급 자원은 보상이 될 수 없다</td></tr>
+    <tr><td><b>교환에 마찰</b></td><td>무한 거래·무한 저장이 가능하면 최적화가 재미를 대체한다</td></tr>
+  </table>
+
+  <h3>4. 잔혹한 진실 — 리텐션보다 먼저인 것</h3>
+  <div class="key">
+    <div class="lab">인디 게임의 실제 성패 요인</div>
+    <p>리텐션 설계는 <strong>사람들이 이미 플레이하기 시작한 뒤</strong>의 문제입니다.<br>
+    대부분의 인디 게임은 <strong>발견되지 못해서</strong> 실패합니다 — 재미없어서가 아니라.<br>
+    → 그래서 <em>"한 장의 스크린샷으로 설명되는가"</em>가 기획 단계의 필수 검증 항목입니다.</p>
+  </div>
+  <p>이걸 <b>비주얼 훅(Visual Hook)</b>이라 합니다. 뱀파이어 서바이버즈의 화면 가득한 탄막, 리썰 컴퍼니의 조명 하나뿐인 어둠 — GIF 3초로 설명됩니다. <strong>기획할 때 "이 게임의 대표 GIF는 무엇인가"를 답할 수 있어야 합니다.</strong></p>
+
+  <div class="readbtn" data-ch="12"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="c13" data-title="프로토타입과 Fun Gate" data-part="4부 · 실무">
+  <div class="ch-head"><div class="ch-no">13</div><div>
+    <h2>프로토타입과 Fun Gate</h2>
+    <div class="sub">재미를 '검증'하는 절차 — 기획의 진짜 완성</div>
+  </div></div>
+
+  <div class="key">
+    <div class="lab">프로토타입의 정의</div>
+    <p><strong>재미 가설 1개를 증명하거나 반증하는, 가장 싼 빌드.</strong><br>본 아트·메뉴·세이브·사운드·최적화 <strong>전부 없음.</strong></p>
+  </div>
+
+  <h3>1. 그레이박스 — 장르마다 정의가 다르다</h3>
+  <p>공통 정의는 하나입니다: <b>최종 아트를 하나도 쓰지 않고 재미를 판단할 수 있는 최소 형태.</b></p>
+  <table>
+    <tr><th>장르</th><th>그레이박스의 실체</th><th>프로토타입의 형태</th></tr>
+    <tr><td>3D 액션·공포</td><td>캡슐·큐브·단색</td><td>맵 1개 + 코어 메카닉 1개</td></tr>
+    <tr><td>2D 도트</td><td>단색 사각형</td><td>스테이지 1개</td></tr>
+    <tr><td><b>VN·내러티브</b></td><td><strong>서식 없는 텍스트</strong></td><td>1챕터 30분 텍스트 빌드</td></tr>
+    <tr><td>퍼즐</td><td><strong>종이와 엑셀</strong></td><td>코드 없이 손으로 플레이</td></tr>
+    <tr><td>시뮬·경영</td><td><strong>스프레드시트</strong></td><td>밸런스 시트가 코드보다 먼저</td></tr>
+  </table>
+
+  <h3>2. ★Fun Gate★ — 파이프라인의 심장</h3>
+  <p>모든 기능은 아트 작업 <strong>전에</strong> 이 관문을 통과해야 합니다.</p>
+  <pre><code>그레이박스 완성 → 전원 플레이테스트 → 판정
+   ├ "재밌다"        → 통과. 아트 착수 허가
+   ├ "고치면 재밌겠다" → 스펙 단계로 복귀. ★아트 착수 금지★
+   └ "안 재밌다"      → 폐기 또는 재설계. ★아트 착수 금지★</code></pre>
+  <div class="key">
+    <div class="lab">이 게이트가 지키는 것</div>
+    <p>아티스트의 노동입니다. 소규모 팀에서 <strong>아트 재작업은 치명상</strong>입니다. 재미가 검증되지 않은 기능에 아트를 붙이는 순간, 그 게임은 "이미 그림을 그렸으니까"라는 이유로 재미없는 설계를 유지하게 됩니다.</p>
+  </div>
+
+  <h3>3. 재미 판정 기준을 잘못 잡는 흔한 실수</h3>
+  <div class="warn"><b>"한 판 더 하고 싶은가?"를 기준으로 쓰면 안 됩니다.</b> 아트도 사운드도 없는 회색 빌드에서 그 반응은 거의 나오지 않습니다. 이 기준을 쓰면 <strong>좋은 게임까지 죽입니다.</strong></div>
+  <div class="tip"><b>올바른 기준 —</b> <strong>"재밌었던 순간을 구체적으로 짚을 수 있는가?"</strong><br>테스터가 "저기서 아슬아슬하게 도망칠 때 좋았어요"라고 <em>특정 순간을 지목</em>하면 통과입니다. 그 순간이 게임의 씨앗입니다. 아무 순간도 못 짚으면, 아트를 붙여도 달라지지 않습니다.</div>
+
+  <h3>4. 테스터 선정</h3>
+  <table>
+    <tr><th>단계</th><th>적합한 테스터</th><th>이유</th></tr>
+    <tr><td>프로토타입(회색 빌드)</td><td><b>게임 많이 해본 사람</b> 3~5명</td><td>회색 도형을 "미래의 게임"으로 읽을 수 있음</td></tr>
+    <tr><td>버티컬 슬라이스 이후</td><td>일반 플레이어</td><td>이 시점부터는 순수한 첫인상이 필요</td></tr>
+  </table>
+
+  <h3>5. Kill은 실패가 아니다</h3>
+  <p>정해진 기간이 지나면 <b>완성도와 무관하게</b> 판정 회의를 엽니다. 판정은 셋뿐입니다.</p>
+  <ul>
+    <li><b>Go</b> — 다음 단계 진행</li>
+    <li><b>Pivot</b> — 핵심 하나만 남기고 재설계</li>
+    <li><b>Kill</b> — 중단. <strong>이건 파이프라인의 정상 출력입니다.</strong></li>
+  </ul>
+  <p>Kill을 못 하는 팀은 <strong>재미없는 게임에 2년을 씁니다.</strong> 4주 만에 Kill한 팀은 그 해에 프로토타입을 10개 만들 수 있습니다.</p>
+
+  <div class="readbtn" data-ch="13"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="c14" data-title="팀 파이프라인 (2·3인)" data-part="4부 · 실무">
+  <div class="ch-head"><div class="ch-no">14</div><div>
+    <h2>팀 파이프라인 — 2인 · 3인</h2>
+    <div class="sub">기획을 실제 제작 순서로 옮기는 법</div>
+  </div></div>
+
+  <div class="key">
+    <div class="lab">모든 파이프라인 규칙이 나오는 단 하나의 원리</div>
+    <p><strong>팀에서 가장 희소한 자원(병목)의 대기시간을 0으로 만든다.</strong></p>
+  </div>
+
+  <h3>1. 병목은 팀이 아니라 장르가 결정한다</h3>
+  <table>
+    <tr><th>장르</th><th>병목</th><th>먼저 채워야 할 레인</th></tr>
+    <tr><td>액션·3D·시뮬·멀티</td><td><b>프로그래머</b></td><td>코드가 아트를 기다리지 않게</td></tr>
+    <tr><td>내러티브·VN</td><td><b>기획/글</b></td><td>초반 주차를 집필에 통째로 배정</td></tr>
+    <tr><td>퍼즐·경영</td><td><b>레벨/밸런스 설계</b></td><td>종이·엑셀 검증이 코드보다 먼저</td></tr>
+    <tr><td>비주얼이 상품</td><td><b>아트</b></td><td>아트 생산량으로 스코프 역산</td></tr>
+  </table>
+
+  <h3>2. 기능 1개의 생애주기 — 10단계 교류 루프</h3>
+  <pre><code>[1] 기획  원페이저 (1장 초과 금지)
+[2] 기획↔코드  기술 검토 · 사이징  S(1일)/M(3일)/L(1주+)/XL(반려)
+[3] 기획  스펙 확정 + 도형 목업 (★수치 필수★)
+        ↓
+[4] 코드  그레이박스 구현
+[5] 전원  플레이테스트 → ★Fun Gate★
+        ↓ (통과한 것만)
+[6] 기획  아트 디렉션 확정
+[7] 아트  에셋 1패스 (폴리시 금지)
+[8] 아트  ★직접★ 엔진 통합
+[9] 기획  리뷰 · 폴리시 노트
+[10] 코드 버그픽스 → 빌드 → 완료</code></pre>
+
+  <h4>절대 규칙 3줄</h4>
+  <ol>
+    <li>코드는 [4]에서 <b>절대 아트를 기다리지 않는다</b></li>
+    <li>아트는 [5] 통과 전 <b>절대 본 아트를 시작하지 않는다</b></li>
+    <li>기획이 [3]에 <b>수치를 안 적으면</b> [4]를 시작시키지 않는다</li>
+  </ol>
+
+  <div class="tip"><b>[8]이 중요한 이유 —</b> 아티스트가 매번 프로그래머에게 "넣어줘"라고 하면 <strong>프로그래머가 통합 담당자로 전락해 병목이 폭발</strong>합니다. 프로그래머는 임포트 프리셋과 프리팹 템플릿, "여기 드래그하면 됨" 슬롯만 제공하세요.</div>
+
+  <h3>3. 플레이스홀더 계약 — 재작업을 막는 장치</h3>
+  <p>[4] 단계에서 코드와 아트가 <b>미리 합의</b>해야 하는 것들입니다. 이게 없으면 나중에 전면 재작업입니다.</p>
+  <ul>
+    <li>실제 크기(m 단위), 피벗 위치, 콜라이더 크기</li>
+    <li>애니메이션 스테이트 이름 목록 (<code>Idle, Walk, Run, Interact_Start/Loop/End</code>)</li>
+    <li>소켓·본 이름 (<code>Socket_Hand_R</code>)</li>
+  </ul>
+  <p>→ 계약이 있으면 나중에 에셋을 <strong>교체만</strong> 하면 됩니다.</p>
+
+  <h3>4. 프로토타입까지의 주차별 진행 (3인 기준)</h3>
+  <table>
+    <tr><th>주</th><th>기획(A)</th><th>코드(B)</th><th>아트(C)</th></tr>
+    <tr><td><b>W0</b></td><td>코어 루프 1문장, 성공기준 수치화, <b>Kill 기준</b></td><td>리포·컨벤션·<b>Hello World 빌드 배포</b></td><td>무드보드 5분류 + <b>안티 레퍼런스</b></td></tr>
+    <tr><td><b>W1</b></td><td>원페이저, 레벨 러프</td><td>이동·카메라·상호작용, <b>디버그 치트키</b></td><td>그레이박스 모듈킷 (<b>그리드 단위 확정</b>)</td></tr>
+    <tr><td><b>W2</b></td><td>수치표</td><td>코어 메카닉 #1</td><td>★<b>아트 파이프라인 왕복 테스트</b>★</td></tr>
+    <tr><td><b>W3</b></td><td>승패조건·정산</td><td>루프 연결(시작→목표→정산→재시작)</td><td>컨셉아트 <b>3종만</b></td></tr>
+    <tr><td><b>W4</b></td><td>테스터 3~5명 섭외</td><td><b>계측 로그</b> + 배포 빌드</td><td>가독성 개선, <b>에셋 1개당 제작시간 실측</b></td></tr>
+    <tr><td><b>W5</b></td><td colspan="3"><b>판정 회의: Go / Pivot / Kill</b></td></tr>
+  </table>
+  <div class="warn"><b>기간 현실 —</b> 전업이면 5~6주, <strong>파트타임이면 10~12주</strong>입니다. 파트타임 4~6주는 산출물 총량 대비 명백히 부족합니다.</div>
+
+  <h3>5. W2의 아트 파이프라인 왕복 테스트</h3>
+  <p>더미 캐릭터 <b>1개</b>를 모델링→리깅→임포트→애니 재생까지 <strong>2주차에 한 번 완주</strong>합니다. 축 방향·단위·스케일·노멀 뒤집힘·필터링·애니 이음새 문제를 <strong>3개월차가 아니라 2주차에</strong> 발견하기 위해서입니다. 결과는 절차서로 남깁니다.</p>
+
+  <h3>6. 2인 팀은 3인의 축소판이 아니다</h3>
+  <table>
+    <tr><th></th><th>3인</th><th>2인</th></tr>
+    <tr><td>병목</td><td>프로그래머</td><td><b>기획+아트 겸업자</b></td></tr>
+    <tr><td>재미 판정</td><td>3명 = 최소한의 다수결</td><td><b>2명 = 동조 편향. 판정 기능이 고장남</b></td></tr>
+    <tr><td>버스팩터</td><td>코드만 1</td><td><b>전 영역 1</b></td></tr>
+  </table>
+  <h4>2인 팀 특유의 규칙 3가지</h4>
+  <ol>
+    <li><b>스코프를 아트 생산량으로 역산</b> — <code>에셋 개수 ÷ 주당 생산량 × 1.5 = 실제 기간</code>. 안 맞으면 기간이 아니라 <strong>개수</strong>를 줄인다</li>
+    <li><b>아트 스타일을 "예쁨"이 아니라 "제작 속도"로 고른다</b> — W0에 후보 2안으로 같은 대상을 만들고 <strong>시간을 잰다.</strong> 2인 팀 최대의 단일 결정</li>
+    <li><b>프로그래머가 앞서갔을 때 기능을 추가하지 않는다</b> — 그건 아트 담당에게 숙제를 던지는 행위. 대기 백로그(툴·리팩터링·최적화)로 빠지고, 최후순위는 "쉰다"</li>
+  </ol>
+  <div class="warn"><b>2인 필수 —</b> Fun Gate에 <strong>외부인 1명이 반드시</strong> 들어갑니다. 2명이 판정하면 거의 항상 "재밌다"가 나옵니다. 둘 다 자기 게임이기 때문입니다.</div>
+
+  <h3>7. 자주 빠뜨리는 것들</h3>
+  <table>
+    <tr><th>항목</th><th>왜 필요한가</th></tr>
+    <tr><td><b>팀 합의서</b></td><td>수익배분·크레딧·저작권·<strong>중도이탈 규칙</strong>. 소규모 팀이 깨지는 원인 1위인데 거의 항상 빠짐</td></tr>
+    <tr><td><b>결정 로그</b></td><td>"그때 왜 그렇게 했지?" 재론 방지</td></tr>
+    <tr><td><b>스코프 예산</b></td><td>에셋 개수를 <strong>숫자로 못 적으면 완성 못 함</strong></td></tr>
+    <tr><td><b>사운드 담당 결정</b></td><td>체감 완성도의 40%. "나중에"는 금지 — 구매/겸업/외주 중 지금 결정</td></tr>
+    <tr><td><b>멀티플레이 여부</b></td><td>★<strong>나중에 붙일 수 없음</strong>★ 싱글로 만들고 네트워크를 얹는 건 사실상 재작성. 코옵 계획이 조금이라도 있으면 <strong>1일차부터 2인 접속 상태로 개발</strong></td></tr>
+  </table>
+
+  <h3>8. 매주 금요일 공통 체크 3가지</h3>
+  <ol>
+    <li>다른 PC에서 실행되는 <b>빌드</b>가 있다</li>
+    <li>팀 전원이 그걸 <b>같이 플레이</b>했다</li>
+    <li>다음 주 <b>티켓</b>이 보드에 있다</li>
+  </ol>
+  <p>하나라도 안 되면 그 주는 <strong>실패</strong>로 칩니다.</p>
+
+  <div class="readbtn" data-ch="14"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="c15" data-title="기획서 작성법" data-part="4부 · 실무">
+  <div class="ch-head"><div class="ch-no">15</div><div>
+    <h2>기획서 작성법</h2>
+    <div class="sub">읽히는 문서 vs 죽은 문서</div>
+  </div></div>
+
+  <div class="warn"><b>진실 —</b> 100장짜리 GDD는 <strong>거의 항상 죽은 문서</strong>가 됩니다. 아무도 안 읽고, 개발이 진행되면 즉시 사실과 달라집니다. 소규모 팀에서 이건 순수한 낭비입니다.</div>
+
+  <h3>1. 원페이저 (1장 초과 금지)</h3>
+  <pre><code>■ 한 줄 요약   : ____를 ____하는 게임
+■ 재미 가설    : 플레이어는 ____할 때 ____ 때문에 재미를 느낀다
+■ 코어 루프    : A → B → C → A  (한 바퀴 ○분)
+■ 승리 / 패배  :
+■ 이게 없으면 안 되는 이유 :
+■ 성공 기준(수치): 예) 테스터 5명 중 3명이 재밌던 순간을 지목
+■ Kill 기준     : 예) 4주 내 위 기준 미달 시 중단</code></pre>
+  <div class="tip"><b>Kill 기준을 먼저 쓰는 이유 —</b> 나중에 쓰면 절대 못 씁니다. 이미 정이 들어서요. <strong>애정이 생기기 전에 미리 정해 두는 것</strong>이 유일한 방법입니다.</div>
+
+  <h3>2. 스펙 문서에 반드시 들어가야 하는 것</h3>
+  <ul>
+    <li><b>수치</b> — 이동속도, 쿨타임, 개수, 확률. <strong>"빠르게"는 스펙이 아닙니다</strong></li>
+    <li><b>화면 배치</b> — 도형 목업. <strong>예쁜 그림을 그리면 그게 낭비</strong>입니다</li>
+    <li><b>상태 전이도</b> — 어떤 상태에서 어떤 입력이 어디로 가는가</li>
+    <li><b>완료 기준(DoD)</b> — 무엇이 되면 "끝"인가</li>
+  </ul>
+
+  <h3>3. 살아있는 문서 3종만</h3>
+  <table>
+    <tr><th>문서</th><th>내용</th><th>갱신</th></tr>
+    <tr><td><code>ONEPAGER.md</code></td><td>위 원페이저</td><td>피벗할 때만</td></tr>
+    <tr><td><code>ART_BIBLE.md</code></td><td>컬러·실루엣·레퍼런스·안티 레퍼런스</td><td>디렉션 확정 시</td></tr>
+    <tr><td><code>DECISIONS.md</code></td><td>결정 로그 — 날짜·결정·<strong>이유</strong></td><td>결정할 때마다 1줄</td></tr>
+  </table>
+  <p>나머지 문서는 <b>필요해진 날</b>에 만드세요. 미리 만든 문서는 전부 죽습니다.</p>
+
+  <h3>4. 30초 피치</h3>
+  <div class="key">
+    <div class="lab">검증 질문</div>
+    <p>당신의 게임을 <strong>30초 안에</strong> 설명해서 상대가 "오 재밌겠다"고 하는가?<br>
+    못 한다면 — 게임이 복잡한 게 아니라 <strong>아직 핵심이 안 정해진 것</strong>입니다.</p>
+  </div>
+  <p>피치 공식: <code>[익숙한 것] 인데 [한 가지 뒤틀기]</code></p>
+  <ul>
+    <li>"<b>다크소울인데 로그라이크</b>" — 하데스</li>
+    <li>"<b>마피아 게임인데 우주선 수리</b>" — 어몽어스</li>
+    <li>"<b>공포 게임인데 알바</b>" — 리썰 컴퍼니</li>
+    <li>"<b>하베스트문인데 혼자 만듦</b>" — 스타듀밸리</li>
+  </ul>
+
+  <div class="readbtn" data-ch="15"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="c16" data-title="성공작 12편 해부" data-part="5부 · 해부">
+  <div class="ch-head"><div class="ch-no">16</div><div>
+    <h2>성공작 12편 해부</h2>
+    <div class="sub">무엇을 발명했고, 어떻게 만들었는가</div>
+  </div></div>
+
+  <p>각 사례에서 볼 것은 <b>①핵심 발명 ②개발 과정 ③당신이 훔칠 것</b> 셋입니다.</p>
+
+  <div class="case">
+    <div class="top"><span class="ico">🍄</span><h4>슈퍼 마리오 브라더스</h4><span class="tag">1985 · 닌텐도</span></div>
+    <div class="inv">핵심 발명 — 레벨 배치만으로 조작법을 가르치기</div>
+    <dl>
+      <dt>과정</dt><dd>제한된 카트리지 용량 때문에 튜토리얼 텍스트를 넣을 수 없었음. <strong>제약이 설계 혁신을 낳은 대표 사례.</strong></dd>
+      <dt>훔칠 것</dt><dd>7장의 <b>제시→연습→시험→응용</b> 4박자. 새 요소마다 반복.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">🧱</span><h4>테트리스</h4><span class="tag">1984 · 알렉세이 파지트노프</span></div>
+    <div class="inv">핵심 발명 — 규칙 4개로 무한한 깊이</div>
+    <dl>
+      <dt>과정</dt><dd>연구소에서 취미로 제작. 그래픽·스토리·성장 없음.</dd>
+      <dt>훔칠 것</dt><dd><b>최소 규칙 × 최대 깊이.</b> 규칙을 더할 생각이 들 때마다 "테트리스는 4개다"를 떠올리세요.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">🔥</span><h4>다크 소울</h4><span class="tag">2011 · 프롬소프트웨어</span></div>
+    <div class="inv">핵심 발명 — 난이도를 결함이 아니라 <b>상품</b>으로</div>
+    <dl>
+      <dt>과정</dt><dd>전작(데몬즈 소울)이 초기 혹평·판매 부진. 그럼에도 방향을 유지해 다음 작에서 폭발.</dd>
+      <dt>훔칠 것</dt><dd>모두를 만족시키려는 순간 아무도 만족시키지 못합니다. <b>대상 플레이어를 좁히는 용기</b>. 그리고 <b>환경 서사</b>(대사 없이 배치로 이야기).</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">⛏️</span><h4>마인크래프트</h4><span class="tag">2009 · 마르쿠스 페르손</span></div>
+    <div class="inv">핵심 발명 — 목표를 <b>플레이어가 만들게</b> 하기 + 얼리 액세스 개척</div>
+    <dl>
+      <dt>과정</dt><dd>1인 개발, 미완성 상태로 유료 판매 시작. 커뮤니티 피드백으로 성장. <strong>"완성 후 출시"라는 통념을 깬 전환점.</strong></dd>
+      <dt>훔칠 것</dt><dd><b>창발</b>(10장) — 블록 놓기/부수기 두 동사의 조합만으로 모든 게 나옵니다. 그리고 <b>미완성으로 내보내 배우는 것</b>.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">🌀</span><h4>포탈</h4><span class="tag">2007 · 밸브</span></div>
+    <div class="inv">핵심 발명 — 동사 하나(포탈)로 장르를 만듦</div>
+    <dl>
+      <dt>과정</dt><dd>학생 팀의 졸업작품 <em>Narbacular Drop</em>을 밸브가 보고 <strong>팀째 채용</strong>. 짧은 분량(3시간)을 유지한 결단.</dd>
+      <dt>훔칠 것</dt><dd><b>새 동사 하나</b>면 충분합니다. 그리고 <b>짧고 완벽한 것</b>이 길고 늘어지는 것을 이깁니다.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">❤️</span><h4>언더테일</h4><span class="tag">2015 · 토비 폭스</span></div>
+    <div class="inv">핵심 발명 — <b>장르 관습을 배반</b>하는 것 자체가 서사</div>
+    <dl>
+      <dt>과정</dt><dd>사실상 1인 개발 약 3년(아트 일부 협업). 킥스타터 목표 5천 달러 → 5만 달러 초과 달성.</dd>
+      <dt>훔칠 것</dt><dd><b>기계적 서사</b>(11장) — "적을 죽이지 않을 수 있다"는 <em>규칙</em>이 곧 주제입니다. 텍스트가 아니라 규칙으로 말하세요.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">🌾</span><h4>스타듀 밸리</h4><span class="tag">2016 · ConcernedApe</span></div>
+    <div class="inv">핵심 발명 — 좋아하는 게임(하베스트문)의 <b>불만을 정확히 고치기</b></div>
+    <dl>
+      <dt>과정</dt><dd><strong>1인 개발 약 4년 반.</strong> 코드·아트·음악·기획 전부. 포트폴리오 목적으로 시작했다가 대표작이 됨.</dd>
+      <dt>훔칠 것</dt><dd>새 장르를 발명할 필요가 없습니다. <b>"이 게임의 이게 아쉬웠다"를 정확히 해결</b>하면 그게 기획입니다. 단, 4년을 각오해야 합니다.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">🗡️</span><h4>하데스</h4><span class="tag">2020 · 슈퍼자이언트</span></div>
+    <div class="inv">핵심 발명 — <b>죽음을 서사로</b>. 로그라이크 × 내러티브</div>
+    <dl>
+      <dt>과정</dt><dd><strong>얼리 액세스 약 2년</strong> 동안 정기 업데이트 + 커뮤니티 피드백 반영. 사망마다 새 대사가 나오는 방대한 대사 시스템.</dd>
+      <dt>훔칠 것</dt><dd>로그라이크의 최대 약점(반복 지루함)을 <b>반복 자체를 서사 장치로 전환</b>해 해결했습니다. <strong>장르의 약점을 정면으로 공략</strong>하는 게 기획의 고급 기술입니다.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">🃏</span><h4>슬레이 더 스파이어</h4><span class="tag">2019 · 메가크릿</span></div>
+    <div class="inv">핵심 발명 — 덱빌딩 × 로그라이크 결합, 그리고 <b>데이터 기반 밸런싱</b></div>
+    <dl>
+      <dt>과정</dt><dd>얼리 액세스 중 <strong>카드별 픽률·승률 통계</strong>를 수집해 감이 아닌 숫자로 조정. 2인 팀 시작.</dd>
+      <dt>훔칠 것</dt><dd>8장의 <b>계측 로그</b>. 소규모 팀도 "어디서 죽었나 / 뭘 골랐나 / 언제 껐나"만 찍으면 밸런싱의 질이 달라집니다.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">🧛</span><h4>뱀파이어 서바이버즈</h4><span class="tag">2022 · 폰클</span></div>
+    <div class="inv">핵심 발명 — <b>공격을 자동화</b>하고 이동만 남기기</div>
+    <dl>
+      <dt>과정</dt><dd>1인, 구매 에셋 다수 활용, 초저가 출시. <strong>적 AI는 "플레이어를 향해 직진"이 전부.</strong></dd>
+      <dt>훔칠 것</dt><dd><b>기술적 야심을 0으로 줄이고 심리 설계에 전부 투자</b>한 사례. 그리고 <b>비주얼 훅</b>(12장) — 화면 가득한 탄막이 3초 GIF로 게임을 설명합니다.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">🔦</span><h4>리썰 컴퍼니</h4><span class="tag">2023 · Zeekerss</span></div>
+    <div class="inv">핵심 발명 — <b>근접 음성 채팅</b>을 공포 메카닉으로</div>
+    <dl>
+      <dt>과정</dt><dd>1인 개발, 얼리 액세스. <strong>스트리머의 반응 자체가 마케팅</strong>이 되는 구조로 폭발적 확산.</dd>
+      <dt>훔칠 것</dt><dd>재미의 대부분을 <b>플레이어들끼리 만들게</b> 했습니다(10장 창발). 어둠 + 손실 위험 + 음성 채팅, 세 요소의 곱셈. <strong>"관전이 재밌는가"</strong>를 기획 단계에서 고려하세요.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">🚀</span><h4>어몽 어스</h4><span class="tag">2018 → 2020 · 이너슬로스</span></div>
+    <div class="inv">핵심 발명 — 사회적 추리를 <b>비대칭 역할</b>로 게임화</div>
+    <dl>
+      <dt>과정</dt><dd>출시 후 <strong>약 2년간 거의 무명.</strong> 이후 스트리머 유입으로 폭발. <em>개발팀은 그때까지 포기 직전이었음.</em></dd>
+      <dt>훔칠 것</dt><dd>좋은 게임이 <b>즉시 발견되지는 않습니다.</b> 그리고 발견의 트리거는 대개 <strong>"보는 재미"</strong>입니다. 12장의 비주얼 훅과 같은 맥락.</dd>
+    </dl>
+  </div>
+
+  <div class="readbtn" data-ch="16"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="c17" data-title="성공작은 어떻게 만들어졌나 (제작 파이프라인)" data-part="5부 · 해부">
+  <div class="ch-head"><div class="ch-no">17</div><div>
+    <h2>성공작은 어떻게 만들어졌나</h2>
+    <div class="sub">기획이 아니라 <b>제작 방식</b>을 훔치기 — 4가지 프로덕션 모델</div>
+  </div></div>
+
+  <p>앞 장이 "무엇을 만들었나"였다면, 이 장은 <b>"어떻게 굴렸나"</b>입니다. 같은 아이디어라도 제작 모델이 틀리면 완성되지 않습니다.</p>
+
+  <h3>1. 한눈에 보는 비교표</h3>
+  <table>
+    <tr><th>게임</th><th>팀 규모</th><th>개발 기간</th><th>출시 전략</th><th>피드백 루프</th></tr>
+    <tr><td>스타듀 밸리</td><td><b>1인</b></td><td>약 4년 반</td><td>완성 후 정식 출시</td><td>거의 없음 (출시 후)</td></tr>
+    <tr><td>언더테일</td><td>사실상 1인</td><td>약 3년</td><td>킥스타터 → 정식</td><td>데모 + 후원자</td></tr>
+    <tr><td>마인크래프트</td><td>1인 → 소규모</td><td>알파부터 공개</td><td><b>유료 알파</b></td><td>매우 강함 (상시)</td></tr>
+    <tr><td>하데스</td><td>중소 스튜디오</td><td>EA 약 2년</td><td><b>얼리 액세스</b></td><td>정기 업데이트 + 커뮤니티</td></tr>
+    <tr><td>슬레이 더 스파이어</td><td>2인 시작</td><td>EA 약 1년 반</td><td>얼리 액세스</td><td><b>플레이 통계 계측</b></td></tr>
+    <tr><td>포탈</td><td>스튜디오(소규모 팀)</td><td>학생작 → 재개발</td><td>번들 동봉</td><td><b>내부 플레이테스트 집중</b></td></tr>
+    <tr><td>뱀파이어 서바이버즈</td><td><b>1인</b></td><td>수개월 → EA</td><td>초저가 조기 출시</td><td>출시 후 급속 반복</td></tr>
+    <tr><td>리썰 컴퍼니</td><td><b>1인</b></td><td>EA 조기 출시</td><td>얼리 액세스</td><td>스트리머 반응</td></tr>
+    <tr><td>어몽 어스</td><td>3인</td><td>출시 후 <b>2년 무명</b></td><td>정식 → 뒤늦게 폭발</td><td>초기엔 거의 없음</td></tr>
+  </table>
+  <div class="tip"><b>먼저 읽어야 할 것 —</b> 이 표에서 <strong>"성공한 방식"이 하나가 아니라는 점</strong>이 핵심입니다. 4년 폐쇄 개발도, 3개월 조기 출시도 성공했습니다. 중요한 건 <em>내 조건에 맞는 모델을 고르는 것</em>입니다.</div>
+
+  <h3>2. 네 가지 프로덕션 모델</h3>
+
+  <div class="case">
+    <div class="top"><span class="ico">🔨</span><h4>A. 폐쇄형 장인 모델</h4><span class="tag">스타듀밸리 · 언더테일</span></div>
+    <dl>
+      <dt>방식</dt><dd>완성될 때까지 혼자 파고든다. 공개는 거의 완성 후.</dd>
+      <dt>성립 조건</dt><dd>① 명확한 참조작이 있어 방향이 흔들리지 않음 ② <strong>수년을 버틸 생활 기반</strong> ③ 코드·아트·음악을 혼자 감당할 능력</dd>
+      <dt>장점</dt><dd>비전이 훼손되지 않음. 출시 시점의 완성도가 높음.</dd>
+      <dt>치명적 위험</dt><dd><b>4년 뒤에 "안 재밌다"를 발견</b>할 수 있음. 이 모델을 쓸 거면 13장의 Fun Gate를 <strong>혼자서라도</strong> 반드시 돌려야 합니다.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">📡</span><h4>B. 공개 제작 모델 (얼리 액세스)</h4><span class="tag">마인크래프트 · 하데스 · 슬더스</span></div>
+    <dl>
+      <dt>방식</dt><dd>미완성 상태로 판매하며 <strong>개발비와 피드백을 동시에</strong> 확보. 정기 업데이트로 신뢰를 유지.</dd>
+      <dt>성립 조건</dt><dd>① <strong>코어 루프가 이미 재밌음</strong>(콘텐츠만 부족한 상태) ② 정기 업데이트를 지킬 체력 ③ 커뮤니티 응대 역량</dd>
+      <dt>하데스가 잘한 것</dt><dd>업데이트에 <strong>리듬</strong>을 만들었습니다. "언젠가 나옴"이 아니라 예측 가능한 주기 + 공개 로드맵. 플레이어가 <em>제작 과정의 참여자</em>가 됩니다.</dd>
+      <dt>치명적 위험</dt><dd>코어가 재미없는 상태로 EA에 나가면 <strong>초기 평점이 영구 낙인</strong>이 됩니다. EA는 재미를 찾는 곳이 아니라 <em>이미 찾은 재미를 키우는 곳</em>입니다.</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">🔬</span><h4>C. 플레이테스트 주도 모델</h4><span class="tag">포탈 · 밸브식</span></div>
+    <dl>
+      <dt>방식</dt><dd>외부인을 정기적으로 데려와 <strong>관찰</strong>하고, 그 관찰 결과가 설계를 바꿉니다.</dd>
+      <dt>핵심 규칙</dt><dd><b>① 테스터가 막히면, 테스터가 아니라 레벨이 틀린 것</b><br><b>② 관찰 중 힌트 금지</b> — 도와주는 순간 데이터가 사라짐<br><b>③ 말이 아니라 행동을 기록</b> — "어디서 멈췄나, 어디를 봤나"</dd>
+      <dt>소규모 팀 적용</dt><dd>비싸 보이지만 사실 <strong>가장 싼 모델</strong>입니다. 필요한 건 사람 3명과 화면 녹화뿐입니다. → 14장 W4</dd>
+    </dl>
+  </div>
+
+  <div class="case">
+    <div class="top"><span class="ico">⚡</span><h4>D. 조기 출시 · 급속 반복 모델</h4><span class="tag">뱀서 · 리썰 컴퍼니</span></div>
+    <dl>
+      <dt>방식</dt><dd>최소 빌드를 <strong>빨리 시장에 내보내고</strong>, 반응을 보며 방향을 정합니다.</dd>
+      <dt>성립 조건</dt><dd>① 스코프가 극단적으로 작음 ② <strong>보는 재미</strong>가 있어 확산됨(12장) ③ 1인이라 의사결정이 즉각적</dd>
+      <dt>본질</dt><dd>이건 "대충 내는 것"이 아니라 <strong>가설 검증을 시장에서 하는 것</strong>입니다. 대신 반응이 오면 <em>며칠 안에</em> 대응할 수 있어야 성립합니다.</dd>
+      <dt>치명적 위험</dt><dd>확산되지 않으면 그냥 묻힙니다. 어몽어스처럼 <strong>2년 뒤에 발견</strong>될 수도 있고, 대부분은 발견되지 않습니다.</dd>
+    </dl>
+  </div>
+
+  <h3>3. 어떤 모델을 골라야 하나</h3>
+  <table>
+    <tr><th>당신의 조건</th><th>추천 모델</th><th>이유</th></tr>
+    <tr><td>참조작이 명확 + 장기 버틸 여건</td><td><b>A 장인형</b></td><td>방향이 안 흔들리므로 폐쇄 개발의 위험이 낮음</td></tr>
+    <tr><td>코어 루프 검증 완료 + 콘텐츠만 부족</td><td><b>B 얼리 액세스</b></td><td>가장 안정적인 인디 경로</td></tr>
+    <tr><td>재미가 아직 불확실</td><td><b>C 플레이테스트</b></td><td>EA로 나가기 <strong>전에</strong> 반드시 거쳐야 하는 단계</td></tr>
+    <tr><td>스코프 초소형 + 보는 재미 있음</td><td><b>D 조기 출시</b></td><td>확산이 유일한 동력</td></tr>
+  </table>
+  <div class="key">
+    <div class="lab">실제로는 조합해서 씁니다</div>
+    <p><strong>C(플레이테스트로 재미 검증) → B(얼리 액세스로 확장)</strong> 가 오늘날 인디의 표준 경로입니다.<br>
+    슬레이 더 스파이어와 하데스가 정확히 이 경로였습니다.</p>
+  </div>
+
+  <h3>4. 공통 마일스톤 — 규모와 무관하게 같다</h3>
+  <table>
+    <tr><th>단계</th><th>증명해야 하는 것</th><th>이게 안 되면</th></tr>
+    <tr><td><b>프로토타입</b></td><td>"이게 재밌는가?"</td><td>Kill. 다음 아이디어로.</td></tr>
+    <tr><td><b>버티컬 슬라이스</b></td><td>"완성되면 이런 모습이다" — <strong>최종 품질의 5~15분</strong></td><td>아트 스타일·스코프 재검토</td></tr>
+    <tr><td><b>알파 / EA</b></td><td>"끝까지 플레이 가능한가"</td><td>콘텐츠 양 문제 — 스코프 축소</td></tr>
+    <tr><td><b>베타</b></td><td>"버그 없이 돌아가는가"</td><td>출시 연기</td></tr>
+    <tr><td><b>라이브</b></td><td>"계속 돌아올 이유가 있는가"</td><td>12장 리텐션 재설계</td></tr>
+  </table>
+  <div class="tip"><b>버티컬 슬라이스가 중요한 이유 —</b> 프로토타입(재미 검증)과 알파(분량 확보) 사이에서 <strong>"이 품질을 이 속도로 만들 수 있는가"</strong>를 증명하는 단계입니다. 14장의 <em>에셋 1개당 제작시간 실측</em>이 여기서 쓰입니다. 이 계산을 건너뛴 팀이 "80% 완성 상태로 영원히 멈추는" 전형적 실패를 겪습니다.</div>
+
+  <h3>5. 복제 가능한 것 / 불가능한 것</h3>
+  <table>
+    <tr><th></th><th>내용</th></tr>
+    <tr><td><b>복제 가능 ✅</b></td><td>플레이테스트 규칙(관찰·힌트 금지) · 계측 로그로 밸런싱 · EA 업데이트 리듬 · 스코프 잔인하게 줄이기 · 프로토 → 슬라이스 → EA 순서 · <b>Kill 기준 사전 설정</b></td></tr>
+    <tr><td><b>복제 불가 ❌</b></td><td>스튜디오의 자본과 인력 · 4년을 버티는 생활 기반 · 대형 퍼블리셔 노출 · <b>운(타이밍·스트리머 발견)</b></td></tr>
+  </table>
+  <div class="warn"><b>정직한 결론 —</b> 위 사례들은 모두 <strong>생존 편향</strong>입니다. 같은 방식으로 만들고 실패한 게임이 수천 배 많습니다. 그래서 사례에서 훔칠 것은 "그들이 한 선택"이 아니라 <strong>"그들이 틀렸을 때 빨리 알아낸 방법"</strong>입니다. 그건 확실히 복제 가능합니다.</div>
+
+  <div class="readbtn" data-ch="17"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="c18" data-title="공통 법칙 7가지 + 자가진단" data-part="5부 · 해부">
+  <div class="ch-head"><div class="ch-no">18</div><div>
+    <h2>공통 법칙 7가지</h2>
+    <div class="sub">12편에서 반복해 나타난 것들</div>
+  </div></div>
+
+  <table>
+    <tr><th>#</th><th>법칙</th><th>근거 사례</th></tr>
+    <tr><td>1</td><td><b>장르를 발명하지 않는다. 익숙한 것 + 한 가지 뒤틀기.</b></td><td>하데스, 스타듀밸리, 어몽어스</td></tr>
+    <tr><td>2</td><td><b>동사(핵심 행동)는 1~2개면 충분하다.</b></td><td>포탈, 테트리스, 마인크래프트</td></tr>
+    <tr><td>3</td><td><b>스코프를 잔인하게 줄인 팀이 완성한다.</b></td><td>뱀서, 포탈(3시간), 언더테일</td></tr>
+    <tr><td>4</td><td><b>플레이어에게 미완성을 보여주고 배운다.</b></td><td>마인크래프트, 하데스, 슬더스</td></tr>
+    <tr><td>5</td><td><b>재미의 일부를 플레이어가 만들게 한다.</b></td><td>마인크래프트, 리썰 컴퍼니</td></tr>
+    <tr><td>6</td><td><b>보는 재미가 있어야 발견된다.</b></td><td>어몽어스, 뱀서, 리썰 컴퍼니</td></tr>
+    <tr><td>7</td><td><b>대상 플레이어를 좁히는 것이 강점이 된다.</b></td><td>다크소울, 언더테일</td></tr>
+  </table>
+
+  <div class="key">
+    <div class="lab">가장 반직관적인 하나</div>
+    <p><strong>3번 — 스코프 축소.</strong> 거의 모든 초보 기획자가 "더 넣으면 더 재밌어진다"고 생각하고, 거의 모든 실패한 프로젝트가 그래서 미완성으로 끝납니다.<br>
+    기획의 실력은 <em>무엇을 넣을지</em>가 아니라 <strong>무엇을 뺄지</strong>에서 드러납니다.</p>
+  </div>
+
+  <hr>
+
+  <h2 style="font-size:24px">📋 기획 자가진단 20문항</h2>
+  <p class="sub">지금 당신의 기획을 점검하세요. 체크된 개수가 곧 준비도입니다.</p>
+
+  <div class="check" id="chk">
+    <div class="row"><input type="checkbox"><span><b>재미 가설</b>을 한 문장으로 쓸 수 있다 (1장)</span></div>
+    <div class="row"><input type="checkbox"><span>주된 <b>재미의 종류</b>를 8가지 중 1~2개로 좁혔다 (1장)</span></div>
+    <div class="row"><input type="checkbox"><span><b>코어 루프</b>가 그려지고, 화살표가 시작점으로 돌아온다 (3장)</span></div>
+    <div class="row"><input type="checkbox"><span>루프 <b>한 바퀴 소요 시간</b>을 숫자로 안다 (3장)</span></div>
+    <div class="row"><input type="checkbox"><span><b>초 단위 루프</b>가 재밌다고 확신한다 (3장)</span></div>
+    <div class="row"><input type="checkbox"><span>핵심 <b>제약</b>이 무엇인지 말할 수 있다 (4장)</span></div>
+    <div class="row"><input type="checkbox"><span><b>즉각 피드백</b>(0.3초 이내)이 설계되어 있다 (4장)</span></div>
+    <div class="row"><input type="checkbox"><span>플레이어의 <b>자율성·유능감·관계성</b> 중 무엇을 주로 채우는지 안다 (5장)</span></div>
+    <div class="row"><input type="checkbox"><span><b>손실 위험</b>을 플레이어가 스스로 선택하게 되어 있다 (5장)</span></div>
+    <div class="row"><input type="checkbox"><span>난이도 곡선에 <b>이완 구간</b>이 있다 (6장)</span></div>
+    <div class="row"><input type="checkbox"><span>새 요소마다 <b>제시→연습→시험→응용</b>을 적용했다 (7장)</span></div>
+    <div class="row"><input type="checkbox"><span><b>지배 전략</b>이 없는지 확인했다 (8장)</span></div>
+    <div class="row"><input type="checkbox"><span>수치가 <b>코드 밖 데이터</b>로 분리되어 있다 (8장)</span></div>
+    <div class="row"><input type="checkbox"><span>코어 액션 1개에 <b>주스</b>가 들어가 있다 (9장)</span></div>
+    <div class="row"><input type="checkbox"><span>규칙끼리 <b>상호작용(곱셈)</b>하는 지점이 있다 (10장)</span></div>
+    <div class="row"><input type="checkbox"><span>선택지가 <b>실제로 다른 결과</b>를 만든다 (11장)</span></div>
+    <div class="row"><input type="checkbox"><span>이 게임의 <b>대표 GIF 3초</b>를 설명할 수 있다 (12장)</span></div>
+    <div class="row"><input type="checkbox"><span><b>Kill 기준</b>을 미리 정해 뒀다 (13장)</span></div>
+    <div class="row"><input type="checkbox"><span><b>병목</b>이 누구/무엇인지 안다 (14장)</span></div>
+    <div class="row"><input type="checkbox"><span><b>30초 피치</b>가 된다 (15장)</span></div>
+    <div class="score" id="chkScore">0 / 20</div>
+  </div>
+
+  <h3>🕐 새 프로젝트 시작 30분 체크리스트</h3>
+  <p>어떤 게임이든 첫 회의에서 이 8개만 확정하면 나머지가 굴러갑니다.</p>
+  <ol>
+    <li>코어 루프 <b>1문장</b></li>
+    <li>재미 가설 <b>1문장</b></li>
+    <li>주된 재미 종류 <b>1~2개</b></li>
+    <li>병목이 누구인지 (장르로 판단)</li>
+    <li>성공 기준 <b>수치</b> + <b>Kill 기준</b> + 기한</li>
+    <li>멀티플레이 여부 (<b>지금 결정, 나중에 못 붙임</b>)</li>
+    <li>아트 스타일을 <b>제작 속도로</b> 결정 (후보 2안 시간 측정)</li>
+    <li>팀 합의서 (수익배분·크레딧·<b>이탈 규칙</b>)</li>
+  </ol>
+
+  <div class="key">
+    <div class="lab">마지막으로</div>
+    <p>기획서는 <strong>재미를 보장하지 않습니다.</strong> 기획서가 하는 일은 <em>재미를 빨리 시험해 보게 만드는 것</em>뿐입니다.<br>
+    좋은 기획자는 문서를 잘 쓰는 사람이 아니라, <strong>틀렸다는 걸 남보다 빨리 알아내는 사람</strong>입니다.</p>
+  </div>
+
+  <div class="readbtn" data-ch="18"><button class="btn">이 장 완독 ✓</button><div class="done">완독함 ✓</div></div>
+</section>
+
+</div>
+<footer>게임 기획 교과서 · 진도와 체크리스트는 이 브라우저에 자동 저장됩니다</footer>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= NAV & PROGRESS ================= */
+const secs = [...document.querySelectorAll('section')];
+const nav = document.getElementById('nav');
+let curPart = '';
+secs.forEach((s,i)=>{
+  const part = s.dataset.part;
+  if(part !== curPart){
+    const d=document.createElement('div'); d.className='part'; d.textContent=part; nav.appendChild(d); curPart=part;
+  }
+  const a=document.createElement('a');
+  a.href='#'+s.id; a.dataset.ch=i;
+  a.innerHTML=`<span class="num">${i}</span><span>${s.dataset.title}</span>`;
+  nav.appendChild(a);
+});
+
+const KEY='gd_textbook_v1';
+let st = JSON.parse(localStorage.getItem(KEY) || '{"read":[],"chk":[]}');
+function save(){ localStorage.setItem(KEY, JSON.stringify(st)); }
+
+function paint(){
+  document.querySelectorAll('nav a').forEach(a=>{
+    a.classList.toggle('read', st.read.includes(+a.dataset.ch));
+  });
+  document.querySelectorAll('.readbtn').forEach(b=>{
+    b.classList.toggle('is-done', st.read.includes(+b.dataset.ch));
+  });
+  const n = st.read.length;
+  document.getElementById('pnum').textContent = n;
+  document.getElementById('pfill').style.width = (n/19*100)+'%';
+}
+document.querySelectorAll('.readbtn').forEach(b=>{
+  b.querySelector('.btn').onclick=()=>{
+    const c=+b.dataset.ch;
+    if(!st.read.includes(c)){ st.read.push(c); save(); paint(); toast('진도 저장됨 · '+st.read.length+'/19장'); }
+  };
+});
+paint();
+
+// scrollspy
+const obs = new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('nav a').forEach(a=>a.classList.remove('on'));
+      const a=document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if(a){a.classList.add('on'); a.scrollIntoView({block:'nearest'});}
+    }
+  });
+},{rootMargin:'-15% 0px -75% 0px'});
+secs.forEach(s=>obs.observe(s));
+
+let tt;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2200);}
+
+/* ================= CHECKLIST ================= */
+const chkRows=[...document.querySelectorAll('#chk .row')];
+chkRows.forEach((r,i)=>{
+  const cb=r.querySelector('input');
+  cb.checked = st.chk.includes(i);
+  r.classList.toggle('ok', cb.checked);
+  cb.onchange=()=>{
+    if(cb.checked){ if(!st.chk.includes(i)) st.chk.push(i); }
+    else st.chk = st.chk.filter(x=>x!==i);
+    r.classList.toggle('ok', cb.checked); save(); chkScore();
+  };
+});
+function chkScore(){
+  const n=st.chk.length;
+  let msg = n>=17?' — 착수 준비 완료 🚀' : n>=12?' — 프로토타입 가능' : n>=7?' — 기획 보강 필요' : ' — 1~3장부터 다시';
+  document.getElementById('chkScore').textContent = n+' / 20'+msg;
+}
+chkScore();
+
+/* ================= CANVAS HELPERS ================= */
+function fit(cv){ const r=cv.getBoundingClientRect(); cv.width=r.width*2; cv.height=cv.height*2||520; cv.style.height=(cv.height/2)+'px'; const c=cv.getContext('2d'); c.scale(2,2); return c; }
+function setup(id,h){ const cv=document.getElementById(id); if(!cv)return null; const r=cv.getBoundingClientRect();
+  cv.width=r.width*2; cv.height=h*2; cv.style.height=h+'px'; const c=cv.getContext('2d'); c.setTransform(2,0,0,2,0,0);
+  return {cv,c,w:r.width,h:h}; }
+
+/* ===== LAB 1: CORE LOOP ===== */
+(function(){
+  const S=setup('loopcv',260); if(!S)return; const {c,w,h}=S;
+  const steps=['행동','피드백','보상','다음 동기'];
+  const cols=['#7aa2f7','#7dcfff','#9ece6a','#ffd866'];
+  let t=0, broken=false;
+  document.getElementById('loopToggle').onclick=function(){
+    broken=!broken; this.textContent = broken?'피드백 다시 연결':'피드백 끊어보기';
+    document.getElementById('loopMsg').textContent = broken
+      ? '피드백이 끊기면 — 행동해도 반응이 없어 루프 전체가 죽습니다.'
+      : '4박자가 모두 돌 때 루프가 살아 있습니다.';
+  };
+  (function draw(){
+    c.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2, R=Math.min(w,h)*0.32;
+    // ring
+    c.strokeStyle='#2c3155'; c.lineWidth=2; c.beginPath(); c.arc(cx,cy,R,0,7); c.stroke();
+    for(let i=0;i<4;i++){
+      const ang=-Math.PI/2 + i*Math.PI/2;
+      const x=cx+Math.cos(ang)*R, y=cy+Math.sin(ang)*R;
+      const dead = broken && i===1;
+      c.beginPath(); c.arc(x,y,26,0,7);
+      c.fillStyle= dead?'#3a2030':'rgba(27,30,51,1)'; c.fill();
+      c.strokeStyle= dead?'#f7768e':cols[i]; c.lineWidth=2.5; c.stroke();
+      c.fillStyle= dead?'#f7768e':cols[i]; c.font='bold 12px Segoe UI'; c.textAlign='center';
+      c.fillText(steps[i],x,y+4);
+    }
+    // pulse
+    const seg = broken ? 1 : 4;
+    const p=(t%100)/100;
+    const ang=-Math.PI/2 + p*(broken? Math.PI/2*1 : Math.PI*2);
+    const px=cx+Math.cos(ang)*R, py=cy+Math.sin(ang)*R;
+    c.beginPath(); c.arc(px,py,7,0,7); c.fillStyle= broken?'#f7768e':'#fff'; c.fill();
+    c.shadowBlur=0;
+    c.fillStyle= broken?'#f7768e':'#8890c0'; c.font='12px Segoe UI'; c.textAlign='center';
+    c.fillText(broken?'✕ 루프 정지':'루프 순환 중', cx, cy+4);
+    t+= broken?0.6:1.1;
+    requestAnimationFrame(draw);
+  })();
+})();
+
+/* ===== LAB 2: REWARD SCHEDULE ===== */
+(function(){
+  const S=setup('rewcv',200); if(!S)return; const {c,w,h}=S;
+  let fixed=[], vari=[];
+  function run(){
+    fixed=[]; vari=[];
+    for(let i=1;i<=100;i++){ fixed.push(i%10===0); vari.push(Math.random()<0.1); }
+    draw();
+    const fc=fixed.filter(Boolean).length, vc=vari.filter(Boolean).length;
+    document.getElementById('rewMsg').textContent=`고정 ${fc}회 / 변동 ${vc}회 — 총량은 비슷하지만 '언제 올지 모름'이 지속성을 만듭니다.`;
+  }
+  function draw(){
+    c.clearRect(0,0,w,h);
+    const pad=44, bw=(w-pad-14)/100;
+    [['고정 비율',fixed,42,'#7aa2f7'],['변동 비율',vari,128,'#ffd866']].forEach(([lab,arr,y,col])=>{
+      c.fillStyle='#8890c0'; c.font='bold 12px Segoe UI'; c.textAlign='left'; c.fillText(lab,4,y-16);
+      c.strokeStyle='#2c3155'; c.lineWidth=1; c.beginPath(); c.moveTo(pad,y+22); c.lineTo(w-10,y+22); c.stroke();
+      arr.forEach((hit,i)=>{
+        if(!hit)return;
+        const x=pad+i*bw;
+        c.fillStyle=col; c.fillRect(x,y-14,Math.max(2,bw*0.7),36);
+      });
+    });
+    c.fillStyle='#565f89'; c.font='11px Segoe UI'; c.fillText('시행 1 → 100',pad,h-4);
+  }
+  document.getElementById('rewRun').onclick=run;
+  run();
+})();
+
+/* ===== LAB 3: FLOW CHANNEL ===== */
+(function(){
+  const S=setup('flowcv',280); if(!S)return; const {c,w,h}=S;
+  const sk=document.getElementById('skill'), df=document.getElementById('diff'), msg=document.getElementById('flowMsg');
+  function draw(){
+    const s=+sk.value, d=+df.value;
+    c.clearRect(0,0,w,h);
+    const pad=44, W=w-pad-16, H=h-46;
+    // zones
+    c.save(); c.translate(pad,14);
+    // anxiety (above channel)
+    c.fillStyle='rgba(247,118,142,.10)'; c.beginPath(); c.moveTo(0,0); c.lineTo(W,0); c.lineTo(0,H); c.closePath(); c.fill();
+    c.fillStyle='rgba(122,162,247,.10)'; c.beginPath(); c.moveTo(W,0); c.lineTo(W,H); c.lineTo(0,H); c.closePath(); c.fill();
+    // flow channel band
+    c.fillStyle='rgba(158,206,106,.22)';
+    c.beginPath(); c.moveTo(0,H*0.12); c.lineTo(W*0.88,0); c.lineTo(W,H*0.12); c.lineTo(W*0.12,H); c.lineTo(0,H*0.88); c.closePath();
+    c.save(); c.beginPath(); c.rect(0,0,W,H); c.clip();
+    c.beginPath(); c.moveTo(-40,H+40-0); c.lineTo(W+40,-40); c.lineTo(W+40,-40+90); c.lineTo(-40,H+40+90); c.closePath();
+    c.fillStyle='rgba(158,206,106,.20)'; c.fill(); c.restore();
+    // axes
+    c.strokeStyle='#2c3155'; c.lineWidth=1.5;
+    c.beginPath(); c.moveTo(0,0); c.lineTo(0,H); c.lineTo(W,H); c.stroke();
+    // labels
+    c.fillStyle='#f7768e'; c.font='bold 12px Segoe UI'; c.textAlign='left'; c.fillText('불안 (너무 어려움)',10,26);
+    c.fillStyle='#7aa2f7'; c.textAlign='right'; c.fillText('지루함 (너무 쉬움)',W-10,H-14);
+    c.save(); c.rotate(-Math.PI/6); c.fillStyle='#9ece6a'; c.font='bold 13px Segoe UI'; c.textAlign='center';
+    c.fillText('몰입 채널 FLOW', W*0.42, H*0.60); c.restore();
+    // point
+    const px=(s/100)*W, py=H-(d/100)*H;
+    c.beginPath(); c.arc(px,py,9,0,7); c.fillStyle='#fff'; c.fill();
+    c.strokeStyle='#0e0f1a'; c.lineWidth=2; c.stroke();
+    c.restore();
+    c.fillStyle='#8890c0'; c.font='11px Segoe UI'; c.textAlign='center';
+    c.fillText('플레이어 실력 →', pad+ (w-pad-16)/2, h-6);
+    c.save(); c.translate(14,h/2); c.rotate(-Math.PI/2); c.textAlign='center'; c.fillText('난이도 →',0,0); c.restore();
+    const diffv=d-s;
+    msg.textContent = diffv>22 ? '❌ 불안 — 실력 대비 너무 어렵습니다'
+      : diffv<-22 ? '❌ 지루함 — 도전이 부족합니다'
+      : '✅ 몰입 — 도전과 실력이 균형을 이룹니다';
+    msg.style.color = Math.abs(diffv)>22 ? '#f7768e' : '#9ece6a';
+  }
+  sk.oninput=df.oninput=draw; draw();
+})();
+
+/* ===== LAB 4: DIFFICULTY CURVES ===== */
+(function(){
+  const S=setup('curvecv',240); if(!S)return; const {c,w,h}=S;
+  const pad=44, W=w-pad-16, H=h-44;
+  c.clearRect(0,0,w,h);
+  c.save(); c.translate(pad,12);
+  c.strokeStyle='#2c3155'; c.lineWidth=1.5;
+  c.beginPath(); c.moveTo(0,0); c.lineTo(0,H); c.lineTo(W,H); c.stroke();
+  // linear
+  c.strokeStyle='#565f89'; c.lineWidth=2.5; c.setLineDash([6,5]);
+  c.beginPath(); c.moveTo(0,H); c.lineTo(W,H*0.12); c.stroke(); c.setLineDash([]);
+  // sawtooth
+  c.strokeStyle='#7aa2f7'; c.lineWidth=3; c.beginPath();
+  for(let i=0;i<=200;i++){
+    const t=i/200, base=1-t*0.86;
+    const saw = 0.16*Math.abs(((t*4.2)%1)*2-1) - 0.08;
+    const y=H*(base+saw);
+    if(i===0)c.moveTo(0,y); else c.lineTo(t*W,y);
+  }
+  c.stroke();
+  // annotations
+  c.fillStyle='#9ece6a'; c.font='bold 11px Segoe UI'; c.textAlign='center';
+  [0.28,0.52,0.76].forEach(t=>{
+    const base=1-t*0.86, saw=0.16*Math.abs(((t*4.2)%1)*2-1)-0.08;
+    const y=H*(base+saw);
+    c.beginPath(); c.arc(t*W,y,4,0,7); c.fillStyle='#9ece6a'; c.fill();
+  });
+  c.fillStyle='#9ece6a'; c.fillText('↓ 이완 구간(휴식·보상)', W*0.52, H*0.86);
+  c.restore();
+  c.fillStyle='#565f89'; c.font='11px Segoe UI'; c.textAlign='left'; c.fillText('진행도 →', pad, h-6);
+  c.save(); c.translate(14,h/2); c.rotate(-Math.PI/2); c.textAlign='center'; c.fillText('난이도 →',0,0); c.restore();
+})();
+
+/* ===== LAB 5: GROWTH CURVES ===== */
+(function(){
+  const S=setup('growcv',250); if(!S)return; const {c,w,h}=S;
+  const rate=document.getElementById('growRate');
+  function draw(){
+    const k=+rate.value/100;
+    c.clearRect(0,0,w,h);
+    const pad=44,W=w-pad-16,H=h-44;
+    c.save(); c.translate(pad,12);
+    c.strokeStyle='#2c3155'; c.lineWidth=1.5;
+    c.beginPath(); c.moveTo(0,0); c.lineTo(0,H); c.lineTo(W,H); c.stroke();
+    // grid
+    c.strokeStyle='rgba(44,49,85,.6)'; c.lineWidth=1;
+    for(let i=1;i<5;i++){ c.beginPath(); c.moveTo(0,H*i/5); c.lineTo(W,H*i/5); c.stroke(); }
+    const N=50;
+    const curves=[
+      ['#7aa2f7', n=> n*k*2 ],
+      ['#bb9af7', n=> Math.pow(1+k*0.12, n)-1 ],
+      ['#9ece6a', n=> Math.log(1+n*k*4)*8 ]
+    ];
+    let max=0;
+    curves.forEach(([,f])=>{ for(let n=0;n<=N;n++) max=Math.max(max,f(n)); });
+    curves.forEach(([col,f])=>{
+      c.strokeStyle=col; c.lineWidth=3; c.beginPath();
+      for(let n=0;n<=N;n++){
+        const x=n/N*W, y=H-Math.min(1,f(n)/max)*H;
+        if(n===0)c.moveTo(x,y); else c.lineTo(x,y);
+      }
+      c.stroke();
+    });
+    c.restore();
+    c.fillStyle='#565f89'; c.font='11px Segoe UI'; c.textAlign='left'; c.fillText('레벨 →', pad, h-6);
+    c.save(); c.translate(14,h/2); c.rotate(-Math.PI/2); c.textAlign='center'; c.fillText('능력치 →',0,0); c.restore();
+  }
+  rate.oninput=draw; draw();
+})();
+
+/* ===== LAB 6: JUICE ===== */
+(function(){
+  const S=setup('juicecv',300); if(!S)return; const {cv,c,w,h}=S;
+  let juice=true, score=0, shake=0, hitstop=0, parts=[], flash=0;
+  let target={x:w/2,y:h/2,r:34,sq:1};
+  const btn=document.getElementById('juiceToggle');
+  btn.onclick=()=>{ juice=!juice; btn.textContent='주스: '+(juice?'ON':'OFF');
+    btn.style.background = juice?'#7aa2f7':'#232741'; btn.style.color=juice?'#0e0f1a':'#e4e8ff'; };
+
+  let AC=null;
+  function beep(){
+    if(!juice) return;
+    try{
+      AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+      const o=AC.createOscillator(), g=AC.createGain();
+      o.connect(g); g.connect(AC.destination);
+      o.type='square'; o.frequency.setValueAtTime(520,AC.currentTime);
+      o.frequency.exponentialRampToValueAtTime(180,AC.currentTime+0.09);
+      g.gain.setValueAtTime(0.06,AC.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+0.1);
+      o.start(); o.stop(AC.currentTime+0.1);
+    }catch(e){}
+  }
+  function move(){
+    target.x = 60+Math.random()*(w-120);
+    target.y = 60+Math.random()*(h-120);
+  }
+  cv.addEventListener('click', e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    if(Math.hypot(mx-target.x,my-target.y) <= target.r){
+      score++;
+      if(juice){
+        shake=13; hitstop=4; flash=1; target.sq=1.7; beep();
+        for(let i=0;i<20;i++){
+          const a=Math.random()*7, sp=2+Math.random()*5.5;
+          parts.push({x:target.x,y:target.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:1,
+            col:['#ffd866','#ff9e64','#f7768e','#fff'][i%4]});
+        }
+      }
+      move();
+    }
+  });
+  (function loop(){
+    if(hitstop>0){ hitstop--; requestAnimationFrame(loop); return; }
+    c.setTransform(2,0,0,2,0,0);
+    let ox=0,oy=0;
+    if(juice&&shake>0){ ox=(Math.random()-.5)*shake; oy=(Math.random()-.5)*shake; shake*=0.82; if(shake<0.4)shake=0; }
+    c.clearRect(0,0,w,h);
+    c.fillStyle='#07080f'; c.fillRect(0,0,w,h);
+    c.save(); c.translate(ox,oy);
+    if(juice&&flash>0){ c.fillStyle='rgba(255,216,102,'+(flash*0.12)+')'; c.fillRect(-20,-20,w+40,h+40); flash*=0.8; if(flash<0.02)flash=0; }
+    // particles
+    parts=parts.filter(p=>p.l>0);
+    parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.22; p.vx*=0.98; p.l-=0.032;
+      c.globalAlpha=Math.max(0,p.l); c.fillStyle=p.col; c.fillRect(p.x-3,p.y-3,6,6); c.globalAlpha=1; });
+    // target
+    if(juice){ target.sq += (1-target.sq)*0.18; } else target.sq=1;
+    const rx=target.r*target.sq, ry=target.r/ (juice? target.sq : 1);
+    c.beginPath(); c.ellipse(target.x,target.y,rx,ry,0,0,7);
+    c.fillStyle= juice? '#ff9e64' : '#5a6188'; c.fill();
+    c.lineWidth=3; c.strokeStyle= juice?'#ffd866':'#7b83b0'; c.stroke();
+    c.beginPath(); c.arc(target.x,target.y,rx*0.35,0,7); c.fillStyle='#07080f'; c.fill();
+    c.restore();
+    // hud
+    c.fillStyle='#e4e8ff'; c.font='bold 17px Segoe UI'; c.textAlign='left';
+    c.fillText('점수 '+score, 16, 30);
+    c.fillStyle= juice?'#9ece6a':'#8890c0'; c.font='13px Segoe UI';
+    c.fillText(juice?'주스 ON — 흔들림·히트스톱·파티클·스쿼시·플래시·사운드':'주스 OFF — 규칙은 완전히 동일합니다', 16, h-16);
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* 창 크기 변경 시 캔버스는 CSS로 스케일됩니다 (리로드하지 않음 — 읽던 위치 유지) */
+</script>
+</body>
+</html>

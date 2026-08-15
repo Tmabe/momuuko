@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>블렌더 모델링 교과서</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#14161f; --bg2:#1b1e2b; --card:#212536; --card2:#2a2f45;
+  --ink:#e9ecf8; --dim:#8d95b8; --line:#333a56;
+  --or:#e8833a;           /* 블렌더 오렌지 */
+  --ue:#5b9bd5;           /* 언리얼 블루 */
+  --ok:#6cc07a; --warn:#e5b755; --bad:#e26a63; --pur:#b18cf0;
+  --mono:'Consolas','D2Coding',monospace;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:'Pretendard','Segoe UI','Malgun Gothic',sans-serif;
+  font-size:15.5px;line-height:1.85;}
+
+/* layout */
+.shell{display:flex;min-height:100vh;}
+aside{width:290px;flex:none;position:sticky;top:0;height:100vh;overflow-y:auto;
+  background:var(--bg2);border-right:1px solid var(--line);padding:20px 0 60px;}
+aside::-webkit-scrollbar{width:7px;} aside::-webkit-scrollbar-thumb{background:#333a56;border-radius:4px;}
+.brand{padding:0 22px 14px;border-bottom:1px solid var(--line);margin-bottom:12px;}
+.brand h1{font-size:19px;line-height:1.35;letter-spacing:-.4px;}
+.brand h1 span{color:var(--or);}
+.brand p{font-size:11.5px;color:var(--dim);margin-top:3px;}
+.prog{padding:0 22px 12px;}
+.pbar{height:6px;background:var(--card2);border-radius:4px;overflow:hidden;}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--or),var(--ok));transition:.4s;}
+.ptxt{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--mono);}
+.part{font-size:10.5px;color:var(--or);font-weight:800;letter-spacing:1.4px;padding:15px 22px 4px;}
+aside a{display:flex;gap:8px;align-items:baseline;padding:6px 22px;color:var(--dim);
+  text-decoration:none;font-size:13.5px;border-left:3px solid transparent;}
+aside a:hover{color:var(--ink);background:rgba(232,131,58,.07);}
+aside a.on{color:var(--or);border-left-color:var(--or);background:rgba(232,131,58,.1);font-weight:700;}
+aside a .n{font-size:11px;color:#5a6285;font-variant-numeric:tabular-nums;min-width:16px;}
+aside a.read .n::after{content:" ✓";color:var(--ok);}
+
+main{flex:1;min-width:0;padding-bottom:90px;}
+.inner{max-width:790px;margin:0 auto;padding:0 32px;}
+
+/* hero */
+.hero{padding:62px 0 38px;border-bottom:1px solid var(--line);}
+.hero .k{color:var(--or);font-weight:800;font-size:12px;letter-spacing:2px;}
+.hero h1{font-size:41px;line-height:1.22;letter-spacing:-1.3px;margin:9px 0 12px;}
+.hero h1 em{font-style:normal;color:var(--or);}
+.hero p{color:var(--dim);font-size:15.5px;}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:5px 13px;font-size:12.5px;color:var(--dim);}
+
+/* section */
+section{padding:44px 0 8px;border-bottom:1px solid var(--line);}
+.ch{display:flex;gap:14px;align-items:flex-start;}
+.chn{flex:none;width:44px;height:44px;border-radius:12px;background:var(--card2);display:flex;
+  align-items:center;justify-content:center;font-weight:800;color:var(--or);font-size:15px;margin-top:4px;font-family:var(--mono);}
+h2{font-size:26px;letter-spacing:-.7px;line-height:1.35;}
+.sub{color:var(--dim);font-size:13.5px;margin-bottom:4px;}
+h3{font-size:18px;margin:30px 0 7px;color:var(--ue);}
+h4{font-size:15.5px;margin:20px 0 3px;color:var(--pur);}
+p{margin:10px 0;}
+b{color:var(--or);font-weight:700;}
+strong{color:var(--ink);font-weight:800;}
+ul,ol{margin:10px 0 10px 22px;} li{margin:5px 0;}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0;}
+
+/* blocks */
+.make{background:linear-gradient(135deg,rgba(232,131,58,.14),rgba(177,140,240,.07));
+  border:1px solid #5a4530;border-radius:14px;padding:16px 20px;margin:18px 0;}
+.make .l{font-size:10.5px;font-weight:800;letter-spacing:1.5px;color:var(--or);margin-bottom:3px;}
+.make p{margin:3px 0;font-size:16px;}
+.one{background:rgba(91,155,213,.1);border:1px solid #34597f;border-radius:12px;padding:13px 18px;margin:16px 0;}
+.one .l{font-size:10.5px;font-weight:800;letter-spacing:1.5px;color:var(--ue);margin-bottom:2px;}
+.stuck{background:rgba(226,106,99,.09);border-left:4px solid var(--bad);border-radius:8px;padding:12px 16px;margin:16px 0;font-size:14.5px;}
+.stuck b{color:var(--bad);}
+.tip{background:rgba(108,192,122,.09);border-left:4px solid var(--ok);border-radius:8px;padding:12px 16px;margin:16px 0;font-size:14.5px;}
+.tip b{color:var(--ok);}
+.warn{background:rgba(229,183,85,.09);border-left:4px solid var(--warn);border-radius:8px;padding:12px 16px;margin:16px 0;font-size:14.5px;}
+.warn b{color:var(--warn);}
+
+/* steps */
+.steps{counter-reset:s;margin:16px 0;}
+.step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(51,58,86,.55);}
+.step:last-child{border-bottom:none;}
+.step .no{flex:none;width:26px;height:26px;border-radius:8px;background:var(--card2);color:var(--or);
+  font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:var(--mono);margin-top:3px;}
+.step .bd{flex:1;font-size:14.5px;}
+.step .bd .t{font-weight:700;color:var(--ink);}
+.step .bd .d{color:var(--dim);font-size:13.5px;}
+
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;}
+th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top;}
+th{background:var(--card2);color:var(--pur);font-weight:700;font-size:13px;}
+kbd{display:inline-block;background:#2e3550;border:1px solid #454e73;border-bottom-width:2px;border-radius:5px;
+  padding:1px 7px;font-family:var(--mono);font-size:12.5px;color:var(--ink);}
+code{font-family:var(--mono);background:#0f1119;padding:1px 6px;border-radius:4px;font-size:13px;color:#c9d2f0;}
+pre{background:#0f1119;border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin:14px 0;overflow-x:auto;}
+pre code{background:none;padding:0;font-size:12.8px;line-height:1.7;}
+
+/* lab */
+.lab{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:17px;margin:20px 0;}
+.lab .cap{font-size:10.5px;font-weight:800;letter-spacing:1.4px;color:var(--warn);margin-bottom:9px;}
+.lab svg{display:block;width:100%;height:auto;}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:11px;font-size:13.5px;color:var(--dim);}
+input[type=number],input[type=text]{background:var(--bg2);border:1px solid var(--line);border-radius:8px;
+  color:var(--ink);padding:8px 11px;font-family:var(--mono);font-size:14px;width:120px;}
+input:focus{outline:none;border-color:var(--or);}
+.btn{background:var(--or);color:#1a1206;border:none;border-radius:8px;padding:8px 15px;font-weight:800;
+  font-size:13.5px;cursor:pointer;font-family:inherit;}
+.btn.g{background:var(--card2);color:var(--ink);border:1px solid var(--line);}
+.btn:hover{filter:brightness(1.1);}
+.out{font-family:var(--mono);font-size:15px;color:var(--ok);font-weight:700;}
+
+/* checklist */
+.ck{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 18px 14px;margin:16px 0;}
+.ck .r{display:flex;gap:11px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(51,58,86,.5);font-size:14px;}
+.ck .r:last-of-type{border-bottom:none;}
+.ck input{margin-top:6px;accent-color:var(--ok);width:16px;height:16px;flex:none;}
+.ck .r.ok span{color:var(--dim);text-decoration:line-through;}
+
+.keys{background:var(--bg2);border:1px dashed var(--line);border-radius:10px;padding:12px 16px;margin:16px 0;font-size:13.5px;}
+.keys .l{font-size:10.5px;font-weight:800;letter-spacing:1.4px;color:var(--dim);margin-bottom:6px;}
+
+.done-btn{margin:24px 0 4px;display:flex;align-items:center;gap:12px;}
+.done-btn .d{color:var(--ok);font-weight:700;font-size:14px;display:none;}
+.done-btn.is .btn{display:none;} .done-btn.is .d{display:block;}
+
+footer{max-width:790px;margin:0 auto;padding:44px 32px;color:var(--dim);font-size:12.5px;text-align:center;}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);background:var(--or);color:#1a1206;
+  font-weight:800;padding:10px 20px;border-radius:22px;opacity:0;transition:.25s;font-size:13.5px;z-index:99;pointer-events:none;}
+.toast.on{opacity:1;transform:translate(-50%,0);}
+@media(max-width:980px){aside{display:none;} .inner{padding:0 20px;} .hero h1{font-size:31px;}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<aside>
+  <div class="brand">
+    <h1>블렌더 <span>모델링 교과서</span></h1>
+    <p>Blender 5.2 LTS → Unreal Engine 5.7</p>
+  </div>
+  <div class="prog">
+    <div class="pbar"><i id="pf"></i></div>
+    <div class="ptxt"><span id="pn">0</span> / 17강</div>
+  </div>
+  <nav id="nav"></nav>
+</aside>
+
+<main><div class="inner">
+
+<div class="hero">
+  <div class="k">BLENDER 5.2 LTS · UE 5.7 · 게임 에셋</div>
+  <h1>도구를 외우지 말고<br><em>프로세스를 반복하라</em></h1>
+  <p>예제 하나하나를 끝까지 만들면서, 매번 <b>똑같은 10단계</b>를 돕니다.<br>17강이 끝나면 새 모델을 만들 때 볼 것은 <b>체크리스트 한 장</b>뿐입니다.</p>
+  <div class="chips">
+    <span class="chip">🧭 10단계 프로세스 고정</span>
+    <span class="chip">⌨️ 87키(넘버패드 없음) 대응</span>
+    <span class="chip">🎮 매 장 UE에 실제로 넣음</span>
+    <span class="chip">🧪 계산기·데모 5종</span>
+  </div>
+</div>
+
+<!-- ============ 프로세스 카드 ============ -->
+<section id="c0" data-t="10단계 프로세스 (이 책의 전부)" data-p="시작">
+  <div class="ch"><div class="chn">0</div><div>
+    <h2>10단계 프로세스</h2><div class="sub">이 책은 이 표를 17번 반복하는 것이 전부입니다</div>
+  </div></div>
+
+  <p>모델이 상자든 몬스터든 <strong>순서는 절대 바뀌지 않습니다.</strong> 바뀌는 건 각 단계에서 쓰는 도구뿐입니다. 이 순서를 손에 익히는 것이 목표이고, 개별 버튼 위치는 그 부산물입니다.</p>
+
+  <div class="steps">
+    <div class="step"><div class="no">0</div><div class="bd"><div class="t">기술 브리프</div>
+      <div class="d">만들기 <b>전에</b> 정한다 — 폴리곤 예산 · 텍스처 해상도 · 머티리얼 슬롯 수 · 스켈레톤 종류. 이게 늦으면 뒤 단계가 전부 재작업된다.</div></div></div>
+    <div class="step"><div class="no">1</div><div class="bd"><div class="t">치수 결정</div>
+      <div class="d">실제 크기를 <b>미터로 먼저 적는다</b>. 문 2.1m, 양동이 0.3m. 눈대중으로 만들면 UE에서 전부 다시 맞춰야 한다.</div></div></div>
+    <div class="step"><div class="no">2</div><div class="bd"><div class="t">블록아웃</div>
+      <div class="d">기본 도형으로 실루엣만. 디테일 금지.</div></div></div>
+    <div class="step"><div class="no">3</div><div class="bd"><div class="t">형태 확정</div>
+      <div class="d">폴리곤 도구로 다듬기. <b>쿼드·삼각형만, n-gon 금지.</b> 변형되는 부위는 엣지가 관절을 감싸게.</div></div></div>
+    <div class="step"><div class="no">4</div><div class="bd"><div class="t">원점 · 피벗 · 이름</div>
+      <div class="d">★게임 에셋의 생사가 갈리는 단계. 프롭은 바닥 중앙, 모듈러는 코너, 문은 경첩 위치. 콜리전은 <code>UCX_메쉬이름</code>.</div></div></div>
+    <div class="step"><div class="no">5</div><div class="bd"><div class="t">UV 언랩</div>
+      <div class="d">채널0 = 텍스처. 스태틱 라이팅을 쓰면 <b>채널1 = 라이트맵</b>이 따로 필요하다. 텍셀 밀도는 부위마다 같게.</div></div></div>
+    <div class="step"><div class="no">6</div><div class="bd"><div class="t">베이크 · 검증</div>
+      <div class="d">노멀을 굽고 <b>여기서 확인하고 넘어간다</b>. 텍스처링과 한 번에 처리하면 아티팩트를 덧칠해 덮게 된다.</div></div></div>
+    <div class="step"><div class="no">7</div><div class="bd"><div class="t">텍스처 · 머티리얼</div>
+      <div class="d">PBR 4종. <b>머티리얼 슬롯 1개 = 드로우콜 1개</b>이므로 슬롯 수를 예산으로 관리.</div></div></div>
+    <div class="step"><div class="no">8</div><div class="bd"><div class="t">익스포트</div>
+      <div class="d">트랜스폼 적용 → 스케일 확인 → FBX 옵션 체크리스트. 매번 같은 곳에서 틀린다.</div></div></div>
+    <div class="step"><div class="no">9</div><div class="bd"><div class="t">UE 임포트</div>
+      <div class="d">콜리전 · Nanite · 소켓 · 머티리얼 재연결.</div></div></div>
+    <div class="step"><div class="no">10</div><div class="bd"><div class="t">검수</div>
+      <div class="d">스케일 · 축 · 면 방향. <b>캐릭터는 반드시 애니메이션을 돌려서</b> 확인한다. 정지 상태 검수는 의미 없다.</div></div></div>
+  </div>
+
+  <div class="tip"><b>왜 0번(기술 브리프)이 있는가 —</b> 실무 파이프라인이 꼽는 가장 큰 실수가 <strong>"기술 브리프가 모델링보다 늦게 나오는 것"</strong>입니다. 폴리 예산이나 머티리얼 슬롯이 중간에 바뀌면 베이크·텍스처·리깅·임포트가 연쇄로 다시 갑니다. 취미 작업이라도 <b>숫자 4개는 먼저 적고</b> 시작하세요.</div>
+
+  <div class="done-btn" data-c="0"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 1. 세팅 ============ -->
+<section id="c1" data-t="첫 실행 세팅 (87키 대응)" data-p="0부 · 준비">
+  <div class="ch"><div class="chn">1</div><div>
+    <h2>첫 실행 세팅</h2><div class="sub">넘버패드 없는 키보드를 쓰신다면 이 강을 건너뛰면 안 됩니다</div>
+  </div></div>
+
+  <div class="make"><div class="l">오늘 할 것</div>
+    <p>블렌더를 <strong>내 키보드에 맞게</strong> 만들고, UE와 단위를 맞춥니다.</p></div>
+
+  <h3>1. ★넘버패드 문제 — 87키의 첫 관문</h3>
+  <p>블렌더는 시점 전환을 <b>넘버패드</b>에 몰아놨습니다. <kbd>Num1</kbd> 정면, <kbd>Num3</kbd> 우측면, <kbd>Num7</kbd> 위. 87키(TKL)에는 이게 없습니다.</p>
+
+  <h4>방법 A — 넘버패드 에뮬레이트</h4>
+  <pre><code>Edit → Preferences → Input → ☑ Emulate Numpad</code></pre>
+  <p>상단 숫자열 <kbd>1</kbd>~<kbd>9</kbd>가 넘버패드처럼 작동합니다.</p>
+  <div class="warn"><b>부작용이 있습니다 —</b> 원래 상단 숫자열은 <strong>에디트 모드에서 버텍스/엣지/페이스 선택 전환</strong>(1/2/3)에 쓰입니다. 에뮬레이트를 켜면 그게 막힙니다. 대신 마우스로 상단 아이콘 3개를 눌러야 합니다.</div>
+
+  <h4>방법 B — 파이 메뉴 (추천)</h4>
+  <pre><code>백틱 키 ` 을 누르고 있으면 → 시점 파이 메뉴가 뜬다
+마우스를 방향으로 튕기고 놓으면 시점 전환</code></pre>
+  <p>에뮬레이트를 <strong>켜지 않고도</strong> 시점 전환이 됩니다. 숫자열 1/2/3도 그대로 살아 있습니다.</p>
+
+  <div class="tip"><b>제 권장 —</b> <strong>방법 B로 시작하세요.</strong> 에뮬레이트는 지금은 편해 보이지만, 5강 에디트 모드부터 1/2/3을 하루에 수백 번 누르게 됩니다. 거기서 막히면 다시 끄게 되고, 그때는 이미 넘버패드 습관이 들어 있습니다. 처음부터 백틱에 익숙해지는 편이 이득입니다.</div>
+
+  <h3>2. 단위 — UE와 맞추기</h3>
+  <p>여기서 안 맞추면 <b>모든 모델이 100배 틀어집니다.</b></p>
+  <pre><code>Scene Properties(원뿔+공 아이콘) → Units
+  Unit System : Metric
+  Unit Scale  : 1.0
+  Length      : Meters</code></pre>
+  <p>즉 <strong>블렌더는 미터로 두고</strong>, 변환은 익스포트 때 처리합니다. 이유는 8강에서 설명합니다.</p>
+
+  <div class="lab">
+    <div class="cap">🧪 계산기 — 블렌더 ↔ 언리얼 단위</div>
+    <div class="row">
+      <label>Blender <input type="number" id="bl" value="2.1" step="0.1"> m</label>
+      <span style="color:var(--or);font-weight:800">↔</span>
+      <label>Unreal <input type="number" id="ue" value="210"> uu(cm)</label>
+    </div>
+    <div class="row"><span class="out" id="uout"></span></div>
+    <div class="row" style="font-size:12.5px">UE는 1 유닛 = 1cm입니다. 블렌더 1m = UE 100uu — <b>이 100배가 초보자 문제 1위</b>입니다.</div>
+  </div>
+
+  <h3>3. 나머지 세팅 (한 번만 하면 됩니다)</h3>
+  <table>
+    <tr><th>항목</th><th>설정</th><th>이유</th></tr>
+    <tr><td>자동 저장</td><td>Preferences → Save&amp;Load → Auto Save ☑, 2분</td><td>블렌더는 <b>잘 죽습니다</b></td></tr>
+    <tr><td>실행 취소 횟수</td><td>Undo Steps 32 → <b>150</b></td><td>기본값이 너무 적음</td></tr>
+    <tr><td>UI 언어</td><td><b>영문 유지</b></td><td>강좌·검색 결과가 전부 영문 기준. 한글로 바꾸면 <b>검색을 못 합니다</b></td></tr>
+    <tr><td>마우스</td><td>3버튼 필수(휠 클릭=회전)</td><td>없으면 Emulate 3 Button Mouse</td></tr>
+    <tr><td>설정 저장</td><td>Preferences 좌하단 ≡ → Save Preferences</td><td>안 누르면 날아감</td></tr>
+  </table>
+
+  <div class="stuck"><b>막히는 지점 —</b> 애드온 <code>.zip</code>을 창에 <strong>드래그해서 설치하면 실패</strong>합니다. Blender 4.2+는 드래그를 <em>확장(Extensions)</em>으로 처리해서 공식 저장소에 없으면 거부합니다.<br>→ <code>Preferences → Add-ons → ▾ → Install from Disk...</code> 로 설치하세요.<br>덧붙여 <strong>5.x에서 파이썬 API가 크게 바뀌어 구형 애드온 다수가 깨졌습니다.</strong> 이 책은 <b>애드온 없이</b> 내장 기능만 씁니다.</div>
+
+  <div class="keys"><div class="l">이번에 쓴 것</div>
+    <kbd>`</kbd> 시점 파이 메뉴 · <kbd>휠클릭</kbd> 회전 · <kbd>Shift+휠클릭</kbd> 이동 · <kbd>휠</kbd> 줌</div>
+
+  <div class="done-btn" data-c="1"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 2. 용어 ============ -->
+<section id="c2" data-t="3D 용어 지도" data-p="0부 · 준비">
+  <div class="ch"><div class="chn">2</div><div>
+    <h2>3D 용어 지도</h2><div class="sub">용어를 모르면 강좌 검색조차 못 합니다</div>
+  </div></div>
+
+  <div class="make"><div class="l">오늘 할 것</div>
+    <p>모르는 단어가 나왔을 때 <strong>돌아와서 찾아볼 지도</strong>를 만듭니다. 외우지 마세요.</p></div>
+
+  <h3>형태를 이루는 것</h3>
+  <table>
+    <tr><th>용어</th><th>뜻</th><th>2D로 치면</th></tr>
+    <tr><td><b>버텍스</b> Vertex</td><td>점</td><td>앵커 포인트</td></tr>
+    <tr><td><b>엣지</b> Edge</td><td>점과 점을 잇는 선</td><td>패스</td></tr>
+    <tr><td><b>페이스</b> Face</td><td>선으로 둘러싸인 면</td><td>칠해진 영역</td></tr>
+    <tr><td><b>메쉬</b> Mesh</td><td>위 셋이 모인 덩어리 = 모델</td><td>레이어 하나</td></tr>
+    <tr><td><b>노멀</b> Normal</td><td>면이 <b>어느 쪽을 향하는가</b></td><td>대응 개념 없음 ★</td></tr>
+    <tr><td><b>토폴로지</b> Topology</td><td>면이 흐르는 <b>구조·짜임새</b></td><td>대응 개념 없음 ★</td></tr>
+  </table>
+  <div class="warn"><b>★ 표시 둘이 2D 작가의 진짜 난관입니다.</b> 대응 개념이 아예 없어서 감으로 못 합니다. 노멀은 5강, 토폴로지는 8강에서 다룹니다.</div>
+
+  <h3>면의 종류 — 게임에서 중요</h3>
+  <table>
+    <tr><th>이름</th><th>변 개수</th><th>게임에서</th></tr>
+    <tr><td><b>트라이</b> Tri</td><td>3</td><td>✅ 최종적으로 전부 이걸로 쪼개짐</td></tr>
+    <tr><td><b>쿼드</b> Quad</td><td>4</td><td>✅ <b>작업 중엔 이게 정답</b> (변형·루프컷에 유리)</td></tr>
+    <tr><td><b>엔곤</b> N-gon</td><td>5 이상</td><td>❌ <b>게임 엔진에서 문제</b>. 없애야 함</td></tr>
+  </table>
+
+  <h3>표면을 입히는 것</h3>
+  <table>
+    <tr><th>용어</th><th>뜻</th></tr>
+    <tr><td><b>UV</b></td><td>3D 표면을 <b>평면으로 펼친 전개도</b>. 종이 상자를 펴는 것과 같음</td></tr>
+    <tr><td><b>텍스처</b></td><td>그 전개도에 그린 그림</td></tr>
+    <tr><td><b>머티리얼</b></td><td>텍스처 + 재질 설정 묶음 (금속인가 천인가)</td></tr>
+    <tr><td><b>PBR</b></td><td>물리 기반 재질. <b>베이스컬러·러프니스·메탈릭·노멀</b> 4종 세트</td></tr>
+    <tr><td><b>베이크</b> Bake</td><td>고해상도 형태의 굴곡을 <b>이미지로 구워</b> 저해상도 모델에 붙이는 것</td></tr>
+  </table>
+
+  <h3>게임 엔진 용어</h3>
+  <table>
+    <tr><th>용어</th><th>뜻</th></tr>
+    <tr><td><b>피벗</b> Pivot / 원점 Origin</td><td>회전·이동의 <b>중심점</b>. 문의 경첩 위치</td></tr>
+    <tr><td><b>콜리전</b> Collision</td><td>충돌 판정용 <b>단순한 보이지 않는 형태</b></td></tr>
+    <tr><td><b>소켓</b> Socket</td><td>다른 물건을 붙이는 <b>부착 지점</b> (손·등)</td></tr>
+    <tr><td><b>LOD</b></td><td>멀어지면 저해상도로 바꿔치기. <b>UE5 Nanite는 자동</b></td></tr>
+    <tr><td><b>드로우콜</b> Draw Call</td><td>GPU에 그리라고 시키는 횟수. <b>머티리얼 슬롯 1개 = 1콜</b></td></tr>
+    <tr><td><b>스켈레탈 메쉬</b></td><td>뼈대가 들어간 움직이는 모델 (캐릭터)</td></tr>
+    <tr><td><b>스태틱 메쉬</b></td><td>뼈대 없는 모델 (소품·벽)</td></tr>
+  </table>
+
+  <div class="tip"><b>지금 외울 것은 5개뿐입니다 —</b> 버텍스 / 엣지 / 페이스 / UV / 피벗. 나머지는 <strong>필요해지는 강에서 다시 설명</strong>합니다.</div>
+
+  <div class="done-btn" data-c="2"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 3. 상자 ============ -->
+<section id="c3" data-t="🪵 나무 상자 — 프로세스 1회전" data-p="1부 · 간단 오브젝트">
+  <div class="ch"><div class="chn">3</div><div>
+    <h2>🪵 나무 상자</h2><div class="sub">가장 단순한 모델로 10단계를 처음부터 끝까지 한 바퀴</div>
+  </div></div>
+
+  <div class="make"><div class="l">오늘 만들 것</div>
+    <p>흉가에 굴러다니는 <strong>나무 상자 하나.</strong> 완성해서 <b>언리얼 안에 세워둡니다.</b></p></div>
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div>
+    <strong>프로세스 전체를 한 번 완주하는 감각.</strong> 각 단계는 최소한으로만 합니다. 잘 만드는 게 목적이 아닙니다.</div>
+
+  <h3>0. 기술 브리프</h3>
+  <pre><code>폴리곤 예산  : 500 tri 이하
+텍스처       : 1024 × 1024, 1세트
+머티리얼 슬롯 : 1개
+종류         : 스태틱 메쉬</code></pre>
+
+  <h3>1. 치수</h3>
+  <p><strong>0.6m × 0.6m × 0.5m.</strong> 사람 무릎 높이입니다. 눈대중 금지 — 실제 크기를 정하고 시작합니다.</p>
+
+  <h3>2~3. 블록아웃과 형태</h3>
+  <ol>
+    <li><kbd>Shift+A</kbd> → Mesh → Cube (기본 큐브가 있으면 그대로 사용)</li>
+    <li><kbd>N</kbd> 으로 사이드바를 열고 Dimensions에 <code>0.6 / 0.6 / 0.5</code> 직접 입력</li>
+    <li>모서리를 살짝 깎습니다 — 4강에서 배울 베벨을 미리 맛보기로: 에디트 모드(<kbd>Tab</kbd>) → <kbd>A</kbd> 전체 선택 → <kbd>Ctrl+B</kbd> → 마우스 조금 → 클릭</li>
+  </ol>
+  <div class="tip"><b>모서리를 깎는 이유 —</b> 완벽히 각진 모서리는 빛을 하나도 안 받아 <strong>현실감이 사라집니다.</strong> 아주 살짝(1~2cm)만 깎아도 화면에서 확 달라집니다. 일러스트에서 하이라이트 넣는 것과 같은 원리입니다.</div>
+
+  <h3>4. 원점 · 피벗 · 이름</h3>
+  <p>상자는 <b>바닥에 놓이는 물건</b>이므로 피벗을 바닥 중앙에 둡니다.</p>
+  <ol>
+    <li>오브젝트 모드에서 <kbd>Shift+S</kbd> → Cursor to World Origin</li>
+    <li>상자를 바닥(Z=0) 위로 올림 — <kbd>N</kbd> 사이드바에서 Location Z를 <code>0.25</code>(높이 절반)</li>
+    <li>Object → Set Origin → <b>Origin to 3D Cursor</b></li>
+    <li>아웃라이너에서 이름을 <code>SM_Crate_01</code> 로</li>
+  </ol>
+  <div class="warn"><b>네이밍 규칙 —</b> <code>SM_</code>=스태틱 메쉬, <code>SK_</code>=스켈레탈, <code>T_</code>=텍스처, <code>M_</code>=머티리얼, <code>UCX_</code>=콜리전. 지금부터 지키면 100개가 넘어갔을 때 살아남습니다.</div>
+
+  <h3>5. UV</h3>
+  <ol>
+    <li>에디트 모드 → <kbd>A</kbd> 전체 선택 → <kbd>U</kbd> → <b>Smart UV Project</b> → OK</li>
+    <li>상단 탭 UV Editing 에서 펼쳐진 모양 확인</li>
+  </ol>
+  <p>이 강에서는 <b>Smart UV Project로 충분합니다.</b> 제대로 된 언랩은 5강에서 합니다.</p>
+
+  <h3>6~7. 텍스처 · 머티리얼</h3>
+  <p>Material Properties → New → Base Color를 갈색으로. 이 강은 <strong>단색으로 끝냅니다.</strong> 텍스처는 6강부터.</p>
+
+  <h3>8. 익스포트 ★</h3>
+  <div class="ck" id="ck-exp">
+    <div class="r"><input type="checkbox"><span>오브젝트 모드인가 (에디트 모드에서 내보내면 안 됨)</span></div>
+    <div class="r"><input type="checkbox"><span><kbd>Ctrl+A</kbd> → <b>All Transforms</b> 적용했는가</span></div>
+    <div class="r"><input type="checkbox"><span>면 방향 확인 — 오버레이 ▾ → Face Orientation, <b>빨간 면이 없어야</b> 함</span></div>
+    <div class="r"><input type="checkbox"><span>내보낼 오브젝트만 선택했는가</span></div>
+    <div class="r"><input type="checkbox"><span>File → Export → FBX, <b>Selected Objects ☑</b></span></div>
+    <div class="r"><input type="checkbox"><span>Transform → <b>Scale 1.00</b>, Apply Scalings <b>FBX All</b></span></div>
+    <div class="r"><input type="checkbox"><span>Armature → <b>Add Leaf Bones ☐ 끄기</b> (캐릭터에서 문제됨)</span></div>
+  </div>
+
+  <h3>9. UE 임포트</h3>
+  <ol>
+    <li>UE 5.7 콘텐츠 브라우저에 FBX를 드래그</li>
+    <li>Import 창 → <b>Generate Lightmap UVs</b> 체크 상태 확인</li>
+    <li>임포트 후 더블클릭 → 크기 확인</li>
+  </ol>
+
+  <h3>10. 검수 — 오늘의 핵심</h3>
+  <div class="stuck"><b>막히는 지점 ①: 상자가 100배 크거나 작다</b><br>
+  원인은 블렌더 m ↔ UE cm 차이입니다. 위 체크리스트의 <b>Apply Scalings = FBX All</b>과 <b>Scale 1.00</b>이 이걸 처리합니다. 그래도 틀리면 임포트 창의 Import Uniform Scale을 <code>100</code> 또는 <code>0.01</code>로.</div>
+  <div class="stuck"><b>막히는 지점 ②: 상자가 옆으로 누워서 들어온다</b><br>
+  블렌더는 Z가 위, FBX 기본은 Y가 위입니다. 익스포트 Transform 항목에서 <b>Forward: -Z Forward / Up: Y Up</b>을 확인하세요. (UE용 표준값)</div>
+  <div class="stuck"><b>막히는 지점 ③: 면이 안 보이거나 속이 비쳐 보인다</b><br>
+  노멀이 뒤집힌 것입니다. 에디트 모드 → <kbd>A</kbd> → <kbd>Shift+N</kbd> (Recalculate Outside).</div>
+
+  <div class="tip"><b>이 3개를 지금 겪는 게 목적입니다.</b> 상자에서 겪으면 5분이고, 캐릭터를 다 만든 뒤에 겪으면 하루입니다.</div>
+
+  <div class="keys"><div class="l">이번에 쓴 것</div>
+    <kbd>Shift+A</kbd> 추가 · <kbd>Tab</kbd> 모드 전환 · <kbd>N</kbd> 사이드바 · <kbd>A</kbd> 전체선택 ·
+    <kbd>Ctrl+B</kbd> 베벨 · <kbd>Shift+S</kbd> 스냅 · <kbd>Ctrl+A</kbd> 트랜스폼 적용 · <kbd>Shift+N</kbd> 노멀 재계산</div>
+
+  <h3>혼자 해보기</h3>
+  <p>같은 프로세스로 <b>나무 궤짝(가로로 긴 상자)</b>을 하나 더. 치수는 1.2 × 0.5 × 0.5m. 10단계를 보지 않고 순서대로 갈 수 있으면 성공입니다.</p>
+
+  <div class="done-btn" data-c="3"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 4. 양동이 ============ -->
+<section id="c4" data-t="🪣 청소 양동이 — 원통과 UV" data-p="1부 · 간단 오브젝트">
+  <div class="ch"><div class="chn">4</div><div>
+    <h2>🪣 청소 양동이</h2><div class="sub">곡면이 들어오면 UV가 어려워집니다</div>
+  </div></div>
+
+  <div class="make"><div class="l">오늘 만들 것</div><p>손잡이 달린 <strong>양동이.</strong> 안쪽이 파인 형태입니다.</p></div>
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div>
+    <strong>원통 형태 다루기 + 심(Seam)을 직접 넣는 UV 언랩.</strong></div>
+
+  <h3>핵심 도구 3개</h3>
+  <table>
+    <tr><th>도구</th><th>단축키</th><th>쓰임</th></tr>
+    <tr><td><b>익스트루드</b> Extrude</td><td><kbd>E</kbd></td><td>면을 뽑아내 두께·기둥 만들기</td></tr>
+    <tr><td><b>인셋</b> Inset</td><td><kbd>I</kbd></td><td>면 안쪽에 작은 면 만들기 (파내기 준비)</td></tr>
+    <tr><td><b>루프컷</b> Loop Cut</td><td><kbd>Ctrl+R</kbd></td><td>둘레를 따라 선 한 바퀴 추가</td></tr>
+  </table>
+  <p>양동이 안쪽은 <strong>윗면 인셋 → 아래로 익스트루드</strong> 두 번이면 끝납니다.</p>
+
+  <h3>★ 원통 버텍스 개수는 처음에 정한다</h3>
+  <p>실린더를 추가하면 좌하단에 <b>Vertices</b> 설정이 뜹니다. 기본 32입니다.</p>
+  <table>
+    <tr><th>버텍스</th><th>용도</th></tr>
+    <tr><td>8~12</td><td>멀리 있는 소품, 모바일</td></tr>
+    <tr><td><b>16~24</b></td><td><b>일반 게임 소품 — 양동이는 16으로</b></td></tr>
+    <tr><td>32+</td><td>가까이 보이는 히어로 오브젝트</td></tr>
+  </table>
+  <div class="warn"><b>이 값은 나중에 바꾸기 어렵습니다.</b> 형태를 다 만든 뒤 줄이려면 처음부터 다시 만드는 게 빠릅니다. 0단계 기술 브리프에 <b>폴리곤 예산</b>이 있는 이유입니다.</div>
+
+  <h3>UV — 심(Seam) 넣기</h3>
+  <p>원통을 평면으로 펴려면 <strong>어딘가는 잘라야</strong> 합니다. 종이컵을 펴려면 옆면을 세로로 한 번 자르는 것과 같습니다.</p>
+  <ol>
+    <li>에디트 모드 → 엣지 선택 모드(<kbd>2</kbd>)</li>
+    <li>양동이 <b>뒤쪽 세로 엣지 한 줄</b> 선택 → <kbd>Ctrl+E</kbd> → <b>Mark Seam</b> (빨갛게 변함)</li>
+    <li>윗면 테두리·아랫면 테두리도 각각 Mark Seam</li>
+    <li><kbd>A</kbd> 전체 선택 → <kbd>U</kbd> → <b>Unwrap</b></li>
+  </ol>
+  <div class="tip"><b>심을 어디에 두는가 —</b> 규칙은 하나입니다. <strong>안 보이는 곳.</strong> 양동이면 뒤쪽, 캐릭터면 팔 안쪽·머리카락 속. 이건 일러스트에서 접합선 숨기는 감각과 같아서 <b>2D 작가에게 유리한 부분</b>입니다.</div>
+
+  <div class="stuck"><b>막히는 지점: UV가 엉망으로 겹쳐 나온다</b><br>
+  심이 부족한 겁니다. <strong>펼칠 수 없는 형태를 억지로 펴면 찌그러집니다.</strong> UV 에디터에서 격자 텍스처(체커)를 씌워 보면 늘어난 부분이 바로 보입니다.<br>
+  → Material Preview 모드 + 체커 텍스처로 확인하는 습관을 지금 들이세요.</div>
+
+  <h3>혼자 해보기</h3>
+  <p>같은 방식으로 <b>대걸레 통</b> 또는 <b>페인트 캔</b>. 손잡이는 원통을 구부려 만듭니다.</p>
+
+  <div class="keys"><div class="l">이번에 쓴 것</div>
+    <kbd>E</kbd> 익스트루드 · <kbd>I</kbd> 인셋 · <kbd>Ctrl+R</kbd> 루프컷 · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 선택 모드 ·
+    <kbd>Ctrl+E</kbd> 엣지 메뉴 · <kbd>U</kbd> UV 메뉴</div>
+
+  <div class="done-btn" data-c="4"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 5. 손전등 ============ -->
+<section id="c5" data-t="🔦 손전등 — 하드서피스와 소켓" data-p="1부 · 간단 오브젝트">
+  <div class="ch"><div class="chn">5</div><div>
+    <h2>🔦 손전등</h2><div class="sub">캐릭터가 손에 드는 물건 — 소켓이 필요합니다</div>
+  </div></div>
+
+  <div class="make"><div class="l">오늘 만들 것</div><p><strong>손전등.</strong> 「무제」에서 실제로 쓸 아이템이고, 발광 머티리얼과 부착 지점이 들어갑니다.</p></div>
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div>
+    <strong>모디파이어</strong>(비파괴 편집) <strong>+ UE 소켓.</strong></div>
+
+  <h3>모디파이어 — 되돌릴 수 있는 편집</h3>
+  <p>지금까지는 형태를 직접 뜯어고쳤습니다. 모디파이어는 <b>원본을 남겨둔 채</b> 효과만 얹습니다. 포토샵의 조정 레이어와 같은 개념입니다.</p>
+  <table>
+    <tr><th>모디파이어</th><th>하는 일</th><th>손전등에서</th></tr>
+    <tr><td><b>Mirror</b></td><td>반대쪽을 자동 복제</td><td>좌우 대칭 버튼</td></tr>
+    <tr><td><b>Bevel</b></td><td>모서리를 전부 부드럽게</td><td>몸통 전체 모서리</td></tr>
+    <tr><td><b>Subdivision Surface</b></td><td>면을 쪼개 매끄럽게</td><td>렌즈 부분</td></tr>
+    <tr><td><b>Solidify</b></td><td>두께 부여</td><td>렌즈 링</td></tr>
+  </table>
+  <div class="warn"><b>익스포트 전에 반드시 —</b> 모디파이어는 <strong>블렌더 안에서만 보이는 효과</strong>일 수 있습니다. FBX 익스포트 시 <b>Apply Modifiers ☑</b>를 확인하거나, <kbd>Ctrl+A</kbd> → Visual Geometry to Mesh로 확정하세요. 안 하면 UE에서 <strong>각진 원본이 들어옵니다.</strong></div>
+
+  <h3>발광 머티리얼</h3>
+  <p>렌즈 부분만 따로 선택 → 머티리얼 슬롯 추가 → Emission. <strong>슬롯이 2개가 되었습니다 = 드로우콜 2개.</strong></p>
+  <div class="tip"><b>슬롯을 늘릴 가치가 있는가 —</b> 손전등처럼 <strong>항상 화면에 있고 빛나야 하는</strong> 물건은 2슬롯이 정당합니다. 반면 상자에 나뭇결·못·라벨을 각각 슬롯으로 나누면 낭비입니다. 그건 <b>하나의 텍스처 안에서</b> 해결합니다.</div>
+
+  <h3>★ UE 소켓 — 손에 붙이기</h3>
+  <p>소켓은 블렌더가 아니라 <b>UE에서 만듭니다.</b></p>
+  <ol>
+    <li>UE에서 스태틱 메쉬 더블클릭 → Socket Manager</li>
+    <li>Create Socket → 이름 <code>Socket_Grip</code></li>
+    <li>손잡이 부분으로 위치 이동</li>
+  </ol>
+  <div class="stuck"><b>막히는 지점: 손전등이 손에서 엉뚱하게 박힌다</b><br>
+  블렌더에서 <strong>원점을 손잡이에 두지 않았기 때문</strong>입니다. 들 수 있는 물건은 피벗을 <b>손이 잡는 위치</b>에 둡니다. 상자처럼 바닥 중앙에 두면 안 됩니다.<br>
+  → 종류마다 피벗 위치가 다릅니다. 상자=바닥중앙 / 손전등=손잡이 / 문=경첩 / 벽=코너.</div>
+
+  <div class="keys"><div class="l">이번에 쓴 것</div>
+    <kbd>Ctrl+2</kbd> 섭디비전 · 모디파이어 패널(렌치 아이콘) · <kbd>Ctrl+A</kbd> Visual Geometry to Mesh</div>
+
+  <div class="done-btn" data-c="5"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 6. 헤드 스컬프팅 ============ -->
+<section id="c6" data-t="🗿 캐릭터 헤드 ① 스컬프팅" data-p="2부 · 캐릭터 헤드">
+  <div class="ch"><div class="chn">6</div><div>
+    <h2>🗿 캐릭터 헤드 ①<br>스컬프팅</h2><div class="sub">2D 실력이 그대로 통하는 구간입니다</div>
+  </div></div>
+
+  <div class="make"><div class="l">오늘 만들 것</div><p>캐릭터 <strong>두상</strong>을 점토처럼 빚습니다. 폴리곤은 신경 쓰지 않습니다.</p></div>
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div>
+    <strong>스컬프팅 모드.</strong> 지금까지의 폴리곤 편집과 완전히 다른 작업입니다.</div>
+
+  <div class="tip"><b>먼저 말씀드립니다 —</b> 이 강은 <strong>재미있습니다.</strong> 형태 감각과 해부학 지식이 그대로 통하고, 브러시로 밀고 당기는 게 드로잉과 비슷합니다. 다음 강(리토폴로지)이 힘드니 여기서 즐겨두세요.</div>
+
+  <h3>준비 — 다이나믹 토폴로지</h3>
+  <p>기본 구(Sphere)로 시작하면 면이 부족해 디테일이 안 들어갑니다. <b>Dyntopo</b>를 켜면 브러시가 지나가는 곳에 면이 자동 생성됩니다.</p>
+  <pre><code>Sculpt Mode 진입 → 상단 Dyntopo ☑
+Detail Size: 처음엔 크게(거친 형태) → 점점 작게(디테일)</code></pre>
+
+  <h3>브러시 5개면 충분합니다</h3>
+  <table>
+    <tr><th>브러시</th><th>하는 일</th><th>2D로 치면</th></tr>
+    <tr><td><b>Draw</b></td><td>부풀리기</td><td>밝은 쪽으로 칠하기</td></tr>
+    <tr><td><b>Grab</b> <kbd>G</kbd></td><td>덩어리째 잡아 끌기</td><td>변형 도구</td></tr>
+    <tr><td><b>Smooth</b> <kbd>Shift</kbd> 누른 채</td><td>부드럽게</td><td>블러</td></tr>
+    <tr><td><b>Crease</b></td><td>홈 파기</td><td>선 긋기</td></tr>
+    <tr><td><b>Flatten</b></td><td>평평하게</td><td>면 정리</td></tr>
+  </table>
+
+  <h3>작업 순서 — 일러스트와 같습니다</h3>
+  <ol>
+    <li><b>큰 덩어리</b> — 두개골 + 턱. 이목구비 금지</li>
+    <li><b>비율</b> — 눈은 머리 세로 중앙, 귀는 눈~코 사이</li>
+    <li><b>중간 형태</b> — 코·눈두덩·광대·입 주변 덩어리</li>
+    <li><b>디테일</b> — 마지막에만</li>
+  </ol>
+  <div class="warn"><b>2D 작가가 가장 많이 하는 실수 —</b> <strong>정면에서만 보고 만드는 것</strong>입니다. 일러스트는 한 각도만 성립하면 되지만 3D는 전부 성립해야 합니다. <b>10초마다 시점을 돌리세요.</b> (<kbd>`</kbd> 파이 메뉴)</div>
+
+  <h3>대칭 켜기</h3>
+  <pre><code>상단 Symmetry → X ☑    (얼굴 반쪽만 만들면 반대편 자동)</code></pre>
+
+  <div class="stuck"><b>막히는 지점: 만들수록 뭉개진다</b><br>
+  Detail Size를 너무 일찍 작게 낮춘 경우입니다. <strong>큰 형태가 틀렸는데 디테일을 올리면 되돌릴 수 없습니다.</strong> 일러스트에서 러프가 틀렸는데 선화를 딴 것과 같습니다.<br>→ 3번 단계까지는 Detail Size를 크게 유지하세요.</div>
+
+  <div class="done-btn" data-c="6"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 7. 리토폴 ============ -->
+<section id="c7" data-t="⚠️ 캐릭터 헤드 ② 리토폴로지" data-p="2부 · 캐릭터 헤드">
+  <div class="ch"><div class="chn">7</div><div>
+    <h2>⚠️ 캐릭터 헤드 ②<br>리토폴로지</h2><div class="sub">이 책에서 가장 힘든 강입니다</div>
+  </div></div>
+
+  <div class="warn" style="font-size:15px"><b>먼저 기대치를 맞춥니다 —</b> 리토폴로지는 <strong>재미없고, 손이 많이 가고, 처음엔 결과가 지저분합니다.</strong> 이건 실력 문제가 아니라 작업의 성질입니다. 3D를 그만두는 사람이 가장 많이 나오는 지점이라, <b>그럴 것을 알고 시작</b>하면 넘어갑니다.</div>
+
+  <div class="make"><div class="l">오늘 할 것</div><p>스컬프트한 두상 <strong>위에 폴리곤을 새로 깝니다.</strong></p></div>
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div>
+    <strong>엣지 흐름(Edge Flow).</strong> 게임 캐릭터가 움직일 수 있느냐가 여기서 결정됩니다.</div>
+
+  <h3>왜 해야 하는가</h3>
+  <table>
+    <tr><th></th><th>스컬프트</th><th>리토폴 후</th></tr>
+    <tr><td>폴리곤</td><td>수십만~수백만</td><td>1~2만</td></tr>
+    <tr><td>구조</td><td>무질서</td><td>규칙적인 쿼드</td></tr>
+    <tr><td>변형</td><td>❌ 관절이 찌그러짐</td><td>✅ 자연스럽게 접힘</td></tr>
+    <tr><td>UV</td><td>❌ 불가능</td><td>✅ 가능</td></tr>
+  </table>
+
+  <h3>★ 엣지 흐름 — 규칙은 하나</h3>
+  <div class="lab">
+    <div class="cap">🧪 엣지 흐름 — 나쁨 vs 좋음</div>
+    <svg viewBox="0 0 640 200">
+      <text x="10" y="18" fill="#e26a63" font-size="13" font-weight="700">✕ 나쁨 — 격자가 눈·입을 가로지름</text>
+      <g stroke="#e26a63" stroke-width="1.2" fill="none" opacity=".8">
+        <g>
+          <line x1="30" y1="40" x2="270" y2="40"/><line x1="30" y1="70" x2="270" y2="70"/>
+          <line x1="30" y1="100" x2="270" y2="100"/><line x1="30" y1="130" x2="270" y2="130"/>
+          <line x1="30" y1="160" x2="270" y2="160"/>
+          <line x1="30" y1="40" x2="30" y2="160"/><line x1="90" y1="40" x2="90" y2="160"/>
+          <line x1="150" y1="40" x2="150" y2="160"/><line x1="210" y1="40" x2="210" y2="160"/>
+          <line x1="270" y1="40" x2="270" y2="160"/>
+        </g>
+      </g>
+      <ellipse cx="105" cy="85" rx="26" ry="14" stroke="#fff" stroke-width="2" fill="none"/>
+      <ellipse cx="195" cy="85" rx="26" ry="14" stroke="#fff" stroke-width="2" fill="none"/>
+      <ellipse cx="150" cy="140" rx="40" ry="15" stroke="#fff" stroke-width="2" fill="none"/>
+
+      <text x="350" y="18" fill="#6cc07a" font-size="13" font-weight="700">✓ 좋음 — 고리가 눈·입을 감쌈</text>
+      <g stroke="#6cc07a" stroke-width="1.4" fill="none" opacity=".9">
+        <ellipse cx="445" cy="85" rx="26" ry="14"/><ellipse cx="445" cy="85" rx="38" ry="24"/><ellipse cx="445" cy="85" rx="50" ry="34"/>
+        <ellipse cx="535" cy="85" rx="26" ry="14"/><ellipse cx="535" cy="85" rx="38" ry="24"/><ellipse cx="535" cy="85" rx="50" ry="34"/>
+        <ellipse cx="490" cy="145" rx="40" ry="15"/><ellipse cx="490" cy="145" rx="55" ry="25"/><ellipse cx="490" cy="145" rx="70" ry="35"/>
+      </g>
+      <ellipse cx="445" cy="85" rx="26" ry="14" stroke="#fff" stroke-width="2" fill="none"/>
+      <ellipse cx="535" cy="85" rx="26" ry="14" stroke="#fff" stroke-width="2" fill="none"/>
+      <ellipse cx="490" cy="145" rx="40" ry="15" stroke="#fff" stroke-width="2" fill="none"/>
+      <text x="350" y="192" fill="#8d95b8" font-size="11">눈·입을 동심원(엣지 루프)이 감싸면 표정이 자연스럽게 접힌다</text>
+    </svg>
+  </div>
+  <p><strong>규칙: 움직이는 구멍(눈·입)은 동심원이 감싼다.</strong> 이것만 지켜도 대부분 해결됩니다. 근육이 수축하는 방향과 면이 접히는 방향이 일치하기 때문입니다.</p>
+
+  <h3>작업 방법 — 블렌더 내장만으로</h3>
+  <ol>
+    <li>스컬프트 위에 새 평면(Plane) 추가</li>
+    <li><b>Shrinkwrap 모디파이어</b> → Target을 스컬프트로 → 표면에 달라붙음</li>
+    <li><b>Mirror 모디파이어</b> → 반쪽만 작업</li>
+    <li>에디트 모드에서 <kbd>E</kbd>로 면을 계속 뽑아 눈·입 주변부터 고리를 두름</li>
+    <li>스냅 켜기: 자석 아이콘 → <b>Face</b> + <b>Project Individual Elements</b></li>
+  </ol>
+
+  <h3>폴리곤 예산</h3>
+  <table>
+    <tr><th>용도</th><th>얼굴 기준</th></tr>
+    <tr><td>배경 NPC</td><td>1,500 ~ 3,000 tri</td></tr>
+    <tr><td><b>일반 게임 캐릭터 머리</b></td><td><b>5,000 ~ 8,000 tri</b></td></tr>
+    <tr><td>히어로 캐릭터 (전신 LOD0)</td><td>80,000 ~ 120,000 tri</td></tr>
+  </table>
+
+  <div class="stuck"><b>막히는 지점: 처음 만든 리토폴은 반드시 지저분합니다</b><br>
+  전부 그렇습니다. <strong>완벽하게 하려 하지 말고 일단 끝까지</strong> 덮으세요. 두 번째 캐릭터에서 훨씬 나아집니다.<br>
+  진짜 실패는 지저분한 게 아니라 <b>중간에 그만두는 것</b>입니다.</div>
+
+  <div class="done-btn" data-c="7"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 8. 헤드 UV/텍스처 ============ -->
+<section id="c8" data-t="캐릭터 헤드 ③ UV·베이크·텍스처" data-p="2부 · 캐릭터 헤드">
+  <div class="ch"><div class="chn">8</div><div>
+    <h2>캐릭터 헤드 ③<br>UV · 베이크 · 텍스처</h2><div class="sub">고생한 스컬프트를 저폴리에 옮겨 담습니다</div>
+  </div></div>
+
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div>
+    <strong>노멀 베이크.</strong> 수백만 폴리곤의 굴곡을 <b>이미지 한 장</b>으로 만들어 저폴리에 씌웁니다.</div>
+
+  <h3>1. UV — 심은 안 보이는 곳에</h3>
+  <table>
+    <tr><th>부위</th><th>심 위치</th></tr>
+    <tr><td>머리</td><td>뒤통수 중앙 세로 (머리카락에 가림)</td></tr>
+    <tr><td>귀</td><td>귀 뒤쪽 접히는 선</td></tr>
+    <tr><td>목</td><td>뒷목 중앙</td></tr>
+  </table>
+  <p><b>텍셀 밀도를 균일하게.</b> 얼굴만 촘촘하고 뒤통수가 성기면 회전할 때 해상도가 튑니다.</p>
+
+  <h3>2. ★ UV 채널 1 = 라이트맵</h3>
+  <div class="warn"><b>초보자가 거의 모르는 항목입니다.</b><br>
+  UE에서 <b>채널0 = 텍스처용</b>, <b>채널1 = 라이트맵용</b>으로 약속돼 있습니다. 스태틱 라이팅을 쓰는데 채널1이 없거나 겹치면 <strong>그림자가 새고 얼룩집니다.</strong><br>
+  → 임포트 시 <b>Generate Lightmap UVs</b>를 켜면 UE가 자동 생성해 줍니다. 아일랜드 사이에 <b>최소 4텍셀</b> 여백이 필요합니다.<br>
+  → 캐릭터는 보통 동적 조명이라 덜 중요하지만, <b>벽·바닥 같은 환경 모델에는 필수</b>입니다.</div>
+
+  <h3>3. 베이크</h3>
+  <pre><code>[준비] 저폴리와 고폴리를 같은 위치에 겹쳐 둔다
+Render Properties → Render Engine: Cycles
+저폴리에 새 이미지(2048) 만들고 머티리얼에 연결
+고폴리 선택 → Shift로 저폴리 추가 선택 (마지막이 활성)
+Bake Type: Normal → ☑ Selected to Active → Extrusion/Cage 조정 → Bake</code></pre>
+
+  <div class="stuck"><b>막히는 지점 ①: 베이크 결과에 검은 얼룩·줄무늬</b><br>
+  케이지(투영 범위)가 부족하거나 과한 것입니다. <b>Extrusion</b> 값을 조금씩 올려가며 다시 구우세요.</div>
+  <div class="stuck"><b>막히는 지점 ②: UE에서만 이음새가 보인다</b><br>
+  <strong>탄젠트 공간 불일치</strong>입니다. 블렌더와 UE 모두 <b>MikkTSpace</b> 기준이므로, 익스포트 시 <b>Tangent Space ☑</b>를 켜야 합니다.</div>
+
+  <div class="tip"><b>베이크는 반드시 텍스처링 전에 검수합니다.</b> 실무에서 꼽는 3대 실수 중 하나가 "베이크와 텍스처링을 한 번에 처리해서, 아티팩트를 색으로 덧칠해 덮어버리는 것"입니다. 나중에 엔진에서 드러나면 되돌릴 수 없습니다.</div>
+
+  <h3>4. 텍스처 — 여기가 강점 구간</h3>
+  <p>Substance 3D Painter가 있으면 그걸로, 없으면 블렌더 Texture Paint로. <strong>CSP에서 하던 감각이 그대로 통합니다.</strong> Adobe CC 전체 앱 구독이면 Substance 3D Collection이 포함돼 있으니 확인해 보세요.</p>
+
+  <div class="done-btn" data-c="8"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 9. 바디 ============ -->
+<section id="c9" data-t="캐릭터 전체 ① 바디 블록아웃" data-p="3부 · 캐릭터 전체">
+  <div class="ch"><div class="chn">9</div><div>
+    <h2>캐릭터 전체 ①<br>바디 블록아웃</h2><div class="sub">비율을 먼저 잠급니다</div>
+  </div></div>
+
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div><strong>실제 치수로 인체 비율 잡기.</strong></div>
+
+  <h3>기준 치수</h3>
+  <table>
+    <tr><th>항목</th><th>값</th></tr>
+    <tr><td>성인 남성 키</td><td><b>1.75 ~ 1.85m</b></td></tr>
+    <tr><td>성인 여성 키</td><td>1.62 ~ 1.70m</td></tr>
+    <tr><td>UE 기본 캐릭터</td><td><b>약 1.8m (180uu)</b></td></tr>
+    <tr><td>눈높이</td><td>키 − 약 0.12m</td></tr>
+  </table>
+  <div class="warn"><b>키를 UE 기본값에 맞추는 이유 —</b> UE의 기본 캡슐 콜리전·카메라 높이·계단 높이가 전부 1.8m 기준으로 세팅돼 있습니다. 크게 벗어나면 <strong>계단을 못 올라가거나 문에 머리가 낍니다.</strong></div>
+
+  <h3>작업 순서</h3>
+  <ol>
+    <li>키 높이의 <b>박스 하나</b>를 먼저 세운다 (자 역할)</li>
+    <li>머리·가슴·골반을 <b>덩어리 3개</b>로</li>
+    <li>팔·다리를 원통으로 — <b>Mirror 모디파이어</b>로 반쪽만</li>
+    <li>실루엣만 맞으면 끝. 디테일 금지</li>
+  </ol>
+  <div class="tip"><b>T포즈 vs A포즈 —</b> UE 표준은 <b>A포즈</b>지만, 리깅 초보에게는 <b>T포즈가 훨씬 쉽습니다</b>(팔이 축과 평행해 웨이트가 깔끔). 처음엔 T포즈로 가세요.</div>
+
+  <div class="done-btn" data-c="9"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="c10" data-t="캐릭터 전체 ② 스컬프트 → 리토폴" data-p="3부 · 캐릭터 전체">
+  <div class="ch"><div class="chn">10</div><div>
+    <h2>캐릭터 전체 ②<br>스컬프트 → 리토폴</h2><div class="sub">6·7강 프로세스를 몸에 반복 적용</div>
+  </div></div>
+
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div>
+    <strong>관절 부위의 엣지 루프.</strong> 머리와 달리 몸은 <b>크게 접힙니다.</b></div>
+
+  <h3>관절에 루프를 몇 개 두는가</h3>
+  <table>
+    <tr><th>부위</th><th>엣지 루프</th><th>이유</th></tr>
+    <tr><td>팔꿈치 · 무릎</td><td><b>3줄</b></td><td>접을 때 부피 유지</td></tr>
+    <tr><td>어깨</td><td><b>3~4줄</b> + 겨드랑이 방사형</td><td>가장 많이 움직임</td></tr>
+    <tr><td>손목 · 발목</td><td>2줄</td><td>회전만</td></tr>
+    <tr><td>허리</td><td>2~3줄</td><td>비틀림</td></tr>
+  </table>
+  <div class="stuck"><b>막히는 지점: 팔을 굽히면 종이처럼 납작해진다</b><br>
+  관절 루프가 부족한 것입니다. <b>1줄이면 반드시 찌그러집니다.</b> 최소 3줄을 두고, 굽혔을 때 바깥쪽이 늘어나고 안쪽이 뭉치도록 간격을 조정하세요.</div>
+
+  <div class="tip"><b>손은 따로 취급합니다 —</b> 손가락 5개는 초보에게 가장 어려운 부위입니다. 첫 캐릭터는 <b>벙어리장갑 형태</b>로 만들어도 됩니다. 청소 알바 캐릭터라면 <strong>작업용 장갑</strong>이 자연스러운 핑계가 됩니다.</div>
+
+  <div class="done-btn" data-c="10"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="c11" data-t="★ 캐릭터 전체 ③ UE5 표준 스켈레톤·리깅" data-p="3부 · 캐릭터 전체">
+  <div class="ch"><div class="chn">11</div><div>
+    <h2>★ 캐릭터 전체 ③<br>UE5 표준 스켈레톤 · 리깅</h2><div class="sub">이 강 하나가 앞으로의 작업량을 결정합니다</div>
+  </div></div>
+
+  <div class="warn" style="font-size:15px"><b>이 책에서 가장 이득이 큰 강입니다.</b><br>
+  본(뼈) <strong>이름을 UE5 표준에 맞추기만 하면</strong> 마켓플레이스·모캡의 기존 애니메이션이 <b>리타게팅 없이 그대로</b> 들어갑니다. 안 맞추면 IK Rig 리타게팅을 따로 만들어야 합니다. <strong>이름 하나 차이입니다.</strong></div>
+
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div><strong>UE5 스켈레톤 계층과 이름 규약.</strong></div>
+
+  <h3>계층 구조 — 순서가 정해져 있습니다</h3>
+  <pre><code>root                 ← 반드시 월드 원점(0,0,0), 회전 0
+└ pelvis             ← 실제 이동의 시작점
+  ├ spine_01
+  │ └ spine_02
+  │   └ spine_03
+  │     ├ neck_01 → head
+  │     ├ clavicle_l → upperarm_l → lowerarm_l → hand_l → (손가락)
+  │     └ clavicle_r → upperarm_r → lowerarm_r → hand_r → (손가락)
+  ├ thigh_l → calf_l → foot_l → ball_l
+  └ thigh_r → calf_r → foot_r → ball_r</code></pre>
+  <div class="warn"><b>root는 반드시 월드 원점에, 회전 0으로.</b> 여기가 틀어지면 캐릭터가 <strong>바닥을 뚫거나 공중에 뜹니다.</strong> UE5 표준 스켈레톤은 약 67개 본으로 구성됩니다.</div>
+
+  <h3>★ 트위스트 본 — 없으면 팔이 꼬입니다</h3>
+  <p>손목을 돌리면 팔뚝 전체가 따라 돌아야 합니다. 본이 하나면 <strong>사탕 포장지처럼 배배 꼬입니다</strong>(candy wrapper).</p>
+  <pre><code>lowerarm_l
+└ lowerarm_twist_01_l   ← 회전의 절반만 받음
+upperarm_l
+└ upperarm_twist_01_l</code></pre>
+
+  <h3>블렌더 5.x 주의 — 본 컬렉션</h3>
+  <div class="warn"><b>4.x 강좌와 다릅니다.</b> 예전의 <strong>아마추어 레이어(Armature Layers)</strong>는 <b>본 컬렉션(Bone Collections)</b>으로 대체되었습니다. 오래된 강좌에서 "레이어를 나누세요"라고 하면 <b>본 컬렉션</b>으로 읽으세요.</div>
+
+  <h3>웨이트 페인팅 — Live2D 경험이 통합니다</h3>
+  <p><b>본이 메쉬를 얼마나 끌고 가는가</b>를 0~1로 칠하는 작업입니다. Live2D의 <strong>변형 패스·웨이트</strong>와 개념이 같습니다.</p>
+  <ol>
+    <li>메쉬 선택 → <kbd>Shift</kbd> 아마추어 선택 → <kbd>Ctrl+P</kbd> → <b>With Automatic Weights</b></li>
+    <li>Weight Paint 모드에서 문제 부위만 손보기</li>
+    <li>빨강 = 1(완전히 따라감), 파랑 = 0</li>
+  </ol>
+  <div class="stuck"><b>막히는 지점: 정지 상태에선 멀쩡한데 움직이면 찌그러진다</b><br>
+  당연합니다. <strong>스키닝 문제는 애니메이션을 돌려야만 보입니다.</strong> Pose 모드에서 팔·다리를 극단적으로 굽혀 보며 확인하세요. 검수를 정지 상태로 끝내면 UE에 넣은 뒤 발견합니다.</div>
+
+  <h3>익스포트 체크</h3>
+  <div class="ck" id="ck-sk">
+    <div class="r"><input type="checkbox"><span>root가 월드 원점 (0,0,0) · 회전 0</span></div>
+    <div class="r"><input type="checkbox"><span>본 이름이 UE5 표준과 일치 (<code>pelvis, spine_01, upperarm_l</code>…)</span></div>
+    <div class="r"><input type="checkbox"><span>트위스트 본 추가됨 (팔뚝·상완)</span></div>
+    <div class="r"><input type="checkbox"><span>FBX Armature → <b>Add Leaf Bones ☐</b> 꺼짐</span></div>
+    <div class="r"><input type="checkbox"><span>Pose 모드에서 극단 포즈로 변형 확인함</span></div>
+    <div class="r"><input type="checkbox"><span>메쉬 이름 <code>SK_</code> 접두사</span></div>
+  </div>
+
+  <div class="done-btn" data-c="11"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="c12" data-t="캐릭터 전체 ④ UE 임포트·애니 확인" data-p="3부 · 캐릭터 전체">
+  <div class="ch"><div class="chn">12</div><div>
+    <h2>캐릭터 전체 ④<br>UE 임포트 · 애니 확인</h2><div class="sub">움직여봐야 끝입니다</div>
+  </div></div>
+
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div><strong>스켈레탈 메쉬 임포트와 피직스 애셋.</strong></div>
+
+  <h3>임포트</h3>
+  <ol>
+    <li>FBX 드래그 → <b>Skeletal Mesh ☑</b></li>
+    <li>Skeleton: 표준 이름을 맞췄다면 <b>기존 UE5 스켈레톤 선택</b> → 애니메이션 즉시 사용 가능</li>
+    <li>Import Content Type: Geometry and Skinning Weights</li>
+  </ol>
+
+  <h3>검수 — 반드시 애니메이션으로</h3>
+  <ol>
+    <li>스켈레탈 메쉬 더블클릭 → Animation 탭</li>
+    <li>기본 걷기/달리기 애니 재생</li>
+    <li><b>어깨·팔꿈치·무릎·골반</b>을 집중해서 본다</li>
+  </ol>
+
+  <h3>피직스 애셋</h3>
+  <div class="warn"><b>바디 개수를 줄이세요.</b> 자동 생성하면 본마다 물리 바디가 생깁니다. <strong>40개를 넘으면 성능 병목</strong>이 됩니다. 손가락 마디마다 물리 바디는 필요 없습니다 — 몸통·팔·다리·머리 정도로 정리하세요.</div>
+
+  <div class="stuck"><b>막히는 지점: 캐릭터가 바닥에 박히거나 떠 있다</b><br>
+  블렌더에서 <b>발바닥이 Z=0</b>에 있지 않았거나 root가 원점이 아닌 것입니다. 11강 체크리스트 1번으로 돌아가세요.</div>
+
+  <div class="done-btn" data-c="12"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="c13" data-t="👹 몬스터 ① 비인간 실루엣" data-p="4부 · 몬스터">
+  <div class="ch"><div class="chn">13</div><div>
+    <h2>👹 몬스터 ①<br>비인간 실루엣</h2><div class="sub">사람 비율을 일부러 깨뜨립니다</div>
+  </div></div>
+
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div><strong>실루엣만으로 공포를 만드는 비율 조작.</strong></div>
+
+  <h3>왜 무서운가 — 설계 가능한 요소</h3>
+  <table>
+    <tr><th>기법</th><th>효과</th><th>예</th></tr>
+    <tr><td><b>불쾌한 골짜기</b></td><td>사람과 비슷한데 <b>미묘하게 다름</b></td><td>관절이 하나 더 있음</td></tr>
+    <tr><td><b>비율 왜곡</b></td><td>팔다리가 지나치게 긺</td><td>「우두커니」형</td></tr>
+    <tr><td><b>실루엣 판독성</b></td><td>어둠 속에서 <b>윤곽만으로 식별</b></td><td>공포 게임 필수</td></tr>
+    <tr><td><b>은폐된 얼굴</b></td><td>표정을 못 읽음 → 의도를 모름</td><td>가면·머리카락</td></tr>
+  </table>
+  <div class="tip"><b>공포 게임의 실루엣 규칙 —</b> 플레이어는 대부분 <strong>손전등 원뿔 안의 일부만</strong> 봅니다. 그래서 디테일보다 <b>윤곽</b>이 훨씬 중요합니다. 검은 실루엣으로만 찍어봤을 때 "저게 뭔지 모르겠지만 사람은 아니다"가 나오면 성공입니다.</div>
+
+  <h3>작업 순서 — 실루엣 우선</h3>
+  <ol>
+    <li>검은 실루엣 썸네일 <b>10~20개</b>를 블렌더 밖(CSP)에서 먼저 그린다 ← <b>강점 활용</b></li>
+    <li>3개만 고른다</li>
+    <li>블록아웃 → 스컬프트 (6강 프로세스 동일)</li>
+    <li>리토폴 (7강 프로세스 동일)</li>
+  </ol>
+  <div class="tip"><b>프로세스가 반복되는 게 보이시나요.</b> 몬스터라고 새 방법을 배우는 게 아닙니다. <strong>같은 10단계에 다른 형태를 넣을 뿐</strong>입니다. 이게 이 책의 목적입니다.</div>
+
+  <div class="done-btn" data-c="13"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="c14" data-t="★ 몬스터 ② 미믹 — 총동원" data-p="4부 · 몬스터">
+  <div class="ch"><div class="chn">14</div><div>
+    <h2>★ 몬스터 ②<br>미믹 (최종 보스)</h2><div class="sub">지금까지 배운 걸 전부 씁니다</div>
+  </div></div>
+
+  <div class="make"><div class="l">오늘 만들 것</div>
+    <p><strong>벽장 미믹</strong> — 평소엔 가구, 다가가면 괴물. 「무제」의 최대 차별점입니다.</p></div>
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div>
+    <strong>하드서피스(가구) + 유기체(괴물)를 한 모델에서 결합하기.</strong></div>
+
+  <h3>왜 최종 보스인가</h3>
+  <table>
+    <tr><th>필요한 것</th><th>배운 강</th></tr>
+    <tr><td>정확한 치수의 가구</td><td>3강 (상자)</td></tr>
+    <tr><td>하드서피스 디테일·모디파이어</td><td>5강 (손전등)</td></tr>
+    <tr><td>유기적 형태 스컬프팅</td><td>6강 (헤드)</td></tr>
+    <tr><td>변형되는 부위의 엣지 흐름</td><td>7·10강 (리토폴)</td></tr>
+    <tr><td>본과 웨이트</td><td>11강 (리깅)</td></tr>
+    <tr><td>피벗과 파츠 분리</td><td>16강 (문) ← 미리 볼 것</td></tr>
+  </table>
+
+  <h3>설계 결정 — 만들기 전에 정합니다</h3>
+  <div class="warn"><b>중요한 갈림길입니다.</b> 미믹을 어떻게 구현할지에 따라 모델링이 완전히 달라집니다.<br><br>
+  <b>A안 · 한 모델 + 뼈대 변형</b> — 벽장과 괴물이 같은 메쉬. 뼈로 문짝을 벌리고 입을 연다.<br>
+  → 전환이 매끄럽고 자연스럽다. 리깅이 어렵다.<br><br>
+  <b>B안 · 두 모델 교체</b> — 평소엔 일반 벽장, 발동 순간 괴물 메쉬로 스왑.<br>
+  → 만들기 훨씬 쉽다. 전환 순간 티가 날 수 있어 <b>연출(연기·암전)로 가려야</b> 한다.<br><br>
+  <strong>초보라면 B안을 권합니다.</strong> 대신 두 모델의 <b>치수와 피벗을 정확히 일치</b>시켜야 교체 시 어긋나지 않습니다.</div>
+
+  <h3>★ 텔(전조) 를 모델에 넣기</h3>
+  <p>기획에서 <b>"모든 미믹은 변이 전 관찰 가능한 전조가 있다"</b>고 정했습니다. 그건 프로그래머 일이 아니라 <strong>모델러 일</strong>입니다.</p>
+  <ul>
+    <li>문틈이 <b>1~2cm</b> 미세하게 벌어져 있음 (일반 벽장은 완전히 닫힘)</li>
+    <li>바닥에 닿는 부분이 미묘하게 <b>뒤틀림</b></li>
+    <li>나뭇결이 한 곳만 <b>결이 다름</b> ← 텍스처로 처리</li>
+  </ul>
+  <div class="tip"><b>진짜 벽장과 미믹은 반드시 같은 폴더에 나란히 두고 비교하며 만드세요.</b> 차이가 <strong>너무 크면 아무도 안 속고, 너무 작으면 불공정</strong>합니다. 이 조절이 이 게임의 핵심 재미입니다.</div>
+
+  <div class="done-btn" data-c="14"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="c15" data-t="몬스터 ③ 변형 연출과 UE 연동" data-p="4부 · 몬스터">
+  <div class="ch"><div class="chn">15</div><div>
+    <h2>몬스터 ③<br>변형 연출과 UE 연동</h2><div class="sub">셰이프키로 형태를 바꿉니다</div>
+  </div></div>
+
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div><strong>셰이프 키(블렌드 셰이프).</strong></div>
+
+  <h3>셰이프 키란</h3>
+  <p>같은 메쉬의 <b>다른 형태</b>를 저장해두고 0~1로 섞는 기능입니다. <strong>Live2D의 파라미터와 정확히 같은 개념</strong>입니다.</p>
+  <table>
+    <tr><th>쓰임</th><th>예</th></tr>
+    <tr><td>표정</td><td>눈 감기, 입 벌리기</td></tr>
+    <tr><td><b>미믹 변형</b></td><td>문짝이 이빨로 벌어지는 중간 단계</td></tr>
+    <tr><td>부풀기</td><td>호흡, 팽창</td></tr>
+  </table>
+  <pre><code>Object Data Properties(초록 삼각형) → Shape Keys
+  + 로 Basis 생성 (원본)
+  + 로 Key 1 생성 → 에디트 모드에서 형태 변경
+  Value 슬라이더 0~1로 섞임 확인</code></pre>
+
+  <div class="warn"><b>익스포트 —</b> FBX 내보낼 때 <b>Shape Keys ☑</b>를 켜야 합니다. UE에서는 <b>Morph Target</b>이라는 이름으로 들어오고, 임포트 시 <b>Import Morph Targets ☑</b>가 필요합니다.</div>
+
+  <div class="tip"><b>애니메이션 시작 전에 만들어 두세요.</b> 실무에서 꼽는 실수 중 하나가 "블렌드 셰이프가 애니메이션 제작이 시작된 뒤에야 준비되는 것"입니다. 나중에 추가하면 이미 만든 애니를 다시 손봐야 합니다.</div>
+
+  <div class="done-btn" data-c="15"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="c16" data-t="🚪 문 — 피벗과 블루프린트" data-p="5부 · 상호작용">
+  <div class="ch"><div class="chn">16</div><div>
+    <h2>🚪 문</h2><div class="sub">실제로 열리는 문을 만듭니다</div>
+  </div></div>
+
+  <div class="make"><div class="l">오늘 만들 것</div><p>UE 안에서 <strong>실제로 열리는 문.</strong> 모델링은 쉽고, <b>피벗과 파츠 분리</b>가 전부입니다.</p></div>
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div><strong>피벗을 경첩 위치로 옮기기.</strong></div>
+
+  <div class="lab">
+    <div class="cap">🧪 데모 — 피벗 위치가 전부입니다 (버튼을 눌러보세요)</div>
+    <svg viewBox="0 0 640 210">
+      <text x="20" y="18" fill="#e26a63" font-size="12.5" font-weight="700">✕ 피벗이 중앙</text>
+      <text x="360" y="18" fill="#6cc07a" font-size="12.5" font-weight="700">✓ 피벗이 경첩</text>
+      <line x1="30" y1="180" x2="290" y2="180" stroke="#333a56" stroke-width="2"/>
+      <line x1="360" y1="180" x2="620" y2="180" stroke="#333a56" stroke-width="2"/>
+      <g id="d1"><rect x="120" y="60" width="80" height="120" fill="#8a5f3a" stroke="#c98b52" stroke-width="2" rx="2"/>
+        <circle cx="185" cy="125" r="4" fill="#e9ecf8"/></g>
+      <circle cx="160" cy="120" r="5" fill="#e26a63"/>
+      <g id="d2"><rect x="450" y="60" width="80" height="120" fill="#8a5f3a" stroke="#c98b52" stroke-width="2" rx="2"/>
+        <circle cx="515" cy="125" r="4" fill="#e9ecf8"/></g>
+      <circle cx="450" cy="120" r="5" fill="#6cc07a"/>
+      <text x="20" y="202" fill="#8d95b8" font-size="11">문이 공중에서 빙글 돈다</text>
+      <text x="360" y="202" fill="#8d95b8" font-size="11">경첩을 축으로 자연스럽게 열린다</text>
+    </svg>
+    <div class="row"><button class="btn" id="doorBtn">문 열기 ▶</button></div>
+  </div>
+
+  <h3>1. 파츠 분리 — 문틀과 문짝은 별개</h3>
+  <pre><code>SM_Door_Frame   문틀   (고정)
+SM_Door_Panel   문짝   (회전) ← 피벗을 경첩에
+SM_Door_Handle  손잡이 (문짝에 붙어 함께 움직임)</code></pre>
+  <div class="warn"><b>한 덩어리로 만들면 문틀까지 같이 돕니다.</b> 반드시 오브젝트를 나누세요.</div>
+
+  <h3>2. ★ 피벗을 경첩으로</h3>
+  <ol>
+    <li>에디트 모드에서 <b>경첩 쪽 세로 엣지</b> 선택</li>
+    <li><kbd>Shift+S</kbd> → <b>Cursor to Selected</b></li>
+    <li>오브젝트 모드 → Object → Set Origin → <b>Origin to 3D Cursor</b></li>
+    <li>확인: <kbd>R</kbd> <kbd>Z</kbd> 로 돌려봐서 <b>경첩을 축으로</b> 돌면 성공</li>
+  </ol>
+
+  <h3>3. 치수</h3>
+  <table><tr><th>부위</th><th>치수</th></tr>
+    <tr><td>문짝</td><td>0.9m(폭) × 2.1m(높이) × 0.04m(두께)</td></tr>
+    <tr><td>손잡이 높이</td><td>바닥에서 1.0m</td></tr></table>
+
+  <h3>4. 콜리전</h3>
+  <p>문짝을 복제 → 단순한 박스로 만들고 이름을 <code>UCX_SM_Door_Panel</code>. <strong>렌더 메쉬 이름과 정확히 일치</strong>해야 하고 대소문자도 구분합니다. 같은 FBX에 함께 내보냅니다.</p>
+
+  <h3>5. UE 블루프린트 — 실제로 열기</h3>
+  <pre><code>[Blueprint Actor 생성: BP_Door]
+ Components
+   ├ SM_Door_Frame  (Static Mesh)
+   └ SM_Door_Panel  (Static Mesh)  ← 이걸 회전시킨다
+   └ Box Collision  (플레이어 감지용)
+
+[Event Graph]
+ OnComponentBeginOverlap
+   → Timeline (0 → 1, 1초)
+   → Lerp (Rotator)  A=(0,0,0)  B=(0,0,90)
+   → SetRelativeRotation (Target: SM_Door_Panel)</code></pre>
+  <div class="tip"><b>여기서 블렌더의 피벗 작업이 보상받습니다.</b> 피벗만 제대로 잡혀 있으면 블루프린트는 노드 4개면 끝납니다. 피벗이 틀리면 <strong>블루프린트에서 아무리 애써도 자연스럽게 못 만듭니다.</strong></div>
+
+  <div class="done-btn" data-c="16"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="c17" data-t="🗃 서랍·뚜껑 + 프로세스 카드" data-p="5부 · 상호작용">
+  <div class="ch"><div class="chn">17</div><div>
+    <h2>🗃 서랍 · 뚜껑<br>그리고 프로세스 카드</h2><div class="sub">다중 피벗 응용 + 이 책의 최종 산출물</div>
+  </div></div>
+
+  <div class="one"><div class="l">새로 배울 것 — 딱 하나</div><strong>파츠마다 다른 피벗 · 다른 움직임.</strong></div>
+
+  <h3>움직임 종류별 피벗</h3>
+  <table>
+    <tr><th>움직임</th><th>피벗 위치</th><th>UE에서</th></tr>
+    <tr><td>문 (회전)</td><td>경첩</td><td>SetRelativeRotation</td></tr>
+    <tr><td><b>서랍 (미끄러짐)</b></td><td>아무 데나 상관없음</td><td><b>SetRelativeLocation</b></td></tr>
+    <tr><td>뚜껑 (위로 열림)</td><td>뒤쪽 아래 모서리</td><td>SetRelativeRotation (X축)</td></tr>
+    <tr><td>레버 (당김)</td><td>축이 되는 부분</td><td>SetRelativeRotation</td></tr>
+  </table>
+  <div class="tip"><b>서랍은 회전이 아니라 이동입니다.</b> 그래서 피벗 위치가 자유롭습니다. <strong>"이 물건은 회전하는가 이동하는가"를 먼저 정하면</strong> 피벗을 어디 둘지가 자동으로 결정됩니다.</div>
+
+  <hr>
+
+  <h2 style="font-size:23px">🧭 프로세스 카드</h2>
+  <p class="sub">이 책의 최종 산출물입니다. 앞으로 새 모델을 만들 때 이 한 장만 옆에 두세요.</p>
+
+  <div class="ck" id="ck-final">
+    <div class="r"><input type="checkbox"><span><b>0. 브리프</b> — 폴리 예산 / 텍스처 해상도 / 머티리얼 슬롯 수 / 스태틱·스켈레탈</span></div>
+    <div class="r"><input type="checkbox"><span><b>1. 치수</b> — 실제 크기를 m로 적었다</span></div>
+    <div class="r"><input type="checkbox"><span><b>2. 블록아웃</b> — 실루엣만, 디테일 없음</span></div>
+    <div class="r"><input type="checkbox"><span><b>3. 형태</b> — n-gon 없음 / 변형 부위에 엣지 루프 3줄</span></div>
+    <div class="r"><input type="checkbox"><span><b>4. 피벗</b> — 회전? 이동? → 위치 결정 / 이름 <code>SM_ SK_ UCX_</code></span></div>
+    <div class="r"><input type="checkbox"><span><b>5. UV</b> — 0~1 안 / 겹침 없음 / 심은 안 보이는 곳 / 텍셀 밀도 균일 / 환경 모델은 라이트맵 채널1</span></div>
+    <div class="r"><input type="checkbox"><span><b>6. 베이크</b> — 굽고 <b>여기서 검수</b> (텍스처링과 분리)</span></div>
+    <div class="r"><input type="checkbox"><span><b>7. 머티리얼</b> — 슬롯 수 = 드로우콜, 예산 내인가</span></div>
+    <div class="r"><input type="checkbox"><span><b>8. 익스포트</b> — <kbd>Ctrl+A</kbd> All Transforms / 면방향 / Scale 1.0 / Apply Scalings=FBX All / Add Leaf Bones ☐</span></div>
+    <div class="r"><input type="checkbox"><span><b>9. 임포트</b> — 콜리전 / Nanite / 소켓 / Generate Lightmap UVs</span></div>
+    <div class="r"><input type="checkbox"><span><b>10. 검수</b> — 크기·축·면방향 / <b>캐릭터는 애니 재생해서</b> 확인</span></div>
+  </div>
+
+  <h3>기억할 숫자</h3>
+  <table>
+    <tr><th>항목</th><th>값</th></tr>
+    <tr><td>단위</td><td>Blender 1m = <b>UE 100uu</b></td></tr>
+    <tr><td>캐릭터 키</td><td><b>1.8m</b> (UE 기본)</td></tr>
+    <tr><td>문</td><td>0.9 × 2.1m</td></tr>
+    <tr><td>게임 캐릭터 머리</td><td>5,000~8,000 tri</td></tr>
+    <tr><td>히어로 전신 LOD0</td><td>80,000~120,000 tri</td></tr>
+    <tr><td>관절 엣지 루프</td><td><b>최소 3줄</b></td></tr>
+    <tr><td>피직스 바디</td><td>40개 미만</td></tr>
+    <tr><td>라이트맵 패딩</td><td>최소 4텍셀</td></tr>
+  </table>
+
+  <div class="make"><div class="l">끝났습니다</div>
+    <p>이제 <strong>새 모델을 만들 때 이 책을 다시 펼 필요가 없습니다.</strong><br>
+    위 카드 한 장이면 됩니다. 그게 이 책의 목적이었습니다.</p></div>
+
+  <div class="done-btn" data-c="17"><button class="btn">이 장 완독 ✓</button><div class="d">완독함 ✓</div></div>
+</section>
+
+</div>
+<footer>블렌더 모델링 교과서 · Blender 5.2 LTS → UE 5.7 · 진도는 이 브라우저에 자동 저장됩니다</footer>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* nav */
+const secs=[...document.querySelectorAll('section')], nav=document.getElementById('nav');
+let cp='';
+secs.forEach((s,i)=>{
+  if(s.dataset.p!==cp){const d=document.createElement('div');d.className='part';d.textContent=s.dataset.p;nav.appendChild(d);cp=s.dataset.p;}
+  const a=document.createElement('a');a.href='#'+s.id;a.dataset.c=i;
+  a.innerHTML=`<span class="n">${i}</span><span>${s.dataset.t}</span>`;nav.appendChild(a);
+});
+
+const K='blender_book_v1';
+let st=JSON.parse(localStorage.getItem(K)||'{"read":[],"ck":{}}');
+if(!st.ck) st.ck={};
+const save=()=>localStorage.setItem(K,JSON.stringify(st));
+
+function paint(){
+  document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('read',st.read.includes(+a.dataset.c)));
+  document.querySelectorAll('.done-btn').forEach(b=>b.classList.toggle('is',st.read.includes(+b.dataset.c)));
+  document.getElementById('pn').textContent=st.read.length;
+  document.getElementById('pf').style.width=(st.read.length/18*100)+'%';
+}
+document.querySelectorAll('.done-btn').forEach(b=>{
+  b.querySelector('.btn').onclick=()=>{const c=+b.dataset.c;
+    if(!st.read.includes(c)){st.read.push(c);save();paint();toast('진도 저장 · '+st.read.length+'/18');}};
+});
+paint();
+
+const obs=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){
+    document.querySelectorAll('nav a').forEach(a=>a.classList.remove('on'));
+    const a=document.querySelector(`nav a[href="#${e.target.id}"]`);
+    if(a){a.classList.add('on');a.scrollIntoView({block:'nearest'});}
+  }}),{rootMargin:'-12% 0px -78% 0px'});
+secs.forEach(s=>obs.observe(s));
+
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1900);}
+
+/* checklists — 개별 저장 */
+document.querySelectorAll('.ck').forEach(box=>{
+  const id=box.id;
+  if(!st.ck[id]) st.ck[id]=[];
+  [...box.querySelectorAll('.r')].forEach((r,i)=>{
+    const cb=r.querySelector('input');
+    cb.checked=st.ck[id].includes(i); r.classList.toggle('ok',cb.checked);
+    cb.onchange=()=>{
+      if(cb.checked){if(!st.ck[id].includes(i))st.ck[id].push(i);}
+      else st.ck[id]=st.ck[id].filter(x=>x!==i);
+      r.classList.toggle('ok',cb.checked); save();
+    };
+  });
+});
+
+/* 단위 계산기 */
+const bl=document.getElementById('bl'), ue=document.getElementById('ue'), uo=document.getElementById('uout');
+function fromB(){const v=parseFloat(bl.value)||0; ue.value=(v*100).toFixed(1); show(v);}
+function fromU(){const v=(parseFloat(ue.value)||0)/100; bl.value=v.toFixed(3); show(v);}
+function show(v){uo.textContent = v>0 ? `블렌더 ${v}m  =  언리얼 ${(v*100).toFixed(1)}uu` : '';}
+if(bl){bl.oninput=fromB; ue.oninput=fromU; fromB();}
+
+/* 문 데모 */
+(function(){
+  const b=document.getElementById('doorBtn'); if(!b)return;
+  const d1=document.getElementById('d1'), d2=document.getElementById('d2');
+  let open=false;
+  b.onclick=()=>{
+    open=!open;
+    b.textContent = open?'문 닫기 ◀':'문 열기 ▶';
+    // 잘못된 피벗: 문 중앙(160,120) 기준 회전
+    d1.style.transition='transform .8s ease'; d1.style.transformOrigin='160px 120px';
+    d1.style.transform = open?'rotate(-55deg)':'rotate(0deg)';
+    // 올바른 피벗: 경첩(450,120) 기준 회전
+    d2.style.transition='transform .8s ease'; d2.style.transformOrigin='450px 120px';
+    d2.style.transform = open?'rotate(-55deg)':'rotate(0deg)';
+  };
+})();
+</script>
+</body>
+</html>

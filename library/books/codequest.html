@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>코드 퀘스트 — 게임 코딩 RPG</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root{
+    --bg:#0d0e1a; --bg2:#15172b; --panel:#1c1f3a; --panel2:#252a4d;
+    --ink:#e6e9ff; --dim:#8b93c9; --line:#2f3566;
+    --p:#7aa2f7; --p2:#bb9af7; --g:#9ece6a; --o:#ff9e64; --r:#f7768e; --gold:#ffd866;
+  }
+  html,body{height:100%;}
+  body{
+    background:radial-gradient(1200px 600px at 50% -10%, #1b1f3d 0%, var(--bg) 60%);
+    color:var(--ink); font-family:"Segoe UI","Malgun Gothic",sans-serif;
+    line-height:1.7; min-height:100vh; overflow-x:hidden;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px 80px;}
+
+  /* ---------- HUD ---------- */
+  .hud{
+    position:sticky;top:0;z-index:60;
+    background:rgba(13,14,26,.9);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:16px;
+    padding:12px 20px;margin-bottom:26px;
+  }
+  .hud .logo{font-size:20px;font-weight:800;letter-spacing:-.5px;}
+  .hud .logo span{color:var(--p2);}
+  .hud .stat{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px;}
+  .hud .stat .ic{font-size:16px;}
+  .hud .spacer{flex:1;}
+  .lvlbadge{background:var(--p);color:#0d0e1a;border-radius:20px;padding:3px 12px;font-weight:800;font-size:13px;}
+  .xpbar{width:140px;height:9px;background:var(--panel2);border-radius:6px;overflow:hidden;}
+  .xpbar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--p));transition:width .5s ease;}
+  .reset{background:none;border:1px solid var(--line);color:var(--dim);border-radius:7px;padding:5px 10px;font-size:12px;cursor:pointer;}
+
+  header.hero{text-align:center;padding:26px 0 10px;}
+  header.hero h1{font-size:40px;letter-spacing:-1px;}
+  header.hero h1 span{color:var(--p2);}
+  header.hero p{color:var(--dim);margin-top:8px;}
+
+  /* ---------- MAP ---------- */
+  .map{display:flex;flex-direction:column;gap:0;margin-top:24px;}
+  .node{
+    position:relative;display:flex;align-items:center;gap:18px;
+    padding:18px 22px;margin:10px 0;border-radius:16px;
+    background:var(--panel);border:1px solid var(--line);
+    cursor:pointer;transition:transform .12s, border-color .15s;
+  }
+  .node:hover{transform:translateY(-2px);border-color:var(--p);}
+  .node.locked{opacity:.45;cursor:not-allowed;filter:grayscale(.6);}
+  .node.locked:hover{transform:none;border-color:var(--line);}
+  .node.done{border-color:var(--g);}
+  .node .badge{
+    width:54px;height:54px;flex:none;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    background:var(--panel2);
+  }
+  .node.done .badge{background:rgba(158,206,106,.18);}
+  .node .body h3{font-size:18px;margin-bottom:2px;}
+  .node .body p{font-size:13.5px;color:var(--dim);}
+  .node .right{margin-left:auto;text-align:right;font-size:12px;color:var(--dim);font-weight:700;}
+  .node .right .chk{font-size:22px;color:var(--g);}
+  .node .right .lock{font-size:20px;}
+  .connector{height:14px;width:3px;background:var(--line);margin:0 auto;border-radius:2px;}
+
+  /* ---------- QUEST VIEW ---------- */
+  .overlay{
+    position:fixed;inset:0;z-index:100;display:none;
+    background:rgba(8,9,18,.86);backdrop-filter:blur(6px);
+    overflow-y:auto;padding:30px 16px;
+  }
+  .overlay.show{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .quest{
+    max-width:680px;margin:0 auto;background:var(--bg2);
+    border:1px solid var(--line);border-radius:20px;padding:30px 30px 26px;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+  }
+  .quest .qhead{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+  .quest .qhead .em{font-size:34px;}
+  .quest .qhead h2{font-size:24px;}
+  .quest .story{
+    background:var(--panel);border-left:4px solid var(--p2);border-radius:8px;
+    padding:12px 16px;margin:16px 0;font-size:14.5px;color:#cfd5ff;font-style:italic;
+  }
+  .quest h4{margin:20px 0 6px;color:var(--p);font-size:16px;}
+  .quest p{font-size:14.5px;margin:8px 0;}
+  .quest b{color:var(--o);}
+  pre{background:#0a0b14;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0;overflow-x:auto;font-size:13.5px;line-height:1.6;}
+  code{font-family:Consolas,"D2Coding",monospace;}
+  .c-key{color:#bb9af7}.c-fn{color:#7aa2f7}.c-str{color:#9ece6a}.c-num{color:#ff9e64}.c-com{color:#565f89;font-style:italic}
+  .blank{color:var(--gold);font-weight:800;background:rgba(255,216,102,.12);padding:0 6px;border-radius:4px;}
+
+  canvas{background:#070810;border-radius:10px;display:block;margin:14px auto;}
+
+  .challenge{margin-top:20px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;}
+  .challenge .q{font-weight:700;margin-bottom:14px;font-size:15px;}
+  .opts{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    text-align:left;background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+    border-radius:10px;padding:12px 14px;font-size:14px;cursor:pointer;transition:.12s;
+    font-family:inherit;
+  }
+  .opt:hover{border-color:var(--p);}
+  .opt.correct{border-color:var(--g);background:rgba(158,206,106,.16);}
+  .opt.wrong{border-color:var(--r);background:rgba(247,118,142,.16);}
+  .opt code{color:#cdd6f4;}
+  .feedback{margin-top:14px;font-size:14px;font-weight:600;min-height:22px;}
+  .feedback.ok{color:var(--g);}
+  .feedback.no{color:var(--r);}
+
+  .qfoot{display:flex;justify-content:space-between;align-items:center;margin-top:22px;}
+  .btn{background:var(--p);color:#0d0e1a;border:none;border-radius:10px;padding:11px 20px;font-weight:800;font-size:15px;cursor:pointer;}
+  .btn:hover{filter:brightness(1.08);}
+  .btn.ghost{background:none;border:1px solid var(--line);color:var(--dim);}
+  .btn:disabled{opacity:.4;cursor:default;}
+
+  /* ---------- TOAST / LEVELUP ---------- */
+  .toast{
+    position:fixed;left:50%;top:74px;transform:translateX(-50%) translateY(-20px);
+    background:var(--gold);color:#3a2c00;font-weight:800;padding:12px 22px;border-radius:30px;
+    opacity:0;transition:.3s;z-index:200;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.4);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .win-screen{text-align:center;padding:40px 0;}
+  .win-screen .trophy{font-size:80px;}
+  .win-screen h2{font-size:30px;margin:10px 0;color:var(--gold);}
+  footer{text-align:center;color:var(--dim);font-size:12px;margin-top:40px;}
+</style>
+</head>
+<body>
+
+<div class="hud">
+  <div class="logo">코드 <span>퀘스트</span></div>
+  <div class="spacer"></div>
+  <div class="stat"><span class="lvlbadge" id="lvl">Lv.1</span></div>
+  <div class="xpbar"><i id="xpfill"></i></div>
+  <div class="stat"><span class="ic">⭐</span><span id="xp">0</span> XP</div>
+  <div class="stat"><span class="ic">🏅</span><span id="badges">0</span></div>
+  <button class="reset" id="reset">진도 초기화</button>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>게임 코딩 <span>RPG</span></h1>
+    <p>퀘스트를 깨고 XP를 모아 '게임 개발자'로 성장하세요 🎮</p>
+  </header>
+
+  <div class="map" id="map"></div>
+
+  <footer>코드 퀘스트 · 진도는 이 브라우저에 자동 저장됩니다</footer>
+</div>
+
+<div class="overlay" id="overlay"><div class="quest" id="questBox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ 퀘스트 데이터 ============
+const QUESTS = [
+  {
+    id:0, emoji:"🔁", title:"게임 루프의 비밀", reward:50,
+    story:"\"모든 게임은 살아 숨 쉰다. 그 심장 박동을 멈추면... 게임도 멈추지.\" 첫 퀘스트, 게임의 심장을 찾아라.",
+    lesson:`
+      <h4>게임 = 1초에 60번 다시 그리는 그림</h4>
+      <p>게임은 애니메이션처럼 <b>프레임</b>을 빠르게 넘겨 움직임을 만듭니다. 이 무한 반복을 <b>게임 루프</b>라 합니다.</p>
+      <pre><code><span class="c-key">function</span> <span class="c-fn">loop</span>(){
+  <span class="c-fn">update</span>();   <span class="c-com">// 상태 갱신</span>
+  <span class="c-fn">render</span>();   <span class="c-com">// 화면 그리기</span>
+  <span class="c-fn">requestAnimationFrame</span>(loop); <span class="c-com">// 다음 프레임 예약</span>
+}</code></pre>
+      <h4>화면 좌표계 — 수학과 반대입니다</h4>
+      <p>컴퓨터 화면은 <b>왼쪽 위가 (0, 0)</b>입니다. x는 오른쪽으로 갈수록 커지고,
+      <b>y는 아래로 갈수록 커집니다.</b> 수학 시간에 배운 것과 위아래가 반대예요.</p>
+      <pre><code>(0,0) ──────→ x 증가
+  │
+  │   화면
+  ↓
+ y 증가          <span class="c-com">// 위로 가려면 y를 <b>빼야</b> 한다</span></code></pre>
+      <p>아래 공은 이 루프가 매 프레임 위치를 바꿔 움직이는 중입니다 👇</p>
+    `,
+    demo:"ball",
+    q:"게임 루프에서 '다음 프레임을 다시 그려달라'고 브라우저에 부탁하는 명령은?",
+    opts:[
+      {t:`<code>requestAnimationFrame(loop)</code>`, ok:true},
+      {t:`<code>setTimeout(loop, 1000)</code> — 1초마다 한 번뿐`, ok:false},
+      {t:`<code>loop.repeat()</code> — 존재하지 않는 명령`, ok:false},
+    ],
+    explain:"requestAnimationFrame은 모니터 주사율(보통 60Hz)에 맞춰 부드럽게 반복해 줍니다."
+  },
+  {
+    id:1, emoji:"🎮", title:"움직이는 자, 플레이어", reward:60,
+    story:"\"조작할 수 없다면 그건 영화지 게임이 아니야.\" 캐릭터에게 생명을, 즉 '입력'을 불어넣어라.",
+    lesson:`
+      <h4>캐릭터는 결국 x, y 숫자 두 개</h4>
+      <p>방향키가 눌리면 좌표 숫자를 더하거나 뺍니다. 단, <b>위쪽은 y가 줄어듭니다</b>(화면 좌표계!).</p>
+      <pre><code><span class="c-key">if</span>(keys[<span class="c-str">"ArrowRight"</span>]) player.x += speed;
+<span class="c-key">if</span>(keys[<span class="c-str">"ArrowUp"</span>])    player.y <span class="blank">??</span> speed;</code></pre>
+      <h4>화면 밖으로 못 나가게 — 경계 처리</h4>
+      <p>이대로 두면 캐릭터가 화면 밖으로 사라집니다. 좌표를 <b>가둬야</b> 합니다.</p>
+      <pre><code><span class="c-com">// x를 0 ~ (화면너비 - 캐릭터크기) 사이로 가둔다</span>
+player.x = <span class="c-fn">Math.max</span>(<span class="c-num">0</span>, <span class="c-fn">Math.min</span>(player.x, canvas.width - size));</code></pre>
+      <p><code>Math.max(0, ...)</code>가 왼쪽을, <code>Math.min(..., 한계)</code>가 오른쪽을 막습니다.</p>
+      <p>아래 캔버스를 클릭하고 방향키로 직접 움직여 보세요 👇</p>
+    `,
+    demo:"player",
+    q:"위로 올라가게 하려면 <span class='blank'>??</span> 자리에 무엇이 들어가야 할까요?",
+    opts:[
+      {t:`<code>-=</code> &nbsp;(y를 줄인다 → 위로)`, ok:true},
+      {t:`<code>+=</code> &nbsp;(y를 늘린다 → 아래로 감)`, ok:false},
+      {t:`<code>*=</code> &nbsp;(곱하기 — 위치가 폭주함)`, ok:false},
+    ],
+    explain:"화면 좌표는 위로 갈수록 y가 작아집니다. 그래서 '위' 이동은 y -= speed."
+  },
+  {
+    id:2, emoji:"💥", title:"부딪힘의 법칙", reward:70,
+    story:"\"세상의 모든 사건은 '닿음'에서 시작된다.\" 두 물체가 겹쳤는지 판별하는 마법, 충돌 판정을 익혀라.",
+    lesson:`
+      <h4>AABB 충돌 — 사각형 vs 사각형</h4>
+      <p>\"한쪽이 다른 쪽의 완전 바깥에 있지 않으면 = 겹쳤다\"는 논리입니다.</p>
+      <pre><code><span class="c-key">function</span> <span class="c-fn">isHit</span>(a,b){
+  <span class="c-key">return</span> a.x &lt; b.x+b.w &&
+         a.x+a.w &gt; b.x &&
+         a.y &lt; b.y+b.h &&
+         a.y+a.h &gt; b.y;
+}</code></pre>
+      <p>아래에서 파란 사각형을 노란 칸에 겹쳐보세요. 닿으면 색이 변합니다 👇</p>
+    `,
+    demo:"collide",
+    q:"두 사각형 a, b가 '겹쳤다'고 판단하는 조건으로 옳은 것은?",
+    opts:[
+      {t:`네 변 모두 안쪽으로 파고드는 조건을 <b>모두(&&)</b> 만족`, ok:true},
+      {t:`x좌표가 같을 때<b>만</b> 겹친 것이다`, ok:false},
+      {t:`둘의 거리가 0일 때만 (사각형엔 부정확)`, ok:false},
+    ],
+    explain:"AABB는 4개의 부등식을 모두 만족해야 겹침으로 판정합니다. 빠르고 정확하죠."
+  },
+  {
+    id:3, emoji:"🏆", title:"점수와 운명(게임오버)", reward:80,
+    story:"\"목표 없는 모험은 산책일 뿐.\" 점수와 게임오버라는 '규칙'을 부여해 진짜 게임을 완성하라.",
+    lesson:`
+      <h4>상태를 변수로 들고 다닌다</h4>
+      <p>게임의 현재 상황(점수, 생존 여부)을 변수에 담아두고, 사건이 나면 바꿉니다.</p>
+      <pre><code><span class="c-key">let</span> score=<span class="c-num">0</span>, gameOver=<span class="c-key">false</span>;
+
+<span class="c-key">if</span>(<span class="c-fn">isHit</span>(player,coin))  score += <span class="c-num">10</span>;
+<span class="c-key">if</span>(<span class="c-fn">isHit</span>(player,enemy)) gameOver = <span class="c-key">true</span>;</code></pre>
+      <p>다음 최종 보스전에서 이 모든 걸 합칩니다!</p>
+    `,
+    demo:null,
+    q:"코인을 먹어 점수를 올리는 코드로 알맞은 것은?",
+    opts:[
+      {t:`<code>if(isHit(player,coin)) score += 10;</code>`, ok:true},
+      {t:`<code>score = 10;</code> — 항상 10으로 고정됨`, ok:false},
+      {t:`<code>if(player) coin += 10;</code> — 엉뚱한 대상`, ok:false},
+    ],
+    explain:"충돌이 일어났을 때만 점수를 '누적(+=)'해야 제대로 쌓입니다."
+  },
+  {
+    id:4, emoji:"👑", title:"최종 보스: 미니 게임", reward:120, boss:true,
+    story:"\"배운 모든 것을 증명할 시간. 루프·입력·충돌·점수를 하나로 — 진짜 게임을 플레이하라!\"",
+    lesson:`
+      <h4>지금까지의 모든 것 = 작은 게임 하나</h4>
+      <p>노란 <b>코인</b>을 먹어 <b>50점</b>을 모으면 승리! 빨간 <b>적</b>에 닿으면 게임오버.</p>
+      <p>캔버스를 클릭하고 방향키로 플레이하세요 👇</p>
+    `,
+    demo:"boss",
+    q:null
+  }
+];
+
+// ============ 상태 ============
+const SAVE_KEY = "codequest_save_v1";
+let state = load();
+function load(){
+  try{ return JSON.parse(localStorage.getItem(SAVE_KEY)) || fresh(); }
+  catch(e){ return fresh(); }
+}
+function fresh(){ return { xp:0, done:[], }; }
+function save(){ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
+
+const XP_PER_LVL = 100;
+function levelOf(xp){ return Math.floor(xp / XP_PER_LVL) + 1; }
+
+// ============ HUD ============
+function renderHUD(){
+  const lvl = levelOf(state.xp);
+  document.getElementById('lvl').textContent = "Lv." + lvl;
+  document.getElementById('xp').textContent = state.xp;
+  document.getElementById('badges').textContent = state.done.length;
+  const into = state.xp % XP_PER_LVL;
+  document.getElementById('xpfill').style.width = (into/XP_PER_LVL*100) + "%";
+}
+
+// ============ MAP ============
+function isUnlocked(i){ return i===0 || state.done.includes(i-1); }
+function renderMap(){
+  const map = document.getElementById('map');
+  map.innerHTML = '';
+  QUESTS.forEach((qu,i)=>{
+    const unlocked = isUnlocked(i);
+    const done = state.done.includes(i);
+    const node = document.createElement('div');
+    node.className = 'node' + (done?' done':'') + (!unlocked?' locked':'');
+    node.innerHTML = `
+      <div class="badge">${unlocked?qu.emoji:'🔒'}</div>
+      <div class="body">
+        <h3>${qu.boss?'★ ':''}${qu.title}</h3>
+        <p>${unlocked?('+'+qu.reward+' XP'):'이전 퀘스트를 먼저 깨세요'}</p>
+      </div>
+      <div class="right">${done?'<span class="chk">✔</span>':(unlocked?'도전!':'<span class="lock">🔒</span>')}</div>
+    `;
+    if(unlocked) node.onclick = ()=>openQuest(i);
+    map.appendChild(node);
+    if(i<QUESTS.length-1){
+      const c=document.createElement('div'); c.className='connector'; map.appendChild(c);
+    }
+  });
+}
+
+// ============ QUEST VIEW ============
+const overlay = document.getElementById('overlay');
+const box = document.getElementById('questBox');
+let answered = false;
+
+function openQuest(i){
+  const qu = QUESTS[i];
+  answered = false;
+  const already = state.done.includes(i);
+
+  let optsHTML = '';
+  if(qu.q){
+    optsHTML = `
+      <div class="challenge">
+        <div class="q">🧩 ${qu.q}</div>
+        <div class="opts">
+          ${qu.opts.map((o,idx)=>`<button class="opt" data-idx="${idx}">${o.t}</button>`).join('')}
+        </div>
+        <div class="feedback" id="fb"></div>
+      </div>`;
+  }
+
+  box.innerHTML = `
+    <div class="qhead"><span class="em">${qu.emoji}</span><h2>${qu.title}</h2></div>
+    <div class="story">${qu.story}</div>
+    ${qu.lesson}
+    ${qu.demo?`<canvas id="dcv"></canvas>`:''}
+    ${optsHTML}
+    <div class="qfoot">
+      <button class="btn ghost" id="closeQ">← 지도로</button>
+      <button class="btn" id="clearQ" ${qu.q?'disabled':''}>${already?'완료됨 ✓':(qu.boss?'보스 클리어 인증':'완료하고 보상받기')}</button>
+    </div>
+  `;
+  overlay.classList.add('show');
+
+  if(qu.demo) startDemo(qu.demo);
+
+  document.getElementById('closeQ').onclick = closeQuest;
+  const clearBtn = document.getElementById('clearQ');
+  clearBtn.onclick = ()=>completeQuest(i);
+
+  if(qu.q){
+    box.querySelectorAll('.opt').forEach(btn=>{
+      btn.onclick = ()=>{
+        if(answered) return;
+        const idx = +btn.dataset.idx;
+        const correct = qu.opts[idx].ok;
+        const fb = document.getElementById('fb');
+        if(correct){
+          answered = true;
+          btn.classList.add('correct');
+          fb.className='feedback ok';
+          fb.textContent = "정답! "+qu.explain;
+          clearBtn.disabled = false;
+        }else{
+          btn.classList.add('wrong');
+          fb.className='feedback no';
+          fb.textContent = "다시 생각해 보세요 🤔";
+        }
+      };
+    });
+  }
+}
+function closeQuest(){ overlay.classList.remove('show'); stopDemo(); }
+
+function completeQuest(i){
+  const qu = QUESTS[i];
+  if(!state.done.includes(i)){
+    const beforeLvl = levelOf(state.xp);
+    state.xp += qu.reward;
+    state.done.push(i);
+    save();
+    renderHUD();
+    toast(`🏅 퀘스트 완료! +${qu.reward} XP`);
+    if(levelOf(state.xp) > beforeLvl){
+      setTimeout(()=>toast(`✨ 레벨 업! Lv.${levelOf(state.xp)} 달성!`), 1400);
+    }
+  }
+  closeQuest();
+  renderMap();
+  // 전부 깼으면 승리 화면
+  if(state.done.length === QUESTS.length){
+    setTimeout(showWin, 600);
+  }
+}
+
+function showWin(){
+  box.innerHTML = `
+    <div class="win-screen">
+      <div class="trophy">🏆</div>
+      <h2>전 퀘스트 클리어!</h2>
+      <p>당신은 이제 게임 코딩의 기초를 모두 마스터했습니다.</p>
+      <p style="color:var(--dim);margin-top:6px">최종 레벨 <b>Lv.${levelOf(state.xp)}</b> · 총 <b>${state.xp} XP</b></p>
+      <div class="qfoot" style="justify-content:center;margin-top:24px">
+        <button class="btn" id="winClose">멋지다! 🎉</button>
+      </div>
+    </div>`;
+  overlay.classList.add('show');
+  document.getElementById('winClose').onclick = closeQuest;
+}
+
+// ============ TOAST ============
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+// ============ DEMOS ============
+let rafId=null;
+function stopDemo(){ if(rafId){ cancelAnimationFrame(rafId); rafId=null; } }
+function startDemo(kind){
+  stopDemo();
+  const cv = document.getElementById('dcv');
+  if(!cv) return;
+  cv.tabIndex = 0;
+  const ctx = cv.getContext('2d');
+
+  if(kind==="ball"){
+    cv.width=560; cv.height=180;
+    let x=60,y=60,vx=3.4,vy=2.6,r=16;
+    (function loop(){
+      x+=vx;y+=vy;
+      if(x-r<0||x+r>cv.width)vx*=-1;
+      if(y-r<0||y+r>cv.height)vy*=-1;
+      ctx.fillStyle="#070810";ctx.fillRect(0,0,cv.width,cv.height);
+      ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle="#7aa2f7";ctx.fill();
+      rafId=requestAnimationFrame(loop);
+    })();
+  }
+
+  if(kind==="player"){
+    cv.width=560; cv.height=220;
+    const keys={}; const p={x:260,y:94,s:30,sp:4};
+    cv.onkeydown=e=>{if(e.key.startsWith('Arrow'))e.preventDefault();keys[e.key]=true;};
+    cv.onkeyup=e=>keys[e.key]=false;
+    (function loop(){
+      if(keys.ArrowLeft)p.x-=p.sp; if(keys.ArrowRight)p.x+=p.sp;
+      if(keys.ArrowUp)p.y-=p.sp;   if(keys.ArrowDown)p.y+=p.sp;
+      p.x=Math.max(0,Math.min(p.x,cv.width-p.s));
+      p.y=Math.max(0,Math.min(p.y,cv.height-p.s));
+      ctx.fillStyle="#070810";ctx.fillRect(0,0,cv.width,cv.height);
+      ctx.fillStyle="#7aa2f7";ctx.fillRect(p.x,p.y,p.s,p.s);
+      rafId=requestAnimationFrame(loop);
+    })();
+  }
+
+  if(kind==="collide"){
+    cv.width=560; cv.height=220;
+    const keys={}; const p={x:60,y:90,w:30,h:30,sp:4};
+    const target={x:380,y:80,w:80,h:60};
+    cv.onkeydown=e=>{if(e.key.startsWith('Arrow'))e.preventDefault();keys[e.key]=true;};
+    cv.onkeyup=e=>keys[e.key]=false;
+    const hit=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+    (function loop(){
+      if(keys.ArrowLeft)p.x-=p.sp; if(keys.ArrowRight)p.x+=p.sp;
+      if(keys.ArrowUp)p.y-=p.sp;   if(keys.ArrowDown)p.y+=p.sp;
+      p.x=Math.max(0,Math.min(p.x,cv.width-p.w));
+      p.y=Math.max(0,Math.min(p.y,cv.height-p.h));
+      const on=hit(p,target);
+      ctx.fillStyle="#070810";ctx.fillRect(0,0,cv.width,cv.height);
+      ctx.fillStyle=on?"#9ece6a":"#3a3f66";
+      ctx.fillRect(target.x,target.y,target.w,target.h);
+      ctx.fillStyle="#7aa2f7";ctx.fillRect(p.x,p.y,p.w,p.h);
+      ctx.fillStyle="#e6e9ff";ctx.font="bold 15px Segoe UI";
+      ctx.fillText(on?"충돌! isHit = true":"겹쳐보세요",16,26);
+      rafId=requestAnimationFrame(loop);
+    })();
+  }
+
+  if(kind==="boss"){
+    cv.width=560; cv.height=320;
+    const keys={}; let p,coin,enemy,score,over,winFlag;
+    const rnd=s=>({x:Math.random()*(cv.width-s),y:Math.random()*(cv.height-s)});
+    function reset(){p={x:260,y:140,w:26,h:26,sp:4};coin=Object.assign({w:18,h:18},rnd(18));
+      enemy=Object.assign({w:24,h:24,vx:2.4,vy:2},rnd(24));score=0;over=false;winFlag=false;}
+    const hit=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+    cv.onkeydown=e=>{if(e.key.startsWith('Arrow'))e.preventDefault();keys[e.key]=true;};
+    cv.onkeyup=e=>keys[e.key]=false;
+    reset();
+    (function loop(){
+      if(!over&&!winFlag){
+        if(keys.ArrowLeft)p.x-=p.sp; if(keys.ArrowRight)p.x+=p.sp;
+        if(keys.ArrowUp)p.y-=p.sp;   if(keys.ArrowDown)p.y+=p.sp;
+        p.x=Math.max(0,Math.min(p.x,cv.width-p.w));
+        p.y=Math.max(0,Math.min(p.y,cv.height-p.h));
+        enemy.x+=enemy.vx;enemy.y+=enemy.vy;
+        if(enemy.x<0||enemy.x+enemy.w>cv.width)enemy.vx*=-1;
+        if(enemy.y<0||enemy.y+enemy.h>cv.height)enemy.vy*=-1;
+        if(hit(p,coin)){score+=10;Object.assign(coin,rnd(coin.w));}
+        if(hit(p,enemy))over=true;
+        if(score>=50)winFlag=true;
+      }
+      ctx.fillStyle="#070810";ctx.fillRect(0,0,cv.width,cv.height);
+      ctx.fillStyle="#edc22e";ctx.fillRect(coin.x,coin.y,coin.w,coin.h);
+      ctx.fillStyle="#f7768e";ctx.fillRect(enemy.x,enemy.y,enemy.w,enemy.h);
+      ctx.fillStyle="#7aa2f7";ctx.fillRect(p.x,p.y,p.w,p.h);
+      ctx.fillStyle="#e6e9ff";ctx.font="bold 17px Segoe UI";
+      ctx.fillText("점수 "+score+" / 50",14,26);
+      if(over){overlayText("게임 오버","#f7768e","R 키로 다시");}
+      if(winFlag){overlayText("승리! 보스 클리어 🎉","#9ece6a","아래 버튼으로 보상받기");
+        const b=document.getElementById('clearQ'); if(b)b.disabled=false;}
+      rafId=requestAnimationFrame(loop);
+    })();
+    function overlayText(t,c,sub){
+      ctx.fillStyle="rgba(7,8,16,.78)";ctx.fillRect(0,0,cv.width,cv.height);
+      ctx.textAlign="center";ctx.fillStyle=c;ctx.font="bold 30px Segoe UI";
+      ctx.fillText(t,cv.width/2,cv.height/2-4);
+      ctx.fillStyle="#c0caf5";ctx.font="15px Segoe UI";
+      ctx.fillText(sub,cv.width/2,cv.height/2+26);ctx.textAlign="left";
+    }
+    cv.addEventListener('keydown',e=>{if((e.key==='r'||e.key==='R')&&over)reset();});
+  }
+
+  setTimeout(()=>cv.focus(),50);
+}
+
+// ============ RESET ============
+document.getElementById('reset').onclick=()=>{
+  if(confirm("정말 진도를 초기화할까요? XP와 뱃지가 모두 사라집니다.")){
+    state=fresh(); save(); renderHUD(); renderMap();
+    toast("진도가 초기화되었습니다");
+  }
+};
+overlay.addEventListener('click',e=>{ if(e.target===overlay) closeQuest(); });
+
+// ============ INIT ============
+renderHUD();
+renderMap();
+</script>
+</body>
+</html>

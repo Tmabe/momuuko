@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>서재 — 모무꼬</title>
+<meta name="theme-color" content="#14161f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="서재">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#14161f; --card:#1c2030; --card2:#252a3d; --line:#2f3549;
+  --ink:#e9ecf8; --dim:#8d95b8; --mute:#5f688c;
+  --or:#e8833a; --ok:#6cc07a;
+}
+html{-webkit-text-size-adjust:100%;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Pretendard','Apple SD Gothic Neo','Segoe UI','Malgun Gothic',sans-serif;
+  line-height:1.6; min-height:100dvh;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 48px;}
+
+/* header */
+header{padding:22px 0 14px;}
+header .top{display:flex;align-items:baseline;gap:10px;}
+header h1{font-size:24px;letter-spacing:-.5px;}
+header h1 span{color:var(--or);}
+header .meta{font-size:12.5px;color:var(--mute);margin-top:3px;}
+.total{height:5px;background:var(--card2);border-radius:4px;overflow:hidden;margin-top:11px;}
+.total i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--or),var(--ok));transition:.5s;}
+
+/* continue */
+.cont{margin-top:20px;}
+.lab{font-size:11px;color:var(--mute);letter-spacing:1.2px;font-weight:700;margin-bottom:7px;}
+a.hero{
+  display:block;text-decoration:none;color:inherit;
+  background:linear-gradient(135deg,rgba(232,131,58,.16),rgba(108,192,122,.07));
+  border:1px solid #4a3a28;border-radius:16px;padding:15px 17px;
+}
+a.hero:active{transform:scale(.985);}
+.hero .r{display:flex;align-items:center;gap:12px;}
+.hero .ic{font-size:26px;flex:none;}
+.hero .tt{font-size:16.5px;font-weight:700;letter-spacing:-.3px;}
+.hero .st{font-size:12.5px;color:var(--dim);margin-top:1px;}
+.hero .go{margin-left:auto;flex:none;font-size:20px;color:var(--or);}
+.hero .bar{height:5px;background:rgba(255,255,255,.09);border-radius:4px;margin-top:12px;overflow:hidden;}
+.hero .bar i{display:block;height:100%;background:var(--or);border-radius:4px;}
+
+/* filter */
+.filters{display:flex;gap:7px;overflow-x:auto;margin:22px 0 12px;padding-bottom:2px;scrollbar-width:none;}
+.filters::-webkit-scrollbar{display:none;}
+.f{flex:none;font-size:13px;padding:6px 14px;border-radius:20px;border:1px solid var(--line);
+  color:var(--dim);background:none;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.f.on{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700;}
+
+/* list */
+.list{display:flex;flex-direction:column;gap:9px;}
+a.bk{
+  display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;
+}
+a.bk:active{transform:scale(.985);}
+a.bk.zero{opacity:.72;}
+.bk .ic{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex:none;background:var(--card2);}
+.bk .bd{flex:1;min-width:0;}
+.bk .tt{font-size:15px;font-weight:700;letter-spacing:-.3px;}
+.bk .st{font-size:12px;color:var(--mute);margin-top:1px;}
+.bk .bar{height:4px;background:#232838;border-radius:3px;margin-top:7px;overflow:hidden;}
+.bk .bar i{display:block;height:100%;border-radius:3px;}
+.bk .pct{font-size:12px;color:var(--dim);flex:none;font-variant-numeric:tabular-nums;min-width:34px;text-align:right;}
+.bk .pct.done{color:var(--ok);font-weight:700;}
+
+footer{margin-top:30px;text-align:center;color:var(--mute);font-size:11.5px;line-height:1.9;}
+footer a{color:var(--dim);}
+.hint{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:11px 14px;
+  font-size:12.5px;color:var(--dim);margin-top:16px;display:none;}
+.hint.on{display:block;}
+
+@media(min-width:720px){
+  .wrap{padding:0 24px 60px;}
+  header h1{font-size:29px;}
+  .list{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="top"><h1>모무꼬 <span>서재</span></h1></div>
+  <div class="meta"><span id="cnt">–</span>권 · 전체 진도 <span id="tot">0</span>%</div>
+  <div class="total"><i id="totbar"></i></div>
+</header>
+
+<div class="cont" id="contWrap" style="display:none">
+  <div class="lab">이어보기</div>
+  <a class="hero" id="hero" href="#">
+    <div class="r">
+      <span class="ic" id="hIc"></span>
+      <div style="min-width:0">
+        <div class="tt" id="hTt"></div>
+        <div class="st" id="hSt"></div>
+      </div>
+      <span class="go">▶</span>
+    </div>
+    <div class="bar"><i id="hBar"></i></div>
+  </a>
+</div>
+
+<div class="filters" id="filters"></div>
+<div class="list" id="list"></div>
+
+<div class="hint" id="hint">
+  진도가 0으로 보이나요? 교재를 <b>다른 기기·다른 브라우저</b>에서 읽으면 진도가 따로 저장됩니다.
+  이 서재와 <b>같은 브라우저</b>에서 읽어야 여기에 표시됩니다.
+</div>
+
+<footer>
+  모무꼬 서재 · 진도는 이 브라우저에 저장됩니다<br>
+  <a href="../studio.html">작업실로 →</a>
+</footer>
+
+</div>
+
+<script>
+const BOOKS = [
+  { id:'blender',    file:'books/blender-book.html',    title:'블렌더 모델링 교과서',
+    sub:'Blender 5.2 → UE 5.7 · 게임 에셋', cat:'아트',  icon:'🧊',
+    key:'blender_book_v1',            total:18, unit:'강', color:'#5b9bd5' },
+  { id:'gamedesign', file:'books/gamedesign-book.html', title:'게임 기획 교과서',
+    sub:'재미를 설계하는 법 · 성공작 12편 해부', cat:'기획', icon:'💡',
+    key:'gd_textbook_v1',             total:18, unit:'장', color:'#bb9af7' },
+  { id:'unity',      file:'books/unity-book.html',      title:'게임작법서',
+    sub:'유니티 입문 → 2D 점프액션 완성', cat:'코딩', icon:'🎮',
+    key:'unity_interactive_save_v1',  total:42, unit:'일', color:'#6cc07a' },
+  { id:'codequest',  file:'books/codequest.html',       title:'코드 퀘스트',
+    sub:'게임 코딩 기초를 RPG로', cat:'코딩', icon:'⚔️',
+    key:'codequest_save_v1',          total:5,  unit:'퀘스트', color:'#e8833a' }
+];
+
+const LK='mm_library_v1';
+let lib={}; try{ lib=JSON.parse(localStorage.getItem(LK))||{}; }catch(e){ lib={}; }
+
+function prog(b){
+  try{
+    const raw=localStorage.getItem(b.key);
+    if(!raw) return {n:0,pct:0};
+    const v=JSON.parse(raw);
+    const arr = Array.isArray(v.read) ? v.read : (Array.isArray(v.done) ? v.done : []);
+    const n=arr.length;
+    return {n, pct:Math.min(100,Math.round(n/b.total*100))};
+  }catch(e){ return {n:0,pct:0}; }
+}
+
+function open(b){
+  lib.last=b.id; lib.at=Date.now();
+  localStorage.setItem(LK, JSON.stringify(lib));
+}
+
+let filter='전체';
+const CATS=['전체', ...new Set(BOOKS.map(b=>b.cat))];
+
+function render(){
+  // 필터 버튼
+  const fw=document.getElementById('filters'); fw.innerHTML='';
+  CATS.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='f'+(c===filter?' on':''); b.textContent=c;
+    b.onclick=()=>{filter=c;render();};
+    fw.appendChild(b);
+  });
+
+  // 전체 진도
+  let dn=0, tt=0, any=false;
+  BOOKS.forEach(b=>{const p=prog(b); dn+=p.n; tt+=b.total; if(p.n>0)any=true;});
+  const totPct = tt? Math.round(dn/tt*100):0;
+  document.getElementById('cnt').textContent=BOOKS.length;
+  document.getElementById('tot').textContent=totPct;
+  document.getElementById('totbar').style.width=totPct+'%';
+  document.getElementById('hint').classList.toggle('on', !any);
+
+  // 이어보기 — 마지막에 연 책, 없으면 진도 있는 책 중 최고
+  let hero=null;
+  if(lib.last) hero=BOOKS.find(b=>b.id===lib.last)||null;
+  if(!hero){
+    const withP=BOOKS.map(b=>({b,p:prog(b)})).filter(x=>x.p.n>0).sort((a,z)=>z.p.n-a.p.n);
+    if(withP.length) hero=withP[0].b;
+  }
+  const cw=document.getElementById('contWrap');
+  if(hero){
+    const p=prog(hero);
+    cw.style.display='block';
+    document.getElementById('hIc').textContent=hero.icon;
+    document.getElementById('hTt').textContent=hero.title;
+    document.getElementById('hSt').textContent = p.n>0
+      ? `${p.n} / ${hero.total}${hero.unit} 완료 · ${p.pct}%`
+      : '아직 시작 전 — 처음부터';
+    document.getElementById('hBar').style.width=Math.max(p.pct,2)+'%';
+    const a=document.getElementById('hero');
+    a.href=hero.file;
+    a.onclick=()=>open(hero);
+  } else cw.style.display='none';
+
+  // 목록
+  const L=document.getElementById('list'); L.innerHTML='';
+  BOOKS.filter(b=>filter==='전체'||b.cat===filter).forEach(b=>{
+    const p=prog(b);
+    const a=document.createElement('a');
+    a.className='bk'+(p.n===0?' zero':''); a.href=b.file;
+    a.onclick=()=>open(b);
+    a.innerHTML=`
+      <span class="ic">${b.icon}</span>
+      <span class="bd">
+        <span class="tt">${b.title}</span>
+        <span class="st">${b.total}${b.unit} · ${b.cat}${b.sub?' · '+b.sub:''}</span>
+        ${p.n>0?`<span class="bar"><i style="width:${p.pct}%;background:${b.color}"></i></span>`:''}
+      </span>
+      <span class="pct${p.pct>=100?' done':''}">${p.n>0?(p.pct>=100?'완독':p.pct+'%'):'시작'}</span>`;
+    L.appendChild(a);
+  });
+}
+render();
+
+// 교재를 읽고 돌아왔을 때 진도 갱신
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) render(); });
+window.addEventListener('pageshow',render);
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
