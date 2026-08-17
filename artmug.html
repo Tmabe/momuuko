@@ -95,32 +95,61 @@ body{
 .slot-tag.open{background:var(--sky-pl);color:var(--sky-d);border-color:var(--sky-l)}
 .slot-tag.full{background:var(--accent-pl);color:var(--accent-d);border-color:var(--accent-l)}
 
-/* PORTFOLIO */
+/* PORTFOLIO — 세로 썸네일 레일 + 고정 스테이지 */
+/* 스테이지 높이: 임베드(자동높이 iframe)에서는 vh가 문서 전체 높이가 되어버리므로
+   clamp의 px 상한이 반드시 필요하다. 이게 없으면 아트머그 사이트에서 거대해진다.
+   썸네일 크기는 "레일에 4.5개가 보이는 높이"에서 역산한다(반쯤 걸친 1장이 다음 작품을 암시). */
+:root{
+  --stageH:clamp(320px,60vh,620px);
+  --thumbGap:8px;
+  --thumbH:clamp(110px, calc((var(--stageH) - 4*var(--thumbGap)) / 4.5), 190px);
+  --railW:calc(var(--thumbH) * 0.75);
+}
 .port-wrap{display:none}
-.port-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px}
-.port-item{position:relative;aspect-ratio:3/4;border-radius:var(--r-sm);overflow:hidden;cursor:pointer;border:1px solid var(--line);box-shadow:var(--sh);background:var(--sky-pl);transition:transform .16s,box-shadow .16s,border-color .16s}
-.port-item:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:var(--sky-l)}
-.port-item img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
-.port-item .cap{position:absolute;left:0;right:0;bottom:0;padding:14px 10px 7px;font-size:11px;font-weight:700;color:#fff;background:linear-gradient(to top,rgba(20,45,70,.8),transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.port-stack{display:flex;gap:12px;align-items:flex-start}
+.port-rail{flex:0 0 calc(var(--railW) + 8px);display:flex;flex-direction:column;gap:var(--thumbGap);
+  max-height:var(--stageH);overflow-y:auto;overscroll-behavior:contain;padding:0 6px 0 2px;scrollbar-width:thin}
+/* 높이를 직접 지정해야 스크롤바 폭에 상관없이 "4.5개 보이기"가 정확히 유지된다 */
+.port-th{position:relative;width:100%;height:var(--thumbH);padding:0;flex-shrink:0;cursor:pointer;
+  border:2px solid transparent;border-radius:var(--r-sm);overflow:hidden;background:var(--sky-pl);
+  box-shadow:var(--sh);transition:border-color .14s,transform .14s,box-shadow .14s}
+.port-th img{width:100%;height:100%;object-fit:cover;object-position:50% 16%;display:block}
+.port-th:hover{transform:translateY(-1px);box-shadow:var(--sh-md)}
+.port-th.on{border-color:var(--sky);box-shadow:0 0 0 3px rgba(62,168,232,.22)}
+.port-stage{position:relative;flex:1;min-width:0;height:var(--stageH);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:linear-gradient(180deg,#fcfeff,#f0f8fd);border:1px solid var(--line);
+  border-radius:var(--r);box-shadow:var(--sh)}
+.port-stage img{max-width:100%;max-height:100%;object-fit:contain;display:block;animation:fade .22s}
+.port-nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:54px;
+  border:1px solid var(--line);background:rgba(255,255,255,.93);border-radius:var(--r-sm);
+  font-family:inherit;font-size:21px;font-weight:900;line-height:1;color:var(--sky-d);cursor:pointer;
+  transition:all .14s}
+.port-nav:hover{background:#fff;border-color:var(--sky-l);box-shadow:var(--sh-md)}
+.port-nav.prev{left:10px} .port-nav.next{right:10px}
+.port-cap{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.93);border:1px solid var(--line);border-radius:var(--r-xs);
+  padding:5px 11px;font-size:12px;font-weight:800;color:var(--ink2);max-width:calc(100% - 130px)}
+.port-cap .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.port-cap .ix{color:var(--ink3);font-variant-numeric:tabular-nums;flex-shrink:0}
+.port-full{position:absolute;right:12px;bottom:12px;background:rgba(255,255,255,.93);
+  border:1px solid var(--line);border-radius:var(--r-xs);padding:5px 11px;font-size:11.5px;font-weight:800;
+  color:var(--ink2);text-decoration:none;cursor:pointer;transition:all .14s}
+.port-full:hover{border-color:var(--sky-l);color:var(--sky-d);background:#fff}
 .port-loading,.port-empty{text-align:center;padding:34px;color:var(--ink3);font-size:13px;font-weight:600}
-.port-viewer{display:none;position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh-md);padding:16px;margin-bottom:16px;text-align:center}
-.port-viewer.open{display:block;animation:fade .2s}
-.port-viewer img{max-width:100%;max-height:74vh;border-radius:var(--r-sm);display:block;margin:0 auto}
-.port-viewer .pv-x{position:absolute;top:10px;right:10px;width:38px;height:38px;border:1px solid var(--line);background:#fff;border-radius:var(--r-sm);font-size:16px;font-weight:800;color:var(--ink2);cursor:pointer;z-index:2}
-.port-viewer .pv-x:hover{border-color:var(--accent-l);color:var(--accent-d)}
-.port-viewer .pv-bar{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:12px}
-.port-viewer .pv-nav{width:44px;height:44px;border:1px solid var(--line);background:#fff;border-radius:var(--r-sm);font-size:22px;font-weight:800;color:var(--sky-d);cursor:pointer;line-height:1}
-.port-viewer .pv-nav:hover{background:var(--sky-pl);border-color:var(--sky-l)}
-.port-viewer .pv-cap{font-size:13px;font-weight:700;color:var(--ink2);min-width:90px}
-.lb{display:none;position:fixed;inset:0;z-index:6000;background:rgba(15,40,65,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;flex-direction:column;gap:14px}
-.lb.open{display:flex;animation:fade .2s}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-.lb img{max-width:92vw;max-height:78vh;border-radius:10px;box-shadow:0 24px 80px rgba(0,0,0,.5)}
-.lb-cap{color:#fff;font-weight:700;font-size:14px}
-.lb-nav{display:flex;gap:12px}
-.lb-nav button,.lb-x{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:var(--r-sm);padding:9px 20px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;transition:background .15s}
-.lb-nav button:hover,.lb-x:hover{background:rgba(255,255,255,.3)}
-.lb-x{position:absolute;top:20px;right:20px;width:44px;height:44px;border-radius:var(--r-sm);padding:0;font-size:18px}
+@media(max-width:640px){
+  :root{
+    --stageH:clamp(260px,52vh,420px);
+    --thumbGap:6px;
+    --thumbH:clamp(84px, calc((var(--stageH) - 4*var(--thumbGap)) / 4.5), 140px);
+  }
+  .port-stack{gap:8px}
+  .port-nav{width:32px;height:46px;font-size:18px}
+  .port-nav.prev{left:6px} .port-nav.next{right:6px}
+  .port-cap{left:8px;bottom:8px;font-size:11px;padding:4px 9px;max-width:calc(100% - 100px)}
+  .port-full{right:8px;bottom:8px;font-size:11px;padding:4px 9px}
+}
 
 /* PRICE form */
 .fgroup{margin-bottom:22px}
@@ -226,7 +255,6 @@ body{
 }
 @media(max-width:430px){
   .opt-cards{grid-template-columns:1fr}
-  .port-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -271,12 +299,16 @@ body{
     <div class="port-loading" id="portLoading"></div>
     <div class="port-empty" id="portEmpty" style="display:none"></div>
     <div class="port-wrap" id="portWrap">
-      <div class="port-viewer" id="portViewer">
-        <button class="pv-x" onclick="closeLb()" aria-label="닫기">✕</button>
-        <img id="pvImg" alt="">
-        <div class="pv-bar"><button class="pv-nav" onclick="lbNav(-1)">‹</button><span class="pv-cap" id="pvCap"></span><button class="pv-nav" onclick="lbNav(1)">›</button></div>
+      <div class="port-stack">
+        <div class="port-rail" id="portRail"></div>
+        <div class="port-stage">
+          <img id="portImg" alt="">
+          <button class="port-nav prev" onclick="pcNav(-1)" aria-label="이전 작품">‹</button>
+          <button class="port-nav next" onclick="pcNav(1)" aria-label="다음 작품">›</button>
+          <div class="port-cap"><span class="nm" id="portNm"></span><span class="ix" id="portIx"></span></div>
+          <a class="port-full" id="portFull" target="_blank" rel="noopener">⤢ 원본</a>
+        </div>
       </div>
-      <div class="port-grid" id="portGrid"></div>
     </div>
   </section>
 
@@ -345,13 +377,6 @@ body{
   <div class="foot" id="foot"></div>
 </div>
 
-<!-- lightbox -->
-<div class="lb" id="lb">
-  <button class="lb-x" onclick="closeLb()">✕</button>
-  <img id="lbImg" src="" alt="">
-  <div class="lb-cap" id="lbCap"></div>
-  <div class="lb-nav"><button id="lbPrev" onclick="lbNav(-1)"></button><button id="lbNext" onclick="lbNav(1)"></button></div>
-</div>
 
 <div class="toast" id="toast"></div>
 
@@ -372,7 +397,6 @@ var UI={
     lPreview:'작업양식 미리보기', lTotal:'현재 선택 합계', won:'원',
     cnt:function(n){return '· '+n+'개 선택';}, copy:'📋 양식 복사하기', reset:'↺ 초기화',
     foot:'© 모무꼬 · Momukko Live2D Illustration · BETA',
-    lbPrev:'‹ 이전', lbNext:'다음 ›',
     portLoad:'🔄 작품을 불러오는 중...', portEmpty:'아직 등록된 작품이 없어요 ✦', portErr:'⚠ 작품을 불러오지 못했어요.',
     slotOpen:function(n){return n+'자리 OPEN';}, slotFull:'마감',
     needSel:'먼저 기본 일러스트를 선택해 주세요 ✦', resetDone:'초기화되었어요 ✦', copyDone:'복사 완료! 작가님께 전달해 주세요 📋',
@@ -392,7 +416,6 @@ var UI={
     lPreview:'Order Form Preview', lTotal:'Current Total', won:'KRW',
     cnt:function(n){return '· '+n+' selected';}, copy:'📋 Copy Order Form', reset:'↺ Reset',
     foot:'© Momukko · Live2D Illustration · BETA',
-    lbPrev:'‹ Prev', lbNext:'Next ›',
     portLoad:'🔄 Loading artworks...', portEmpty:'No artworks yet ✦', portErr:'⚠ Failed to load artworks.',
     slotOpen:function(n){return n+' slot'+(n>1?'s':'')+' open';}, slotFull:'Full',
     needSel:'Please select a base illustration first ✦', resetDone:'Reset done ✦', copyDone:'Copied! Please send it to the artist 📋',
@@ -519,7 +542,6 @@ function renderUI(){
   set('l-msg',u.lMsg);set('h-msg',u.hMsg);set('l-apply',u.lApply);set('l-ref',u.lRef);set('l-email',u.lEmail);
   set('l-preview',u.lPreview);set('l-total',u.lTotal);set('t-won',u.won);
   set('btnCopy',u.copy);set('btnReset',u.reset);set('foot',u.foot);
-  set('lbPrev',u.lbPrev);set('lbNext',u.lbNext);
   document.getElementById('formMsg').placeholder=lang==='ko'?'캐릭터 설명, 특이사항 등...':'Character description, special notes, etc...';
   document.getElementById('portLoading').textContent=u.portLoad;
 }
@@ -613,7 +635,16 @@ function loadPortfolio(){
     .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
     .then(function(data){
       imgs=[];
-      (data||[]).forEach(function(f){if(f.type==='file'&&/\.(png|jpe?g|gif|webp)$/i.test(f.name)){imgs.push({src:'https://'+GH.user+'.github.io/'+GH.repo+'/'+GH.folder+'/'+encodeURIComponent(f.name),cap:f.name.replace(/\.[^.]+$/,'')});}});
+      /* 경량화 이미지(make-thumbs.py 생성)를 먼저 쓰고, 없으면 원본으로 폴백한다.
+         thumb=가로400(세로 레일) / view=가로1400(스테이지) / src=원본 */
+      var BASE='https://'+GH.user+'.github.io/'+GH.repo+'/'+GH.folder+'/';
+      (data||[]).forEach(function(f){if(f.type==='file'&&/\.(png|jpe?g|gif|webp)$/i.test(f.name)){
+        var stem=f.name.replace(/\.[^.]+$/,'');
+        imgs.push({src:BASE+encodeURIComponent(f.name),
+                   view:BASE+'view/'+encodeURIComponent(stem)+'.webp',
+                   thumb:BASE+'thumb/'+encodeURIComponent(stem)+'.webp',
+                   cap:stem});
+      }});
       if(DATA.portfolioOrder&&DATA.portfolioOrder.length){
         imgs.sort(function(a,b){var ia=DATA.portfolioOrder.indexOf(a.cap+'.png');
           // match by filename stem against order entries (strip extension in order list too)
@@ -622,22 +653,54 @@ function loadPortfolio(){
       }
       document.getElementById('portLoading').style.display='none';
       if(!imgs.length){var e=document.getElementById('portEmpty');e.style.display='block';e.textContent=UI[lang].portEmpty;return;}
-      var g='';imgs.forEach(function(im,i){g+='<div class="port-item" onclick="openLb('+i+')"><img loading="lazy" src="'+im.src+'" alt="'+im.cap+'"><div class="cap">'+im.cap+'</div></div>';});
-      document.getElementById('portGrid').innerHTML=g;document.getElementById('portWrap').style.display='block';
+      var rail=document.getElementById('portRail'), rh='';
+      imgs.forEach(function(im,i){
+        rh+='<button class="port-th" type="button" onclick="pcShow('+i+')" aria-label="'+im.cap+'">'+
+            '<img loading="lazy" src="'+im.thumb+'" alt="'+im.cap+'"></button>';
+      });
+      rail.innerHTML=rh;
+      rail.querySelectorAll('.port-th img').forEach(function(el,i){ pvFallback(el,[imgs[i].src]); });
+      document.getElementById('portWrap').style.display='block';
+      pcShow(0);
     })
     .catch(function(){document.getElementById('portLoading').style.display='none';var e=document.getElementById('portEmpty');e.style.display='block';e.textContent=UI[lang].portErr;});
 }
-/* iframe 임베드에서도 동작하는 인라인 뷰어 (position:fixed 미사용) */
-function openLb(i){
-  if(!imgs.length)return; lbIdx=(i+imgs.length)%imgs.length; var im=imgs[lbIdx];
-  document.getElementById('pvImg').src=im.src;
-  document.getElementById('pvImg').alt=im.cap;
-  document.getElementById('pvCap').textContent=(lbIdx+1)+' / '+imgs.length;
-  var v=document.getElementById('portViewer'); v.classList.add('open');
-  try{ v.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){ v.scrollIntoView(); }
+/* ── 뷰어: 세로 얼굴 레일 + 고정 스테이지 ──
+   열고 닫는 개념이 없어 페이지가 절대 움직이지 않는다.
+   position:fixed 를 전혀 쓰지 않으므로 아트머그 자동높이 iframe 임베드에서도 그대로 동작한다. */
+/* 경량화 이미지가 아직 없으면 다음 후보(→원본)로 자동 교체 */
+function pvFallback(el,alts){
+  var q=alts.slice();
+  el.onerror=function(){ var n=q.shift(); if(n){el.src=n;} else {el.onerror=null;} };
 }
-function closeLb(){document.getElementById('portViewer').classList.remove('open');}
-function lbNav(d){openLb(lbIdx+d);}
+function pcShow(i){
+  if(!imgs.length)return;
+  lbIdx=(i+imgs.length)%imgs.length; var im=imgs[lbIdx];
+  var el=document.getElementById('portImg');
+  pvFallback(el,[im.src]); el.src=im.view; el.alt=im.cap;
+  document.getElementById('portNm').textContent=im.cap;
+  document.getElementById('portIx').textContent=(lbIdx+1)+' / '+imgs.length;
+  document.getElementById('portFull').href=im.src;
+  var rail=document.getElementById('portRail');
+  var ths=rail.querySelectorAll('.port-th');
+  for(var k=0;k<ths.length;k++)ths[k].classList.toggle('on',k===lbIdx);
+  /* 선택된 얼굴을 레일 안에서만 스크롤해 보여준다(페이지는 건드리지 않음) */
+  var t=ths[lbIdx]; if(!t)return;
+  var top=t.offsetTop-rail.offsetTop, bot=top+t.offsetHeight;
+  if(top<rail.scrollTop) rail.scrollTop=top;
+  else if(bot>rail.scrollTop+rail.clientHeight) rail.scrollTop=bot-rail.clientHeight;
+}
+function pcNav(d){ pcShow(lbIdx+d); }
+/* 스테이지 좌우 스와이프 */
+(function(){
+  var st=document.querySelector('.port-stage'); if(!st)return;
+  var sx=0,sy=0;
+  st.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  st.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>52&&Math.abs(dx)>Math.abs(dy)) pcNav(dx<0?1:-1);
+  },{passive:true});
+})();
 
 /* ════════ selection ════════ */
 function findItem(secId,itId){var s=DATA.sections.find(function(x){return x.id===secId;});return s.items.find(function(i){return i.id===itId;});}
@@ -796,7 +859,12 @@ function init(){
     .then(function(){ setLang('ko'); loadPortfolio(); });
 }
 init();
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLb();});
+document.addEventListener('keydown',function(e){
+  if(!imgs.length)return;
+  var t=e.target, tag=t&&t.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;   // 입력 중엔 무시
+  if(e.key==='ArrowRight')pcNav(1); else if(e.key==='ArrowLeft')pcNav(-1);
+});
 
 /* ── iframe 자동 높이: 부모(artmug.kr)에 내 높이 전달 ── */
 (function(){
