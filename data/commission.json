@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-01T06:48:37.725Z",
+  "updated": "2026-08-19T10:21:15.809Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -100,8 +100,8 @@
       "ko": "9월",
       "en": "September",
       "filled": [
-        false,
-        false
+        true,
+        true
       ]
     },
     {
