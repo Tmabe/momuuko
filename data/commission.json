@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-19T11:37:32.793Z",
+  "updated": "2026-08-31T23:24:31.017Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -88,15 +88,6 @@
   ],
   "slots": [
     {
-      "ko": "8월",
-      "en": "August",
-      "filled": [
-        true,
-        true,
-        true
-      ]
-    },
-    {
       "ko": "9월",
       "en": "September",
       "filled": [
@@ -107,6 +98,15 @@
     {
       "ko": "10월",
       "en": "October",
+      "filled": [
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "ko": "11월",
+      "en": "November",
       "filled": [
         false,
         false,
@@ -246,7 +246,8 @@
           "ko": "볼빵빵",
           "en": "Puffed cheeks"
         }
-      ]
+      ],
+      "hintKo": "풀옵션 선택시 전체 제공합니다."
     },
     {
       "id": "add",
@@ -268,7 +269,7 @@
           "id": "a3",
           "ko": "의상 추가 (전신)",
           "en": "Extra outfit (full body)",
-          "p": 200000,
+          "p": 400000,
           "cat": "part"
         },
         {
@@ -288,7 +289,7 @@
           "id": "a6",
           "ko": "헤어 추가",
           "en": "Extra hairstyle",
-          "p": 200000,
+          "p": 300000,
           "cat": "part"
         },
         {
@@ -314,7 +315,7 @@
         },
         {
           "id": "add_mqa7prr6",
-          "ko": "r18 파츠 추가",
+          "ko": "나체 파츠(추후 신의상 용이)",
           "en": "r18 parts",
           "p": 100000,
           "cat": "part"
@@ -371,7 +372,7 @@
           "id": "e2",
           "ko": "빠른 마감 7일",
           "en": "Rush delivery (7 days)",
-          "p": 300000
+          "p": 500000
         },
         {
           "id": "e3",
