@@ -27,6 +27,8 @@
   --amber-h:#FFB93D;
   --amber-ink:#8A5A00;  /* 종이 위 앰버 텍스트. #F5A623은 흰 배경 대비 1.97:1이라
                            본문 글자색으로 못 씀. 이 값이 약 4.9:1 확보. */
+  --amber-ttl:#A06B00;  /* 그룹 제목용. --amber-ink 보다 밝아 포인트색에 가깝게 읽히면서
+                           흰 카드 위 4.57:1 로 가독성 기준(4.5:1)은 지킨다. */
   --amber-l:#F3DCB0;
   --amber-pl:#FDF4E4;
 
@@ -231,9 +233,9 @@ body{
 .fgroup:has(+ .fgroup.merged){padding-bottom:18px;margin-bottom:0;border-bottom:none}
 .fgroup.merged{padding-left:15px;border-left:2px solid var(--amber-l)}
 .fgroup.merged .fgroup-head{margin-bottom:11px}
-.fgroup.merged .fgroup-title{font-size:12.5px;font-weight:700;color:var(--ink2)}
+.fgroup.merged .fgroup-title{font-size:14px;font-weight:800;color:var(--amber-ttl)}
 .fgroup-head{display:flex;align-items:center;gap:8px;margin-bottom:13px;flex-wrap:wrap}
-.fgroup-title{font-size:14px;font-weight:900;color:var(--ink);letter-spacing:-.005em}
+.fgroup-title{font-size:16px;font-weight:900;color:var(--amber-ttl);letter-spacing:-.005em}
 .fgroup-tag{font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:2px 9px;border-radius:var(--r-xs)}
 .fgroup-tag.req{background:var(--ink);color:#fff}
 .fgroup-tag.free{background:var(--amber);color:var(--ink)}

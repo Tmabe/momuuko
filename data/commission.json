@@ -131,7 +131,8 @@
           "en": "Full body · Collab",
           "p": 1050000,
           "subKo": "🎉 20만원 할인",
-          "subEn": "🎉 ₩200,000 off"
+          "subEn": "🎉 ₩200,000 off",
+          "artmugId": "12166956"
         },
         {
           "id": "b2",
@@ -139,27 +140,30 @@
           "en": "Full body",
           "p": 1100000,
           "subKo": "🎉 20만원 할인",
-          "subEn": "🎉 ₩200,000 off"
+          "subEn": "🎉 ₩200,000 off",
+          "artmugId": "12166957"
         },
         {
           "id": "b3",
           "ko": "반신 (리깅X)",
           "en": "Half body (no rigging)",
-          "p": 850000
+          "p": 850000,
+          "artmugId": "12130521"
         },
         {
           "id": "b4",
           "ko": "풀옵션[디자인, 전신, 알몸파츠(추후 신의상에 용의), 게임기, 저작권(리깅x)+기본표정파츠 전체]",
           "en": "Full package (design + full body + nude parts + game device + copyright, no rigging)",
           "p": 1950000,
-          "cat": "fullopt"
+          "cat": "fullopt",
+          "artmugId": "12131269"
         }
       ]
     },
     {
       "id": "expr",
       "ko": "기본 제공 표정(기본 5개 무료)",
-      "en": " Free Expressions",
+      "en": "Free Expressions",
       "koLabel": "기본 제공 표정(기본 5개 무료)",
       "tagKo": "무료",
       "tagEn": "Free",
@@ -169,55 +173,65 @@
         {
           "id": "x1",
           "ko": "빠직",
-          "en": "Anger mark"
+          "en": "Anger mark",
+          "artmugId": "12130007"
         },
         {
           "id": "x2",
           "ko": "정색 (얼굴 어두워짐)",
-          "en": "Deadpan"
+          "en": "Deadpan",
+          "artmugId": "12130008"
         },
         {
           "id": "x3",
           "ko": "반짝이는 눈",
-          "en": "Sparkly eyes"
+          "en": "Sparkly eyes",
+          "artmugId": "12130009"
         },
         {
           "id": "x4",
           "ko": "하트눈",
-          "en": "Heart eyes"
+          "en": "Heart eyes",
+          "artmugId": "12130010"
         },
         {
           "id": "x5",
           "ko": "눈물",
-          "en": "Tears"
+          "en": "Tears",
+          "artmugId": "12130011"
         },
         {
           "id": "x6",
           "ko": "땀",
-          "en": "Sweat"
+          "en": "Sweat",
+          "artmugId": "12130012"
         },
         {
           "id": "x7",
           "ko": "죽은눈",
-          "en": "Dead eyes"
+          "en": "Dead eyes",
+          "artmugId": "12130013"
         },
         {
           "id": "x8",
           "ko": "동공 작아짐",
-          "en": "Shrunk pupils"
+          "en": "Shrunk pupils",
+          "artmugId": "12130014"
         },
         {
           "id": "x9",
           "ko": "볼빵빵",
-          "en": "Puffed cheeks"
+          "en": "Puffed cheeks",
+          "artmugId": "12209034"
         }
       ],
-      "hintKo": "풀옵션 선택시 전체 제공합니다."
+      "hintKo": "풀옵션 선택시 전체 제공합니다.",
+      "mergeUp": true
     },
     {
       "id": "newfit",
       "ko": "신의상 · 신헤어",
-      "en": " New Outfit · Hair",
+      "en": "New Outfit · Hair",
       "koLabel": "신의상·신헤어",
       "type": "pill",
       "items": [
@@ -280,7 +294,8 @@
           "en": "Hayena rigging + full body set",
           "p": 800000,
           "subKo": "5만원 할인",
-          "subEn": "₩50,000 off"
+          "subEn": "₩50,000 off",
+          "artmugId": "12130895"
         },
         {
           "id": "r2",
@@ -288,7 +303,8 @@
           "en": "Momon rigging + full body set",
           "p": 900000,
           "subKo": "표정리깅 전부 무료",
-          "subEn": "all expression rigging free"
+          "subEn": "all expression rigging free",
+          "artmugId": "12136645"
         },
         {
           "id": "r3",
@@ -296,14 +312,15 @@
           "en": "Pini rigging + full body set",
           "p": 1300000,
           "subKo": "5만원 할인",
-          "subEn": "₩50,000 off"
+          "subEn": "₩50,000 off",
+          "artmugId": "12147114"
         }
       ]
     },
     {
       "id": "add",
-      "ko": " 추가 옵션",
-      "en": " Add-ons",
+      "ko": "추가 옵션",
+      "en": "Add-ons",
       "koLabel": "추가 옵션",
       "type": "pill",
       "hintKo": "⚠ 의상·헤어는 먼저 문의 후 선택해 주세요",
@@ -314,62 +331,71 @@
           "ko": "표정·얼굴 파츠 추가",
           "en": "Expression / face parts",
           "p": 10000,
-          "cat": "expr"
+          "cat": "expr",
+          "artmugId": "11905302"
         },
         {
           "id": "a3",
           "ko": "의상 추가 (전신)",
           "en": "Extra outfit (full body)",
           "p": 400000,
-          "cat": "part"
+          "cat": "part",
+          "artmugId": "11905304"
         },
         {
           "id": "a4",
           "ko": "악세서리·소품 파츠",
           "en": "Accessory / prop parts",
           "p": 10000,
-          "cat": "part"
+          "cat": "part",
+          "artmugId": "11905305"
         },
         {
           "id": "a5",
           "ko": "게임기 파츠 및 맞춤 손·팔",
           "en": "Game device + custom hands/arms",
-          "p": 150000
+          "p": 150000,
+          "artmugId": "11905306"
         },
         {
           "id": "a6",
           "ko": "헤어 추가",
           "en": "Extra hairstyle",
           "p": 300000,
-          "cat": "part"
+          "cat": "part",
+          "artmugId": "11945298"
         },
         {
           "id": "a8",
           "ko": "동물귀",
           "en": "Animal ears",
           "p": 20000,
-          "cat": "part"
+          "cat": "part",
+          "artmugId": "12153225"
         },
         {
           "id": "a9",
           "ko": "꼬리",
           "en": "Tail",
           "p": 10000,
-          "cat": "part"
+          "cat": "part",
+          "artmugId": "12153226"
         },
         {
           "id": "a10",
           "ko": "3면도 (단색채색)",
           "en": "3-view sheet (flat color)",
           "p": 200000,
-          "cat": "samyeon"
+          "cat": "samyeon",
+          "artmugId": "11905300"
         },
         {
           "id": "add_mqa7prr6",
           "ko": "나체 파츠(추후 신의상 용이)",
           "en": "r18 parts",
           "p": 100000,
-          "cat": "part"
+          "cat": "part",
+          "artmugId": "12235681"
         },
         {
           "id": "add_mqbswruz",
@@ -381,8 +407,8 @@
     },
     {
       "id": "debut",
-      "ko": " 데뷔축전",
-      "en": " Debut Celebration",
+      "ko": "데뷔축전",
+      "en": "Debut Celebration",
       "koLabel": "데뷔축전",
       "type": "pill",
       "items": [
@@ -390,13 +416,15 @@
           "id": "d1",
           "ko": "데뷔축전 전신",
           "en": "Debut art (full body)",
-          "p": 300000
+          "p": 350000,
+          "artmugId": "12090219"
         },
         {
           "id": "d2",
           "ko": "데뷔축전 ( 상업용·장패드등의 굿즈)",
           "en": "Debut art ( commercial · ex)mousepad )",
-          "p": 550000
+          "p": 550000,
+          "artmugId": "12177083"
         },
         {
           "id": "debut_mqa7n7il",
@@ -417,19 +445,22 @@
           "id": "e1",
           "ko": "저작권 구매 (굿즈·모델양도·상업 사용)",
           "en": "Copyright (goods · transfer · commercial)",
-          "p": 400000
+          "p": 400000,
+          "artmugId": "11905307"
         },
         {
           "id": "e2",
           "ko": "빠른 마감 7일",
           "en": "Rush delivery (7 days)",
-          "p": 500000
+          "p": 500000,
+          "artmugId": "11905312"
         },
         {
           "id": "e3",
           "ko": "작품 비공개",
           "en": "Private work",
-          "p": 100000
+          "p": 100000,
+          "artmugId": "11937775"
         }
       ]
     }
