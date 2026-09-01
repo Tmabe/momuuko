@@ -159,7 +159,7 @@
     {
       "id": "expr",
       "ko": "기본 제공 표정(기본 5개 무료)",
-      "en": " Free Expressions",
+      "en": "Free Expressions",
       "koLabel": "기본 제공 표정(기본 5개 무료)",
       "tagKo": "무료",
       "tagEn": "Free",
@@ -217,7 +217,7 @@
     {
       "id": "newfit",
       "ko": "신의상 · 신헤어",
-      "en": " New Outfit · Hair",
+      "en": "New Outfit · Hair",
       "koLabel": "신의상·신헤어",
       "type": "pill",
       "items": [
@@ -226,40 +226,35 @@
           "ko": "신의상 (전신)",
           "en": "New outfit (full body)",
           "p": 400000,
-          "cat": "part",
-          "artmugId": "12235680"
+          "cat": "part"
         },
         {
           "id": "nf2",
           "ko": "신헤어",
           "en": "New hairstyle",
           "p": 300000,
-          "cat": "part",
-          "artmugId": "12249675"
+          "cat": "part"
         },
         {
           "id": "nf3",
           "ko": "신의상 + 신헤어 세트",
           "en": "New outfit + hairstyle set",
           "p": 700000,
-          "cat": "part",
-          "artmugId": "12249676"
+          "cat": "part"
         },
         {
           "id": "nf4",
           "ko": "나체 파츠 (얼굴 제외)",
           "en": "Nude parts (excl. face)",
           "p": 100000,
-          "cat": "part",
-          "artmugId": "12235681"
+          "cat": "part"
         },
         {
           "id": "nf5",
           "ko": "기존 모델이 제 작업물이 아닌 경우 (할증)",
           "en": "Surcharge — model not originally by me",
           "p": 50000,
-          "cat": "ignore",
-          "artmugId": "12235682"
+          "cat": "ignore"
         }
       ],
       "hintKo": "⚠ 나체 파츠는 기존 모델 파일에 없는 나체가 필요한 경우에만 신청해 주세요 (의상 면적이 줄어드는 경우 등)⚠ 디자인에 따라 추가금이 발생할 수 있습니다",
@@ -302,8 +297,8 @@
     },
     {
       "id": "add",
-      "ko": " 추가 옵션",
-      "en": " Add-ons",
+      "ko": "추가 옵션",
+      "en": "Add-ons",
       "koLabel": "추가 옵션",
       "type": "pill",
       "hintKo": "⚠ 의상·헤어는 먼저 문의 후 선택해 주세요",
@@ -381,8 +376,8 @@
     },
     {
       "id": "debut",
-      "ko": " 데뷔축전",
-      "en": " Debut Celebration",
+      "ko": "데뷔축전",
+      "en": "Debut Celebration",
       "koLabel": "데뷔축전",
       "type": "pill",
       "items": [

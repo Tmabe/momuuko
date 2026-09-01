@@ -655,10 +655,15 @@ function renderWork(){
   });
   document.getElementById('woGrid').innerHTML=h;
 }
+/* 앞 그룹에 딸려 보일 섹션.
+   commission.json 에 두면 커미션편집 탭이 저장할 때마다 날아가므로(실제로 발생)
+   레이아웃 결정은 페이지가 들고 있는다. json 의 mergeUp 도 계속 인정한다. */
+var MERGE_UP={expr:1};
+function isMerged(sec){ return !!(sec.mergeUp || MERGE_UP[sec.id]); }
 function renderForm(){
   var h='';
   DATA.sections.forEach(function(sec){
-    h+='<div class="fgroup'+(sec.mergeUp?' merged':'')+'"><div class="fgroup-head"><span class="fgroup-title">'+sec[lang]+'</span>';
+    h+='<div class="fgroup'+(isMerged(sec)?' merged':'')+'"><div class="fgroup-head"><span class="fgroup-title">'+sec[lang]+'</span>';
     var tag=lang==='ko'?sec.tagKo:sec.tagEn; if(tag)h+='<span class="fgroup-tag '+sec.tagCls+'">'+tag+'</span>';
     h+='</div>';
     var note=lang==='ko'?sec.noteKo:sec.noteEn; if(note)h+='<div class="fgroup-note">'+note+'</div>';
