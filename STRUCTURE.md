@@ -12,7 +12,7 @@
 | 파일 | 용도 |
 |------|------|
 | `index.html` | 메인 커미션 페이지 — **라이브 사용 중, 수정 금지** |
-| `artmug.html` | 아트머그 임베드용 공개 커미션 페이지 (`data/commission.json` 읽음, 파스텔 디자인 최종) |
+| `artmug.html` | 아트머그 임베드용 공개 커미션 페이지 (`data/commission.json` 읽음, 차콜+앰버 네임카드 디자인 — 콜로소 배너 팔레트 기준. 구버전=`archive/artmug-pastel.html`) |
 | `portfolio.html` | 공개 포트폴리오 사이트 (다크+골드, `portfolio/data.json` 동적 렌더) |
 | `home.html` | 홈/포털 페이지 |
 | `links.html` | 링크 모음 (링크트리 스타일) |
