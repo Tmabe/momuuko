@@ -607,7 +607,8 @@ function amRender(snap, map){
   });
   var extra = [];
   Object.keys(prices).forEach(function(aid){
-    if(!used[aid] && prices[aid].p > 0) extra.push({g:prices[aid].g, nm:prices[aid].n, p:prices[aid].p});
+    var pr = prices[aid];
+    if(!used[aid] && (pr.p > 0 || pr.f)) extra.push({g:pr.g, nm:pr.n, p:pr.p, f:pr.f});
   });
   AM.diff = diff;
 
@@ -631,7 +632,7 @@ function amRender(snap, map){
   }
   if(extra.length){
     h += '<div class="amGrp">아트머그에만 있는 항목 — 웹 미등록</div>';
-    extra.forEach(function(d){ h += '<div class="amRow"><span class="amSec">'+amEsc((d.g||'').slice(0,9))+'</span><span class="amNm">'+amEsc(d.nm)+'</span><span class="amP n">'+amWon(d.p)+'</span></div>'; });
+    extra.forEach(function(d){ h += '<div class="amRow"><span class="amSec">'+amEsc((d.g||'').slice(0,9))+'</span><span class="amNm">'+amEsc(d.nm)+'</span><span class="amP n">'+(d.p?amWon(d.p):'무료')+'</span></div>'; });
     h += '<div class="amNote">여기 있는 건 자동으로 못 넣어요. 어느 섹션에 넣을지 · 영문 · 분류(cat)를 정해야 하거든요.</div>';
   }
   if(unmapped.length){

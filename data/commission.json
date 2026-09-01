@@ -210,6 +210,11 @@
           "id": "x9",
           "ko": "볼빵빵",
           "en": "Puffed cheeks"
+        },
+        {
+          "id": "x10",
+          "ko": "진한 홍조",
+          "en": "Deep blush"
         }
       ],
       "hintKo": "풀옵션 선택시 전체 제공합니다."
