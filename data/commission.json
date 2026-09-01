@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-01T16:01:10.745Z",
+  "updated": "2026-09-01T16:37:34.961Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -308,7 +308,7 @@
           "id": "a2",
           "ko": "표정·얼굴 파츠 추가",
           "en": "Expression / face parts",
-          "p": 10000,
+          "p": 10001,
           "cat": "expr"
         },
         {
@@ -392,12 +392,6 @@
           "ko": "데뷔축전 ( 상업용·장패드등의 굿즈)",
           "en": "Debut art ( commercial · ex)mousepad )",
           "p": 550000
-        },
-        {
-          "id": "debut_mqa7n7il",
-          "ko": "메모리얼용 파츠분리 추가",
-          "en": "Adding Parts Separation for Memorials",
-          "p": 250000
         }
       ]
     },
