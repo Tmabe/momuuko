@@ -385,8 +385,8 @@
     },
     {
       "id": "etc",
-      "ko": "⚙ 기타",
-      "en": "⚙ Others",
+      "ko": "기타",
+      "en": "Others",
       "koLabel": "기타",
       "type": "pill",
       "items": [
