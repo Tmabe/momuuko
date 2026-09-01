@@ -94,6 +94,29 @@ textarea.f{resize:vertical;min-height:60px;line-height:1.6}
   .item-row .en-in,.col-head .en-col{display:none}
   .gh-grid{grid-template-columns:1fr}
 }
+/* ── 아트머그 가격 대조 ── */
+.amOv{position:fixed;inset:0;z-index:400;background:rgba(10,10,14,.72);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:24px}
+.amOv.on{display:flex}
+.amBox{width:100%;max-width:620px;max-height:82vh;display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+.amHd{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--border);font-family:var(--cond);font-size:17px;font-weight:700;letter-spacing:.4px;color:var(--text)}
+.amWhen{font-family:var(--mono);font-size:11px;color:var(--text3);font-weight:400;letter-spacing:0}
+.amWhen.old{color:#fbbf24}
+.amX{margin-left:auto;background:none;border:none;color:var(--text3);font-size:19px;cursor:pointer;line-height:1}
+.amX:hover{color:var(--text)}
+.amBody{padding:16px 18px;overflow-y:auto;flex:1}
+.amGrp{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.6px;color:var(--text3);text-transform:uppercase;margin:14px 0 7px}
+.amGrp:first-child{margin-top:0}
+.amRow{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--border2);border-radius:9px;margin-bottom:6px;background:var(--bg3)}
+.amRow.chg{border-color:rgba(61,142,240,.45)}
+.amSec{font-family:var(--mono);font-size:10.5px;color:var(--text3);flex-shrink:0;width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.amNm{font-size:13px;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.amP{font-family:var(--mono);font-size:12.5px;flex-shrink:0;white-space:nowrap}
+.amP .o{color:var(--text3);text-decoration:line-through}
+.amP .a{color:var(--Y);margin:0 5px}
+.amP .n{color:var(--green);font-weight:700}
+.amNote{font-size:12px;color:var(--text2);line-height:1.7;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:11px 13px;margin-top:4px}
+.amNone{text-align:center;padding:34px 10px;color:var(--green);font-size:15px;font-family:var(--cond);letter-spacing:.5px}
+.amFt{display:flex;gap:9px;justify-content:flex-end;padding:13px 18px;border-top:1px solid var(--border);background:var(--bg)}
 </style>
 </head>
 <body>
@@ -103,6 +126,7 @@ textarea.f{resize:vertical;min-height:60px;line-height:1.6}
   <div class="tb-sub">커미션 페이지</div>
   <div class="tb-spacer"></div>
   <div class="tb-status" id="status"></div>
+  <button class="btn btn-ghost" onclick="amOpen()">💱 가격 불러오기</button>
   <button class="btn btn-ghost" onclick="reloadData()">↻ 새로고침</button>
   <button class="btn btn-save" onclick="save()">💾 저장 (배포)</button>
 </div>
@@ -245,6 +269,18 @@ textarea.f{resize:vertical;min-height:60px;line-height:1.6}
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div class="amOv" id="amOv">
+  <div class="amBox">
+    <div class="amHd">아트머그 가격 대조 <span class="amWhen" id="amWhen"></span>
+      <button class="amX" onclick="amClose()">✕</button></div>
+    <div class="amBody" id="amBody"></div>
+    <div class="amFt">
+      <button class="btn btn-ghost" onclick="amClose()">닫기</button>
+      <button class="btn btn-save" id="amApply" onclick="amApply()">적용하기</button>
+    </div>
+  </div>
+</div>
 
 <script>
 var D={hero:{},steps:[],chips:[],slots:[],sections:[],notice:[],apply:[],portfolioOrder:[]};
@@ -535,6 +571,90 @@ function save(){
       else{status('실패','err');toast('저장 실패: '+(res.j.message||'알 수 없는 오류'),'err');}
     })
     .catch(function(e){status('오류','err');toast('네트워크 오류: '+e.message,'err');});
+}
+
+
+/* ───── 아트머그 가격 대조 ─────
+   브라우저는 artmug.kr 를 직접 못 읽는다(CORS 차단, 확인함). 그래서 바탕화면의
+   가격수집.py 가 주기적으로 data/artmug_prices.json 스냅샷을 올려두고 여기선 그걸 읽는다.
+   짝짓기는 data/artmug_map.json (웹 항목 id -> 아트머그 옵션 id).
+   가격 차이만 적용 대상. 신규·삭제는 판단이 필요하므로 보여주기만 한다.
+   적용은 메모리(D)에만 하고, 배포는 평소처럼 저장 버튼이 한다. */
+var AM = {diff: []};
+function amWon(n){ return (n||0).toLocaleString('en-US'); }
+function amClose(){ document.getElementById('amOv').classList.remove('on'); }
+function amEsc(x){ return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function amOpen(){
+  status('아트머그 가격 대조 중...','load');
+  var t = '?t=' + Date.now();
+  Promise.all([
+    fetch('data/artmug_prices.json'+t).then(function(r){ if(!r.ok) throw new Error('artmug_prices.json '+r.status); return r.json(); }),
+    fetch('data/artmug_map.json'+t).then(function(r){ if(!r.ok) throw new Error('artmug_map.json '+r.status); return r.json(); })
+  ]).then(function(a){ amRender(a[0], a[1].map || {}); })
+   .catch(function(e){ status('대조 실패','err'); toast('가격 스냅샷을 못 읽었어요: '+e.message,'err'); });
+}
+function amRender(snap, map){
+  var prices = snap.prices || {}, used = {}, diff = [], gone = [], unmapped = [];
+  D.sections.forEach(function(sec){
+    (sec.items||[]).forEach(function(it){
+      var aid = map[it.id];
+      if(!aid){ if(it.p) unmapped.push({sec:sec.ko, nm:it.ko, p:it.p}); return; }
+      used[aid] = 1;
+      var a = prices[aid];
+      if(!a){ gone.push({sec:sec.ko, nm:it.ko, aid:aid}); return; }
+      if((a.p||0) !== (it.p||0)) diff.push({sec:sec.ko, nm:it.ko, from:it.p||0, to:a.p||0, ref:it});
+    });
+  });
+  var extra = [];
+  Object.keys(prices).forEach(function(aid){
+    if(!used[aid] && prices[aid].p > 0) extra.push({g:prices[aid].g, nm:prices[aid].n, p:prices[aid].p});
+  });
+  AM.diff = diff;
+
+  var when = snap.fetchedAt ? new Date(snap.fetchedAt) : null;
+  var ageH = when ? Math.round((Date.now()-when.getTime())/36e5) : 999;
+  var w = document.getElementById('amWhen');
+  w.textContent = when ? ('수집 ' + when.toLocaleString('ko-KR') + (ageH>=3 ? ' · '+ageH+'시간 전' : '')) : '수집 시각 불명';
+  w.className = 'amWhen' + (ageH>=6 ? ' old' : '');
+
+  var h = '';
+  if(diff.length){
+    h += '<div class="amGrp">가격이 달라진 항목 '+diff.length+'개 — 적용 대상</div>';
+    diff.forEach(function(d){
+      h += '<div class="amRow chg"><span class="amSec">'+amEsc(d.sec)+'</span><span class="amNm">'+amEsc(d.nm)+'</span>'
+         + '<span class="amP"><span class="o">'+amWon(d.from)+'</span><span class="a">&rarr;</span><span class="n">'+amWon(d.to)+'</span></span></div>';
+    });
+  }
+  if(gone.length){
+    h += '<div class="amGrp">아트머그에서 사라진 항목 — 매핑 확인 필요</div>';
+    gone.forEach(function(d){ h += '<div class="amRow"><span class="amSec">'+amEsc(d.sec)+'</span><span class="amNm">'+amEsc(d.nm)+'</span><span class="amP o">'+amEsc(d.aid)+'</span></div>'; });
+  }
+  if(extra.length){
+    h += '<div class="amGrp">아트머그에만 있는 항목 — 웹 미등록</div>';
+    extra.forEach(function(d){ h += '<div class="amRow"><span class="amSec">'+amEsc((d.g||'').slice(0,9))+'</span><span class="amNm">'+amEsc(d.nm)+'</span><span class="amP n">'+amWon(d.p)+'</span></div>'; });
+    h += '<div class="amNote">여기 있는 건 자동으로 못 넣어요. 어느 섹션에 넣을지 · 영문 · 분류(cat)를 정해야 하거든요.</div>';
+  }
+  if(unmapped.length){
+    h += '<div class="amGrp">아트머그에 없는 웹 항목</div>';
+    unmapped.forEach(function(d){ h += '<div class="amRow"><span class="amSec">'+amEsc(d.sec)+'</span><span class="amNm">'+amEsc(d.nm)+'</span><span class="amP o">'+amWon(d.p)+'</span></div>'; });
+  }
+  if(!h) h = '<div class="amNone">양쪽이 완전히 같아요 ✓</div>';
+  else if(!diff.length) h = '<div class="amNone" style="padding:18px 10px">가격은 전부 일치해요 ✓</div>' + h;
+
+  document.getElementById('amBody').innerHTML = h;
+  var b = document.getElementById('amApply');
+  b.style.display = diff.length ? '' : 'none';
+  b.textContent = '가격 ' + diff.length + '개 적용하기';
+  document.getElementById('amOv').classList.add('on');
+  status('대조 완료','ok');
+}
+function amApply(){
+  if(!AM.diff.length){ amClose(); return; }
+  AM.diff.forEach(function(d){ d.ref.p = d.to; });
+  var n = AM.diff.length; AM.diff = [];
+  renderPrice(); syncRaw(); updateMeta(); amClose();
+  toast(n + '개 가격을 반영했어요 · 저장(배포)을 눌러야 공개돼요','ok');
+  status('적용됨 — 저장 필요','ok');
 }
 
 /* ───── init ───── */
