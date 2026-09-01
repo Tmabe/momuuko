@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-31T23:24:31.017Z",
+  "updated": "2026-09-01T15:39:23.131Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -117,8 +117,8 @@
   "sections": [
     {
       "id": "base",
-      "ko": "✦ 기본 일러스트",
-      "en": "✦ Base Illustration",
+      "ko": "기본 일러스트",
+      "en": "Base Illustration",
       "koLabel": "기본 일러스트",
       "tagKo": "필수",
       "tagEn": "Required",
@@ -158,8 +158,8 @@
     },
     {
       "id": "rig",
-      "ko": "♥ 리깅 협업 세트",
-      "en": "♥ Rigging Collab Set",
+      "ko": "리깅 협업 세트",
+      "en": "Rigging Collab Set",
       "koLabel": "리깅 협업 세트",
       "type": "radio",
       "noteKo": "💡 리깅은 협업 작가님께 별도 신청이 필요해요.",
@@ -193,8 +193,8 @@
     },
     {
       "id": "expr",
-      "ko": "💬 기본 제공 표정(기본 5개 무료)",
-      "en": "💬 Free Expressions",
+      "ko": "기본 제공 표정(기본 5개 무료)",
+      "en": " Free Expressions",
       "koLabel": "기본 제공 표정(기본 5개 무료)",
       "tagKo": "무료",
       "tagEn": "Free",
@@ -251,8 +251,8 @@
     },
     {
       "id": "add",
-      "ko": "▸ 추가 옵션",
-      "en": "▸ Add-ons",
+      "ko": " 추가 옵션",
+      "en": " Add-ons",
       "koLabel": "추가 옵션",
       "type": "pill",
       "hintKo": "⚠ 의상·헤어는 먼저 문의 후 선택해 주세요",
@@ -330,8 +330,8 @@
     },
     {
       "id": "debut",
-      "ko": "🎊 데뷔축전",
-      "en": "🎊 Debut Celebration",
+      "ko": " 데뷔축전",
+      "en": " Debut Celebration",
       "koLabel": "데뷔축전",
       "type": "pill",
       "items": [
@@ -384,8 +384,8 @@
     },
     {
       "id": "newfit",
-      "ko": "👗 신의상 · 신헤어",
-      "en": "👗 New Outfit · Hair",
+      "ko": "신의상 · 신헤어",
+      "en": " New Outfit · Hair",
       "koLabel": "신의상·신헤어",
       "type": "pill",
       "items": [
@@ -430,7 +430,7 @@
           "artmugId": "12235682"
         }
       ],
-      "hintKo": "⚠ 나체 파츠는 기존 모델 파일에 없는 나체가 필요한 경우에만 신청해 주세요 (의상 면적이 줄어드는 경우 등)\n⚠ 세트는 디자인에 따라 추가금이 발생할 수 있습니다",
+      "hintKo": "⚠ 나체 파츠는 기존 모델 파일에 없는 나체가 필요한 경우에만 신청해 주세요 (의상 면적이 줄어드는 경우 등)⚠ 디자인에 따라 추가금이 발생할 수 있습니다",
       "hintEn": "⚠ Nude parts are only needed when the existing model file lacks the required nude area (e.g. a smaller outfit coverage)\n⚠ The set may incur extra charges depending on the design"
     }
   ],
