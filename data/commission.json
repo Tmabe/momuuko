@@ -381,6 +381,57 @@
           "p": 100000
         }
       ]
+    },
+    {
+      "id": "newfit",
+      "ko": "👗 신의상 · 신헤어",
+      "en": "👗 New Outfit · Hair",
+      "koLabel": "신의상·신헤어",
+      "type": "pill",
+      "items": [
+        {
+          "id": "nf1",
+          "ko": "신의상 (전신)",
+          "en": "New outfit (full body)",
+          "p": 400000,
+          "cat": "part",
+          "artmugId": "12235680"
+        },
+        {
+          "id": "nf2",
+          "ko": "신헤어",
+          "en": "New hairstyle",
+          "p": 300000,
+          "cat": "part",
+          "artmugId": "12249675"
+        },
+        {
+          "id": "nf3",
+          "ko": "신의상 + 신헤어 세트",
+          "en": "New outfit + hairstyle set",
+          "p": 700000,
+          "cat": "part",
+          "artmugId": "12249676"
+        },
+        {
+          "id": "nf4",
+          "ko": "나체 파츠 (얼굴 제외)",
+          "en": "Nude parts (excl. face)",
+          "p": 100000,
+          "cat": "part",
+          "artmugId": "12235681"
+        },
+        {
+          "id": "nf5",
+          "ko": "기존 모델이 제 작업물이 아닌 경우 (할증)",
+          "en": "Surcharge — model not originally by me",
+          "p": 50000,
+          "cat": "ignore",
+          "artmugId": "12235682"
+        }
+      ],
+      "hintKo": "⚠ 나체 파츠는 기존 모델 파일에 없는 나체가 필요한 경우에만 신청해 주세요 (의상 면적이 줄어드는 경우 등)\n⚠ 세트는 디자인에 따라 추가금이 발생할 수 있습니다",
+      "hintEn": "⚠ Nude parts are only needed when the existing model file lacks the required nude area (e.g. a smaller outfit coverage)\n⚠ The set may incur extra charges depending on the design"
     }
   ],
   "notice": [
