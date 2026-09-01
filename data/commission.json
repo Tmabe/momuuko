@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-01T16:37:34.961Z",
+  "updated": "2026-09-01T16:39:56.642Z",
   "hero": {
     "badgeKo": "✦ Live2D Illustrator · 모무꼬",
     "badgeEn": "✦ Live2D Illustrator · Momukko",
@@ -308,7 +308,7 @@
           "id": "a2",
           "ko": "표정·얼굴 파츠 추가",
           "en": "Expression / face parts",
-          "p": 10001,
+          "p": 10000,
           "cat": "expr"
         },
         {
