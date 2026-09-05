@@ -1,167 +1,176 @@
 {
   "todos": [
     {
-      "id": "msdia4t55agt",
-      "client": "청이리",
-      "text": "선화"
-    },
-    {
-      "id": "msdia8iws3f7",
-      "client": "청이리",
-      "text": "완성"
-    },
-    {
-      "id": "msdiad7yfs6i",
-      "client": "코메코",
+      "id": "mtokuvxuufjw",
+      "client": "하이루냥",
       "text": "삼면도"
     },
     {
-      "id": "msdiaqrwox85",
-      "client": "코메코",
-      "text": "축전"
+      "id": "mtokv8kh7o7d",
+      "client": "문서희",
+      "text": "신의상 완성"
     },
     {
-      "id": "msdib4owgbad",
-      "client": "순진",
-      "text": "축전"
+      "id": "mtokvebui7il",
+      "client": "문서희",
+      "text": "신의상 수정, 분리, 추가손"
     },
     {
-      "id": "msdibfahhmrm",
-      "client": "문뱀",
-      "text": "신의상"
-    },
-    {
-      "id": "msdibn9gj4f4",
-      "client": "청이리",
-      "text": "러프"
-    },
-    {
-      "id": "msdid0ekzxyr",
-      "client": "공아",
+      "id": "mtokvxdtqlck",
+      "client": "꽁아(이은서)",
       "text": "러프2"
     },
     {
-      "id": "msdid53zjaw4",
-      "client": "공아",
-      "text": "선화"
+      "id": "mtokvzacegme",
+      "client": "꽁아(이은서)",
+      "text": "작업"
     },
     {
-      "id": "msdiecy5rjlw",
-      "client": "공아",
-      "text": "러프1"
-    },
-    {
-      "id": "msdiecy5mp40",
-      "client": "공아",
-      "text": "러프3"
-    },
-    {
-      "id": "msdiecy5a0te",
-      "client": "공아",
-      "text": "채색"
-    },
-    {
-      "id": "msdiecy50oc1",
-      "client": "공아",
+      "id": "mtokw104yae8",
+      "client": "꽁아(이은서)",
       "text": "완성"
+    },
+    {
+      "id": "mtokwoe9ow06",
+      "client": "숭이s",
+      "text": "러프"
+    },
+    {
+      "id": "mtokwvedpa76",
+      "client": "숭이s",
+      "text": "작업"
+    },
+    {
+      "id": "mtokwydyxo1i",
+      "client": "숭이s",
+      "text": "분리 및 완성"
+    },
+    {
+      "id": "mtokxawztqoa",
+      "client": "숭이s",
+      "text": "완성2"
+    },
+    {
+      "id": "mtokxqmal36i",
+      "client": "고소미",
+      "text": "신의상 러프"
+    },
+    {
+      "id": "mtokxsl62g3e",
+      "client": "고소미",
+      "text": "신의상 작업"
+    },
+    {
+      "id": "mtokxwf1d99o",
+      "client": "고소미",
+      "text": "신의상 완성"
+    },
+    {
+      "id": "mtoky8bswm2l",
+      "client": "곰다람쥐",
+      "text": "러프"
+    },
+    {
+      "id": "mtokya3tb8wd",
+      "client": "곰다람쥐",
+      "text": "러프2"
+    },
+    {
+      "id": "mtokybjfrlc3",
+      "client": "곰다람쥐",
+      "text": "작업"
+    },
+    {
+      "id": "mtokyg13cd5o",
+      "client": "곰다람쥐",
+      "text": "완성"
+    },
+    {
+      "id": "mtokykykkw8z",
+      "client": "곰다람쥐",
+      "text": "완성2"
+    },
+    {
+      "id": "mtokytgir47o",
+      "client": "곰다람쥐",
+      "text": "완성3"
     }
   ],
   "placements": [
     {
-      "id": "msdibhivuu7x",
-      "todoId": "msdibfahhmrm",
-      "date": "2026-08-04",
+      "id": "mtokzb781luj",
+      "todoId": "mtokv8kh7o7d",
+      "date": "2026-09-06",
       "done": false
     },
     {
-      "id": "msdibjqls8lc",
-      "todoId": "msdiad7yfs6i",
-      "date": "2026-08-04",
+      "id": "mtokzbzvf7rs",
+      "todoId": "mtokvebui7il",
+      "date": "2026-09-07",
       "done": false
     },
     {
-      "id": "msdibp5b0ypb",
-      "todoId": "msdibn9gj4f4",
-      "date": "2026-08-04",
+      "id": "mtokzore217z",
+      "todoId": "mtokxqmal36i",
+      "date": "2026-09-06",
       "done": false
     },
     {
-      "id": "msdibs5q52b4",
-      "todoId": "msdibfahhmrm",
-      "date": "2026-08-05",
+      "id": "mtokzzw9fkpy",
+      "todoId": "mtokvxdtqlck",
+      "date": "2026-09-10",
       "done": false
     },
     {
-      "id": "msdibw4aqh2v",
-      "todoId": "msdia4t55agt",
-      "date": "2026-08-05",
+      "id": "mtol00u9f3vj",
+      "todoId": "mtokvzacegme",
+      "date": "2026-09-09",
       "done": false
     },
     {
-      "id": "msdibxx9nqgz",
-      "todoId": "msdia8iws3f7",
-      "date": "2026-08-06",
+      "id": "mtol01ssjlx5",
+      "todoId": "mtokvzacegme",
+      "date": "2026-09-10",
       "done": false
     },
     {
-      "id": "msdic6gpchip",
-      "todoId": "msdib4owgbad",
-      "date": "2026-08-07",
+      "id": "mtol03xtxk01",
+      "todoId": "mtokw104yae8",
+      "date": "2026-09-11",
       "done": false
     },
     {
-      "id": "msdiex86mvm8",
-      "todoId": "msdiecy5rjlw",
-      "date": "2026-08-07",
+      "id": "mtol0h7pbbw0",
+      "todoId": "mtokwoe9ow06",
+      "date": "2026-09-08",
       "done": false
     },
     {
-      "id": "msdif0ylshdu",
-      "todoId": "msdid0ekzxyr",
-      "date": "2026-08-08",
+      "id": "mtol0omvnr3m",
+      "todoId": "mtokxqmal36i",
+      "date": "2026-09-08",
       "done": false
     },
     {
-      "id": "msdif30xv37x",
-      "todoId": "msdiecy5mp40",
-      "date": "2026-08-09",
+      "id": "mtol0xvp0zte",
+      "todoId": "mtokwoe9ow06",
+      "date": "2026-09-12",
       "done": false
     },
     {
-      "id": "msdif5l82hol",
-      "todoId": "msdid53zjaw4",
-      "date": "2026-08-10",
-      "done": false
-    },
-    {
-      "id": "msdif6irwaw1",
-      "todoId": "msdiecy5a0te",
-      "date": "2026-08-11",
-      "done": false
-    },
-    {
-      "id": "msdif79i7l33",
-      "todoId": "msdiecy50oc1",
-      "date": "2026-08-12",
-      "done": false
-    },
-    {
-      "id": "msdif87fov4v",
-      "todoId": "msdiecy50oc1",
-      "date": "2026-08-13",
+      "id": "mtol0ywc3pti",
+      "todoId": "mtokxqmal36i",
+      "date": "2026-09-12",
       "done": false
     }
   ],
   "clients": [
-    "순진",
-    "청이리",
-    "김쵸크",
-    "이미정",
-    "코메코",
-    "문뱀",
-    "미딱부",
-    "차몽차",
-    "공아"
+    "하이루냥",
+    "문서희",
+    "꽁아(이은서)",
+    "숭이s",
+    "고소미",
+    "곰다람쥐"
   ],
   "inventory": {}
 }
