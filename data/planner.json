@@ -6,31 +6,6 @@
       "text": "삼면도"
     },
     {
-      "id": "mtokv8kh7o7d",
-      "client": "문서희",
-      "text": "신의상 완성"
-    },
-    {
-      "id": "mtokvebui7il",
-      "client": "문서희",
-      "text": "신의상 수정, 분리, 추가손"
-    },
-    {
-      "id": "mtokvxdtqlck",
-      "client": "꽁아(이은서)",
-      "text": "러프2"
-    },
-    {
-      "id": "mtokvzacegme",
-      "client": "꽁아(이은서)",
-      "text": "작업"
-    },
-    {
-      "id": "mtokw104yae8",
-      "client": "꽁아(이은서)",
-      "text": "완성"
-    },
-    {
       "id": "mtokwoe9ow06",
       "client": "숭이s",
       "text": "러프"
@@ -49,21 +24,6 @@
       "id": "mtokxawztqoa",
       "client": "숭이s",
       "text": "완성2"
-    },
-    {
-      "id": "mtokxqmal36i",
-      "client": "고소미",
-      "text": "신의상 러프"
-    },
-    {
-      "id": "mtokxsl62g3e",
-      "client": "고소미",
-      "text": "신의상 작업"
-    },
-    {
-      "id": "mtokxwf1d99o",
-      "client": "고소미",
-      "text": "신의상 완성"
     },
     {
       "id": "mtoky8bswm2l",
@@ -94,73 +54,226 @@
       "id": "mtokytgir47o",
       "client": "곰다람쥐",
       "text": "완성3"
+    },
+    {
+      "id": "mttmesnqw69r",
+      "client": "아토아",
+      "text": "신의상 러프"
+    },
+    {
+      "id": "mttmez8kxg3a",
+      "client": "아토아",
+      "text": "어레인지 시안 1 2"
+    },
+    {
+      "id": "muieyaxtpofy",
+      "client": "문서희",
+      "text": "삼면도"
+    },
+    {
+      "id": "muieygc729l6",
+      "client": "문문",
+      "text": "신의상"
+    },
+    {
+      "id": "muif4h8gsg0n",
+      "client": "아토아",
+      "text": "본작업"
+    },
+    {
+      "id": "muif5q0ttouh",
+      "client": "미딱부",
+      "text": "3d 헤어"
+    },
+    {
+      "id": "muif6ggxdcc5",
+      "client": "삥뽕빵",
+      "text": "러프"
+    },
+    {
+      "id": "muif6ifhw3ck",
+      "client": "삥뽕빵",
+      "text": "본작업"
+    },
+    {
+      "id": "muif6j5uvl7g",
+      "client": "삥뽕빵",
+      "text": "완성"
     }
   ],
   "placements": [
     {
-      "id": "mtokzb781luj",
-      "todoId": "mtokv8kh7o7d",
-      "date": "2026-09-06",
-      "done": false
-    },
-    {
-      "id": "mtokzbzvf7rs",
-      "todoId": "mtokvebui7il",
-      "date": "2026-09-07",
-      "done": false
-    },
-    {
-      "id": "mtokzore217z",
-      "todoId": "mtokxqmal36i",
-      "date": "2026-09-06",
-      "done": false
-    },
-    {
-      "id": "mtokzzw9fkpy",
-      "todoId": "mtokvxdtqlck",
-      "date": "2026-09-10",
-      "done": false
-    },
-    {
-      "id": "mtol00u9f3vj",
-      "todoId": "mtokvzacegme",
-      "date": "2026-09-09",
-      "done": false
-    },
-    {
-      "id": "mtol01ssjlx5",
-      "todoId": "mtokvzacegme",
-      "date": "2026-09-10",
-      "done": false
-    },
-    {
-      "id": "mtol03xtxk01",
-      "todoId": "mtokw104yae8",
-      "date": "2026-09-11",
-      "done": false
-    },
-    {
       "id": "mtol0h7pbbw0",
       "todoId": "mtokwoe9ow06",
-      "date": "2026-09-08",
-      "done": false
-    },
-    {
-      "id": "mtol0omvnr3m",
-      "todoId": "mtokxqmal36i",
-      "date": "2026-09-08",
+      "date": "2026-09-27",
       "done": false
     },
     {
       "id": "mtol0xvp0zte",
       "todoId": "mtokwoe9ow06",
-      "date": "2026-09-12",
+      "date": "2026-09-26",
       "done": false
     },
     {
-      "id": "mtol0ywc3pti",
-      "todoId": "mtokxqmal36i",
-      "date": "2026-09-12",
+      "id": "mttmghiuvmir",
+      "todoId": "mttmesnqw69r",
+      "date": "2026-09-26",
+      "done": false
+    },
+    {
+      "id": "mttmgk8o4dlq",
+      "todoId": "mttmez8kxg3a",
+      "date": "2026-09-27",
+      "done": false
+    },
+    {
+      "id": "muif3dozrmwk",
+      "todoId": "mtoky8bswm2l",
+      "date": "2026-10-07",
+      "done": false
+    },
+    {
+      "id": "muif3f1nj1v7",
+      "todoId": "mtokya3tb8wd",
+      "date": "2026-10-08",
+      "done": false
+    },
+    {
+      "id": "muif3hlcmr4r",
+      "todoId": "mtokxawztqoa",
+      "date": "2026-10-06",
+      "done": false
+    },
+    {
+      "id": "muif3icbq8lx",
+      "todoId": "mtokwydyxo1i",
+      "date": "2026-10-05",
+      "done": false
+    },
+    {
+      "id": "muif3j4lona8",
+      "todoId": "mtokwvedpa76",
+      "date": "2026-10-04",
+      "done": false
+    },
+    {
+      "id": "muif3ksbmwqh",
+      "todoId": "mtokwvedpa76",
+      "date": "2026-10-03",
+      "done": false
+    },
+    {
+      "id": "muif3svhbxje",
+      "todoId": "muieyaxtpofy",
+      "date": "2026-10-16",
+      "done": false
+    },
+    {
+      "id": "muif4j6fadb6",
+      "todoId": "muif4h8gsg0n",
+      "date": "2026-09-28",
+      "done": false
+    },
+    {
+      "id": "muif4mso2hvy",
+      "todoId": "muif4h8gsg0n",
+      "date": "2026-10-02",
+      "done": false
+    },
+    {
+      "id": "muif4yurlxou",
+      "todoId": "mtokwoe9ow06",
+      "date": "2026-09-28",
+      "done": false
+    },
+    {
+      "id": "muif5rsusgnx",
+      "todoId": "muif5q0ttouh",
+      "date": "2026-09-29",
+      "done": false
+    },
+    {
+      "id": "muif5sr1pd1y",
+      "todoId": "muif5q0ttouh",
+      "date": "2026-09-30",
+      "done": false
+    },
+    {
+      "id": "muif6u6sr3a5",
+      "todoId": "muif6ggxdcc5",
+      "date": "2026-10-09",
+      "done": false
+    },
+    {
+      "id": "muif6v8edhwm",
+      "todoId": "muif6ggxdcc5",
+      "date": "2026-10-10",
+      "done": false
+    },
+    {
+      "id": "muif75xh3zc7",
+      "todoId": "muif6ggxdcc5",
+      "date": "2026-10-18",
+      "done": false
+    },
+    {
+      "id": "muif776144st",
+      "todoId": "muif6ifhw3ck",
+      "date": "2026-10-23",
+      "done": false
+    },
+    {
+      "id": "muif7epgnon0",
+      "todoId": "mtokybjfrlc3",
+      "date": "2026-10-19",
+      "done": false
+    },
+    {
+      "id": "muif7iohsdcf",
+      "todoId": "mtokykykkw8z",
+      "date": "2026-10-20",
+      "done": false
+    },
+    {
+      "id": "muif7jg21a3o",
+      "todoId": "mtokytgir47o",
+      "date": "2026-10-21",
+      "done": false
+    },
+    {
+      "id": "muif7qnr76kd",
+      "todoId": "mtokytgir47o",
+      "date": "2026-10-22",
+      "done": false
+    },
+    {
+      "id": "muif7uvlt2om",
+      "todoId": "muif6ifhw3ck",
+      "date": "2026-10-24",
+      "done": false
+    },
+    {
+      "id": "muif7vw9uuz6",
+      "todoId": "muif6ifhw3ck",
+      "date": "2026-10-25",
+      "done": false
+    },
+    {
+      "id": "muif7ygcfdlq",
+      "todoId": "muif6j5uvl7g",
+      "date": "2026-10-27",
+      "done": false
+    },
+    {
+      "id": "muif818d9yaw",
+      "todoId": "muif6ifhw3ck",
+      "date": "2026-10-26",
+      "done": false
+    },
+    {
+      "id": "muif8zv57gwb",
+      "todoId": "mtokuvxuufjw",
+      "date": "2026-09-29",
       "done": false
     }
   ],
@@ -170,7 +283,12 @@
     "꽁아(이은서)",
     "숭이s",
     "고소미",
-    "곰다람쥐"
+    "곰다람쥐",
+    "아토아",
+    "감라빛",
+    "문문",
+    "미딱부",
+    "삥뽕빵"
   ],
   "inventory": {}
 }
