@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>모무꼬 · 커미션 안내 ✦ Momukko Live2D</title>
+<title>모무꼬 · 커미션 안내 · Momukko Live2D</title>
 <meta name="description" content="Live2D 일러스트레이터 모무꼬 · 커미션 및 작업 안내">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +37,11 @@
   --line:#E2DFD9; --line2:#EDEAE4;
 
   /* 명함 문법: 그림자 대신 헤어라인으로 면을 나눈다. 라운드는 각지지 않을 만큼만. */
-  --r:8px; --r-sm:6px; --r-xs:4px;
+  /* 역할별로 다르게. 전부 같은 값이면 위계가 사라지고 '툴이 찍어낸' 인상이 된다 */
+  --r:10px;      /* 카드·패널 */
+  --r-sm:6px;    /* 버튼·입력·컨트롤 */
+  --r-xs:3px;    /* 배지·태그 */
+  --r-pill:999px;/* 칩·필 */
   --sh:none;
   --sh-md:0 1px 2px rgba(23,23,26,.06);
   --sh-lg:0 10px 34px rgba(23,23,26,.14);
@@ -75,7 +79,6 @@ body{
 #sideMini{display:none;position:fixed;top:84px;right:14px;z-index:500;width:158px;
   background:
     linear-gradient(var(--amber),var(--amber)) 14px 0/16px 2px no-repeat,
-    repeating-linear-gradient(0deg,rgba(255,255,255,.032) 0 1px,transparent 1px 30px),
     var(--ink);
   border:1px solid var(--ink-line);border-radius:var(--r-sm);box-shadow:var(--sh-lg);padding:15px 14px 13px;color:#fff}
 #sideMini.show{display:block}
@@ -91,21 +94,12 @@ body{
 /* ── HERO = 명함 앞면 ── */
 .hero{padding:56px 22px 32px;max-width:980px;margin:0 auto}
 .hero-card{
-  background:
-    radial-gradient(420px 320px at 88% -6%, rgba(245,166,35,.17), transparent 66%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.030) 0 1px, transparent 1px 36px),
-    repeating-linear-gradient(0deg,  rgba(255,255,255,.030) 0 1px, transparent 1px 36px),
-    var(--ink);
+  background:var(--ink);
   border:1px solid var(--ink);border-radius:var(--r);padding:40px 42px 36px;box-shadow:var(--sh-lg);position:relative;overflow:hidden;color:#fff}
 .hero-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber)}
 /* 배너에서 인물 실루엣이 앉던 우상단 자리를 앰버 광으로만 암시 */
-/* 명함처럼 안쪽에 한 겹 더 두르고, 대각 두 모서리에만 앰버 브래킷을 건다 */
-.hero-card::after{content:'';position:absolute;inset:14px;border:1px solid rgba(255,255,255,.075);border-radius:3px;pointer-events:none;
-  background:
-    linear-gradient(var(--amber),var(--amber)) left top/16px 1px no-repeat,
-    linear-gradient(var(--amber),var(--amber)) left top/1px 16px no-repeat,
-    linear-gradient(var(--amber),var(--amber)) right bottom/16px 1px no-repeat,
-    linear-gradient(var(--amber),var(--amber)) right bottom/1px 16px no-repeat}
+/* 안쪽 프레임·모서리 브래킷은 정보를 담지 않는 장식이라 뺐다.
+   액센트는 왼쪽 앰버 스파인(::before) 하나로 충분하다. */
 .hero-badge{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--amber);border:1px solid rgba(245,166,35,.42);font-family:var(--cond);font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:5px 12px;border-radius:var(--r-xs);margin-bottom:20px}
 .wordmark{position:relative;z-index:1;font-family:var(--disp);font-weight:400;font-size:clamp(46px,10.2vw,104px);line-height:.9;letter-spacing:.004em;color:#fff;text-transform:uppercase}
 .wordmark .wm-b{color:var(--amber)}
@@ -113,11 +107,11 @@ body{
 .hero-jp{position:relative;z-index:1;font-size:12px;font-weight:500;letter-spacing:.34em;color:rgba(255,255,255,.5);margin-top:10px}
 .hero-sub{position:relative;z-index:1;font-size:13.5px;color:rgba(255,255,255,.72);margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.11);line-height:1.85;font-weight:400;max-width:56ch}
 .chips{position:relative;z-index:1;display:flex;gap:6px;flex-wrap:wrap;margin-top:20px}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(255,255,255,.05);border:1px solid var(--ink-line);border-radius:var(--r-xs);font-size:12px;font-weight:500;color:rgba(255,255,255,.7)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;background:rgba(255,255,255,.05);border:1px solid var(--ink-line);border-radius:var(--r-pill);font-size:12px;font-weight:500;color:rgba(255,255,255,.7)}
 .chip b{color:#fff;font-weight:800}
 .chip.pk b{color:var(--amber)}
-.chip .dotlive{width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 0 rgba(245,166,35,.55);animation:pulse 1.8s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,166,35,.55)}70%{box-shadow:0 0 0 7px rgba(245,166,35,0)}100%{box-shadow:0 0 0 0 rgba(245,166,35,0)}}
+/* 점은 색으로 이미 '접수중'을 말한다. 맥동까지 더하면 주목 요소가 둘이 된다 */
+.chip .dotlive{width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0}
 .hero-cta{position:relative;z-index:1;display:flex;gap:8px;flex-wrap:wrap;margin-top:26px}
 
 /* buttons */
@@ -225,8 +219,9 @@ body{
 .wo-cell.last .wo-sub{color:rgba(23,23,26,.62)}
 
 /* PRICE form */
-.fgroup{margin-bottom:26px;padding-bottom:26px;border-bottom:1px solid var(--line2)}
-.fgroup:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+/* 그룹 사이는 선이 아니라 여백으로 나눈다. 선은 섹션 제목처럼 큰 구분에만 */
+.fgroup{margin-bottom:34px}
+.fgroup:last-child{margin-bottom:0}
 /* mergeUp 섹션 = 앞 그룹에 딸린 하위 블록.
    섹션 타입이 서로 달라(radio vs expr) 한 섹션으로는 못 합치므로,
    구분선을 지우고 들여써서 "위 항목에 포함된 것"으로 읽히게 한다. */
@@ -250,7 +245,7 @@ body{
 .opt-card .p{font-size:17px;font-weight:900;color:var(--ink);margin-top:8px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .opt-card .sub{display:inline-block;font-size:11px;font-weight:800;color:var(--amber-ink);background:var(--amber-pl);border:1px solid var(--amber-l);border-radius:var(--r-xs);padding:2px 8px;margin-top:7px}
 .pills{display:flex;flex-wrap:wrap;gap:6px}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--white);font-size:12.5px;font-weight:600;color:var(--ink2);cursor:pointer;transition:.14s;user-select:none}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--white);font-size:12.5px;font-weight:600;color:var(--ink2);cursor:pointer;transition:.14s;user-select:none}
 .pill:hover{border-color:var(--ink3);color:var(--ink)}
 .pill.sel{background:var(--ink);border-color:var(--ink);color:#fff}
 .pill .pp{font-weight:800;color:var(--amber-ink)}
@@ -288,12 +283,9 @@ body{
 .preview-card{background:var(--white);border:1px solid var(--ink);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-lg);position:sticky;top:16px}
 .preview-head{background:
     linear-gradient(var(--amber),var(--amber)) 16px 0/16px 2px no-repeat,
-    repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 30px),
     var(--ink);
   border-bottom:1px solid rgba(255,255,255,.10);padding:15px 16px 13px;display:flex;align-items:center;justify-content:space-between}
 .preview-head-t{font-size:12.5px;font-weight:800;color:#fff}
-.preview-head-b{font-family:var(--cond);font-size:11.5px;font-weight:600;letter-spacing:.16em;color:var(--ink);background:var(--amber);padding:3px 9px;border-radius:var(--r-xs);animation:pulse2 2.4s infinite}
-@keyframes pulse2{0%,100%{opacity:1}50%{opacity:.5}}
 .preview-body{padding:15px 17px;font-family:'Noto Sans KR',monospace;font-size:11.5px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink);max-height:46vh;overflow-y:auto;background:var(--paper)}
 .preview-total{padding:16px 18px;border-top:1px solid var(--line);background:var(--white);text-align:center}
 .preview-total-lbl{font-family:var(--cond);font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
@@ -306,14 +298,25 @@ body{
 .preview-reset:hover{color:var(--ink)}
 
 .form-2col{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start;margin-top:18px}
-@media(max-width:860px){.form-2col{grid-template-columns:1fr}.preview-card{position:static}}
+/* 합계를 옵션 바로 아래로.
+   기존엔 미리보기 카드가 페이지 86~88% 지점이라 고르는 동안 금액이 안 보였다.
+   임베드에서 position:fixed 는 화면이 아니라 iframe 기준이 되어 못 쓰므로 순서를 바꾼다.
+   경계는 폼이 1단으로 접히는 860px — 760px 로 잡으면 태블릿 구간이 비어버린다(실측으로 확인). */
+@media(max-width:860px){
+  /* 기본 규칙의 align-items:start 를 그대로 두면 flex 세로 배치에서
+     자식이 내용 폭으로 줄어든다(미리보기 카드가 167px 이 됐다). stretch 로 되돌린다. */
+  .form-2col{display:flex;flex-direction:column;grid-template-columns:none;align-items:stretch}
+  .preview-card{position:static;order:-1}
+}
 
 /* NOTICE accordion — 카드 대신 표처럼 쌓인 행 */
 .notice-list{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
 .nt{background:transparent;border:none;border-bottom:1px solid var(--line);border-radius:0;overflow:hidden;transition:background .15s,box-shadow .15s}
 .nt.open{background:var(--white);box-shadow:inset 3px 0 0 var(--amber)}
 .nt-q{display:flex;align-items:center;gap:11px;padding:15px 14px;cursor:pointer;font-size:13.5px;font-weight:800;color:var(--ink);user-select:none}
-.nt-ico{flex-shrink:0;font-size:14px;opacity:.7}
+/* 약관 항목의 이모지 아이콘은 숨긴다. commission.json 의 ico 값은 건드리지 않아
+   편집탭에서 그대로 보이고, 공개 페이지에만 안 나온다 */
+.nt-ico{display:none}
 .nt-arr{margin-left:auto;color:var(--ink3);font-size:10px;transition:transform .2s,color .2s;flex-shrink:0}
 .nt.open .nt-arr{transform:rotate(180deg);color:var(--amber-ink)}
 .nt-a{max-height:0;overflow:hidden;transition:max-height .25s ease;font-size:13px;line-height:1.9;color:var(--ink2);font-weight:400}
@@ -326,19 +329,78 @@ body{
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 @media(max-width:760px){
-  .wrap{padding:0 16px}
-  .hero{padding:58px 16px 22px}
-  .hero-card{padding:32px 26px 28px}
-  .hero-card::after{inset:10px}
-  .opt-cards{grid-template-columns:1fr 1fr}
+  /* ── 1. 좌우 여백 ──
+     기존: .wrap 16 + .card 24 + .opt-card 16 = 한쪽 56px 이 3겹으로 겹쳐
+     375px 화면에서 글자가 261px(70%)밖에 못 썼다.
+     카드를 화면 끝까지 붙이고 카드 자기 패딩만 남겨 한쪽 29px 로 줄인다. */
+  .wrap{padding:0}
+  .section{margin-bottom:34px}
+  .sec-head{margin-left:15px;margin-right:15px}
+  .card{border-left:none;border-right:none;border-radius:0;padding:16px 15px}
+  .notice-list{margin:0 15px}
+  .foot{margin:0 15px}
+  .subcard{border-left:none;border-right:none;border-radius:0;padding:18px 15px;margin-top:12px}
+  .preview-card{border-left:none;border-right:none;border-radius:0}
+
+  .form-2col{gap:0;margin-top:14px}
+
+  /* ── 3. 옵션 카드 → 행 리스트 ──
+     1열 카드는 이름 한 줄+가격 한 줄뿐이라 오른쪽이 비었다. 추가옵션과 같은 행 형태로 통일. */
+  .opt-cards{grid-template-columns:1fr;gap:0;border-top:1px solid var(--line2)}
+  .opt-card{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;
+    border:none;border-bottom:1px solid var(--line2);border-radius:0;padding:13px 2px}
+  .opt-card:hover{border-color:var(--line2)}
+  .opt-card.sel{background:var(--amber-pl);box-shadow:none}
+  .opt-card.sel::after{position:static;order:3;width:17px;height:17px;flex-shrink:0;top:auto;right:auto}
+  .opt-card .n{flex:1 1 0;min-width:0;padding-right:0;font-size:13.5px}
+  .opt-card .p{order:2;margin-top:0;flex-shrink:0;font-size:15px}
+  .opt-card .sub{order:4;flex-basis:100%;margin-top:0}
+  .qty-item{border:none;border-bottom:1px solid var(--line2);border-radius:0;padding:12px 2px}
+  .qty-item.on{background:var(--amber-pl);box-shadow:none}
+  .qty-list{gap:0;border-top:1px solid var(--line2)}
+  .fgroup{margin-bottom:28px}
+
+  /* ── 4. 포트폴리오: 세로 레일이 화면 폭의 19%를 먹었다 → 그림 아래 가로 스트립 ── */
+  .port-stack{flex-direction:column-reverse;gap:8px}
+  .port-rail{flex:none;width:100%;flex-direction:row;max-height:none;
+    overflow-x:auto;overflow-y:hidden;padding:0 0 4px}
+  .port-th{width:var(--railW);height:var(--thumbH);flex-shrink:0}
+
+  /* ── 5. 히어로 압축 (556px → 약 400px) ── */
+  .hero{padding:40px 12px 16px}
+  .hero-card{padding:26px 20px 22px}
+  .hero-jp{display:none}
+  .hero-sub{margin-top:16px;padding-top:14px}
+  .chips{margin-top:16px;gap:5px}
+  .chip{padding:5px 11px;font-size:11.5px}
+  .hero-cta{margin-top:20px}
+  .btn{padding:12px 20px;font-size:13px}
+
   .wo-grid{grid-template-columns:1fr 1fr}
   .wo-cell:nth-child(2n)::after{display:none}   /* 2열에서는 오른쪽 칸이 줄 끝 */
   .wo-cell::before{font-size:38px;right:7px}    /* 칸이 좁아 고스트 번호가 본문과 부딪힘 */
-  .section{margin-bottom:42px}
 }
 @media(max-width:430px){
-  .opt-cards{grid-template-columns:1fr}
   .hero-role{letter-spacing:.08em}
+}
+
+/* ── 하단 합계 바 ──
+   단독 열람(body.solo)에서만 띄운다. 임베드에서는 position:fixed 가 화면이 아니라
+   iframe 최상단 기준이 되어 7000px 짜리 문서 맨 밑에 붙어버리므로 쓸 수 없다. */
+.mbar{display:none}
+@media(max-width:760px){
+  body.solo .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:300;
+    align-items:center;gap:12px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+    background:var(--ink);border-top:1px solid var(--ink-line)}
+  body.solo{padding-bottom:64px}
+  .mbar-l{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
+  .mbar-k{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:rgba(255,255,255,.5)}
+  .mbar-v{font-family:var(--disp);font-size:19px;color:var(--amber);line-height:1.15;
+    font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mbar-b{flex-shrink:0;padding:11px 18px;border:none;border-radius:var(--r-sm);
+    background:var(--amber);color:var(--ink);font-family:inherit;font-size:13.5px;font-weight:900;cursor:pointer}
+  .mbar-b:disabled{background:var(--ink-line);color:rgba(255,255,255,.4);cursor:default}
 }
 </style>
 </head>
@@ -439,7 +501,7 @@ body{
 
       <!-- RIGHT: live preview -->
       <div class="preview-card">
-        <div class="preview-head"><span class="preview-head-t" id="l-preview"></span><span class="preview-head-b">LIVE</span></div>
+        <div class="preview-head"><span class="preview-head-t" id="l-preview"></span></div>
         <div class="preview-body" id="previewBody"></div>
         <div class="preview-total">
           <div class="preview-total-lbl" id="l-total"></div>
@@ -466,46 +528,51 @@ body{
 
 <div class="toast" id="toast"></div>
 
+<div class="mbar" id="mbar">
+  <div class="mbar-l"><span class="mbar-k" id="mbarK"></span><span class="mbar-v" id="mbarAmt">0</span></div>
+  <button class="mbar-b" id="mbarCopy" onclick="copyForm()" disabled></button>
+</div>
+
 <script>
 /* ════════ UI strings ════════ */
 var UI={
   ko:{
-    heroBadge:'✦ Live2D Illustrator · 모무꼬',
-    heroSub:'퀄리티 높고 가성비 있는 그림을 지향합니다.<br>편하게 문의주세요 ✦',
+    heroBadge:'Live2D Illustrator · 모무꼬',
+    heroSub:'퀄리티 높고 가성비 있는 그림을 지향합니다.<br>편하게 문의주세요.',
     ctaPrice:'가격 계산하기', ctaPort:'포트폴리오 보기',
     tSlots:'작업 슬롯 현황', bSlots:'실시간',
     tPort:'포트폴리오', bPort:'갤러리',
     tWork:'작업 순서',
     tPrice:'가격 계산 & 신청서', bPrice:'간편',
     tNotice:'작업 안내 & 약관',
-    lMsg:'✉ 작가님께 전할 말', hMsg:'캐릭터 설명, 특이사항 등 자유롭게 작성해 주세요',
-    lApply:'✦ 신청양식', lRef:'📎 레퍼런스 링크 (이미지 URL 등)', lEmail:'📧 파일 수령 이메일',
+    lMsg:'작가님께 전할 말', hMsg:'캐릭터 설명, 특이사항 등 자유롭게 작성해 주세요',
+    lApply:'신청양식', lRef:'레퍼런스 링크 (이미지 URL 등)', lEmail:'파일 수령 이메일',
     lPreview:'작업양식 미리보기', lTotal:'현재 선택 합계', won:'원',
-    cnt:function(n){return '· '+n+'개 선택';}, copy:'📋 양식 복사하기', reset:'↺ 초기화',
+    cnt:function(n){return '· '+n+'개 선택';}, copy:'양식 복사하기', reset:'초기화',
     foot:'© 모무꼬 · Momukko Live2D Illustration · BETA',
-    portLoad:'🔄 작품을 불러오는 중...', portEmpty:'아직 등록된 작품이 없어요 ✦', portErr:'⚠ 작품을 불러오지 못했어요.',
+    portLoad:'작품을 불러오는 중...', portEmpty:'아직 등록된 작품이 없어요', portErr:'작품을 불러오지 못했어요.',
     slotOpen:function(n){return n+'자리 OPEN';}, slotFull:'마감',
-    needSel:'먼저 기본 일러스트를 선택해 주세요 ✦', resetDone:'초기화되었어요 ✦', copyDone:'복사 완료! 작가님께 전달해 주세요 📋',
-    emptyPreview:'옵션을 선택하면\n여기에 신청서가 만들어져요 ✦'
+    needSel:'먼저 기본 일러스트를 선택해 주세요', resetDone:'초기화되었어요', copyDone:'복사 완료! 작가님께 전달해 주세요',
+    emptyPreview:'옵션을 선택하면\n여기에 신청서가 만들어져요'
   },
   en:{
-    heroBadge:'✦ Live2D Illustrator · Momukko',
-    heroSub:'Quality artwork at a fair price.<br>Feel free to reach out ✦',
+    heroBadge:'Live2D Illustrator · Momukko',
+    heroSub:'Quality artwork at a fair price.<br>Feel free to reach out.',
     ctaPrice:'Price Calculator', ctaPort:'View Portfolio',
     tSlots:'Slot Availability', bSlots:'Live',
     tPort:'Portfolio', bPort:'Gallery',
     tWork:'Work Process',
     tPrice:'Price & Order Form', bPrice:'Easy',
     tNotice:'Terms & Info',
-    lMsg:'✉ Message to the artist', hMsg:'Feel free to describe your character, special notes, etc.',
-    lApply:'✦ Application Form', lRef:'📎 Reference link (image URL, etc.)', lEmail:'📧 Email for file delivery',
+    lMsg:'Message to the artist', hMsg:'Feel free to describe your character, special notes, etc.',
+    lApply:'Application Form', lRef:'Reference link (image URL, etc.)', lEmail:'Email for file delivery',
     lPreview:'Order Form Preview', lTotal:'Current Total', won:'KRW',
-    cnt:function(n){return '· '+n+' selected';}, copy:'📋 Copy Order Form', reset:'↺ Reset',
+    cnt:function(n){return '· '+n+' selected';}, copy:'Copy Order Form', reset:'Reset',
     foot:'© Momukko · Live2D Illustration · BETA',
-    portLoad:'🔄 Loading artworks...', portEmpty:'No artworks yet ✦', portErr:'⚠ Failed to load artworks.',
+    portLoad:'Loading artworks...', portEmpty:'No artworks yet', portErr:'Failed to load artworks.',
     slotOpen:function(n){return n+' slot'+(n>1?'s':'')+' open';}, slotFull:'Full',
-    needSel:'Please select a base illustration first ✦', resetDone:'Reset done ✦', copyDone:'Copied! Please send it to the artist 📋',
-    emptyPreview:'Select options and your\norder form appears here ✦'
+    needSel:'Please select a base illustration first', resetDone:'Reset done', copyDone:'Copied! Please send it to the artist',
+    emptyPreview:'Select options and your\norder form appears here'
   }
 };
 
@@ -619,8 +686,8 @@ function renderAll(){renderUI();renderChips();renderSlots();renderWork();renderF
 function renderUI(){
   var u=UI[lang];
   var map={heroBadge:'heroBadge',heroSub:'heroSub'};
-  document.getElementById('heroBadge').textContent=DATA.hero?(lang==='ko'?DATA.hero.badgeKo:DATA.hero.badgeEn):u.heroBadge;
-  document.getElementById('heroSub').innerHTML=DATA.hero?(lang==='ko'?DATA.hero.subKo:DATA.hero.subEn):u.heroSub;
+  document.getElementById('heroBadge').textContent=clean(DATA.hero?(lang==='ko'?DATA.hero.badgeKo:DATA.hero.badgeEn):u.heroBadge);
+  document.getElementById('heroSub').innerHTML=clean(DATA.hero?(lang==='ko'?DATA.hero.subKo:DATA.hero.subEn):u.heroSub);
   document.getElementById('ctaPrice').textContent=u.ctaPrice;
   document.getElementById('ctaPort').textContent=u.ctaPort;
   set('t-slots',u.tSlots);set('b-slots',u.bSlots);set('t-port',u.tPort);set('b-port',u.bPort);
@@ -632,6 +699,11 @@ function renderUI(){
   document.getElementById('portLoading').textContent=u.portLoad;
 }
 function set(id,t){var e=document.getElementById(id);if(e)e.textContent=t;}
+/* commission.json 에 들어 있는 장식용 이모지를 화면에서만 떼어낸다.
+   데이터를 고치면 편집탭 저장에 되돌아가므로 표시 단계에서 처리한다.
+   가운뎃점(·)·화살표(→) 같은 본문 기호는 범위 밖이라 살아남는다. */
+var DECO=/[\u2600-\u27BF\u2B00-\u2BFF\uFE0F]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g;
+function clean(t){return String(t==null?'':t).replace(DECO,'').replace(/\s{2,}/g,' ').trim();}
 
 function renderChips(){
   var h='';DATA.chips.forEach(function(c){h+='<span class="chip'+(c.pk?' pk':'')+'">'+(c.live?'<span class="dotlive"></span>':'')+c[lang]+'</span>';});
@@ -666,11 +738,11 @@ function renderForm(){
     h+='<div class="fgroup'+(isMerged(sec)?' merged':'')+'"><div class="fgroup-head"><span class="fgroup-title">'+sec[lang]+'</span>';
     var tag=lang==='ko'?sec.tagKo:sec.tagEn; if(tag)h+='<span class="fgroup-tag '+sec.tagCls+'">'+tag+'</span>';
     h+='</div>';
-    var note=lang==='ko'?sec.noteKo:sec.noteEn; if(note)h+='<div class="fgroup-note">'+note+'</div>';
+    var note=clean(lang==='ko'?sec.noteKo:sec.noteEn); if(note)h+='<div class="fgroup-note">'+note+'</div>';
     if(sec.type==='radio'){
       h+='<div class="opt-cards">';
       sec.items.forEach(function(it){
-        var sub=lang==='ko'?it.subKo:it.subEn;
+        var sub=clean(lang==='ko'?it.subKo:it.subEn);
         h+='<div class="opt-card'+(sel[sec.id]===it.id?' sel':'')+'" id="oc-'+it.id+'" onclick="pickRadio(\''+sec.id+'\',\''+it.id+'\')">'+
            '<div class="n">'+it[lang]+'</div><div class="p">'+won(it.p)+' '+UI[lang].won+'</div>'+(sub?'<span class="sub">'+sub+'</span>':'')+'</div>';
       });
@@ -696,7 +768,7 @@ function renderForm(){
       });
       h+='</div>';
     }
-    var hint=lang==='ko'?sec.hintKo:sec.hintEn; if(hint)h+='<div class="fgroup-hint">'+hint+'</div>';
+    var hint=clean(lang==='ko'?sec.hintKo:sec.hintEn); if(hint)h+='<div class="fgroup-hint">'+hint+'</div>';
     h+='</div>';
   });
   document.getElementById('formGroups').innerHTML=h;
@@ -902,6 +974,9 @@ function rebuild(){
   var r=buildFormText();
   document.getElementById('totalAmt').textContent=won(r.total);
   var sm=document.getElementById('smTotal'); if(sm)sm.textContent=won(r.total)+' '+UI[lang].won;
+  var mv=document.getElementById('mbarAmt'); if(mv)mv.textContent=won(r.total)+' '+UI[lang].won;
+  var mk=document.getElementById('mbarK'); if(mk)mk.textContent=UI[lang].lTotal;
+  var mb=document.getElementById('mbarCopy'); if(mb){mb.textContent=UI[lang].copy;mb.disabled=!r.any;}
   mmPostMeta(r.total);
   var c=countSel();
   document.getElementById('totalCnt').textContent=c?UI[lang].cnt(c):'';
@@ -942,6 +1017,8 @@ function applyData(j){
   if(j.apply)DATA.apply=j.apply;
   if(j.portfolioOrder)DATA.portfolioOrder=j.portfolioOrder;
 }
+/* 단독 열람일 때만 하단 고정 바를 켠다 (임베드에서는 fixed 가 iframe 기준이라 무용) */
+try{ if(window.self===window.top) document.body.classList.add('solo'); }catch(e){}
 function init(){
   fetch('data/commission.json?t='+Date.now())
     .then(function(r){return r.ok?r.json():null;})
