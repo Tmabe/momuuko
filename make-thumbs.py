@@ -8,6 +8,10 @@ artmug.html 은 썸네일 -> 감상용 -> 원본 순으로 폴백한다(onerror)
 그래서 새 그림을 올린 뒤 이 스크립트를 안 돌려도 페이지는 정상 동작하고,
 돌리면 그만큼 가벼워진다. 원본은 그대로 두므로 언제든 되돌릴 수 있다.
 
+칸(카테고리) 폴더 portfolio/<칸>/*.png 도 같은 방식으로
+  portfolio/<칸>/thumb/*.webp · portfolio/<칸>/view/*.webp 를 만든다.
+  (시트생성기 "포트폴리오로 보내기"는 브라우저에서 직접 만들어 함께 올리므로 이 스크립트가 필요 없다)
+
 사용법:
     python make-thumbs.py            # 새로 생기거나 원본이 바뀐 것만 처리
     python make-thumbs.py --force    # 전부 다시 생성
@@ -49,18 +53,29 @@ def crop_face(im, name, boxes, defaults):
     return im.crop((x, y, x + s, y + s))
 
 
+SKIP_DIRS = {'thumb', 'view', 'face'}
+
+
 def main():
     force = '--force' in sys.argv
     want_face = '--faces' in sys.argv
     boxes, defaults = load_faces()
-    targets = SIZES + ([FACE] if want_face else [])
-    for sub, _, _ in targets:
-        os.makedirs(os.path.join(SRC, sub), exist_ok=True)
+    # 루트(지금 artmug 가 읽는 곳) + 칸 폴더들
+    roots = [SRC] + sorted(os.path.join(SRC, d) for d in os.listdir(SRC)
+                           if os.path.isdir(os.path.join(SRC, d)) and d not in SKIP_DIRS)
+    for root in roots:
+        print('[%s]' % os.path.relpath(root, os.path.dirname(SRC)))
+        process(root, force, want_face and root == SRC, boxes, defaults)
 
+
+def process(SRC, force, want_face, boxes, defaults):
+    targets = SIZES + ([FACE] if want_face else [])
     names = sorted(n for n in os.listdir(SRC)
                    if n.lower().endswith(EXTS) and os.path.isfile(os.path.join(SRC, n)))
     if not names:
-        print('portfolio/ 에 이미지가 없습니다.'); return
+        print('  (이미지 없음)'); return
+    for sub, _, _ in targets:
+        os.makedirs(os.path.join(SRC, sub), exist_ok=True)
 
     total_src = total_dst = 0
     made = skipped = 0

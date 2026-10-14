@@ -320,6 +320,21 @@ button.bt.pri:hover{filter:brightness(1.1);}
   background:rgba(20,20,28,.85);border:1px solid var(--border);border-radius:20px;
   padding:5px 16px;font-size:11px;color:var(--text2);pointer-events:none;white-space:nowrap;
 }
+#pfDlg{position:fixed;inset:0;z-index:150;background:rgba(10,10,14,.66);display:none;align-items:center;justify-content:center;padding:16px;}
+#pfDlg.show{display:flex;}
+.pfBox{width:min(720px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.pfHd{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);font-size:15px;}
+.pfX{margin-left:auto;background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;}
+.pfBody{display:flex;gap:16px;padding:16px;}
+.pfPrev{flex:0 0 200px;}
+.pfPrev canvas{width:100%;border-radius:8px;display:block;background:#2a2a33;}
+.pfForm{flex:1;min-width:0;}
+.pfForm .row label{width:66px;}
+.pfOk{align-items:flex-start;margin:10px 0;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.35);border-radius:8px;padding:8px;}
+.pfOk small{color:var(--text3);font-size:10.5px;line-height:1.5;}
+.pfOk input{margin-top:3px;}
+#pfMsg{min-height:30px;margin:6px 0 8px;font-size:11.5px;}
+@media(max-width:600px){ .pfBody{flex-direction:column;} .pfPrev{flex:none;width:140px;margin:0 auto;} }
 #toast{
   position:fixed;top:52px;left:50%;transform:translateX(-50%);
   background:var(--Y);color:#fff;padding:8px 20px;border-radius:20px;
@@ -687,6 +702,7 @@ button.bt.pri:hover{filter:brightness(1.1);}
       <label class="chk"><input type="checkbox" id="outTrans"> 배경 투명하게 (PNG·WebP만)</label>
       <button class="bt pri" id="btnExport">⬇ 현재 템플릿 다운로드</button>
       <button class="bt" id="btnExportAll">📦 전 템플릿 일괄 다운로드</button>
+      <button class="bt" id="btnSendPf">📤 포트폴리오로 보내기 (아트머그 전시)</button>
       <button class="bt" id="btnReset">전체 초기화</button>
     </div>
     </div><!-- /editPane -->
@@ -4413,9 +4429,10 @@ const ORDER_STEPS=[
      f.querySelector('#oF').addEventListener('change',e=>{ S.out.fmt=e.target.value; if(S.out.fmt==='jpg') S.out.transparent=false; orderChanged(); });
      const b1=document.createElement('button'); b1.className='bt pri'; b1.textContent='⬇ 다운로드'; b1.addEventListener('click',()=>$('#btnExport').click());
      const b2=document.createElement('button'); b2.className='bt'; b2.textContent='📦 전 템플릿 일괄 다운로드'; b2.addEventListener('click',()=>$('#btnExportAll').click());
+     const b5=document.createElement('button'); b5.className='bt'; b5.textContent='📤 포트폴리오로 보내기 (아트머그 전시)'; b5.addEventListener('click',()=>openSendPortfolio());
      const b3=document.createElement('button'); b3.className='bt'; b3.textContent='🛠 세부 편집에서 마저 다듬기'; b3.addEventListener('click',()=>setMode('edit'));
      const b4=document.createElement('button'); b4.className='bt'; b4.textContent='💾 프리셋으로 저장'; b4.addEventListener('click',()=>$('#btnSavePreset').click());
-     h.append(b1,b2,b3,b4);
+     h.append(b1,b5,b2,b3,b4);
    }},
 ];
 function renderReceipt(){
@@ -4478,6 +4495,187 @@ function renderOrder(keepScroll){
   if(keepScroll) $('#side').scrollTop=sc;
 }
 
+
+/* ═══════════ 📤 포트폴리오로 보내기 ═══════════
+   렌더 → 원본 + 감상용(가로1400 webp) + 썸네일(가로400 webp) 을 portfolio/<칸>/ 에 올리고
+   portfolio/data.json 의 해당 칸에 항목을 추가한다. 아트머그 페이지·프로필 사이트가 이 data.json 을 읽는다.
+   토큰은 다른 스튜디오 탭과 공유(gh_token/gh_user/gh_repo). data.json 은 올리기 직전에 새로 받아 sha 로 갱신(덮어쓰기 사고 방지). */
+const GHC=()=>({user:localStorage.getItem('gh_user')||'Tmabe', repo:localStorage.getItem('gh_repo')||'momuuko', token:localStorage.getItem('gh_token')||''});
+const GH_API=p=>{ const c=GHC(); return `https://api.github.com/repos/${c.user}/${c.repo}/contents/${p.split('/').map(encodeURIComponent).join('/')}`; };
+async function ghGet(path){
+  const c=GHC();
+  const r=await fetch(GH_API(path)+'?t='+Date.now(),{headers:c.token?{Authorization:'token '+c.token}:{}});
+  if(r.status===404) return null;
+  if(!r.ok) throw new Error('GitHub 읽기 '+r.status);
+  return r.json();
+}
+async function ghPut(path,b64,msg,sha){
+  const c=GHC();
+  const r=await fetch(GH_API(path),{method:'PUT',
+    headers:{Authorization:'token '+c.token,'Content-Type':'application/json'},
+    body:JSON.stringify(Object.assign({message:msg,content:b64},sha?{sha}:{}))});
+  if(!r.ok){ let m=''; try{ m=(await r.json()).message||''; }catch(e){} const er=new Error(`GitHub 쓰기 ${r.status} ${m}`); er.status=r.status; throw er; }
+  return r.json();
+}
+const blobB64=b=>new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=rej; fr.readAsDataURL(b); });
+const utf8b64=s=>btoa(unescape(encodeURIComponent(s)));
+const b64utf8=s=>decodeURIComponent(escape(atob(String(s).replace(/\n/g,''))));
+/* 현재 템플릿을 원하는 폭으로 렌더한 캔버스 */
+function renderCanvas(w,transparent){
+  const k=w/DW;
+  TRANSPARENT=!!transparent;
+  const c=document.createElement('canvas');
+  c.width=w; c.height=Math.round(DH()*k);
+  try{ render(c.getContext('2d'),k); } finally { TRANSPARENT=false; }
+  return c;
+}
+/* 고품질 축소(반씩 단계적으로 줄임) */
+function downscale(src,w){
+  let cur=src;
+  w=Math.min(w,src.width);
+  while(cur.width/2>=w){
+    const t=document.createElement('canvas'); t.width=Math.round(cur.width/2); t.height=Math.round(cur.height/2);
+    const x=t.getContext('2d'); x.imageSmoothingQuality='high'; x.drawImage(cur,0,0,t.width,t.height); cur=t;
+  }
+  if(cur.width!==w){
+    const t=document.createElement('canvas'); t.width=w; t.height=Math.round(cur.height*w/cur.width);
+    const x=t.getContext('2d'); x.imageSmoothingQuality='high'; x.drawImage(cur,0,0,t.width,t.height); cur=t;
+  }
+  return cur;
+}
+const toBlob=(c,mime,q)=>new Promise(r=>c.toBlob(r,mime,q));
+const safeName=s=>String(s||'').trim().replace(/[\\/:*?"<>|#%&{}$!'@+`=]/g,'').replace(/\s+/g,'_').slice(0,60);
+const TPL_TAG={sheet:'Character Sheet', poster:'Profile Poster', graphic:'Graphic Poster'};
+
+let PF_DATA=null;   // 마지막으로 받은 data.json
+async function loadPfData(){
+  try{
+    const meta=await ghGet('portfolio/data.json');
+    if(meta&&meta.content) return {json:JSON.parse(b64utf8(meta.content)), sha:meta.sha};
+    if(meta&&meta.download_url){ const j=await (await fetch(meta.download_url+'?t='+Date.now())).json(); return {json:j, sha:meta.sha}; }
+    return {json:{categories:[]}, sha:null};
+  }catch(e){
+    // API 를 못 쓰면 사이트 사본이라도 (칸 목록 표시용)
+    const r=await fetch('portfolio/data.json?t='+Date.now()); if(!r.ok) throw e;
+    return {json:await r.json(), sha:undefined};
+  }
+}
+function pfDialog(){
+  let d=$('#pfDlg');
+  if(d) return d;
+  d=document.createElement('div'); d.id='pfDlg';
+  d.innerHTML=`<div class="pfBox">
+    <div class="pfHd"><b>📤 포트폴리오로 보내기</b><button class="pfX" title="닫기">✕</button></div>
+    <div class="pfBody">
+      <div class="pfPrev"><canvas id="pfCv"></canvas></div>
+      <div class="pfForm">
+        <div class="row"><label>칸</label><select id="pfCat"><option>불러오는 중…</option></select></div>
+        <div class="row"><label>제목</label><input type="text" id="pfTitle" placeholder="캐릭터 이름"></div>
+        <div class="row"><label>영문 제목</label><input type="text" id="pfTitleEn" placeholder="(선택)"></div>
+        <div class="row"><label>태그</label><input type="text" id="pfTag"></div>
+        <div class="row"><label>파일 이름</label><input type="text" id="pfFile"></div>
+        <div class="row"><label>위치</label><select id="pfPos"><option value="front">칸 맨 앞 (최신작)</option><option value="back">칸 맨 뒤</option></select></div>
+        <div class="row"><label>원본 크기</label><select id="pfW"><option value="2000">2000px</option><option value="3000" selected>3000px</option><option value="4000">4000px</option></select></div>
+        <label class="chk pfOk"><input type="checkbox" id="pfPublic"> <span>공개해도 되는 작품이에요<br><small>저장소가 공개라서, 올리면 페이지에서 숨겨도 파일 주소로 누구나 볼 수 있어요. 데뷔 전 비공개 작품은 올리지 마세요.</small></span></label>
+        <div id="pfMsg" class="hint"></div>
+        <button class="bt pri" id="pfGo" disabled>📤 올리기</button>
+      </div>
+    </div></div>`;
+  document.body.appendChild(d);
+  d.addEventListener('click',e=>{ if(e.target===d) pfClose(); });
+  d.querySelector('.pfX').addEventListener('click',pfClose);
+  $('#pfPublic').addEventListener('change',pfValidate);
+  ['#pfTitle','#pfFile'].forEach(s=>$(s).addEventListener('input',pfValidate));
+  $('#pfCat').addEventListener('change',pfValidate);
+  $('#pfGo').addEventListener('click',pfUpload);
+  return d;
+}
+function pfClose(){ const d=$('#pfDlg'); if(d&&!d.dataset.busy) d.classList.remove('show'); }
+function pfValidate(){
+  const ok=$('#pfPublic').checked && safeName($('#pfFile').value) && PF_DATA && $('#pfCat').value && GHC().token;
+  $('#pfGo').disabled=!ok;
+}
+function pfMsg(t,err){ const m=$('#pfMsg'); m.innerHTML=t; m.style.color=err?'#ff8a7a':''; }
+async function openSendPortfolio(){
+  if(!IMG.base){ toast('기본 일러스트를 먼저 업로드하세요'); return; }
+  const d=pfDialog(); d.classList.add('show');
+  $('#pfPublic').checked=false;
+  $('#pfTitle').value=S.nameEn||'';
+  $('#pfTitleEn').value='';
+  $('#pfTag').value=TPL_TAG[S.tpl]||'';
+  $('#pfFile').value=safeName((S.nameEn||'character')+'_'+S.tpl);
+  // 미리보기
+  await loadFonts();
+  const cv=$('#pfCv'), small=renderCanvas(360);
+  cv.width=small.width; cv.height=small.height; cv.getContext('2d').drawImage(small,0,0);
+  if(!GHC().token){ pfMsg('⚠ GitHub 토큰이 없어요. 스튜디오 <b>커미션편집 탭 ⚙ 설정</b>에서 먼저 넣어 주세요.',true); }
+  else pfMsg('칸 목록을 불러오는 중…');
+  try{
+    PF_DATA=await loadPfData();
+    const cats=PF_DATA.json.categories||[];
+    const sel=$('#pfCat');
+    sel.innerHTML=cats.map(c=>`<option value="${c.id}">${c.name}${c.sub?' — '+c.sub:''} (${(PF_DATA.json[c.id]||[]).length})</option>`).join('');
+    const last=localStorage.getItem('mm_pf_cat');
+    sel.value = cats.some(c=>c.id===last) ? last : (cats.some(c=>c.id==='design') ? 'design' : (cats[0]||{}).id);
+    if(GHC().token) pfMsg('아트머그 페이지와 프로필 사이트에 이 칸으로 전시돼요. (반영까지 1~2분)');
+  }catch(e){ pfMsg('칸 목록을 못 불러왔어요: '+e.message,true); }
+  pfValidate();
+}
+async function pfUpload(){
+  const d=$('#pfDlg'), go=$('#pfGo');
+  const cat=$('#pfCat').value, stem=safeName($('#pfFile').value);
+  const fmt=S.out.fmt==='jpg'?'jpg':(S.out.fmt==='webp'?'webp':'png');
+  const file=stem+'.'+EXT[fmt];
+  const base=`portfolio/${cat}/`;
+  d.dataset.busy='1'; go.disabled=true;
+  try{
+    // 같은 이름이 있으면 덮어쓸지 확인
+    pfMsg('기존 파일 확인 중…');
+    const [o0,t0,v0]=await Promise.all([ghGet(base+file), ghGet(base+'thumb/'+stem+'.webp'), ghGet(base+'view/'+stem+'.webp')]);
+    if(o0 && !confirm(`「${cat}/${file}」 이(가) 이미 있어요. 덮어쓸까요?`)){ pfMsg('취소했어요. 파일 이름을 바꿔 보세요.'); return; }
+    pfMsg('렌더링 중…');
+    await loadFonts();
+    await new Promise(r=>setTimeout(r,30));
+    const big=renderCanvas(+$('#pfW').value, false);
+    const ob=await toBlob(big, MIME[fmt], fmt==='png'?undefined:0.94);
+    const vb=await toBlob(downscale(big,1400),'image/webp',0.86);
+    const tb=await toBlob(downscale(big,400),'image/webp',0.82);
+    const mb=x=>(x.size/1048576).toFixed(1)+'MB';
+    pfMsg(`원본 ${mb(ob)} 올리는 중… (1/4)`);
+    await ghPut(base+file, await blobB64(ob), `📤 시트생성기 → 포트폴리오 ${cat}/${file}`, o0&&o0.sha);
+    pfMsg('감상용 이미지 올리는 중… (2/4)');
+    await ghPut(base+'view/'+stem+'.webp', await blobB64(vb), `📤 감상용 ${cat}/${stem}`, v0&&v0.sha);
+    pfMsg('썸네일 올리는 중… (3/4)');
+    await ghPut(base+'thumb/'+stem+'.webp', await blobB64(tb), `📤 썸네일 ${cat}/${stem}`, t0&&t0.sha);
+    // data.json — 직전에 새로 받아서 갱신, 충돌(409)이면 한 번 더
+    const item={file, title:$('#pfTitle').value.trim()||stem, title_en:$('#pfTitleEn').value.trim(), tag:$('#pfTag').value.trim(),
+                from:'sheet-maker', added:new Date().toISOString().slice(0,10)};
+    for(let tryN=0;;tryN++){
+      pfMsg('전시 목록(data.json) 갱신 중… (4/4)');
+      const fresh=await loadPfData();
+      const j=fresh.json;
+      if(!Array.isArray(j.categories)) j.categories=[];
+      if(!j.categories.some(c=>c.id===cat)) j.categories.push({id:cat,name:cat.toUpperCase(),sub:'',num:''});
+      const arr=(Array.isArray(j[cat])?j[cat]:[]).filter(it=>it&&it.file!==file);
+      if($('#pfPos').value==='front') arr.unshift(item); else arr.push(item);
+      j[cat]=arr;
+      try{
+        await ghPut('portfolio/data.json', utf8b64(JSON.stringify(j,null,2)), `🖼 포트폴리오 ${cat}에 「${item.title}」 추가 (시트생성기)`, fresh.sha);
+        break;
+      }catch(e){ if(e.status===409 && tryN<2) continue; throw e; }
+    }
+    localStorage.setItem('mm_pf_cat',cat);
+    const c=GHC(), url=`https://${c.user.toLowerCase()}.github.io/${c.repo}/artmug.html#port`;
+    pfMsg(`✅ 올렸어요! 1~2분 뒤 <a href="${url}" target="_blank" rel="noopener" style="color:var(--Y)">아트머그 페이지</a>에 보여요.<br>⚠ <b>포트폴리오 관리 탭</b>을 열어 둔 상태라면 새로고침한 뒤 저장하세요 (예전 목록으로 덮어쓸 수 있어요).`);
+    toast('포트폴리오로 보냈어요');
+  }catch(e){
+    pfMsg('실패: '+e.message+(String(e.message).includes('401')?' — 토큰이 만료됐거나 권한이 없어요.':''),true);
+  }finally{
+    delete d.dataset.busy; pfValidate();
+  }
+}
+
+$('#btnSendPf').addEventListener('click',openSendPortfolio);
 /* ─── 시작 ─── */
 window.addEventListener('resize',()=>{ fitPreview(); draw(); });
 async function loadFonts(){
@@ -4514,7 +4712,7 @@ window.SM = { setSlot, get S(){return S;}, get IMG(){return IMG;}, draw, render,
   extractColors, removeBgCanvas, exportOne, undo, redo, applyStylePreset, randomStyle,
   applyScheme, schemeColors, hex2lch, lch2hex, deltaE, COLOR_SCHEMES,
   get hist(){return {idx:histIdx,len:histStack.length};},
-  get REC(){return LAST_REC;}, select, get SEL(){return SEL;}, setMode, goStep, miniRender, elMut, moveSel, scaleSel,
+  get REC(){return LAST_REC;}, openSendPortfolio, select, get SEL(){return SEL;}, setMode, goStep, miniRender, elMut, moveSel, scaleSel,
   setTransparent(v){ TRANSPARENT=!!v; } };
 </script>
 </body>
