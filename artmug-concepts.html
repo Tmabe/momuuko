@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모무꼬 · 커미션 페이지 시안 3종</title>
+<meta name="description" content="밝고 트렌디한 방향 3가지 비교">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Archivo:wght@400;600;800;900&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Noto Sans KR',sans-serif;background:#f1f0ee}
+img{display:block;max-width:100%}
+
+/* ══════════ 시안 전환 바 ══════════ */
+.pick{position:sticky;top:0;z-index:900;display:flex;gap:6px;align-items:center;
+  padding:10px 12px;background:rgba(18,18,20,.94);backdrop-filter:blur(10px);overflow-x:auto}
+.pick b{font-size:12px;color:#fff;opacity:.5;letter-spacing:.08em;white-space:nowrap;margin-right:4px}
+.pick button{flex-shrink:0;border:1px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.7);
+  font-family:inherit;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:999px;cursor:pointer;
+  transition:background .18s,color .18s,border-color .18s;white-space:nowrap}
+.pick button.on{background:#fff;color:#121214;border-color:#fff}
+.stage{display:none}
+.stage.on{display:block}
+
+/* 스크롤 등장 — 셋 다 공용. 움직임 줄이기 설정은 존중한다 */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .rv{opacity:1;transform:none;transition:none}
+  *{animation:none!important}
+}
+
+/* ════════════════════════════════════════════════
+   시안 A — 따뜻한 종이
+   그림이 색을 맡고 배경은 물러선다. 둥글고 부드럽게.
+   ════════════════════════════════════════════════ */
+#A{--bg:#FFFBF5;--card:#fff;--ink:#2B2520;--ink2:#7A6E64;--line:#EFE6DA;
+  --accent:#F2604C;--accent2:#4E95C9;
+  background:var(--bg);color:var(--ink);line-height:1.7}
+#A .w{max-width:900px;margin:0 auto;padding:0 20px}
+#A .hero{padding:52px 20px 10px;max-width:900px;margin:0 auto}
+#A .hcard{background:var(--card);border-radius:28px;padding:38px 34px;box-shadow:0 2px 14px rgba(80,60,40,.06)}
+#A .tag{display:inline-block;background:#FFF0ED;color:var(--accent);font-size:12.5px;font-weight:700;
+  padding:6px 14px;border-radius:999px;margin-bottom:18px}
+#A h1{font-size:clamp(30px,6.4vw,46px);font-weight:900;line-height:1.25;letter-spacing:-.02em}
+#A h1 em{font-style:normal;color:var(--accent)}
+#A .sub{color:var(--ink2);margin-top:14px;font-size:15px}
+#A .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:22px}
+#A .chips span{background:#F8F3EC;border-radius:999px;padding:7px 14px;font-size:13px;color:var(--ink2);font-weight:500}
+#A .chips b{color:var(--ink);font-weight:800}
+#A .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+#A .b1,#A .b2{border:none;font-family:inherit;font-size:15px;font-weight:800;padding:15px 28px;border-radius:999px;cursor:pointer;
+  transition:transform .14s cubic-bezier(.34,1.56,.64,1),box-shadow .18s}
+#A .b1{background:var(--accent);color:#fff;box-shadow:0 6px 18px rgba(242,96,76,.3)}
+#A .b2{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+#A .b1:active,#A .b2:active{transform:scale(.96)}
+#A .b1:hover{box-shadow:0 10px 26px rgba(242,96,76,.4)}
+#A h2{font-size:21px;font-weight:900;margin:52px 0 16px;letter-spacing:-.01em}
+#A .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+#A .slot{background:var(--card);border-radius:20px;padding:20px 16px;text-align:center;box-shadow:0 2px 10px rgba(80,60,40,.05)}
+#A .slot .m{font-size:15px;font-weight:800}
+#A .dots{display:flex;gap:5px;justify-content:center;margin:12px 0 10px}
+#A .dots i{width:11px;height:11px;border-radius:50%;background:#E8DFD4}
+#A .dots i.free{background:var(--accent2)}
+#A .st{font-size:12.5px;font-weight:800;color:var(--accent2)}
+#A .st.full{color:#BDB2A6}
+#A .gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+#A .gal figure{border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 2px 12px rgba(80,60,40,.07);
+  transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s}
+#A .gal figure:hover{transform:translateY(-6px);box-shadow:0 14px 30px rgba(80,60,40,.14)}
+#A .gal img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:50% 18%;
+  transition:transform .5s cubic-bezier(.22,1,.36,1)}
+#A .gal figure:hover img{transform:scale(1.05)}
+#A .plist{background:var(--card);border-radius:24px;overflow:hidden;box-shadow:0 2px 12px rgba(80,60,40,.06)}
+#A .p{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .18s}
+#A .p:last-child{border-bottom:none}
+#A .p:hover{background:#FFFAF4}
+#A .p .nm{flex:1;font-size:15px;font-weight:600}
+#A .p .pr{font-size:17px;font-weight:900;white-space:nowrap}
+#A .p .off{background:#FFF0ED;color:var(--accent);font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px}
+#A .end{text-align:center;padding:56px 20px 70px}
+#A .end p{color:var(--ink2);margin-bottom:18px}
+
+/* ════════════════════════════════════════════════
+   시안 B — 에디토리얼
+   큰 글씨가 주인공. 깨진 그리드에 그림이 걸친다.
+   ════════════════════════════════════════════════ */
+#B{--ink:#111;--ink2:#6B6B6B;--line:#E4E4E4;--accent:#FF3B2F;
+  background:#fff;color:var(--ink);line-height:1.6}
+#B .w{max-width:1040px;margin:0 auto;padding:0 24px}
+#B .mast{border-bottom:2px solid var(--ink);padding:14px 0;display:flex;align-items:baseline;gap:12px;
+  font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:13px;font-weight:600}
+#B .mast .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+#B .mast .r{margin-left:auto;color:var(--ink2)}
+#B .big{font-family:'Playfair Display',serif;font-size:clamp(46px,11vw,112px);line-height:.92;
+  font-weight:800;letter-spacing:-.025em;margin:36px 0 0}
+#B .big i{font-style:italic;color:var(--accent)}
+/* 키네틱 타이포 — 로드될 때 글자가 자리를 잡는다 */
+#B .big span{display:inline-block;opacity:0;transform:translateY(28px) rotate(2deg);
+  animation:bIn .85s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes bIn{to{opacity:1;transform:none}}
+#B .lede{display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:end;margin-top:26px}
+#B .lede p{font-size:17px;color:var(--ink2);max-width:46ch}
+#B .lede .meta{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.1em;
+  font-size:13px;font-weight:600;border-top:1px solid var(--line);padding-top:10px}
+#B .lede .meta div{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line)}
+#B .mq{overflow:hidden;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);margin-top:38px;padding:11px 0}
+#B .mqi{display:flex;gap:40px;width:max-content;animation:mq 26s linear infinite;
+  font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:15px;font-weight:600}
+#B .mqi b{color:var(--accent)}
+@keyframes mq{to{transform:translateX(-50%)}}
+#B .bk{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:54px;align-items:start}
+#B .bk .a{grid-column:1/8}
+#B .bk .b{grid-column:8/13;margin-top:56px}
+#B .bk .c{grid-column:3/11;margin-top:18px}
+#B .bk figure{overflow:hidden;background:#F3F3F3}
+#B .bk img{width:100%;object-fit:cover;transition:transform .6s cubic-bezier(.22,1,.36,1);filter:grayscale(.1)}
+#B .bk figure:hover img{transform:scale(1.04);filter:none}
+#B .bk figcaption{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.1em;
+  font-size:12px;color:var(--ink2);padding-top:7px}
+#B h2{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,44px);font-weight:800;
+  letter-spacing:-.02em;margin:66px 0 4px}
+#B .rule{height:2px;background:var(--ink);margin-bottom:4px}
+#B .pr{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:baseline;
+  padding:17px 0;border-bottom:1px solid var(--line)}
+#B .pr .n{font-size:16px;font-weight:600}
+#B .pr .n small{display:block;font-size:12.5px;color:var(--accent);font-weight:700;margin-top:3px}
+#B .pr .v{font-family:'Archivo',sans-serif;font-size:21px;font-weight:900;letter-spacing:-.02em}
+#B .end{margin:60px 0 80px;border:2px solid var(--ink);padding:38px 30px;display:flex;
+  align-items:center;gap:20px;flex-wrap:wrap}
+#B .end h3{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;flex:1;min-width:200px}
+#B .end button{background:var(--ink);color:#fff;border:none;font-family:'Barlow Condensed',sans-serif;
+  text-transform:uppercase;letter-spacing:.12em;font-size:17px;font-weight:600;padding:17px 34px;cursor:pointer;
+  transition:background .2s}
+#B .end button:hover{background:var(--accent)}
+
+/* ════════════════════════════════════════════════
+   시안 C — 소프트 팝
+   버튜버 감성. 천천히 흐르는 그라데이션 위 유리 카드.
+   ════════════════════════════════════════════════ */
+#C{--ink:#2E2A3D;--ink2:#716C86;--pink:#FF8FB1;--aqua:#6FD6E8;--lav:#B9A7F5;
+  color:var(--ink);line-height:1.7;position:relative;overflow:hidden;
+  background:linear-gradient(130deg,#FFF0F6 0%,#F2F7FF 38%,#EFFBFA 68%,#FFF6EC 100%);
+  background-size:220% 220%;animation:drift 22s ease-in-out infinite}
+@keyframes drift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+#C::before,#C::after{content:'';position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;pointer-events:none}
+#C::before{width:340px;height:340px;background:var(--pink);top:-90px;left:-70px;animation:fl 16s ease-in-out infinite}
+#C::after{width:300px;height:300px;background:var(--aqua);top:220px;right:-90px;animation:fl 19s ease-in-out infinite reverse}
+@keyframes fl{0%,100%{transform:translate(0,0)}50%{transform:translate(26px,34px)}}
+#C .w{max-width:880px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+#C .hero{padding:50px 20px 8px;max-width:880px;margin:0 auto;position:relative;z-index:1}
+#C .glass{background:rgba(255,255,255,.62);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.8);
+  border-radius:30px;padding:36px 32px;box-shadow:0 10px 34px rgba(120,110,160,.13)}
+#C .sticker{display:inline-block;background:var(--pink);color:#fff;font-size:12.5px;font-weight:800;
+  padding:7px 15px;border-radius:999px;transform:rotate(-2.5deg);margin-bottom:18px;
+  box-shadow:0 4px 12px rgba(255,143,177,.4)}
+#C h1{font-size:clamp(29px,6.2vw,44px);font-weight:900;line-height:1.3;letter-spacing:-.02em}
+#C h1 em{font-style:normal;background:linear-gradient(90deg,var(--pink),var(--lav));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+#C .sub{color:var(--ink2);margin-top:14px;font-size:15px}
+#C .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:20px}
+#C .chips span{background:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.9);border-radius:999px;
+  padding:7px 14px;font-size:13px;font-weight:500;color:var(--ink2)}
+#C .chips b{color:var(--ink);font-weight:800}
+#C .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+#C .b1,#C .b2{border:none;font-family:inherit;font-size:15px;font-weight:800;padding:15px 28px;border-radius:999px;
+  cursor:pointer;transition:transform .16s cubic-bezier(.34,1.56,.64,1),box-shadow .2s}
+#C .b1{background:linear-gradient(120deg,var(--pink),var(--lav));color:#fff;box-shadow:0 8px 22px rgba(185,167,245,.45)}
+#C .b2{background:rgba(255,255,255,.8);color:var(--ink)}
+#C .b1:active,#C .b2:active{transform:scale(.95)}
+#C .b1:hover{transform:translateY(-2px)}
+#C h2{font-size:21px;font-weight:900;margin:50px 0 14px}
+#C .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+#C .slot{background:rgba(255,255,255,.66);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.85);
+  border-radius:24px;padding:20px 14px;text-align:center}
+#C .slot .m{font-size:15px;font-weight:800}
+#C .dots{display:flex;gap:5px;justify-content:center;margin:12px 0 10px}
+#C .dots i{width:11px;height:11px;border-radius:50%;background:rgba(120,110,160,.18)}
+#C .dots i.free{background:var(--aqua);box-shadow:0 0 0 3px rgba(111,214,232,.22)}
+#C .st{font-size:12.5px;font-weight:800;color:#2FA8BD}
+#C .st.full{color:#A9A3BC}
+#C .gal{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+#C .gal figure{flex:0 0 62%;max-width:260px;scroll-snap-align:center;border-radius:26px;overflow:hidden;
+  border:3px solid rgba(255,255,255,.9);box-shadow:0 8px 24px rgba(120,110,160,.16);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+#C .gal figure:hover{transform:translateY(-6px) rotate(-1deg)}
+#C .gal img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:50% 18%}
+#C .plist{display:flex;flex-direction:column;gap:9px}
+#C .p{display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.72);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.85);border-radius:20px;padding:16px 19px;cursor:pointer;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .2s}
+#C .p:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(120,110,160,.16)}
+#C .p .nm{flex:1;font-size:15px;font-weight:600}
+#C .p .pr{font-size:17px;font-weight:900;white-space:nowrap}
+#C .p .off{background:linear-gradient(120deg,var(--pink),var(--lav));color:#fff;font-size:11.5px;
+  font-weight:800;padding:3px 10px;border-radius:999px}
+#C .end{text-align:center;padding:54px 20px 72px}
+#C .end p{color:var(--ink2);margin-bottom:18px}
+
+@media(max-width:700px){
+  #B .lede{grid-template-columns:1fr}
+  #B .bk .a,#B .bk .b,#B .bk .c{grid-column:1/13;margin-top:0}
+  #A .slots,#C .slots{grid-template-columns:1fr}
+  #A .hcard,#C .glass{padding:28px 22px}
+}
+</style>
+</head>
+<body>
+
+<div class="pick">
+  <b>시안</b>
+  <button class="on" data-s="A">A · 따뜻한 종이</button>
+  <button data-s="B">B · 에디토리얼</button>
+  <button data-s="C">C · 소프트 팝</button>
+</div>
+
+<!-- ══════════ A ══════════ -->
+<div class="stage on" id="A">
+  <div class="hero"><div class="hcard rv">
+    <span class="tag">커미션 접수 중</span>
+    <h1>캐릭터가 <em>살아 움직이는</em><br>순간까지 만들어 드려요</h1>
+    <p class="sub">Live2D 일러스트 · 파츠분리 전문. 퀄리티 높고 가성비 있는 그림을 지향합니다.</p>
+    <div class="chips"><span>답변율 <b>98%</b></span><span>Live2D <b>전문</b></span><span>작업기간 <b>30일</b></span></div>
+    <div class="cta"><button class="b1">가격 계산해 보기</button><button class="b2">작품 먼저 보기</button></div>
+  </div></div>
+  <div class="w">
+    <h2 class="rv">언제 신청할 수 있나요?</h2>
+    <div class="slots" id="A-slots"></div>
+    <h2 class="rv">지금까지 그린 캐릭터들</h2>
+    <div class="gal" id="A-gal"></div>
+    <h2 class="rv">가격</h2>
+    <div class="plist rv" id="A-price"></div>
+    <div class="end rv"><p>고민되시면 먼저 편하게 물어봐 주세요.</p><button class="b1">문의하기</button></div>
+  </div>
+</div>
+
+<!-- ══════════ B ══════════ -->
+<div class="stage" id="B">
+  <div class="w">
+    <div class="mast"><span class="dot"></span><span>Momukko</span><span>Live2D Illustration</span><span class="r">접수중 · 2026</span></div>
+    <h1 class="big" id="B-big"></h1>
+    <div class="lede">
+      <p class="rv">캐릭터의 인체부터 새로 그립니다. 고정 틀로 작업하지 않고, 매번 그 캐릭터에 맞는 파츠를 만듭니다.</p>
+      <div class="meta rv" id="B-meta"></div>
+    </div>
+    <div class="mq"><div class="mqi" id="B-mq"></div></div>
+    <div class="bk" id="B-gal"></div>
+    <h2 class="rv">Price</h2><div class="rule rv"></div>
+    <div id="B-price"></div>
+    <div class="end rv"><h3>작업을 맡겨 보시겠어요?</h3><button>문의하기</button></div>
+  </div>
+</div>
+
+<!-- ══════════ C ══════════ -->
+<div class="stage" id="C">
+  <div class="hero"><div class="glass rv">
+    <span class="sticker">지금 접수 중</span>
+    <h1>당신의 캐릭터를<br><em>Live2D로 움직이게</em></h1>
+    <p class="sub">일러스트부터 파츠분리까지. 편하게 문의 주세요.</p>
+    <div class="chips"><span>답변율 <b>98%</b></span><span>Live2D <b>전문</b></span><span>작업기간 <b>30일</b></span></div>
+    <div class="cta"><button class="b1">가격 계산해 보기</button><button class="b2">작품 보기</button></div>
+  </div></div>
+  <div class="w">
+    <h2 class="rv">신청 가능한 달</h2>
+    <div class="slots" id="C-slots"></div>
+    <h2 class="rv">작업한 캐릭터</h2>
+    <div class="gal" id="C-gal"></div>
+    <h2 class="rv">가격</h2>
+    <div class="plist" id="C-price"></div>
+    <div class="end rv"><p>궁금한 건 언제든 물어봐 주세요!</p><button class="b1">문의하기</button></div>
+  </div>
+</div>
+
+<script>
+/* 시안 비교용 페이지. 실제 commission.json 의 값과 실제 포트폴리오 이미지를 쓴다 —
+   가짜 더미로 보면 느낌 판단이 빗나가기 때문. */
+var SLOTS=[{m:'10월',f:[1,1,1]},{m:'11월',f:[0,0,0]},{m:'12월',f:[0,0,0]}];
+var PRICE=[
+  {n:'전신 · 협업용',p:1050000,off:'20만원 할인'},
+  {n:'전신',p:1100000,off:'20만원 할인'},
+  {n:'반신 (리깅X)',p:850000},
+  {n:'풀옵션 (디자인+전신+저작권)',p:1950000}
+];
+var ART=['감라빛','난지','달자기','백곰형','유피','엠쓔'];
+var won=function(n){return n.toLocaleString('en-US');};
+var img=function(name){return 'portfolio/view/'+encodeURIComponent(name)+'.webp';};
+var fall=function(el,name){el.onerror=function(){el.onerror=null;el.src='portfolio/'+encodeURIComponent(name)+'.png';};};
+
+function slots(id){
+  document.getElementById(id).innerHTML=SLOTS.map(function(s){
+    var free=s.f.filter(function(x){return !x;}).length;
+    return '<div class="slot rv"><div class="m">'+s.m+'</div><div class="dots">'+
+      s.f.map(function(x){return '<i class="'+(x?'':'free')+'"></i>';}).join('')+
+      '</div><div class="st'+(free?'':' full')+'">'+(free?free+'자리 남음':'마감')+'</div></div>';
+  }).join('');
+}
+function gallery(id,n,cap){
+  var h=ART.slice(0,n).map(function(a,i){
+    return '<figure class="rv"'+(cap?' data-k="'+i+'"':'')+'><img alt="'+a+'" data-n="'+a+'">'+
+      (cap?'<figcaption>'+a+' — Live2D illustration</figcaption>':'')+'</figure>';
+  }).join('');
+  var box=document.getElementById(id); box.innerHTML=h;
+  box.querySelectorAll('img').forEach(function(el){var n=el.dataset.n;fall(el,n);el.src=img(n);});
+}
+function priceA(id){
+  document.getElementById(id).innerHTML=PRICE.map(function(p){
+    return '<div class="p"><span class="nm">'+p.n+'</span>'+(p.off?'<span class="off">'+p.off+'</span>':'')+
+      '<span class="pr">'+won(p.p)+'원</span></div>';
+  }).join('');
+}
+function priceB(id){
+  document.getElementById(id).innerHTML=PRICE.map(function(p){
+    return '<div class="pr rv"><div class="n">'+p.n+(p.off?'<small>'+p.off+'</small>':'')+
+      '</div><div class="v">'+won(p.p)+'</div></div>';
+  }).join('');
+}
+
+/* A */
+slots('A-slots'); gallery('A-gal',6,false); priceA('A-price');
+/* C */
+slots('C-slots'); gallery('C-gal',6,false); priceA('C-price');
+/* B — 키네틱 헤드라인: 단어마다 시차를 줘 자리를 잡게 한다 */
+(function(){
+  var words=['Drawing','characters','that','<i>breathe</i>'];
+  document.getElementById('B-big').innerHTML=words.map(function(w,i){
+    return '<span style="animation-delay:'+(i*.09)+'s">'+w+'</span>';
+  }).join(' ');
+  document.getElementById('B-meta').innerHTML=
+    '<div><span>Reply rate</span><b>98%</b></div>'+
+    '<div><span>Turnaround</span><b>30 days</b></div>'+
+    '<div><span>Slots open</span><b>11·12월</b></div>';
+  var items='<b>Live2D</b> · 파츠분리 · 캐릭터 디자인 · 데뷔축전 · 삼면도 · ';
+  document.getElementById('B-mq').innerHTML='<span>'+items.repeat(4)+'</span><span>'+items.repeat(4)+'</span>';
+  gallery('B-gal',3,true);
+  var g=document.getElementById('B-gal').children;
+  if(g[0])g[0].className+=' a'; if(g[1])g[1].className+=' b'; if(g[2])g[2].className+=' c';
+  priceB('B-price');
+})();
+
+/* 스크롤 등장 */
+var io=new IntersectionObserver(function(es){
+  es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+},{rootMargin:'0px 0px -8% 0px'});
+function watch(){ document.querySelectorAll('.rv:not(.in)').forEach(function(el){io.observe(el);}); }
+watch();
+
+/* 시안 전환 */
+document.querySelectorAll('.pick button').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('.pick button').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    document.querySelectorAll('.stage').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.s);});
+    window.scrollTo(0,0);
+    requestAnimationFrame(watch);
+  };
+});
+</script>
+</body>
+</html>
