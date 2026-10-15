@@ -19,18 +19,22 @@
    · 그래서 섹션 배경은 fixed 가 아니라 각 섹션 안의 absolute 로 깐다
    ══════════════════════════════════════════════════════════════ */
 :root{
-  --night:#180F1E; --night2:#3A1B3F;
-  --halo:#FF6FB5; --sky:#DB3C8E; --sky-d:#B3246B;
-  --paper:#FDF5F9; --white:#fff;
-  --ink:#231520; --ink2:#6B5560; --ink3:#A89099;
-  --line:rgba(35,21,32,.11); --line2:rgba(35,21,32,.07);
+  --night:#141229; --night2:#2A2450;
+  --halo:#FFA3CE;    /* 1차 — 연한 핑크. 누르는 것·브랜드 */
+  --halo2:#8FD9F5;   /* 2차 — 하늘색. 읽는 것·상태·숫자. 어두운 바탕 위 11.8:1 */
+  --sky:#DB3C8E;     /* 밝은 바탕 장식(핑크) */
+  --sky-d:#B3246B;   /* 밝은 바탕 글자(핑크) 5.8:1 — 연한 핑크는 흰 위에서 못 읽는다 */
+  --sky-b:#1B6FA8;   /* 밝은 바탕 글자(하늘) 5.0:1 */
+  --paper:#F8F7FC; --white:#fff;
+  --ink:#1F1D33; --ink2:#5E5A77; --ink3:#9C98B5;
+  --line:rgba(31,29,51,.11); --line2:rgba(31,29,51,.07);
   --onNight:rgba(255,255,255,.72); --onNight2:rgba(255,255,255,.45);
   --nline:rgba(255,255,255,.14);
 
   --r:10px; --r-sm:6px; --r-xs:3px; --r-pill:999px;
   --sh:none;
-  --sh-md:0 1px 2px rgba(24,15,30,.06);
-  --sh-lg:0 12px 34px rgba(24,15,30,.16);
+  --sh-md:0 1px 2px rgba(20,18,41,.06);
+  --sh-lg:0 12px 34px rgba(20,18,41,.16);
 
   --disp:'Archivo',sans-serif;
   --cond:'Barlow Condensed','Noto Sans KR',sans-serif;
@@ -59,10 +63,10 @@ img{display:block;max-width:100%}
   opacity:0;transition:opacity 1.1s ease}
 .night .bg img.on{opacity:.26}
 .night .bg::after{content:'';position:absolute;inset:0;
-  background:linear-gradient(100deg,var(--night) 20%,rgba(24,15,30,.84) 54%,rgba(24,15,30,.62) 100%)}
+  background:linear-gradient(100deg,var(--night) 20%,rgba(20,18,41,.84) 54%,rgba(20,18,41,.62) 100%)}
 .day .bg img.on{opacity:.13}
 .day .bg::after{content:'';position:absolute;inset:0;
-  background:linear-gradient(95deg,var(--paper) 44%,rgba(253,245,249,.76) 74%,rgba(253,245,249,.54) 100%)}
+  background:linear-gradient(95deg,var(--paper) 44%,rgba(248,247,252,.76) 74%,rgba(248,247,252,.54) 100%)}
 
 /* ── 등장 ──
    섹션이 보이기 시작하면 안쪽 요소가 차례로 떠오른다. */
@@ -78,8 +82,8 @@ img{display:block;max-width:100%}
   border-bottom:2px solid var(--ink)}
 .night .sec-head{border-bottom-color:var(--nline)}
 .sec-head::before{content:counter(sec,decimal-leading-zero);font-family:var(--disp);font-size:13px;
-  font-weight:900;letter-spacing:.06em;color:var(--sky-d);flex-shrink:0;line-height:1}
-.night .sec-head::before{color:var(--halo)}
+  font-weight:900;letter-spacing:.06em;color:var(--sky-b);flex-shrink:0;line-height:1}
+.night .sec-head::before{color:var(--halo2)}
 .sec-titles{display:flex;flex-direction:column;gap:1px}
 .sec-jp{display:none}
 .sec-title{font-size:19px;font-weight:900;letter-spacing:-.02em;line-height:1.2}
@@ -95,7 +99,7 @@ body.solo .lang-toggle{position:fixed}
   text-transform:uppercase}
 .lang-toggle button.on{background:var(--halo);color:var(--night)}
 .prog{display:none}
-body.solo .prog{display:block;position:fixed;top:0;left:0;height:3px;width:0;background:var(--halo);
+body.solo .prog{display:block;position:fixed;top:0;left:0;height:3px;width:0;background:var(--halo2);
   z-index:210;transition:width .1s linear}
 
 /* ── 히어로 (접수 슬롯을 안으로 합쳤다) ── */
@@ -108,7 +112,7 @@ body.solo .prog{display:block;position:fixed;top:0;left:0;height:3px;width:0;bac
 .hero .bg img{object-position:72% 12%}
 .hero .bg img.on{opacity:.26}
 .hero .bg::after{content:'';position:absolute;inset:0;
-  background:linear-gradient(100deg,var(--night) 20%,rgba(24,15,30,.84) 54%,rgba(24,15,30,.6) 100%)}
+  background:linear-gradient(100deg,var(--night) 20%,rgba(20,18,41,.84) 54%,rgba(20,18,41,.6) 100%)}
 .motes{position:absolute;inset:0;z-index:1;pointer-events:none}
 .motes i{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--halo);opacity:.4;
   animation:rise linear infinite}
@@ -135,8 +139,8 @@ body.solo .prog{display:block;position:fixed;top:0;left:0;height:3px;width:0;bac
   border:1px solid var(--nline);border-radius:var(--r-pill);font-size:12.5px;font-weight:500;
   color:var(--onNight)}
 .chip b{color:#fff;font-weight:800}
-.chip.pk b{color:var(--halo)}
-.chip .dotlive{width:6px;height:6px;border-radius:50%;background:var(--halo);flex-shrink:0}
+.chip.pk b{color:var(--halo2)}
+.chip .dotlive{width:6px;height:6px;border-radius:50%;background:var(--halo2);flex-shrink:0}
 .hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
 
 /* ── 버튼 ── */
@@ -145,8 +149,8 @@ body.solo .prog{display:block;position:fixed;top:0;left:0;height:3px;width:0;bac
   padding:14px 30px;cursor:pointer;text-decoration:none;transform:skewX(var(--tilt));
   transition:transform .2s,box-shadow .24s,background .24s,color .24s}
 .btn > *{display:inline-block;transform:skewX(calc(var(--tilt) * -1))}
-.btn-main{background:var(--halo);color:var(--night);box-shadow:0 8px 22px rgba(255,111,181,.26)}
-.btn-main:hover{transform:skewX(var(--tilt)) translateY(-3px);box-shadow:0 13px 30px rgba(255,111,181,.4)}
+.btn-main{background:var(--halo);color:var(--night);box-shadow:0 8px 22px rgba(255,163,206,.26)}
+.btn-main:hover{transform:skewX(var(--tilt)) translateY(-3px);box-shadow:0 13px 30px rgba(255,163,206,.4)}
 .btn-ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.42)}
 .btn-ghost:hover{background:rgba(255,255,255,.11)}
 
@@ -163,10 +167,10 @@ body.solo .prog{display:block;position:fixed;top:0;left:0;height:3px;width:0;bac
 .dot{width:13px;height:4px;border-radius:0;border:none;background:rgba(255,255,255,.28);
   font-size:0;color:transparent;background-image:none}
 .dot.filled{background:rgba(255,255,255,.28)}
-.dot.open{background:var(--halo)}
+.dot.open{background:var(--halo2)}
 .slot-tag{font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:13px;
   font-weight:600;padding:0;border:none;background:none;flex-shrink:0}
-.slot-tag.open{color:var(--halo)}
+.slot-tag.open{color:var(--halo2)}
 .slot-tag.full{color:var(--onNight2)}
 
 /* ── 카드 ── */
@@ -198,17 +202,17 @@ body.solo .prog{display:block;position:fixed;top:0;left:0;height:3px;width:0;bac
   border-radius:var(--r);box-shadow:none}
 .port-stage img{max-width:100%;max-height:100%;object-fit:contain;animation:fade .22s}
 .port-nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:52px;border:none;
-  background:rgba(24,15,30,.72);border-radius:0;font-family:inherit;font-size:20px;font-weight:700;
+  background:rgba(20,18,41,.72);border-radius:0;font-family:inherit;font-size:20px;font-weight:700;
   line-height:1;color:#fff;cursor:pointer;transition:.18s}
 .port-nav:hover{background:var(--halo);color:var(--night)}
 .port-nav.prev{left:10px} .port-nav.next{right:10px}
 .port-cap{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:9px;
-  background:rgba(24,15,30,.86);border:none;border-radius:0;padding:6px 12px;
+  background:rgba(20,18,41,.86);border:none;border-radius:0;padding:6px 12px;
   font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:13px;font-weight:600;
   color:#fff;max-width:calc(100% - 130px)}
 .port-cap .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.port-cap .ix{color:var(--halo);font-variant-numeric:tabular-nums;flex-shrink:0}
-.port-full{position:absolute;right:12px;bottom:12px;background:rgba(24,15,30,.86);border:none;
+.port-cap .ix{color:var(--halo2);font-variant-numeric:tabular-nums;flex-shrink:0}
+.port-full{position:absolute;right:12px;bottom:12px;background:rgba(20,18,41,.86);border:none;
   border-radius:0;padding:6px 12px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;
   font-size:12.5px;font-weight:600;color:#fff;text-decoration:none;cursor:pointer;transition:.18s}
 .port-full:hover{background:var(--halo);color:var(--night)}
@@ -220,18 +224,18 @@ body.solo .prog{display:block;position:fixed;top:0;left:0;height:3px;width:0;bac
   border:1px solid var(--nline);border-radius:0;overflow:hidden;counter-reset:wo}
 .wo-cell{background:rgba(255,255,255,.04);color:#fff;padding:16px 13px 14px;text-align:left;
   position:relative;counter-increment:wo}
-.wo-cell.last{background:var(--halo)}
+.wo-cell.last{background:var(--halo2)}
 .wo-cell::before{content:counter(wo,decimal-leading-zero);position:absolute;right:9px;bottom:0;
   font-family:var(--disp);font-size:42px;font-weight:900;line-height:.8;color:rgba(255,255,255,.07);
   pointer-events:none}
-.wo-cell.last::before{color:rgba(24,15,30,.16)}
+.wo-cell.last::before{color:rgba(20,18,41,.16)}
 .wo-num{position:relative;z-index:1;font-family:var(--cond);font-size:12px;font-weight:600;
-  letter-spacing:.18em;color:var(--halo);margin-bottom:6px;text-transform:uppercase}
-.wo-cell.last .wo-num{color:rgba(24,15,30,.66)}
+  letter-spacing:.18em;color:var(--halo2);margin-bottom:6px;text-transform:uppercase}
+.wo-cell.last .wo-num{color:rgba(20,18,41,.66)}
 .wo-name{position:relative;z-index:1;font-size:14.5px;font-weight:800;color:#fff;line-height:1.3}
 .wo-cell.last .wo-name{color:var(--night)}
 .wo-sub{position:relative;z-index:1;font-size:11px;color:var(--onNight2);margin-top:3px}
-.wo-cell.last .wo-sub{color:rgba(24,15,30,.62)}
+.wo-cell.last .wo-sub{color:rgba(20,18,41,.62)}
 
 /* ── 가격 계산기 ── */
 .fgroup{margin-bottom:24px}
@@ -377,12 +381,12 @@ body.solo #sideMini.show{display:block;position:fixed;top:84px;right:14px;z-inde
   box-shadow:var(--sh-lg);padding:14px;color:#fff}
 .sm-tl{font-family:var(--cond);font-size:11.5px;font-weight:600;color:var(--onNight2);letter-spacing:.14em;
   text-transform:uppercase}
-.sm-amt{font-family:var(--disp);font-weight:900;font-size:20px;color:var(--halo);margin:3px 0 10px;
+.sm-amt{font-family:var(--disp);font-weight:900;font-size:20px;color:var(--halo2);margin:3px 0 10px;
   font-variant-numeric:tabular-nums;line-height:1.15;letter-spacing:-.03em}
 .sm-nav{display:flex;flex-direction:column;gap:1px;border-top:1px solid var(--nline);padding-top:8px}
 .sm-link{font-size:11.5px;font-weight:600;color:var(--onNight);padding:5px 7px;cursor:pointer;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:.14s}
-.sm-link:hover{background:rgba(255,111,181,.14);color:var(--halo)}
+.sm-link:hover{background:rgba(255,163,206,.14);color:var(--halo)}
 @media(max-width:1340px){#sideMini{display:none!important}}
 
 /* ── 모바일 하단 합계 바 ── */
@@ -395,7 +399,7 @@ body.solo #sideMini.show{display:block;position:fixed;top:84px;right:14px;z-inde
   .mbar-l{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
   .mbar-k{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.14em;
     text-transform:uppercase;color:var(--onNight2)}
-  .mbar-v{font-family:var(--disp);font-weight:900;font-size:19px;color:var(--halo);line-height:1.15;
+  .mbar-v{font-family:var(--disp);font-weight:900;font-size:19px;color:var(--halo2);line-height:1.15;
     font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .mbar-b{flex-shrink:0;padding:11px 18px;border:none;background:var(--halo);color:var(--night);
     font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:15px;font-weight:700;
