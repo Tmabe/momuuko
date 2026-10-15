@@ -362,6 +362,10 @@ body{
 
   /* ── 4. 포트폴리오: 세로 레일이 화면 폭의 19%를 먹었다 → 그림 아래 가로 스트립 ── */
   .port-stack{flex-direction:column-reverse;gap:8px}
+  /* 가로 배치일 땐 flex:1 의 flex-basis 가 폭을 정했지만, 세로로 돌리면 그 basis:0% 가
+     height:var(--stageH) 를 눌러 상한(420px)이 무시된다 — 실측 530px.
+     flex 를 끄고 height 가 이기게 한다. */
+  .port-stage{flex:none;width:100%;height:var(--stageH)}
   .port-rail{flex:none;width:100%;flex-direction:row;max-height:none;
     overflow-x:auto;overflow-y:hidden;padding:0 0 4px}
   .port-th{width:var(--railW);height:var(--thumbH);flex-shrink:0}
